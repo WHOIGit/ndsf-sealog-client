@@ -1,0 +1,10 @@
+version: '3.6'
+
+services:
+  sealog-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oceandatatools/sealog-client-vehicle
+    ports:
+      - "80:80"  # website
