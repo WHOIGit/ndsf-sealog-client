@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
- - [sealog-server v1.0.0+](https://github.com/webbpinner/sealog-server)
+ - [sealog-server v1.0.0+](https://github.com/oceandatatools/sealog-server)
  - [nodeJS v8.11.0+](https://nodejs.org)
  - [npm](https://www.npmjs.com)
  - [git](https://git-scm.com)
@@ -23,7 +23,7 @@ sudo apt-get install nodejs
 ### Clone the repository
 
 ```
-git clone https://github.com/webbpinner/sealog-client-vehicle.git
+git clone https://github.com/oceandatatools/sealog-client-vehicle.git
 ```
 
 This should clone the repo to a directory called `sealog-client-vehicle`
