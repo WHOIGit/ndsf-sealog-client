@@ -1,0 +1,190 @@
+import React, { Component } from 'react';
+import { compose } from 'redux';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { reduxForm, Field } from 'redux-form';
+import Datetime from 'react-datetime';
+import moment from 'moment';
+import { Button, Card, Form } from 'react-bootstrap';
+import * as mapDispatchToProps from '../actions';
+
+const dateFormat = "YYYY-MM-DD"
+const timeFormat = "HH:mm:ss"
+
+class EventFilterForm extends Component {
+
+  constructor (props) {
+    super(props);
+
+    this.renderDatePicker = this.renderDatePicker.bind(this);
+    this.clearForm = this.clearForm.bind(this);
+  }
+
+  static propTypes = {
+    handlePostSubmit: PropTypes.func.isRequired,
+    initialValues: PropTypes.object
+  };
+
+  componentDidMount() {
+    if(this.props.initialValues) {
+      this.props.initialize(this.props.initialValues);
+    }
+  }
+
+  componentWillUnmount() {
+  }
+
+
+  async populateDefaultValues() {
+    let eventDefaultValues = {event_ts: moment.utc()};
+    this.props.eventTemplate.event_options.forEach((option, index) => {
+      if(option.event_option_default_value) {
+        eventDefaultValues[`option_${index}`] = option.event_option_default_value;
+      }
+    });
+    this.props.initialize(eventDefaultValues);
+  }
+
+  handleFormSubmit(formProps) {
+
+      if(formProps.startTS && typeof(formProps.startTS) === "object") {
+        if(this.props.minDate && formProps.startTS.isBefore(moment(this.props.minDate))) {
+          formProps.startTS = this.props.minDate
+        } else {
+          formProps.startTS = formProps.startTS.toISOString()
+        }
+      }
+
+      if(formProps.stopTS && typeof(formProps.stopTS) === "object") {
+        if(this.props.maxDate && formProps.stopTS.isAfter(moment(this.props.maxDate))) {
+          formProps.stopTS = this.props.maxDate
+        } else {
+          formProps.stopTS = formProps.stopTS.toISOString()
+        }
+      }
+
+      if(formProps.value) {
+        formProps.value = formProps.value.split(',').map((value) => value.trim()).join(',')
+      }
+
+      if(formProps.author) {
+        formProps.author = formProps.author.split(',').map((author) => author.trim()).join(',')
+      }
+
+    this.props.handlePostSubmit(formProps);
+  }
+
+  clearForm() {
+    this.props.resetFields('eventFilterForm', {
+      value: '',
+      author: '',
+      startTS: '',
+      stopTS: '',
+      freetext: '',
+      datasource: ''
+    });
+    this.props.handlePostSubmit();
+  }
+
+  renderTextField({ input, label, placeholder, required, meta: { touched, error } }) {
+    let requiredField = (required)? <span className='text-danger'> *</span> : ''
+    let placeholder_txt = (placeholder)? placeholder: label
+
+    return (
+      <Form.Group>
+        <Form.Label>{label}{requiredField}</Form.Label>
+        <Form.Control type="text" {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
+        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
+      </Form.Group>
+    )
+  }
+
+  renderDatePicker({ input, defaultValue, label, required, meta: { touched, error } }) {
+    let requiredField = (required)? <span className='text-danger'> *</span> : ''
+    
+    return (
+      <Form.Group>
+        <Form.Label>{label}{requiredField}</Form.Label>
+        <Datetime {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : defaultValue} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value, dateFormat) : null }/>
+        {touched && (error && <div style={{width: "100%", marginTop: "0.25rem", fontSize: "80%"}} className='text-danger'>{error}</div>)}
+      </Form.Group>
+    )
+  }
+
+  render() {
+
+    const { handleSubmit, submitting, valid } = this.props;
+    const eventFilterFormHeader = (<div>Event Filter</div>);
+    const startTS = (this.props.minDate)? moment(this.props.minDate): null
+    const stopTS = (this.props.maxDate)? moment(this.props.maxDate): null
+
+    return (
+      <Card className="form-standard">
+        <Card.Header>{eventFilterFormHeader}</Card.Header>
+        <Card.Body>
+          <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+            <Field
+              name="value"
+              component={this.renderTextField}
+              label="Event Value"
+              placeholder="i.e. SAMPLE"
+              disabled={this.props.disabled}
+            />
+            <Field
+              name="author"
+              component={this.renderTextField}
+              label="Author"
+              placeholder="i.e. jsmith"
+              disabled={this.props.disabled}
+            />
+            <Field
+              name="startTS"
+              component={this.renderDatePicker}
+              defaultValue={startTS}
+              label="Start Date/Time (UTC)"
+              disabled={this.props.disabled}
+            />
+            <Field
+              name="stopTS"
+              component={this.renderDatePicker}
+              defaultValue={stopTS}
+              label="Stop Date/Time (UTC)"
+              disabled={this.props.disabled}
+            />
+            <Field
+              name="freetext"
+              component={this.renderTextField}
+              label="Freeform Text"
+              disabled={this.props.disabled}
+            />
+            <div className="float-right">
+              <Button variant="secondary" size="sm" disabled={submitting || this.props.disabled} onClick={this.clearForm}>Reset</Button>
+              <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid || this.props.disabled}>Update</Button>
+            </div>
+          </form>
+        </Card.Body>
+      </Card>
+    )
+  }
+}
+
+function validate(formProps) {
+  const errors = {};
+  return errors;
+
+}
+
+function mapStateToProps(state) {
+
+  return {};
+
+}
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  reduxForm({
+    form: 'eventFilterForm',
+    // enableReinitialize: true,
+    validate: validate
+  })
+)(EventFilterForm);
