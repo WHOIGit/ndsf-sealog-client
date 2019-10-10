@@ -1,0 +1,50 @@
+
+// Use these settings if connecting to a server using http
+const API_ROOT_URL = `http://localhost:8000/sealog-server`;
+const WS_ROOT_URL = `ws://localhost:8000/ws`;
+
+// Use these settings if connecting to a server using https
+// const API_ROOT_URL = `https://localhost:8000/sealog-server`;
+// const WS_ROOT_URL = `wss://localhost:8000/ws`;
+
+// Change this if not hosting the client at the webserver's document root i.e. '/sealog/'
+const ROOT_PATH = "/sealog/";
+
+// Where the images are hosted on the webserver.
+const IMAGE_PATH = "/files/images";
+
+// Site customization
+// Add a reCaptcha site kit to enable recaptcha bot protection
+const RECAPTCHA_SITE_KEY = "";
+
+// Text show on the login page.  If a login image is defined then this text will appear below the image.
+const LOGIN_SCREEN_TXT = "Sealog provides the Oceanographic Research community with an open-source tool for recording, reviewing, and exporting insitu scientific and operational observations.";
+
+// Image file shown on the login page.  This image needs to be saved in the ./dist/images folder
+const LOGIN_IMAGE = "";
+
+// Text show on the main page above the cruise list.
+const MAIN_SCREEN_TXT = "Please select a cruise from the list below.  Once a cruise is selected please select a lowering from the list of lowerings associated with that cruise that appear at the bottom of the cruise information panel.  Selecting a lowering will open the lowering information panel.  At the bottom of the cruise information panel there will be links for proceeding to the lowering replay section, the lowering review section and the lowering gallery section of Sealog. If at any time you wish to return to this page please click the \"Review Cruises/Lowerings\" text in upper navigation bar.";
+
+// Title displayed on the left side of the title bar
+const HEADER_TITLE = "Sealog - Vehicle";
+
+// Set default vessel
+const DEFAULT_VESSEL = "";
+
+// Use an internal tile server (true), or pull tiles directly from the Internet (false).
+const USE_MAPTILE_PROXY = false;
+
+module.exports = {
+  API_ROOT_URL,
+  WS_ROOT_URL,
+  ROOT_PATH,
+  IMAGE_PATH,
+  RECAPTCHA_SITE_KEY,
+  LOGIN_SCREEN_TXT,
+  LOGIN_IMAGE,
+  MAIN_SCREEN_TXT,
+  HEADER_TITLE,
+  DEFAULT_VESSEL,
+  USE_MAPTILE_PROXY
+}

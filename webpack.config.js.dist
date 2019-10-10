@@ -1,0 +1,73 @@
+const { ROOT_PATH, HEADER_TITLE } = require('./src/client_config');
+const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: ROOT_PATH
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    publicPath: ROOT_PATH,
+    historyApiFallback: { index: ROOT_PATH }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+        title: HEADER_TITLE,
+        filename: 'index.html',
+        template: path.resolve(__dirname, 'src/assets/index.html')
+      }),
+    new CopyPlugin([
+      { from: path.resolve(__dirname, 'node_modules/typeface-roboto/files/'), to: 'style/fonts' },
+      { from: path.resolve(__dirname, 'node_modules/leaflet/dist/images/'), to: 'style/images' },
+      { from: path.resolve(__dirname, 'src/assets/images/'), to: 'images' }
+    ]),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
+        test: /\.scss$/,
+        loader: 'style-loader!css-loader!sass-loader'
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'style-loader',
+            options: {
+              injectType: 'linkTag',
+            }
+          },
+          { loader: 'file-loader',
+            options: {
+              outputPath: 'style/',
+              publicPath: ROOT_PATH + 'style/'
+            }
+          }
+        ]
+      },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'style/fonts/',
+            publicPath: ROOT_PATH + 'style/fonts/'
+          }
+        }]
+      }
+    ]
+  }
+};
