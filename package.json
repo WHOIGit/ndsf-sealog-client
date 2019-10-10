@@ -1,8 +1,8 @@
 {
   "name": "sealog-client-vehicle",
-  "version": "0.8.1",
+  "version": "1.0.0rc",
   "license": "GPL-3.0",
-  "description": "Sealog event-logging client built for use with deployable vehicles",
+  "description": "Sealog Client intended for use with vehicles deployed from research vessels such as ROVs, AUVs and HOVs",
   "bugs": {
     "url": "https://github.com/webbpinner/sealog-client-vehicle/issues"
   },

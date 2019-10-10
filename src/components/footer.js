@@ -107,7 +107,7 @@ class Footer extends Component {
         <div style={{marginTop: "4px"}}>
           {asnapStatus}
           <span className="float-right">
-            <a href={`/github`} target="_blank">Sealog</a> is licensed under the <a href={`/license`} target="_blank">GPLv3</a> public license
+            <a href={`/github`} target="_blank">Sealog</a> is licensed under the <a href={`/license`} target="_blank">MIT</a> public license
           </span>
         </div>
       </div>
