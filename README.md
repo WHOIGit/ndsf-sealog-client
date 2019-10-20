@@ -3,7 +3,7 @@ React-Redux based client for the Sealog Eventlogging Server
 
 For installation instruction please look at [INSTALL.md](./INSTALL.md)
 
-[Live Demo](https://sealog.oceandatatools.org)
+[Live Demo](https://sealog-vehicle.oceandatatools.org)
 
 - admin account for demo: admin:demo
 
