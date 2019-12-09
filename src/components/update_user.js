@@ -131,6 +131,24 @@ class UpdateUser extends Component {
     );
   }
 
+  renderSwitch({ input, label, meta: { dirty, error } }) {    
+
+    return (
+      <Form.Group>
+        <Form.Switch
+          {...input}
+          id={input.name}
+          checked={input.value ? true : false}
+          onChange={(e) => input.onChange(e.target.checked)}
+          isInvalid={dirty && error}
+          label={label}
+        >
+        </Form.Switch>
+        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
+      </Form.Group>
+    );
+  }
+
   renderAdminOptions() {
     if(this.props.roles.includes('admin')) {
       return (
@@ -147,7 +165,7 @@ class UpdateUser extends Component {
       <Field
         name="system_user"
         label="System User"
-        component={this.renderCheckbox}
+        component={this.renderSwitch}
       />
     );
   }
@@ -157,8 +175,8 @@ class UpdateUser extends Component {
       return (
         <Field
           name="disabled"
-          label="Account Disabled"
-          component={this.renderCheckbox}
+          label="User Disabled"
+          component={this.renderSwitch}
         />
       );
     }

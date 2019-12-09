@@ -8,7 +8,7 @@ import {
   CREATE_EVENT_TEMPLATE_SUCCESS,
   CREATE_EVENT_TEMPLATE_ERROR,
   LEAVE_CREATE_EVENT_TEMPLATE_FORM,
-  FETCH_EVENT_TEMPLATES,
+  FETCH_EVENT_TEMPLATES
 
 } from '../actions/types';
 
@@ -45,7 +45,6 @@ export default function(state={ event_template: {}, event_templates: [], event_t
 
     case FETCH_EVENT_TEMPLATES:
       return { ...state, event_templates: action.payload };
-
   }    
   return state;
 }

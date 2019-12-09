@@ -30,6 +30,7 @@ export const LEAVE_UPDATE_USER_FORM = 'leave_update_user_form';
 export const FETCH_USERS = 'fetch_users';
 
 export const FETCH_EVENT_TEMPLATES_FOR_MAIN = 'fetch_event_templates_for_main';
+export const UPDATE_EVENT_TEMPLATE_CATEGORY = 'update_evebt_template_category';
 
 export const FETCH_EVENTS = 'fetch_events';
 export const SET_SELECTED_EVENT = 'set_selected_event';

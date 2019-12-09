@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -7,50 +7,46 @@ import { API_ROOT_URL } from '../client_config';
 
 const cookies = new Cookies();
 
-class LoweringDropdownToggle extends Component {
-  constructor(props) {
-    super(props);
+const LoweringDropdownToggle = React.forwardRef(
+  ({ children, onClick }, ref) => {
 
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick(e) {
-    e.preventDefault();
-
-    this.props.onClick(e);
-  }
-
-  render() {
     return (
-      <span className="text-warning dropdown-toggle" onClick={this.handleClick}>
-        {this.props.children}
+      <span
+        className="text-primary dropdown-toggle"
+        ref={ref}
+        onClick={e => {
+          e.preventDefault();
+          onClick(e);
+        }}
+      >
+        {children}
       </span>
     );
   }
-}
+);
 
-class LoweringDropdownMenu extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleChange = this.handleChange.bind(this);
-
-  }
-
-  handleChange(e) {
-    this.setState({ value: e.target.value.toLowerCase().trim() });
-  }
-
-  render() {
-    const { children, style, className, 'aria-labelledby': labeledBy, } = this.props;
+const LoweringDropdownMenu = React.forwardRef(
+  ({ children, style, className, 'aria-labelledby': labeledBy }, ref) => {
+    const [value, setValue] = useState('');
 
     return (
-      <div style={style} className={className} aria-labelledby={labeledBy}>
-        {this.props.children}
+      <div
+        ref={ref}
+        style={style}
+        className={className}
+        aria-labelledby={labeledBy}
+      >
+        <ul className="list-unstyled">
+          {React.Children.toArray(children).filter(
+            child =>
+              !value || child.props.children.toLowerCase().startsWith(value),
+          )}
+        </ul>
       </div>
     );
   }
-}
+);
+
 
 class LoweringDropdown extends Component {
 
@@ -59,13 +55,10 @@ class LoweringDropdown extends Component {
 
     this.state = {
       menuItems: [],
-      toggleText: "Loading...",
-      cruise: {}
+      toggleText: this.props.active_lowering.lowering_id,
     }
 
     this.menuItemStyle = {paddingLeft: "10px"};
-    this.getLowerings = this.getLowerings.bind(this);
-
   }
 
   static propTypes = {
@@ -74,42 +67,41 @@ class LoweringDropdown extends Component {
     onClick: PropTypes.func
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    if(prevProps.active_lowering !== this.props.active_lowering){
+      this.setState({toggleText: this.props.active_lowering.lowering_id})
+    }
 
-    if(this.state.cruise && this.props.active_cruise && this.state.cruise.id !== this.props.active_cruise.id) {
-      this.getLowerings(this.props.active_cruise, this.props.onClick)
+    if(prevProps.active_cruise !== this.props.active_cruise){
+      this.buildMenuItems();
     }
   }
 
-  UNSAFE_componentWillReceiveProps() {
-    this.setState(
-      {
-        toggleText: (this.props.active_lowering.lowering_id)? this.props.active_lowering.lowering_id : 'Loading...'
+  async buildMenuItems() {
+
+    // let lowering_start_ts = new Date(this.props.active_lowering.start_ts);
+    // let lowering_stop_ts = new Date(this.props.active_lowering.stop_ts);
+    // let startOfYear = new Date(Date.UTC(lowering_start_ts.getFullYear(), 0, 1, 0, 0, 0));
+    // let endOfYear = new Date(Date.UTC(lowering_start_ts.getFullYear(), 11, 31, 23, 59, 59));
+    
+    if ( this.props.active_cruise.id ) {
+      try {
+        const response = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/bycruise/${this.props.active_cruise.id}`,
+        {
+          headers: {
+            authorization: cookies.get('token')
+          }
+        })
+        
+        const lowerings = await response.data;
+        this.setState({menuItems: lowerings.map((lowering) => (<Dropdown.Item className="text-primary" onClick={() => this.props.onClick(lowering.id)} key={lowering.id}>{lowering.lowering_id}</Dropdown.Item>))})
       }
-    )
-
-    if(this.props.active_cruise && this.props.active_cruise.cruise_id !== this.state.cruise.cruise_id) {
-      this.getLowerings(this.props.active_cruise, this.props.onClick)
-    }
-  }
-
-  async getLowerings(cruise, onClick) {
-
-    try {
-      const response = await axios.get(`${API_ROOT_URL}/api/v1/lowerings?startTS=${cruise.start_ts}&stopTS=${cruise.stop_ts}`,
-      {
-        headers: {
-          authorization: cookies.get('token')
-        }
-      })
-      
-      const lowerings = await response.data;
-      this.setState({cruise, menuItems: lowerings.map((lowering) => (<Dropdown.Item className="text-warning" onClick={() => onClick(lowering.id)} key={lowering.id}>{lowering.lowering_id}</Dropdown.Item>))})
-    }
-    catch(error){
-      console.log(error)
+      catch(error){
+        console.log(error)
+      }
     }
   }
 

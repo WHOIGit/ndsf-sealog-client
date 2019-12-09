@@ -1,51 +1,46 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
-class LoweringModeDropdownToggle extends Component {
-  constructor(props) {
-    super(props);
+const LoweringModeDropdownToggle = React.forwardRef(
+  ({ children, onClick }, ref) => {
 
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick(e) {
-    e.preventDefault();
-
-    this.props.onClick(e);
-  }
-
-  render() {
     return (
-      <span className="text-primary dropdown-toggle" onClick={this.handleClick}>
-        {this.props.children}
+      <span
+        className="text-primary dropdown-toggle"
+        ref={ref}
+        onClick={e => {
+          e.preventDefault();
+          onClick(e);
+        }}
+      >
+        {children}
       </span>
     );
   }
-}
+);
 
-class LoweringModeDropdownMenu extends Component {
-  constructor(props) {
-    super(props);
-
-    this.handleChange = this.handleChange.bind(this);
-
-  }
-
-  handleChange(e) {
-    this.setState({ value: e.target.value.toLowerCase().trim() });
-  }
-
-  render() {
-    const { children, style, className, 'aria-labelledby': labeledBy, } = this.props;
+const LoweringModeDropdownMenu = React.forwardRef(
+  ({ children, style, className, 'aria-labelledby': labeledBy }, ref) => {
+    const [value, setValue] = useState('');
 
     return (
-      <div style={style} className={className} aria-labelledby={labeledBy}>
-        {this.props.children}
+      <div
+        ref={ref}
+        style={style}
+        className={className}
+        aria-labelledby={labeledBy}
+      >
+        <ul className="list-unstyled">
+          {React.Children.toArray(children).filter(
+            child =>
+              !value || child.props.children.toLowerCase().startsWith(value),
+          )}
+        </ul>
       </div>
     );
   }
-}
+);
 
 class LoweringModeDropdown extends Component {
 

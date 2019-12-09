@@ -21,7 +21,8 @@ class DisplayUserTokenModal extends Component {
   }
 
   static propTypes = {
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
+    handleHide: PropTypes.func.isRequired
   };
 
   componentDidMount() {
@@ -42,28 +43,33 @@ class DisplayUserTokenModal extends Component {
   }
 
   handleConfirm() {
-    this.props.handleDestroy();
+    this.props.handleHide();
   }
 
   render() {
 
-    const { show, handleHide } = this.props
+    const { show, handleHide, id } = this.props
 
-    return (
-      <Modal show={show} onHide={handleHide}>
-        <Modal.Header closeButton>
-          <Modal.Title>User&#39;s Java Web Token</Modal.Title>
-        </Modal.Header>
+    if (id) {
+      return (
+        <Modal show={show} onHide={handleHide}>
+          <Modal.Header closeButton>
+            <Modal.Title>User&#39;s Java Web Token</Modal.Title>
+          </Modal.Header>
 
-        <Modal.Body>
-          <h6>Token:</h6><div style={{wordWrap:'break-word'}}>{this.state.token}</div>
-        </Modal.Body>
+          <Modal.Body>
+            <h6>Token:</h6><div style={{wordWrap:'break-word'}}>{this.state.token}</div>
+          </Modal.Body>
 
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleHide}>Close</Button>
-        </Modal.Footer>
-      </Modal>
-    );
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleHide}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      );
+    }
+    else {
+      return null;
+    }
   }
 }
 

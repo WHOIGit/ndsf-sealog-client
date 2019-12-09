@@ -32,7 +32,7 @@ class EventShowDetailsModal extends Component {
   }
 
   static propTypes = {
-    event: PropTypes.object.isRequired,
+    event: PropTypes.object,
     handleHide: PropTypes.func.isRequired
   };
 
@@ -171,57 +171,62 @@ class EventShowDetailsModal extends Component {
   }
 
   render() {
-    const { show } = this.props
+    const { show, event } = this.props
 
     const event_free_text_card = (this.state.event.event_free_text)? (<Card><Card.Body className="data-card-body">Free-form Text: {this.state.event.event_free_text}</Card.Body></Card>) : null;
     const event_comment = (this.state.event.event_options) ? this.state.event.event_options.find((event_option) => (event_option.event_option_name === 'event_comment' && event_option.event_option_value.length > 0)) : null
 
     const event_comment_card = (event_comment)?(<Card><Card.Body className="data-card-body">Comment: {event_comment.event_option_value}</Card.Body></Card>) : null;
     
-    if(this.state.event.event_options) {
-      return (
-        <Modal size="lg" show={show} onHide={this.props.handleHide}>
-            <ImagePreviewModal />
+    if (event ) {
+      if(this.state.event.event_options) {
+        return (
+          <Modal size="lg" show={show} onHide={this.props.handleHide}>
+              <ImagePreviewModal />
+              <Modal.Header closeButton>
+                <Modal.Title as="h5">Event Details: {this.state.event.event_value}</Modal.Title>
+              </Modal.Header>
+
+              <Modal.Body>
+                <span>User: {this.state.event.event_author}</span><br/>
+                <span>Date: {this.state.event.ts}</span>
+                <Row style={{paddingTop: "8px"}}>
+                  <Col xs={12}>
+                    {this.renderImageryCard()}
+                  </Col>
+                </Row>
+                <Row style={{paddingTop: "8px"}}>
+                  {this.renderEventOptionsCard()}
+                  {this.renderAuxDataCard()}
+                </Row>
+                <Row style={{paddingTop: "8px"}}>
+                  <Col xs={12}>
+                    {event_free_text_card}
+                  </Col>
+                </Row>
+                <Row style={{paddingTop: "8px"}}>
+                  <Col xs={12}>
+                    {event_comment_card}
+                  </Col>
+                </Row>
+              </Modal.Body>
+          </Modal>
+        );
+      } else {
+        return (
+          <Modal size="lg" show={show} onHide={this.props.handleHide}>
             <Modal.Header closeButton>
               <Modal.Title as="h5">Event Details: {this.state.event.event_value}</Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
-              <span>User: {this.state.event.event_author}</span><br/>
-              <span>Date: {this.state.event.ts}</span>
-              <Row style={{paddingTop: "8px"}}>
-                <Col xs={12}>
-                  {this.renderImageryCard()}
-                </Col>
-              </Row>
-              <Row style={{paddingTop: "8px"}}>
-                {this.renderEventOptionsCard()}
-                {this.renderAuxDataCard()}
-              </Row>
-              <Row style={{paddingTop: "8px"}}>
-                <Col xs={12}>
-                  {event_free_text_card}
-                </Col>
-              </Row>
-              <Row style={{paddingTop: "8px"}}>
-                <Col xs={12}>
-                  {event_comment_card}
-                </Col>
-              </Row>
+              Loading...
             </Modal.Body>
-        </Modal>
-      );
-    } else {
-      return (
-        <Modal size="lg" show={show} onHide={this.props.handleHide}>
-          <Modal.Header closeButton>
-            <Modal.Title as="h5">Event Details: {this.state.event.event_value}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Loading...
-          </Modal.Body>
-        </Modal>
-      );
+          </Modal>
+        );
+      }
+    }
+    else {
+      return null;
     }
   }
 }

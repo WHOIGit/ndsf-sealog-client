@@ -16,32 +16,37 @@ class ImagePreviewModal extends Component {
   }
 
   static propTypes = {
-    name: PropTypes.string.isRequired,
-    filepath: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    filepath: PropTypes.string,
     handleHide: PropTypes.func.isRequired,
   };
 
   handleClose() {
-    this.props.handleDestroy();
+    this.props.handleHide();
   }
 
   render() {
 
-    const { show, handleHide } = this.props
+    const { show, handleHide, name } = this.props
 
-    return (
-      <Modal size="lg" show={show} onHide={handleHide}>
-        <Modal.Header closeButton>
-          <Modal.Title as="h5">Image Preview - {this.props.name}</Modal.Title>
-        </Modal.Header>
+    if (name) {
+      return (
+        <Modal size="lg" show={show} onHide={handleHide}>
+          <Modal.Header closeButton>
+            <Modal.Title as="h5">Image Preview - {this.props.name}</Modal.Title>
+          </Modal.Header>
 
-        <Modal.Body>
-          <div className="text-center">
-            <Image fluid src={this.props.filepath} onError={this.handleMissingImage} />
-          </div>
-        </Modal.Body>
-      </Modal>
-    );
+          <Modal.Body>
+            <div className="text-center">
+              <Image fluid src={this.props.filepath} onError={this.handleMissingImage} />
+            </div>
+          </Modal.Body>
+        </Modal>
+      );
+    }
+    else {
+      return null;
+    }
   }
 }
 

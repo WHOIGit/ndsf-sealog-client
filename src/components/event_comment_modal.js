@@ -16,9 +16,9 @@ class EventCommentModal extends Component {
   }
 
   static propTypes = {
-    event: PropTypes.object.isRequired,
+    event: PropTypes.object,
     handleHide: PropTypes.func.isRequired,
-    handleUpdateEvent: PropTypes.func.isRequired
+    handleUpdateEvent: PropTypes.func
   };
 
   componentDidMount() {
@@ -44,7 +44,7 @@ class EventCommentModal extends Component {
     }
 
     this.props.handleUpdateEvent(this.props.event.id, this.props.event.event_value, this.props.event.event_free_text, event_options, this.props.event.ts);
-    this.props.handleDestroy();
+    this.props.handleHide();
   }
 
   renderTextArea({ input, label, required, meta: { touched, error, warning } }) {
@@ -60,29 +60,34 @@ class EventCommentModal extends Component {
   }
 
   render() {
-    const { show, handleHide, handleSubmit, submitting, valid } = this.props
+    const { show, handleHide, handleSubmit, submitting, valid, event } = this.props
 
-    return (
-      <Modal show={show} onHide={handleHide}>
-        <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
-          <Modal.Header closeButton>
-            <Modal.Title>Add/Update Comment</Modal.Title>
-          </Modal.Header>
+    if (event) {
+      return (
+        <Modal show={show} onHide={handleHide}>
+          <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+            <Modal.Header closeButton>
+              <Modal.Title>Add/Update Comment</Modal.Title>
+            </Modal.Header>
 
-          <Modal.Body>
-            <Field
-              name="event_comment"
-              component={this.renderTextArea}
-            />
-          </Modal.Body>
+            <Modal.Body>
+              <Field
+                name="event_comment"
+                component={this.renderTextArea}
+              />
+            </Modal.Body>
 
-          <Modal.Footer>
-            <Button variant="secondary" size="sm" disabled={submitting} onClick={handleHide}>Cancel</Button>
-            <Button variant="primary" size="sm" type="submit" disabled={ submitting || !valid}>Submit</Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
-    );
+            <Modal.Footer>
+              <Button variant="secondary" size="sm" disabled={submitting} onClick={handleHide}>Cancel</Button>
+              <Button variant="primary" size="sm" type="submit" disabled={ submitting || !valid}>Submit</Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
+      );
+    }
+    else {
+      return null;
+    }
   }
 }
 

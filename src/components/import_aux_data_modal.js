@@ -27,7 +27,6 @@ class ImportAuxDataModal extends Component {
 
   static propTypes = {
     handleHide: PropTypes.func.isRequired
-    // handleDestroy: PropTypes.func.isRequired,
     // handleExit: PropTypes.func
   };
 

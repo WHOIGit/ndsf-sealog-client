@@ -28,10 +28,21 @@ class UpdateEventTemplate extends Component {
   }
 
   handleFormSubmit(formProps) {
-    // console.log("typeof:", typeof(formProps.system_template))
-    if(typeof(formProps.system_template) !== 'boolean'){
+    if(typeof formProps.system_template === 'undefined') {
       formProps.system_template = false;
     }
+
+    if(typeof(formProps.template_disabled) === 'undefined') {
+      formProps.template_disabled = false;
+    }
+
+    if(formProps.template_categories && typeof formProps.template_categories !== 'object') {
+      formProps.template_categories = formProps.template_categories.split(',');
+      formProps.template_categories = formProps.template_categories.map(string => {
+        return string.trim();
+      });
+    }    
+
     // console.log("formProps:", formProps);
     this.props.updateEventTemplate(formProps);
     this.props.fetchEventTemplates();
@@ -97,6 +108,24 @@ class UpdateEventTemplate extends Component {
           label={label}
         >
         </Form.Check>
+        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
+      </Form.Group>
+    );
+  }
+
+  renderSwitch({ input, label, meta: { dirty, error } }) {    
+
+    return (
+      <Form.Group>
+        <Form.Switch
+          {...input}
+          id={input.name}
+          checked={input.value ? true : false}
+          onChange={(e) => input.onChange(e.target.checked)}
+          isInvalid={dirty && error}
+          label={label}
+        >
+        </Form.Switch>
         <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
       </Form.Group>
     );
@@ -176,7 +205,7 @@ class UpdateEventTemplate extends Component {
             <hr className="border-secondary" />
             <span>
               <Form.Label>Option #{index + 1}</Form.Label>
-              <FontAwesomeIcon className="text-danger float-right" icon='trash' fixedWidth onClick={() => fields.remove(index)}/>
+              <FontAwesomeIcon className="text-danger float-right" icon='times' fixedWidth onClick={() => fields.remove(index)}/>
               {promote(index, fields)}
               {demote(index, fields)}
             </span>
@@ -196,7 +225,7 @@ class UpdateEventTemplate extends Component {
             { this.renderOptionOptions(options, index) }
             <Field
               name={`${options}.event_option_required`}
-              component={this.renderCheckbox}
+              component={this.renderSwitch}
               label="Required?"
             />
           </div>
@@ -214,22 +243,31 @@ class UpdateEventTemplate extends Component {
       return (
         <div>
           {this.renderSystemEventTemplateOption()}
+          {this.renderDisableTemplateOption()}
         </div>
       );
     }
   }
 
-
   renderSystemEventTemplateOption() {
     return (
       <Field
         name='system_template'
-        component={this.renderCheckbox}
-        label="System Template?"
+        component={this.renderSwitch}
+        label="System Template"
       />
     );
   }
 
+  renderDisableTemplateOption() {
+    return (
+      <Field
+        name="template_disabled"
+        label="Disable Template"
+        component={this.renderSwitch}
+      />
+    );
+  }
 
   renderAlert() {
     if (this.props.errorMessage) {
@@ -275,9 +313,15 @@ class UpdateEventTemplate extends Component {
                 required={true}
               />
               <Field
+                name={"template_categories"}
+                component={this.renderTextField}
+                label="Template Categories (comma delimited)"
+                placeholder="i.e. biology,geology"
+              />
+              <Field
                 name='event_free_text_required'
                 id='event_free_text_required'
-                component={this.renderCheckbox}
+                component={this.renderSwitch}
                 label={"Free text Required?"}
               />
               {this.renderAdminOptions()}
@@ -315,6 +359,15 @@ function validate(formProps) {
     errors.event_value = 'Required';
   }
 
+  if (!formProps.template_categories) {
+    try {
+      const valueArray = formProps.template_categories.split(',');
+    }
+    catch(err) {
+      errors.template_categories = 'Invalid csv list';
+    }
+  }
+
   if (formProps.event_options && formProps.event_options.length) {
     const event_optionsArrayErrors = [];
     formProps.event_options.forEach((event_option, event_optionIndex) => {
@@ -327,7 +380,7 @@ function validate(formProps) {
         event_optionErrors.event_option_type = 'Required';
         event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
       } else {
-        // console.log(event_option.event_option_type)
+
         if (event_option.event_option_type === 'dropdown') {
 
           let valueArray = [];
@@ -356,7 +409,6 @@ function validate(formProps) {
             valueArray = valueArray.map(string => {
               return string.trim();
             });
-            // console.log(valueArray)
           }
           catch(err) {
             event_optionErrors.event_option_values = 'Invalid csv list';
@@ -370,7 +422,8 @@ function validate(formProps) {
     }
   }
 
-  // console.log(errors);
+  // console.log(errors)
+
   return errors;
 
 }

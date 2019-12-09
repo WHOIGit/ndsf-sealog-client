@@ -1,10 +1,10 @@
 {
   "name": "sealog-client-vehicle",
-  "version": "1.0.0rc",
+  "version": "1.0.4-rc",
   "license": "GPL-3.0",
   "description": "Sealog Client intended for use with vehicles deployed from research vessels such as ROVs, AUVs and HOVs",
   "bugs": {
-    "url": "https://github.com/webbpinner/sealog-client-vehicle/issues"
+    "url": "https://github.com/oceandatatools/sealog-client-vehicle/issues"
   },
   "main": "index.js",
   "scripts": {
@@ -15,11 +15,11 @@
     "lint-fix": "eslint . --ext .js --fix"
   },
   "author": "Webb Pinner",
-  "homepage": "https://github.com/webbpinner/",
+  "homepage": "https://github.com/oceandatatools/",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/webbpinner/sealog-client-vehicle.git"
+    "url": "https://github.com/oceandatatools/sealog-client-vehicle.git"
   },
   "keywords": [
     "react",
@@ -54,7 +54,7 @@
     "react-router-dom": "^5.1.2",
     "redux": "^4.0.4",
     "redux-form": "^8.2.6",
-    "redux-modal": "^3.0.2",
+    "redux-modal": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "typeface-roboto": "0.0.75",
     "universal-cookie": "^4.0.2"
