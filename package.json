@@ -1,7 +1,7 @@
 {
   "name": "sealog-client-vehicle",
-  "version": "1.0.4-rc",
-  "license": "GPL-3.0",
+  "version": "1.0.5-rc",
+  "license": "MIT",
   "description": "Sealog Client intended for use with vehicles deployed from research vessels such as ROVs, AUVs and HOVs",
   "bugs": {
     "url": "https://github.com/oceandatatools/sealog-client-vehicle/issues"
