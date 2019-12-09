@@ -85,7 +85,7 @@ export function validateJWT() {
   }
 
   return function (dispatch) {
-    axios.get(`${API_ROOT_URL}/api/v1/validate`,
+    axios.get(`${API_ROOT_URL}/api/v1/auth/validate`,
       {
         headers: {
           authorization: token
@@ -116,7 +116,7 @@ export function resetFields(formName, fieldsObj) {
 export function updateProfileState() {
 
   return function (dispatch) {
-    axios.get(`${API_ROOT_URL}/api/v1/profile`,
+    axios.get(`${API_ROOT_URL}/api/v1/auth/profile`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -176,8 +176,8 @@ export function login({username, password, reCaptcha = null}) {
   const payload = (reCaptcha !== null)? {username, password, reCaptcha} : {username, password};
 
   return function (dispatch) {
-    // axios.post(`${API_ROOT_URL}/api/v1/login`, {username, password, reCaptcha}) <-- need to implement this server-side
-    axios.post(`${API_ROOT_URL}/api/v1/login`, payload)
+    // axios.post(`${API_ROOT_URL}/api/v1/auth/login`, {username, password, reCaptcha}) <-- need to implement this server-side
+    axios.post(`${API_ROOT_URL}/api/v1/auth/login`, payload)
       .then(response => {
 
         // If request is good save the JWT token to a cookie
@@ -427,7 +427,7 @@ export function forgotPassword({email, reCaptcha = null}) {
   const payload = (reCaptcha)? {email, reCaptcha}: {email};
 
   return function (dispatch) {
-    axios.post(`${API_ROOT_URL}/api/v1/forgotPassword`, payload)
+    axios.post(`${API_ROOT_URL}/api/v1/auth/forgotPassword`, payload)
       .then(response => {
 
         dispatch(authSuccess(response.data.message));
@@ -448,7 +448,7 @@ export function resetPassword({token, password, reCaptcha = null}) {
   const payload = (reCaptcha)? {token, password, reCaptcha}: {token, password};
   
   return function (dispatch) {
-    axios.patch(`${API_ROOT_URL}/api/v1/resetPassword`, payload)
+    axios.patch(`${API_ROOT_URL}/api/v1/auth/resetPassword`, payload)
       .then(() => {
         dispatch(authSuccess('Password Reset'));
       })
@@ -468,7 +468,7 @@ export function registerUser({username, fullname, password, email, reCaptcha = n
   const payload = (reCaptcha !== null)? {username, fullname, password, email, reCaptcha} : {username, fullname, password, email};
 
   return function (dispatch) {
-    axios.post(`${API_ROOT_URL}/api/v1/register`, payload)
+    axios.post(`${API_ROOT_URL}/api/v1/auth/register`, payload)
       .then(() => {
         dispatch(registerUserSuccess('User created'));
       })

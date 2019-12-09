@@ -211,7 +211,9 @@ function validate(formProps) {
 let recaptchaInstance = null;
 
 const afterSubmit = () => {
-  recaptchaInstance.reset();
+  if (recaptchaInstance) {
+    recaptchaInstance.reset();
+  }
 };
 
 function mapStateToProps(state) {
