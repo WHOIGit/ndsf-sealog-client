@@ -510,6 +510,7 @@ class LoweringReplay extends Component {
   render(){
 
     const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "Loading...";
+    // console.log("cruise:", this.props.cruise);
 
     return (
       <div tabIndex="-1" onKeyDown={this.handleKeyPress} ref={(div) => { this.divFocus = div }}>

@@ -22,9 +22,21 @@ class CreateEventTemplate extends Component {
   }
 
   handleFormSubmit(formProps) {
-    if(typeof(formProps.system_template) === 'undefined'){
+    if(typeof formProps.system_template === 'undefined'){
       formProps.system_template = false;
     }
+
+    if(typeof formProps.template_disabled === 'undefined'){
+      formProps.template_disabled = false;
+    }
+
+    if(formProps.template_categories) {
+      formProps.template_categories = formProps.template_categories.split(',');
+      formProps.template_categories = formProps.template_categories.map(string => {
+        return string.trim();
+      });
+    }    
+
     this.props.createEventTemplate(formProps);
   }
 
@@ -76,6 +88,24 @@ class CreateEventTemplate extends Component {
           label={label}
         >
         </Form.Check>
+        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
+      </Form.Group>
+    );
+  }
+
+  renderSwitch({ input, label, meta: { dirty, error } }) {    
+
+    return (
+      <Form.Group>
+        <Form.Switch
+          {...input}
+          id={input.name}
+          checked={input.value ? true : false}
+          onChange={(e) => input.onChange(e.target.checked)}
+          isInvalid={dirty && error}
+          label={label}
+        >
+        </Form.Switch>
         <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
       </Form.Group>
     );
@@ -150,7 +180,7 @@ class CreateEventTemplate extends Component {
             <hr className="border-secondary" />
             <span>
               <Form.Label>Option #{index + 1}</Form.Label>
-              <FontAwesomeIcon className="text-danger float-right" icon='trash' fixedWidth onClick={() => fields.remove(index)}/>
+              <FontAwesomeIcon className="text-danger float-right" icon='times' fixedWidth onClick={() => fields.remove(index)}/>
               {promote(index, fields)}
               {demote(index, fields)}
             </span>
@@ -170,7 +200,7 @@ class CreateEventTemplate extends Component {
             { this.renderOptionOptions(options, index) }
             <Field
               name={`${options}.event_option_required`}
-              component={this.renderCheckbox}
+              component={this.renderSwitch}
               label="Required?"
             />
           </div>
@@ -188,6 +218,7 @@ class CreateEventTemplate extends Component {
       return (
         <div>
           {this.renderSystemEventTemplateOption()}
+          {this.renderDisableTemplateOption()}
         </div>
       );
     }
@@ -198,12 +229,21 @@ class CreateEventTemplate extends Component {
     return (
       <Field
         name='system_template'
-        component={this.renderCheckbox}
-        label="System Template?"
+        component={this.renderSwitch}
+        label="System Template"
       />
     );
   }
 
+  renderDisableTemplateOption() {
+    return (
+      <Field
+        name="template_disabled"
+        label="Disable Template"
+        component={this.renderSwitch}
+      />
+    );
+  }
 
   renderAlert() {
     if (this.props.errorMessage) {
@@ -252,8 +292,16 @@ class CreateEventTemplate extends Component {
                 required={true}
               />
               <Field
+                name="template_categories"
+                type="text"
+                component={this.renderTextField}
+                label="Template Categories (comma delimited)"
+                placeholder="i.e. biology,geology"
+                required={true}
+              />
+              <Field
                 name='event_free_text_required'
-                component={this.renderCheckbox}
+                component={this.renderSwitch}
                 label={"Free text Required?"}
               />
               {this.renderAdminOptions()}
@@ -291,6 +339,16 @@ function validate(formProps) {
   if (!formProps.event_value) {
     errors.event_value = 'Required';
   }
+
+  if (!formProps.template_categories) {
+    try {
+      const valueArray = formProps.template_categories.split(',');
+    }
+    catch(err) {
+      errors.template_categories = 'Invalid csv list';
+    }
+  }
+
   if (formProps.event_options && formProps.event_options.length) {
     const event_optionsArrayErrors = [];
     formProps.event_options.forEach((event_option, event_optionIndex) => {

@@ -27,7 +27,6 @@ class ImportLoweringsModal extends Component {
 
   static propTypes = {
     handleHide: PropTypes.func.isRequired,
-    // handleDestroy: PropTypes.func.isRequired,
     handleExit: PropTypes.func
   };
 
@@ -165,36 +164,41 @@ class ImportLoweringsModal extends Component {
 
   render() {
 
-    const { show } = this.props
+    const { show, handleExit } = this.props
 
-    return (
-      <Modal show={show} onExit={this.props.handleExit} onHide={this.quitImport}>
-        <Modal.Header closeButton>
-          <Modal.Title>Import Lowerings</Modal.Title>
-        </Modal.Header>
+    if (handleExit) {
+      return (
+        <Modal show={show} onExit={handleExit} onHide={this.quitImport}>
+          <Modal.Header closeButton>
+            <Modal.Title>Import Lowerings</Modal.Title>
+          </Modal.Header>
 
-        <Modal.Body>
-          <Row>
-            <Col xs={6}>
-              <ReactFileReader fileTypes={[".json"]} handleFiles={this.handleLoweringRecordImport}>
-                  <Button size="sm">Select File</Button>
-              </ReactFileReader>
-            </Col>
-            <Col xs={4}>
-              Pending: {this.state.pending}
-              <hr/>
-              Imported: {this.state.imported}<br/>
-              Skipped: {this.state.skipped}<br/>
-              Errors: {this.state.errors}<br/>
-            </Col>
-          </Row>
-        </Modal.Body>
+          <Modal.Body>
+            <Row>
+              <Col xs={6}>
+                <ReactFileReader fileTypes={[".json"]} handleFiles={this.handleLoweringRecordImport}>
+                    <Button size="sm">Select File</Button>
+                </ReactFileReader>
+              </Col>
+              <Col xs={4}>
+                Pending: {this.state.pending}
+                <hr/>
+                Imported: {this.state.imported}<br/>
+                Skipped: {this.state.skipped}<br/>
+                Errors: {this.state.errors}<br/>
+              </Col>
+            </Row>
+          </Modal.Body>
 
-        <Modal.Footer>
-          <Button variant="secondary" size="sm" onClick={this.quitImport}>Close</Button>
-        </Modal.Footer>
-      </Modal>
-    );
+          <Modal.Footer>
+            <Button variant="secondary" size="sm" onClick={this.quitImport}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      );
+    }
+    else {
+      return null;
+    }  
   }
 }
 

@@ -2,11 +2,12 @@ import {
   FETCH_EVENT_TEMPLATES_FOR_MAIN,
   FETCH_EVENT_HISTORY,
   UPDATE_EVENT_HISTORY,
+  UPDATE_EVENT_TEMPLATE_CATEGORY
 } from '../actions/types';
 
 const historyLimit = 20;
 
-export default function(state={event_templates: [], history: []}, action) {
+export default function(state={event_templates: [], history: [], event_template_category: ''}, action) {
   switch(action.type){
     case FETCH_EVENT_TEMPLATES_FOR_MAIN:
       return {...state, event_templates: action.payload };
@@ -43,6 +44,10 @@ export default function(state={event_templates: [], history: []}, action) {
         recentHistory = completeHistory;
       }
       return {...state, history: recentHistory };
+
+    case UPDATE_EVENT_TEMPLATE_CATEGORY:
+      return { ...state, event_template_category: action.payload };
+
   }
   return state;
 }

@@ -465,3 +465,14 @@ td.rdtYear:hover {
 .rdtTime td {
   cursor: default;
 }
+
+.categoryTab .nav-link.active {
+  color: #FF8800 !important;
+  background-color: #060606 !important;
+  border: 0;
+}
+
+.categoryTab {
+  border: 0 !important;
+  text-transform: capitalize;
+}

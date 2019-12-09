@@ -51,12 +51,13 @@ import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faStepBackward } from '@fortawesome/free-solid-svg-icons/faStepBackward';
 import { faStepForward } from '@fortawesome/free-solid-svg-icons/faStepForward';
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { faVial } from '@fortawesome/free-solid-svg-icons/faVial';
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
 import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaximize';
 
-library.add(faArrowLeft,faArrowRight,faBackward,faCalculator,faChevronDown,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTrash,faVial,faUser,faWindowMaximize);
+library.add(faArrowLeft,faArrowRight,faBackward,faCalculator,faChevronDown,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faWindowMaximize);
 
 import './assets/style/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css';

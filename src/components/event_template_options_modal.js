@@ -33,9 +33,9 @@ class EventTemplateOptionsModal extends Component {
   }
 
   static propTypes = {
-    eventTemplate: PropTypes.object.isRequired,
+    eventTemplate: PropTypes.object,
     event: PropTypes.object,
-    handleHide: PropTypes.func,
+    handleHide: PropTypes.func.isRequired,
     handleUpdateEvent: PropTypes.func,
     handleDeleteEvent: PropTypes.func
   };
@@ -67,7 +67,7 @@ class EventTemplateOptionsModal extends Component {
   }
 
   async populateDefaultValues() {
-    let timestring = this.props.event.ts;
+    let timestring = (this.props.event) ? this.props.event.ts : moment.utc().toISOString();
     let eventDefaultValues = {event_ts: moment.utc(timestring)};
     this.props.eventTemplate.event_options.forEach((option, index) => {
       if(option.event_option_default_value && option.event_option_type !== 'checkboxes') {
@@ -121,14 +121,14 @@ class EventTemplateOptionsModal extends Component {
     if(this.state.event_id) {
       this.props.handleUpdateEvent(this.state.event_id, this.props.eventTemplate.event_value, formProps.event_free_text, event_options, event_ts);
     }
-    this.props.handleDestroy();
+    this.props.handleHide();
   }
 
   handleFormHide() {
     if(this.state.event_id) {
       this.props.handleDeleteEvent(this.state.event_id)
     }
-    this.props.handleDestroy()
+    this.props.handleHide()
   }
 
   renderTextField({ input, label, placeholder, required, meta: { touched, error } }) {
@@ -322,36 +322,41 @@ class EventTemplateOptionsModal extends Component {
       <Button className="float-right" variant="secondary" onClick={this.handleFormHide}>Close</Button>
       
 
-    return (
-      <Modal show={show} onHide={this.handleFormHide}>
-        <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
-          <Modal.Header closeButton>
-            <Modal.Title>Event Options - {eventTemplate.event_value}</Modal.Title>
-          </Modal.Header>
+    if (eventTemplate) {
+      return (
+        <Modal show={show} onHide={this.handleFormHide}>
+          <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+            <Modal.Header closeButton>
+              <Modal.Title>Event Options - {eventTemplate.event_value}</Modal.Title>
+            </Modal.Header>
 
-          <Modal.Body>
-            {this.renderEventOptions()}
-            <Field
-              name="event_free_text"
-              component={this.renderTextField}
-              label="Additional Text"
-              required={eventTemplate.event_free_text_required}
-              validate={ eventTemplate.event_free_text_required ? required : undefined }
-            />
-            <Field
-              name="event_ts"
-              label="Custom Time (UTC)"
-              component={this.renderDatePicker}
-              disabled={this.props.disabled}
-              required={true}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            {footer}
-          </Modal.Footer>
-        </form>
-      </Modal>
-    );
+            <Modal.Body>
+              {this.renderEventOptions()}
+              <Field
+                name="event_free_text"
+                component={this.renderTextField}
+                label="Additional Text"
+                required={eventTemplate.event_free_text_required}
+                validate={ eventTemplate.event_free_text_required ? required : undefined }
+              />
+              <Field
+                name="event_ts"
+                label="Custom Time (UTC)"
+                component={this.renderDatePicker}
+                disabled={this.props.disabled}
+                required={true}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              {footer}
+            </Modal.Footer>
+          </form>
+        </Modal>
+      );
+    }
+    else {
+      return null;
+    }
   }
 }
 

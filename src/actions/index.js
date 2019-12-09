@@ -36,6 +36,7 @@ import {
   LEAVE_UPDATE_PROFILE_FORM,
   INIT_EVENT_TEMPLATE,
   FETCH_EVENT_TEMPLATES,
+  UPDATE_EVENT_TEMPLATE_CATEGORY,
   UPDATE_EVENT_TEMPLATE_SUCCESS,
   UPDATE_EVENT_TEMPLATE_ERROR,
   LEAVE_UPDATE_EVENT_TEMPLATE_FORM,
@@ -114,9 +115,8 @@ export function resetFields(formName, fieldsObj) {
 
 export function updateProfileState() {
 
-  const id = cookies.get('id');
   return function (dispatch) {
-    axios.get(`${API_ROOT_URL}/api/v1/users/${id}`,
+    axios.get(`${API_ROOT_URL}/api/v1/profile`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -554,6 +554,8 @@ export function createEventTemplate(formProps) {
   fields.event_name = formProps.event_name;
   fields.event_value = formProps.event_value;
   fields.system_template = formProps.system_template;
+  fields.template_disabled = formProps.template_disabled;
+  fields.template_categories = formProps.template_categories;
 
   if(!formProps.event_free_text_required) {
     fields.event_free_text_required = false;
@@ -932,6 +934,8 @@ export function updateEventTemplate(formProps) {
 
   fields.event_name = formProps.event_name;
   fields.event_value = formProps.event_value;
+  fields.template_disabled = formProps.template_disabled;
+  fields.template_categories = formProps.template_categories;
 
   if(!formProps.event_free_text_required) {
     fields.event_free_text_required = false;
@@ -1499,7 +1503,6 @@ export function fetchEventTemplates() {
       // console.log("data:", data)
       dispatch({type: FETCH_EVENT_TEMPLATES, payload: data});
     }).catch((error) => {
-      console.log("error:", error);
       if(error.response.data.statusCode === 404) {
         dispatch({type: FETCH_EVENT_TEMPLATES, payload: []});
       } else {
@@ -1528,18 +1531,18 @@ export function initCruiseFromLowering(id) {
   // console.log("initcruisefromlowering:", id)
   return function (dispatch) {
     axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+    {
+      headers: {
+        authorization: cookies.get('token')
+      }
+    }).then((loweringResponse) => {
+    // console.log("response:", loweringResponse.data)
+      axios.get(`${API_ROOT_URL}/api/v1/cruises?startTS=${loweringResponse.data.start_ts}&stopTS=${loweringResponse.data.stop_ts}`,
       {
         headers: {
           authorization: cookies.get('token')
         }
-      }).then((loweringResponse) => {
-      // console.log("response:", loweringResponse.data)
-      axios.get(`${API_ROOT_URL}/api/v1/cruises?startTS=${loweringResponse.data.start_ts}&stopTS=${loweringResponse.data.stop_ts}`,
-        {
-          headers: {
-            authorization: cookies.get('token')
-          }
-        }).then((response) => {
+      }).then((response) => {
         dispatch({ type: INIT_CRUISE, payload: response.data[0] });
       }).catch((error)=>{
         if(error.response.data.statusCode !== 404) {
@@ -1894,5 +1897,12 @@ export function deleteAllNonSystemEventTemplates() {
     }).catch((error)=> {
       console.log(error.response);
     });
+  };
+}
+
+export function updateEventTemplateCategory(category) {
+  return {
+    type: UPDATE_EVENT_TEMPLATE_CATEGORY,
+    payload: category
   };
 }

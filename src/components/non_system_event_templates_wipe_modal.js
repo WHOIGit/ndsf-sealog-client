@@ -12,35 +12,39 @@ class NonSystemEventTemplatesWipeModal extends Component {
   }
 
   static propTypes = {
-    handleDelete: PropTypes.func.isRequired,
+    handleDelete: PropTypes.func,
     handleHide: PropTypes.func.isRequired
   };
 
   handleConfirm() {
     this.props.handleDelete();
-    this.props.handleDestroy();
+    this.props.handleHide();
   }
 
   render() {
 
-    const { show, handleHide } = this.props
+    const { show, handleHide, handleDelete } = this.props
+    if( handleDelete ) {
+      return (
+        <Modal show={show} onHide={handleHide}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Wipe</Modal.Title>
+          </Modal.Header>
 
-    return (
-      <Modal show={show} onHide={handleHide}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Wipe</Modal.Title>
-        </Modal.Header>
+          <Modal.Body>
+            { 'Are you sure you want to remove the non-system event templates from the local database?' }
+          </Modal.Body>
 
-        <Modal.Body>
-          { 'Are you sure you want to remove the non-system event templates from the local database?' }
-        </Modal.Body>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleHide}>Cancel</Button>
-          <Button variant="danger" onClick={this.handleConfirm}>Yup!</Button>
-        </Modal.Footer>
-      </Modal>
-    );
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleHide}>Cancel</Button>
+            <Button variant="danger" onClick={this.handleConfirm}>Yup!</Button>
+          </Modal.Footer>
+        </Modal>
+      );
+    }
+    else {
+      return null;
+    }
   }
 }
 

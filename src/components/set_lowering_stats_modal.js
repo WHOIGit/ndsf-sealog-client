@@ -128,9 +128,9 @@ class SetLoweringStatsModal extends Component {
   }
 
   static propTypes = {
-    lowering: PropTypes.object.isRequired,
+    lowering: PropTypes.object,
     handleHide: PropTypes.func.isRequired,
-    handleUpdateLowering: PropTypes.func.isRequired,
+    handleUpdateLowering: PropTypes.func,
     message: PropTypes.string,
     errorMessage: PropTypes.string
   };
@@ -459,9 +459,10 @@ class SetLoweringStatsModal extends Component {
       <Polyline color="red" positions={this.state.tracklines.vehicleReNavData.polyline.getLatLngs()} />
       : null;
     
-    if(!this.state.fetching) {
-      return (
-        <Modal size="lg" show={show} onHide={handleHide}>
+    if(this.props.lowering) {
+      if(!this.state.fetching) {
+        return (
+          <Modal size="lg" show={show} onHide={handleHide}>
             <Modal.Header closeButton>
               <Modal.Title as="h5">Lowering Details: {this.props.lowering.lowering_id}</Modal.Title>
             </Modal.Header>
@@ -511,16 +512,20 @@ class SetLoweringStatsModal extends Component {
                 </Col>
               </Row>
             </Modal.Body>
-        </Modal>
-      );
-    } else {
-      return (
-        <Modal size="lg" show={show} onHide={handleHide}>
-          <Modal.Body>
-            Loading...
-          </Modal.Body>
-        </Modal>
-      );
+          </Modal>
+        );
+      } else {
+        return (
+          <Modal size="lg" show={show} onHide={handleHide}>
+            <Modal.Body>
+              Loading...
+            </Modal.Body>
+          </Modal>
+        );
+      }
+    }
+    else {
+      return null;
     }
   }
 }
