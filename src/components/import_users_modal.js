@@ -61,7 +61,7 @@ class ImportUsersModal extends Component {
         // console.log("Attempting to add user")
 
         try {
-          const result = axios.post(`${API_ROOT_URL}/api/v1/users`,
+          const result = await axios.post(`${API_ROOT_URL}/api/v1/users`,
           {id, username, fullname, email, password, roles, system_user},
           {
             headers: {

@@ -27,7 +27,6 @@ class EventShowDetailsModal extends Component {
     this.state = { event: {} }
 
     this.handleImagePreviewModal = this.handleImagePreviewModal.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
 
   }
 
@@ -65,12 +64,6 @@ class EventShowDetailsModal extends Component {
 
   handleImagePreviewModal(source, filepath) {
     this.props.showModal('imagePreview', { name: source, filepath: filepath })
-  }
-
-  handleKeyPress(event) {
-    if(event.key === "Esc") {
-      this.props.handleHide();
-    }
   }
 
   renderImage(source, filepath) {

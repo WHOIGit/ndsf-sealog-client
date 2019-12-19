@@ -3,7 +3,8 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { reduxForm, Field, FieldArray, formValueSelector, reset } from 'redux-form';
-import { Alert, Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
+import { renderAlert, renderMessage, renderSelectField, renderSwitch, renderTextField } from './form_elements';
 import * as mapDispatchToProps from '../actions';
 import { EventTemplateOptionTypes } from '../event_template_option_types';
 
@@ -26,8 +27,8 @@ class CreateEventTemplate extends Component {
       formProps.system_template = false;
     }
 
-    if(typeof formProps.template_disabled === 'undefined'){
-      formProps.template_disabled = false;
+    if(typeof formProps.disabled === 'undefined'){
+      formProps.disabled = false;
     }
 
     if(formProps.template_categories) {
@@ -40,85 +41,16 @@ class CreateEventTemplate extends Component {
     this.props.createEventTemplate(formProps);
   }
 
-  renderTextField({ input, label, placeholder, required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    return (
-      <Form.Group>
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control type="text" {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderSelectField({ input, label, placeholder, required, options, meta: { touched, error } }) {
-
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-    let defaultOption = ( <option key={`${input.name}.default`} value=""></option> );
-    let optionList = options.map((option, index) => {
-      return (
-        <option key={`${input.name}.${index}`} value={`${option}`}>{ `${option}`}</option>
-      );
-    });
-
-    return (
-      <Form.Group controlId="formControlsSelect">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control as="select" {...input} placeholder={placeholder_txt} isInvalid={touched && error}>
-          { defaultOption }
-          { optionList }
-        </Form.Control>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderCheckbox({ input, label, meta: { dirty, error } }) {    
-
-    return (
-      <Form.Group>
-        <Form.Check
-          {...input}
-          checked={input.value ? true : false}
-          onChange={(e) => input.onChange(e.target.checked)}
-          isInvalid={dirty && error}
-          label={label}
-        >
-        </Form.Check>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderSwitch({ input, label, meta: { dirty, error } }) {    
-
-    return (
-      <Form.Group>
-        <Form.Switch
-          {...input}
-          id={input.name}
-          checked={input.value ? true : false}
-          onChange={(e) => input.onChange(e.target.checked)}
-          isInvalid={dirty && error}
-          label={label}
-        >
-        </Form.Switch>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
   renderOptionOptions(prefix, index) {
     if(this.props.event_options[index].event_option_type === 'text') {
       return (
         <div>
           <Field
             name={`${prefix}.event_option_default_value`}
-            component={this.renderTextField}
+            component={renderTextField}
             label="Default Value"
+            lg={12}
+            sm={12}
           />
         </div>
       );
@@ -127,14 +59,19 @@ class CreateEventTemplate extends Component {
         <div>
           <Field
             name={`${prefix}.event_option_values`}
-            component={this.renderTextField}
+            component={renderTextField}
             label="Dropdown Options"
+            required={true}
+            lg={12}
+            sm={12}
           />
           <Field
             name={`${prefix}.event_option_default_value`}
-            component={this.renderTextField}
+            component={renderTextField}
             label="Default Value"
             placeholder="i.e. a value from the list of options"
+            lg={12}
+            sm={12}
           />
         </div>
       );
@@ -143,14 +80,19 @@ class CreateEventTemplate extends Component {
         <div>
           <Field
             name={`${prefix}.event_option_values`}
-            component={this.renderTextField}
+            component={renderTextField}
             label="Checkbox Options"
+            required={true}
+            lg={12}
+            sm={12}
           />
           <Field
             name={`${prefix}.event_option_default_value`}
-            component={this.renderTextField}
+            component={renderTextField}
             label="Default Value"
             placeholder="i.e. a value from the list of options"
+            lg={12}
+            sm={12}
           />
         </div>
       );
@@ -186,22 +128,28 @@ class CreateEventTemplate extends Component {
             </span>
             <Field
               name={`${options}.event_option_name`}
-              component={this.renderTextField}
+              component={renderTextField}
               label="Name"
               required={true}
+              lg={12}
+              sm={12}
             />
             <Field
               name={`${options}.event_option_type`}
-              component={this.renderSelectField}
+              component={renderSelectField}
               options={EventTemplateOptionTypes}
               label="Type"
               required={true}
+              lg={12}
+              sm={12}
             />
             { this.renderOptionOptions(options, index) }
             <Field
               name={`${options}.event_option_required`}
-              component={this.renderSwitch}
+              component={renderSwitch}
               label="Required?"
+              lg={12}
+              sm={12}
             />
           </div>
         )}
@@ -229,8 +177,10 @@ class CreateEventTemplate extends Component {
     return (
       <Field
         name='system_template'
-        component={this.renderSwitch}
+        component={renderSwitch}
         label="System Template"
+        lg={12}
+        sm={12}
       />
     );
   }
@@ -238,31 +188,13 @@ class CreateEventTemplate extends Component {
   renderDisableTemplateOption() {
     return (
       <Field
-        name="template_disabled"
+        name="disabled"
         label="Disable Template"
-        component={this.renderSwitch}
+        component={renderSwitch}
+        lg={12}
+        sm={12}
       />
     );
-  }
-
-  renderAlert() {
-    if (this.props.errorMessage) {
-      return (
-        <Alert variant="danger">
-          <strong>Opps!</strong> {this.props.errorMessage}
-        </Alert>
-      );
-    }
-  }
-
-  renderMessage() {
-    if (this.props.message) {
-      return (
-        <Alert variant="success">
-          <strong>Success!</strong> {this.props.message}
-        </Alert>
-      );
-    }
   }
 
   render() {
@@ -279,36 +211,43 @@ class CreateEventTemplate extends Component {
             <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <Field
                 name="event_name"
-                component={this.renderTextField}
+                component={renderTextField}
                 type="text"
                 label="Button Name"
                 required={true}
+                lg={12}
+                sm={12}
               />
               <Field
                 name="event_value"
                 type="text"
-                component={this.renderTextField}
+                component={renderTextField}
                 label="Event Value"
                 required={true}
+                lg={12}
+                sm={12}
               />
               <Field
                 name="template_categories"
                 type="text"
-                component={this.renderTextField}
+                component={renderTextField}
                 label="Template Categories (comma delimited)"
                 placeholder="i.e. biology,geology"
-                required={true}
+                lg={12}
+                sm={12}
               />
               <Field
                 name='event_free_text_required'
-                component={this.renderSwitch}
+                component={renderSwitch}
                 label={"Free text Required?"}
+                lg={12}
+                sm={12}
               />
               {this.renderAdminOptions()}
               <FieldArray name="event_options" component={this.renderOptions}/>
               <br/>
-              {this.renderAlert()}
-              {this.renderMessage()}
+              {renderAlert(this.props.errorMessage)}
+              {renderMessage(this.props.message)}
               <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
                 <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Form</Button>
                 <Button variant="primary" type="submit" size="sm" disabled={pristine || submitting || !valid}>Create</Button>
@@ -340,7 +279,7 @@ function validate(formProps) {
     errors.event_value = 'Required';
   }
 
-  if (!formProps.template_categories) {
+  if (formProps.template_categories) {
     try {
       const valueArray = formProps.template_categories.split(',');
     }
@@ -365,40 +304,51 @@ function validate(formProps) {
 
           let valueArray = [];
 
-          try {
-            valueArray = event_option.event_option_values.split(',');
-            valueArray = valueArray.map(string => {
-              return string.trim();
-            });
+          if (!event_option.event_option_values) {
+            event_optionErrors.event_option_values = 'Required';
           }
-          catch(err) {
-            event_optionErrors.event_option_values = 'Invalid csv list';
-            event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
+          else {
+            try {
+              valueArray = event_option.event_option_values.split(',');
+              valueArray = valueArray.map(string => {
+                return string.trim();
+              });
+            }
+            catch(err) {
+              event_optionErrors.event_option_values = 'Invalid csv list';
+            }
           }
 
           if(event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
             event_optionErrors.event_option_default_value = 'Value is not in options list';
-            event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
           }
+
+          event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
+
         } else if (event_option.event_option_type === 'checkboxes') {
 
           let valueArray = [];
 
-          try {
-            valueArray = event_option.event_option_values.split(',');
-            valueArray = valueArray.map(string => {
-              return string.trim();
-            });
+          if (!event_option.event_option_values) {
+            event_optionErrors.event_option_values = 'Required';
           }
-          catch(err) {
-            event_optionErrors.event_option_values = 'Invalid csv list';
-            event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
+          else {
+            try {
+              valueArray = event_option.event_option_values.split(',');
+              valueArray = valueArray.map(string => {
+                return string.trim();
+              });
+            }
+            catch(err) {
+              event_optionErrors.event_option_values = 'Invalid csv list';
+            }
           }
 
           if(event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
             event_optionErrors.event_option_default_value = 'Value is not in options list';
-            event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
           }
+
+          event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
         }
       }
     });

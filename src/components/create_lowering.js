@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { reduxForm, Field, reset } from 'redux-form';
-import { Alert, Button, Col, Form, Card } from 'react-bootstrap';
+import { Button, Form, Card } from 'react-bootstrap';
+import { renderAlert, renderDateTimePicker, renderMessage, renderSwitch, renderTextField, renderTextArea, dateFormat, timeFormat } from './form_elements';
 import moment from 'moment';
-import Datetime from 'react-datetime';
 import * as mapDispatchToProps from '../actions';
-
-const dateFormat = "YYYY-MM-DD";
-const timeFormat = "HH:mm";
 
 class CreateLowering extends Component {
 
@@ -29,138 +26,6 @@ class CreateLowering extends Component {
     this.props.createLowering(formProps);
   }
 
-  renderTextField({ input, label, placeholder, required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    return (
-      <Form.Group as={Col} lg="6">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control type="text" {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderTextArea({ input, label, placeholder, required, rows = 4, meta: { error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    return (
-      <Form.Group as={Col} lg="12">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control as="textarea" {...input} placeholder={placeholder_txt} rows={rows}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderSelectField({ input, label, placeholder, required, options, meta: { touched, error } }) {
-
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-    let defaultOption = ( <option key={`${input.name}.empty`} value=""></option> );
-    let optionList = options.map((option, index) => {
-      return (
-        <option key={`${input.name}.${index}`} value={`${option}`}>{ `${option}`}</option>
-      );
-    });
-
-    return (
-      <Form.Group as={Col} lg="6">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control as="select" {...input} placeholder={placeholder_txt} isInvalid={touched && error}>
-          { defaultOption }
-          { optionList }
-        </Form.Control>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderDatePicker({ input, label, required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    
-    return (
-      <Form.Group as={Col} lg="6">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Datetime {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value, dateFormat) : null }/>
-        {touched && (error && <div style={{width: "100%", marginTop: "0.25rem", fontSize: "80%"}} className='text-danger'>{error}</div>)}
-      </Form.Group>
-    );
-  }
-
-  renderCheckboxGroup({ label, options, input, required, meta: { dirty, error } }) {
-
-    let requiredField = (required)? (<span className='text-danger'> *</span>) : '';
-    let checkboxList = options.map((option, index) => {
-
-      return (
-        <Form.Check
-          inline
-          label={option.value}
-          name={`${option.label}[${index}]`}
-          key={`${label}.${index}`}
-          value={option.value}
-          checked={input.value.indexOf(option.value) !== -1}
-          onChange={event => {
-            const newValue = [...input.value];
-            if(event.target.checked) {
-              newValue.push(option.value);
-            } else {
-              newValue.splice(newValue.indexOf(option.value), 1);
-            }
-            return input.onChange(newValue);
-          }}
-        />
-      );
-    });
-
-    return (
-      <Form.Group>
-        <Form.Label>{label}{requiredField}</Form.Label><br/>
-        {checkboxList}
-        {dirty && (error && <div className="text-danger" style={{width: "100%", marginTop: "0.25rem", fontSize: "80%"}}>{error}</div>)}
-      </Form.Group>
-    );
-  }
-
-  renderCheckbox({ input, label, meta: { dirty, error } }) {    
-    return (
-      <Form.Group as={Col} lg="6">
-        <Form.Check
-          {...input}
-          label={label}
-          checked={input.value ? true : false}
-          onChange={(e) => input.onChange(e.target.checked)}
-          isInvalid={dirty && error}
-        >
-        </Form.Check>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderAlert() {
-    if (this.props.errorMessage) {
-      return (
-        <Alert variant="danger">
-          <strong>Opps!</strong> {this.props.errorMessage}
-        </Alert>
-      );
-    }
-  }
-
-  renderMessage() {
-    if (this.props.message) {
-      return (
-        <Alert variant="success">
-          <strong>Success!</strong> {this.props.message}
-        </Alert>
-      );
-    }
-  }
-
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
@@ -178,14 +43,14 @@ class CreateLowering extends Component {
                 <Form.Row>
                   <Field
                     name="lowering_id"
-                    component={this.renderTextField}
+                    component={renderTextField}
                     label="Lowering ID"
                     placeholder="i.e. J2-1000"
                     required={true}
                   />
                   <Field
                     name="lowering_location"
-                    component={this.renderTextField}
+                    component={renderTextField}
                     label="Lowering Location"
                     placeholder="i.e. Kelvin Seamount"
                   />
@@ -193,7 +58,7 @@ class CreateLowering extends Component {
                 <Form.Row>
                   <Field
                     name="lowering_description"
-                    component={this.renderTextArea}
+                    component={renderTextArea}
                     label="Lowering Description"
                     placeholder="i.e. A brief description of the lowering"
                     rows={8}
@@ -202,13 +67,13 @@ class CreateLowering extends Component {
                 <Form.Row>
                   <Field
                     name="start_ts"
-                    component={this.renderDatePicker}
+                    component={renderDateTimePicker}
                     label="Start Date/Time (UTC)"
                     required={true}
                   />
                   <Field
                     name="stop_ts"
-                    component={this.renderDatePicker}
+                    component={renderDateTimePicker}
                     label="Stop Date/Time (UTC)"
                     required={true}
                   />
@@ -216,14 +81,14 @@ class CreateLowering extends Component {
                 <Form.Row>
                   <Field
                     name="lowering_tags"
-                    component={this.renderTextArea}
+                    component={renderTextArea}
                     label="Lowering Tags, comma delimited"
                     placeholder="i.e. coral,chemistry,engineering"
                     rows={2}
                   />
                 </Form.Row>
-                {this.renderAlert()}
-                {this.renderMessage()}
+                {renderAlert(this.props.errorMessage)}
+                {renderMessage(this.props.message)}
                 <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
                   <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Form</Button>
                   <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid}>Create</Button>

@@ -7,12 +7,16 @@ import CreateCruise from './create_cruise';
 import UpdateCruise from './update_cruise';
 import DeleteCruiseModal from './delete_cruise_modal';
 import ImportCruisesModal from './import_cruises_modal';
+import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
+import { USE_ACCESS_CONTROL, DEFAULT_VESSEL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 let fileDownload = require('js-file-download');
 
 const maxCruisesPerPage = 6;
+
+const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "100px" : "85px" };
 
 class Cruises extends Component {
 
@@ -21,7 +25,6 @@ class Cruises extends Component {
 
     this.state = {
       activePage: 1,
-      cruiseUpdate: false,
       filteredCruises: null
     };
 
@@ -42,15 +45,12 @@ class Cruises extends Component {
     this.props.showModal('deleteCruise', { id: id, handleDelete: this.props.deleteCruise });
   }
 
-  handleCruiseUpdate(id) {
-    this.props.initCruise(id);
-    this.setState({cruiseUpdate: true, cruiseAccess: false});
-    window.scrollTo(0, 0);
+  handleCruisePermissions(cruise) {
+    this.props.showModal('cruisePermissions', { cruise_id: cruise.id });
   }
 
-  handleCruiseAccess(id) {
+  handleCruiseUpdate(id) {
     this.props.initCruise(id);
-    this.setState({cruiseUpdate: false, cruiseAccess: true});
     window.scrollTo(0, 0);
   }
 
@@ -64,7 +64,6 @@ class Cruises extends Component {
 
   handleCruiseCreate() {
     this.props.leaveUpdateCruiseForm();
-    this.setState({cruiseUpdate: false, cruiseAccess: false});
   }
 
   handleCruiseImportModal() {
@@ -80,17 +79,17 @@ class Cruises extends Component {
     if(fieldVal !== "") {
       this.setState({filteredCruises: this.props.cruises.filter((cruise) => {
         const regex = RegExp(fieldVal, 'i');
-        if(cruise.cruise_id.match(regex) || cruise.cruise_additional_meta.cruise_vessel.match(regex) || cruise.cruise_pi.match(regex)) {
+        if(cruise.cruise_id.match(regex) || (cruise.cruise_vessel.match(regex)) || cruise.cruise_pi.match(regex) || cruise.cruise_location.match(regex) || cruise.cruise_tags.includes(fieldVal)) {
           return cruise;
         }
-        else if (cruise.cruise_additional_meta.cruise_name && cruise.cruise_additional_meta.cruise_name.match(regex)) {
+        else if (cruise.cruise_additional_meta.cruise_departure_location && cruise.cruise_additional_meta.cruise_departure_location.match(regex)) {
           return cruise;
         }
-        else if (cruise.cruise_location && cruise.cruise_location.match(regex)) {
+        else if (cruise.cruise_additional_meta.cruise_arrival_location && cruise.cruise_additional_meta.cruise_arrival_location.match(regex)) {
           return cruise;
         }
-        else if (cruise.cruise_tags.includes(fieldVal)){
-          return cruise; 
+        else if (cruise.cruise_additional_meta.cruise_partipants && cruise.cruise_additional_meta.cruise_partipants.includes(fieldVal)) {
+          return cruise;
         }
       })
       });
@@ -110,7 +109,7 @@ class Cruises extends Component {
     if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
       return (
         <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.state.cruiseUpdate}>Add Cruise</Button>
+          <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.props.cruiseid}>Add Cruise</Button>
         </div>
       );
     }
@@ -132,6 +131,7 @@ class Cruises extends Component {
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this cruise.</Tooltip>);
     const showTooltip = (<Tooltip id="showTooltip">Cruise is hidden, click to show.</Tooltip>);
     const hideTooltip = (<Tooltip id="hideTooltip">Cruise is visible, click to hide.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
 
     const cruises = (Array.isArray(this.state.filteredCruises)) ? this.state.filteredCruises : this.props.cruises;
 
@@ -148,17 +148,18 @@ class Cruises extends Component {
 
         let cruiseName = (cruise.cruise_additional_meta.cruise_name)? <span>Name: {cruise.cruise_additional_meta.cruise_name}<br/></span> : null;
         let cruiseLocation = (cruise.cruise_location)? <span>Location: {cruise.cruise_location}<br/></span> : null;
-        let cruiseVessel = (cruise.cruise_additional_meta.cruise_vessel)? <span>Vessel: {cruise.cruise_additional_meta.cruise_vessel}<br/></span> : null;
+        let cruiseVessel = (DEFAULT_VESSEL !== cruise.cruise_vessel)? <span>Vessel: {cruise.cruise_vessel}<br/></span> : null;
         let cruisePi = (cruise.cruise_pi)? <span>PI: {cruise.cruise_pi}<br/></span> : null;
 
         return (
           <tr key={cruise.id}>
             <td className={(this.props.cruiseid === cruise.id)? "text-warning" : ""}>{cruise.cruise_id}</td>
-            <td>{cruiseName}{cruiseVessel}{cruiseLocation}{cruisePi}Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
+            <td>{cruiseName}{cruiseLocation}{cruisePi}{cruiseVessel}Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
             <td>
               <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCruiseUpdate(cruise.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
-              {deleteLink}
+              {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissions(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
               {hiddenLink}
+              {deleteLink}
             </td>
           </tr>
         );
@@ -174,7 +175,7 @@ class Cruises extends Component {
             <tr>
               <th>Cruise</th>
               <th>Details</th>
-              <th style={{width: "80px"}}>Actions</th>
+              <th style={tableHeaderStyle}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -218,7 +219,7 @@ class Cruises extends Component {
 
       let cruiseForm = null;
   
-      if(this.state.cruiseUpdate) {
+      if(this.props.cruiseid) {
         cruiseForm = <UpdateCruise handleFormSubmit={ this.props.fetchCruises } />;
       } else {
         cruiseForm = <CreateCruise handleFormSubmit={ this.props.fetchCruises } />;
@@ -227,6 +228,7 @@ class Cruises extends Component {
       return (
         <div>
           <DeleteCruiseModal />
+          <CruisePermissionsModal />
           <ImportCruisesModal  handleExit={this.handleCruiseImportClose} />
           <Row>
             <Col sm={12} md={7} lg={6} xl={{span:5, offset:1}}>

@@ -3,13 +3,12 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { Button, Col, Form, Row} from 'react-bootstrap';
+import { renderDateTimePicker, renderTextField, dateFormat } from './form_elements';
 import moment from 'moment';
-import Datetime from 'react-datetime';
 import PropTypes from 'prop-types';
 import * as mapDispatchToProps from '../actions';
 
-const dateFormat = "YYYY-MM-DD"
-const timeFormat = "HH:mm:ss.SSS"
+const timeFormat = "HH:mm:ss.SSS";
 
 class UpdateLoweringStatsForm extends Component {
 
@@ -45,7 +44,6 @@ class UpdateLoweringStatsForm extends Component {
   }
 
   componentWillUnmount() {
-    // this.props.leaveUpdateLoweringForm();
   }
 
   handleFormSubmit(formProps) {
@@ -93,20 +91,6 @@ class UpdateLoweringStatsForm extends Component {
     )
   }
 
-  renderDatePicker({ input, label, required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : ''
-    
-    return (
-      <Form.Group as={Row}>
-        <Form.Label column sm={6}>{label}{requiredField}</Form.Label>
-        <Col xs={7} sm={5}>
-          <Datetime {...input} inputProps={{className: "form-control form-control-sm"}} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null }/>
-          {touched && (error && <div style={{width: "100%", marginTop: "0.25rem", fontSize: "80%"}} className='text-danger'>{error}</div>)}
-        </Col>
-      </Form.Group>
-    )
-  }
-
   render() {
 
     const { handleSubmit, submitting, valid } = this.props;
@@ -119,25 +103,33 @@ class UpdateLoweringStatsForm extends Component {
                 <Col md={6}>
                   <Field
                     name="start"
-                    component={this.renderDatePicker}
+                    component={renderDateTimePicker}
                     label="Start Date/Time (UTC)"
+                    timeFormat={timeFormat}
                     required={true}
+                    sm={12}
                   />
                   <Field
                     name="on_bottom"
-                    component={this.renderDatePicker}
+                    component={renderDateTimePicker}
                     label="On Bottom Date/Time (UTC)"
+                    timeFormat={timeFormat}
+                    sm={12}
                   />
                   <Field
                     name="off_bottom"
-                    component={this.renderDatePicker}
+                    component={renderDateTimePicker}
                     label="Off Bottom Date/Time (UTC)"
+                    timeFormat={timeFormat}
+                    sm={12}
                   />
                   <Field
                     name="stop"
-                    component={this.renderDatePicker}
+                    component={renderDateTimePicker}
                     label="Stop Date/Time (UTC)"
                     required={true}
+                    timeFormat={timeFormat}
+                    sm={12}
                   />
                 </Col>
                 <Col md={6}>
@@ -145,9 +137,11 @@ class UpdateLoweringStatsForm extends Component {
                     <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
                       <Field
                         name="max_depth"
-                        component={this.renderTextField}
+                        component={renderTextField}
                         label="Max Depth"
                         placeholder="in meters"
+                        lg={12}
+                        sm={12}
                       />
                     </Col>
                   </Row>
@@ -155,9 +149,11 @@ class UpdateLoweringStatsForm extends Component {
                     <Col xs={{span: 6, offset: 3}}>
                       <Field
                         name="bbox_north"
-                        component={this.renderTextField}
+                        component={renderTextField}
                         label="North"
                         placeholder="in ddeg"
+                        lg={12}
+                        sm={12}
                       />
                     </Col>
                   </Row>
@@ -165,17 +161,21 @@ class UpdateLoweringStatsForm extends Component {
                     <Col>
                       <Field
                         name="bbox_west"
-                        component={this.renderTextField}
+                        component={renderTextField}
                         label="West"
                         placeholder="in ddeg"
+                        lg={12}
+                        sm={12}
                       />
                     </Col>
                     <Col>
                       <Field
                         name="bbox_east"
-                        component={this.renderTextField}
+                        component={renderTextField}
                         label="East"
                         placeholder="in ddeg"
+                        lg={12}
+                        sm={12}
                       />
                     </Col>
                   </Row>
@@ -183,9 +183,11 @@ class UpdateLoweringStatsForm extends Component {
                     <Col xs={{span: 6, offset: 3}}>
                       <Field
                         name="bbox_south"
-                        component={this.renderTextField}
+                        component={renderTextField}
                         label="South"
                         placeholder="in ddeg"
+                        lg={12}
+                        sm={12}
                       />
                     </Col>
                   </Row>
@@ -196,24 +198,30 @@ class UpdateLoweringStatsForm extends Component {
                     <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
                       <Field
                         name="origin_lat"
-                        component={this.renderTextField}
+                        component={renderTextField}
                         label="Latitude"
                         placeholder="in ddeg"
+                        lg={12}
+                        sm={12}
                       />
                     </Col>
                     <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
                       <Field
                         name="origin_lng"
-                        component={this.renderTextField}
+                        component={renderTextField}
                         label="Longitude"
                         placeholder="in ddeg"
+                        lg={12}
+                        sm={12}
                       />
                     </Col>
                     <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
                       <Field
                         name="origin_utm"
-                        component={this.renderTextField}
+                        component={renderTextField}
                         label="UTM Zone"
+                        lg={12}
+                        sm={12}
                       />
                     </Col>
                   </Row>

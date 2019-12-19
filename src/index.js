@@ -55,9 +55,10 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { faVial } from '@fortawesome/free-solid-svg-icons/faVial';
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
+import { faUserLock } from '@fortawesome/free-solid-svg-icons/faUserLock';
 import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaximize';
 
-library.add(faArrowLeft,faArrowRight,faBackward,faCalculator,faChevronDown,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faWindowMaximize);
+library.add(faArrowLeft,faArrowRight,faBackward,faCalculator,faChevronDown,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
 
 import './assets/style/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css';
@@ -65,6 +66,8 @@ import './assets/style/style.css';
 
 import configureStore from './store';
 import history from './history';
+
+import { DISABLE_EVENT_LOGGING } from './client_config';
 
 const store = configureStore();
 
@@ -80,7 +83,7 @@ ReactDOM.render(
       <div>
         <Header />
         <Switch>
-          <Route path={ `/` } exact={true} component={RequireAuth(EventLogging)}/>
+          <Route path={ `/` } exact={true} component={RequireAuth((DISABLE_EVENT_LOGGING) ? CruiseMenu : EventLogging )}/>
           <Route path={ `/github`} exact={true} component={() => window.location = 'https://github.com/oceandatatools/sealog-client-vehicle'}/>
           <Route path={ `/license`} exact={true} component={() => window.location = 'https://github.com/oceandatatools/sealog-client-vehicle/blob/master/LICENSE'}/>
           <Route path={ `/profile` } exact={true} component={RequireAuth(Profile)} />

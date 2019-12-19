@@ -60,7 +60,7 @@ class ExportDropdown extends Component {
 
   }
 
-  fetchEvents(format, eventFilter, hideASNAP) {
+  async fetchEvents(format, eventFilter, hideASNAP) {
 
     const cookies = new Cookies();
     format = `format=${format}`;
@@ -72,7 +72,7 @@ class ExportDropdown extends Component {
     let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
     let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
 
-    return axios.get(`${API_ROOT_URL}/api/v1/events${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/events${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -90,7 +90,7 @@ class ExportDropdown extends Component {
     );
   }
 
-  fetchEventAuxData(eventFilter, hideASNAP) {
+  async fetchEventAuxData(eventFilter, hideASNAP) {
 
     const cookies = new Cookies();
     let startTS = (eventFilter.startTS)? `startTS=${eventFilter.startTS}` : '';
@@ -101,7 +101,7 @@ class ExportDropdown extends Component {
     let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
     let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
 
-    return axios.get(`${API_ROOT_URL}/api/v1/event_aux_data${this.state.cruiseOrLowering}?${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data${this.state.cruiseOrLowering}?${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -119,7 +119,7 @@ class ExportDropdown extends Component {
     );
   }
 
-  fetchEventsWithAuxData(format, eventFilter, hideASNAP) {
+  async fetchEventsWithAuxData(format, eventFilter, hideASNAP) {
 
     const cookies = new Cookies();
     format = `format=${format}`;
@@ -131,7 +131,7 @@ class ExportDropdown extends Component {
     let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
     let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
 
-    return axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
       {
         headers: {
           authorization: cookies.get('token')

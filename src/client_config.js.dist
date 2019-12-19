@@ -36,6 +36,12 @@ const DEFAULT_VESSEL = "";
 // Use an internal tile server (true), or pull tiles directly from the Internet (false).
 const USE_MAPTILE_PROXY = false;
 
+// Add cruise-level and lowering-level authentication. This needs to match the 'useAccessControl' setting on the sealog-server.
+const USE_ACCESS_CONTROL = false;
+
+// Remove ability to add new events
+const DISABLE_EVENT_LOGGING = false;
+
 module.exports = {
   API_ROOT_URL,
   WS_ROOT_URL,
@@ -47,5 +53,7 @@ module.exports = {
   MAIN_SCREEN_TXT,
   HEADER_TITLE,
   DEFAULT_VESSEL,
-  USE_MAPTILE_PROXY
+  USE_MAPTILE_PROXY,
+  USE_ACCESS_CONTROL,
+  DISABLE_EVENT_LOGGING
 }

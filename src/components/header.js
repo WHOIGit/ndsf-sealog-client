@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { HEADER_TITLE, RECAPTCHA_SITE_KEY } from '../client_config';
+import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 class Header extends Component {
@@ -28,7 +28,7 @@ class Header extends Component {
   }
 
   renderUserOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) {
+    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoUsers}>Users</NavDropdown.Item>
       );
@@ -36,7 +36,7 @@ class Header extends Component {
   }
 
   renderEventLoggingOptions() {
-    if(this.props.authenticated) {
+    if ( this.props.authenticated && !DISABLE_EVENT_LOGGING ) {
       return (
         <Nav.Link onClick={this.props.gotoCruiseMenu}>Review Cruises/Lowerings</Nav.Link>
       );
@@ -44,7 +44,7 @@ class Header extends Component {
   }
 
   renderEventManagementOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('event_manager')) {
+    if ( this.props.roles.includes('admin') || this.props.roles.includes('event_manager') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoEventManagement}>Event Management</NavDropdown.Item>
       );
@@ -52,7 +52,7 @@ class Header extends Component {
   }
 
   renderEventTemplateOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('template_manager')) {
+    if ( !DISABLE_EVENT_LOGGING && (this.props.roles.includes('admin') || this.props.roles.includes('template_manager')) ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoEventTemplates}>Event Templates</NavDropdown.Item>
       );
@@ -60,7 +60,7 @@ class Header extends Component {
   }
 
   renderLoweringOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) {
+    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoLowerings}>Lowerings</NavDropdown.Item>
       );
@@ -68,7 +68,7 @@ class Header extends Component {
   }
 
   renderCruiseOptions() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) {
+    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoCruises}>Cruises</NavDropdown.Item>
       );
@@ -76,7 +76,7 @@ class Header extends Component {
   }
 
   renderTaskOptions() {
-    if(this.props.roles.includes('admin')) {
+    if ( this.props.roles.includes('admin') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoTasks}>Tasks</NavDropdown.Item>
       );
@@ -84,7 +84,7 @@ class Header extends Component {
   }
 
   renderToggleASNAP() {
-    if(this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) {
+    if ( !DISABLE_EVENT_LOGGING && ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) ) {
       return (
         <NavDropdown.Item onClick={ () => this.handleASNAPToggle() }>Toggle ASNAP</NavDropdown.Item>
       );
@@ -92,7 +92,7 @@ class Header extends Component {
   }
 
   renderSystemManagerDropdown() {
-    if(this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('template_manager') || this.props.roles.includes('event_manager'))) {
+    if ( this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('template_manager') || this.props.roles.includes('event_manager')) ) {
       return (
         <NavDropdown title={'System Management'} id="basic-nav-dropdown-system">
           {this.renderCruiseOptions()}

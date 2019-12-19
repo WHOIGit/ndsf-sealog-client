@@ -8,12 +8,16 @@ import UpdateLowering from './update_lowering';
 import DeleteLoweringModal from './delete_lowering_modal';
 import ImportLoweringsModal from './import_lowerings_modal';
 import SetLoweringStatsModal from './set_lowering_stats_modal';
+import LoweringPermissionsModal from './lowering_permissions_modal';
 import CustomPagination from './custom_pagination';
+import { USE_ACCESS_CONTROL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 let fileDownload = require('js-file-download');
 
 const maxLoweringsPerPage = 8;
+
+const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "100px" : "90px" };
 
 class Lowerings extends Component {
 
@@ -22,7 +26,6 @@ class Lowerings extends Component {
 
     this.state = {
       activePage: 1,
-      loweringUpdate: false,
       filteredLowerings: null
     };
 
@@ -46,13 +49,6 @@ class Lowerings extends Component {
 
   handleLoweringUpdate(id) {
     this.props.initLowering(id);
-    this.setState({loweringUpdate: true, loweringAccess: false});
-    window.scrollTo(0, 0);
-  }
-
-  handleLoweringAccess(id) {
-    this.props.initLowering(id);
-    this.setState({loweringUpdate: false, loweringAccess: true});
     window.scrollTo(0, 0);
   }
 
@@ -66,11 +62,14 @@ class Lowerings extends Component {
 
   handleLoweringCreate() {
     this.props.leaveUpdateLoweringForm();
-    this.setState({loweringUpdate: false, loweringAccess: false});
   }
 
   handleLoweringImportModal() {
     this.props.showModal('importLowerings', { handleHide: this.handleLoweringImportClose });
+  }
+
+  handleLoweringPermissions(lowering_id) {
+    this.props.showModal('loweringPermissions', { lowering_id: lowering_id });
   }
 
   handleLoweringImportClose() {
@@ -105,7 +104,7 @@ class Lowerings extends Component {
     if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
       return (
         <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleLoweringCreate()} disabled={!this.state.loweringUpdate}>Add Lowering</Button>
+          <Button variant="primary" size="sm" onClick={ () => this.handleLoweringCreate()} disabled={!this.props.loweringid}>Add Lowering</Button>
         </div>
       );
     }
@@ -127,6 +126,7 @@ class Lowerings extends Component {
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this lowering.</Tooltip>);
     const showTooltip = (<Tooltip id="showTooltip">Cruise is hidden, click to show.</Tooltip>);
     const hideTooltip = (<Tooltip id="hideTooltip">Cruise is visible, click to hide.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
 
     const lowerings = (Array.isArray(this.state.filteredLowerings)) ? this.state.filteredLowerings : this.props.lowerings;
 
@@ -155,8 +155,9 @@ class Lowerings extends Component {
             <td>{loweringLocation}{loweringStarted}{loweringDurationStr}</td>
             <td>
               <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleLoweringUpdate(lowering.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
-              {deleteLink}
+              {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleLoweringPermissions(lowering.id) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
               {hiddenLink}
+              {deleteLink}
             </td>
           </tr>
         );
@@ -172,7 +173,7 @@ class Lowerings extends Component {
             <tr>
               <th>Lowering</th>
               <th>Details</th>
-              <th style={{width: "80px"}}>Actions</th>
+              <th style={tableHeaderStyle}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -214,19 +215,14 @@ class Lowerings extends Component {
 
     if(this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager')) {
 
-      let loweringForm = null;
-  
-      if(this.state.loweringUpdate) {
-        loweringForm = <UpdateLowering handleFormSubmit={ this.props.fetchLowerings } />;
-      } else {
-        loweringForm = <CreateLowering handleFormSubmit={ this.props.fetchLowerings } />;
-      }
+      let loweringForm = (this.props.loweringid) ? <UpdateLowering handleFormSubmit={ this.props.fetchLowerings } /> : <CreateLowering handleFormSubmit={ this.props.fetchLowerings } />;
 
       return (
         <div>
           <DeleteLoweringModal />
-          <ImportLoweringsModal  handleExit={this.handleLoweringImportClose} />
+          <ImportLoweringsModal handleExit={this.handleLoweringImportClose} />
           <SetLoweringStatsModal />
+          <LoweringPermissionsModal />
           <Row>
             <Col sm={12} md={7} lg={6} xl={{span:5, offset:1}}>
               <Card>
