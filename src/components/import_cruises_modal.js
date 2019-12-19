@@ -36,7 +36,7 @@ class ImportCruisesModal extends Component {
     this.props.handleHide()
   }
 
-  async insertCruise({ id, cruise_id, start_ts, stop_ts, cruise_location = '', cruise_pi, cruise_tags = [], cruise_hidden = false, cruise_additional_meta = {} }) {
+  async insertCruise({ id, cruise_id, start_ts, stop_ts, cruise_location = '', cruise_pi, cruise_tags = [], cruise_hidden = false, cruise_vessel = '', cruise_additional_meta = {} }) {
 
     try {
       const result = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${id}`,
@@ -62,7 +62,7 @@ class ImportCruisesModal extends Component {
 
         try {
           const result = await axios.post(`${API_ROOT_URL}/api/v1/cruises`,
-          { id, cruise_id, start_ts, stop_ts, cruise_location, cruise_pi, cruise_tags, cruise_hidden, cruise_additional_meta},
+          { id, cruise_id, start_ts, stop_ts, cruise_location, cruise_pi, cruise_tags, cruise_hidden, cruise_vessel, cruise_additional_meta},
           {
             headers: {
               authorization: cookies.get('token'),
