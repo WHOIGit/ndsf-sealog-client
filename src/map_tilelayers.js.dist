@@ -1,6 +1,6 @@
 import { USE_MAPTILE_PROXY } from './client_config';
 
-const tilelayers = (USE_MAPTILE_PROXY) ? [
+export const TILE_LAYERS = (USE_MAPTILE_PROXY) ? [
 ] : [
   {
     name: "Ocean Basemap",
@@ -22,4 +22,4 @@ const tilelayers = (USE_MAPTILE_PROXY) ? [
   }
 ]
 
-export default tilelayers; 
+export const DEFAULT_LOCATION = {lat:41.38,lng:-71.50};

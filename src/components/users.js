@@ -8,7 +8,9 @@ import DisplayUserTokenModal from './display_user_token_modal';
 import NonSystemUsersWipeModal from './non_system_users_wipe_modal';
 import ImportUsersModal from './import_users_modal';
 import DeleteUserModal from './delete_user_modal';
+import UserPermissionsModal from './user_permissions_modal';
 import CustomPagination from './custom_pagination';
+import { USE_ACCESS_CONTROL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const disabledAccounts = ['admin', 'guest', 'pi'];
@@ -17,6 +19,8 @@ let fileDownload = require('js-file-download');
 
 const maxSystemUsersPerPage = 4;
 const maxUsersPerPage = 6;
+
+const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "110px" : "90px" };
 
 class Users extends Component {
 
@@ -50,7 +54,7 @@ class Users extends Component {
     this.setState({activeSystemPage: eventKey});
   }
 
-  handleUserDelete(id) {
+  handleUserDeleteModal(id) {
     this.props.showModal('deleteUser', { id: id, handleDelete: this.props.deleteUser });
   }
 
@@ -62,7 +66,7 @@ class Users extends Component {
     this.props.showModal('displayUserToken', { id: id });
   }
 
-  handleUserSelect(id) {
+  handleUserUpdate(id) {
     this.props.initUser(id);
   }
 
@@ -70,8 +74,12 @@ class Users extends Component {
     this.props.leaveUpdateUserForm();
   }
 
-  handleUserImport() {
+  handleUserImportModal() {
     this.props.showModal('importUsers');
+  }
+
+  handleUserPermissionsModal(id) {
+    this.props.showModal('userPermissions', { user_id: user_id});
   }
 
   handleUserImportClose() {
@@ -127,7 +135,7 @@ class Users extends Component {
     if (!this.props.showform) {
       return (
         <div className="float-right">
-          <Button variant="primary" disabled={!this.props.userid} size="sm" onClick={ () => this.handleUserCreate()}>Add User</Button>
+          <Button variant="primary" size="sm" onClick={ () => this.handleUserCreate() } disabled={!this.props.userid} >Add User</Button>
         </div>
       );
     }
@@ -137,7 +145,7 @@ class Users extends Component {
     if(this.props.roles.includes("admin")) {
       return (
         <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleUserImport()}>Import From File</Button>
+          <Button variant="primary" size="sm" onClick={ () => this.handleUserImportModal()}>Import From File</Button>
         </div>
       );
     }
@@ -146,8 +154,9 @@ class Users extends Component {
   renderUsers() {
 
     const editTooltip = (<Tooltip id="editTooltip">Edit this user.</Tooltip>);
-    const tokenTooltip = (<Tooltip id="viewTooltip">Show user&apos;s JWT token.</Tooltip>);
+    const tokenTooltip = (<Tooltip id="tokenTooltip">Show user&apos;s JWT token.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this user.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">Cruise/Lowering permissions.</Tooltip>);
 
     let users = (Array.isArray(this.state.filteredUsers)) ? this.state.filteredUsers : this.props.users.filter(user => user.system_user === false);
     users = users.slice((this.state.activePage - 1) * maxUsersPerPage, this.state.activePage * maxUsersPerPage);
@@ -159,9 +168,10 @@ class Users extends Component {
           <td style={style} className={(this.props.userid === user.id)? "text-warning" : ""}>{user.username}</td>
           <td style={style}>{user.fullname}</td>
           <td>
-            <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleUserSelect(user.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>{' '}
+            <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleUserUpdate(user.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>{' '}
+            {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleUserPermissionsModal(user.id) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
             {(this.props.roles.includes('admin'))? <OverlayTrigger placement="top" overlay={tokenTooltip}><FontAwesomeIcon className="text-warning" onClick={ () => this.handleDisplayUserToken(user.id) } icon='eye' fixedWidth/></OverlayTrigger> : ''}{' '}
-            {(user.id !== this.props.profileid && !disabledAccounts.includes(user.username))? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon  className="text-danger" onClick={ () => this.handleUserDelete(user.id) } icon='trash' fixedWidth/></OverlayTrigger> : ''}
+            {(user.id !== this.props.profileid && !disabledAccounts.includes(user.username))? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon  className="text-danger" onClick={ () => this.handleUserDeleteModal(user.id) } icon='trash' fixedWidth/></OverlayTrigger> : ''}
           </td>
         </tr>
       );
@@ -171,8 +181,9 @@ class Users extends Component {
   renderSystemUsers() {
 
     const editTooltip = (<Tooltip id="editTooltip">Edit this user.</Tooltip>);
-    const tokenTooltip = (<Tooltip id="deleteTooltip">Show user&apos;s JWT token.</Tooltip>);
+    const tokenTooltip = (<Tooltip id="tokenTooltip">Show user&apos;s JWT token.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this user.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">Cruise/Lowering permissions.</Tooltip>);
 
     let system_users = (Array.isArray(this.state.filteredSystemUsers)) ? this.state.filteredSystemUsers : this.props.users.filter(user => user.system_user === true);
     system_users = system_users.slice((this.state.activeSystemPage - 1) * maxSystemUsersPerPage, this.state.activeSystemPage * maxSystemUsersPerPage);
@@ -186,9 +197,10 @@ class Users extends Component {
             <td style={style} className={(this.props.userid === user.id)? "text-warning" : ""}>{user.username}</td>
             <td style={style} >{user.fullname}</td>
             <td>
-              {(this.props.roles.includes('admin'))? <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleUserSelect(user.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger> : ''}{' '}
+              {(this.props.roles.includes('admin'))? <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleUserUpdate(user.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger> : ''}{' '}
+              {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleUserPermissionsModal(user.id) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
               {(this.props.roles.includes('admin'))? <OverlayTrigger placement="top" overlay={tokenTooltip}><FontAwesomeIcon className="text-warning" onClick={ () => this.handleDisplayUserToken(user.id) } icon='eye' fixedWidth/></OverlayTrigger> : ''}{' '}
-              {(user.id !== this.props.profileid && !disabledAccounts.includes(user.username))? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleUserDelete(user.id) } icon='trash' fixedWidth/></OverlayTrigger> : ''}
+              {(user.id !== this.props.profileid && !disabledAccounts.includes(user.username))? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleUserDeleteModal(user.id) } icon='trash' fixedWidth/></OverlayTrigger> : ''}
             </td>
           </tr>
         );
@@ -204,7 +216,7 @@ class Users extends Component {
             <tr>
               <th>User Name</th>
               <th>Full Name</th>
-              <th style={{width: "90px"}}>Actions</th>
+              <th style={ tableHeaderStyle }>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -227,7 +239,7 @@ class Users extends Component {
             <tr>
               <th>User Name</th>
               <th>Full Name</th>
-              <th style={{width: "90px"}}>Actions</th>
+              <th style={ tableHeaderStyle }>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -295,7 +307,7 @@ class Users extends Component {
 
     if (this.props.roles.includes("admin") || this.props.roles.includes("cruise_manager")) {
 
-      const  userForm = (this.props.userid)? <UpdateUser /> : <CreateUser />;
+      const  userForm = (this.props.userid) ? <UpdateUser /> : <CreateUser />;
 
       return (
         <div>
@@ -303,6 +315,7 @@ class Users extends Component {
           <DeleteUserModal />
           <ImportUsersModal handleExit={this.handleUserImportClose}/>
           <NonSystemUsersWipeModal />
+          <UserPermissionsModal />
           <Row>
             <Col sm={12} md={7} lg={{span:6, offset:1}} xl={{span:5, offset:2}}>
               <Card key="system_users_card" style={{marginBottom: "8px"}} >
@@ -311,9 +324,7 @@ class Users extends Component {
               </Card>
               <CustomPagination style={{marginTop: "8px"}} page={this.state.activeSystemPage} count={(this.state.filteredSystemUsers)? this.state.filteredSystemUsers.length : this.props.users.filter(user => user.system_user === true).length} pageSelectFunc={this.handleSystemPageSelect} maxPerPage={maxSystemUsersPerPage}/>
               <Card style={{marginBottom: "8px"}} >
-                <Card.Header>
-                  {this.renderUsersHeader()}
-                </Card.Header>
+                <Card.Header>{this.renderUsersHeader()}</Card.Header>
                 {this.renderUserTable()}
               </Card>
               <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={(this.state.filteredUsers)? this.state.filteredUsers.length : this.props.users.filter(user => user.system_user === false).length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxUsersPerPage}/>
@@ -328,7 +339,6 @@ class Users extends Component {
           </Row>
         </div>
       );
-
     } else {
       return (
         <div>

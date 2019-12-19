@@ -26,7 +26,11 @@ class DisplayUserTokenModal extends Component {
   };
 
   componentDidMount() {
-    axios.get(`${API_ROOT_URL}/api/v1/users/${this.props.id}/token`,
+    this.getUserJWT()
+  }
+
+  async getUserJWT() {
+    const token = await axios.get(`${API_ROOT_URL}/api/v1/users/${this.props.id}/token`,
     {
       headers: {
         authorization: cookies.get('token'),
@@ -34,12 +38,13 @@ class DisplayUserTokenModal extends Component {
       }
     })
     .then((response) => {
-
-      this.setState( { token: response.data.token} )
+      return response.data.token;
     })
     .catch(() => {
-      this.setState( {token: "There was an error retriving the JWT for this user."})
+      return "There was an error retriving the JWT for this user.";
     })
+
+    this.setState( { token } )
   }
 
   handleConfirm() {

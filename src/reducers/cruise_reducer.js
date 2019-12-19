@@ -39,7 +39,8 @@ export default function(state={ cruise: {}, cruises: [], cruise_message: '', cru
       return { ...state, cruise_error: '', cruise_message: '' };
 
     case FETCH_CRUISES:
-      let cruise = (state.cruise.id)? action.payload.find((cruise) => cruise.id === state.cruise.id) : {};
+      const selected_cruise_id = (state.cruise.id) ? state.cruise.id : null;
+      const cruise = (selected_cruise_id) ? action.payload.find((cruise) => cruise.id === selected_cruise_id) : {};
       return { ...state, cruise: cruise, cruises: action.payload };
   }    
   return state;

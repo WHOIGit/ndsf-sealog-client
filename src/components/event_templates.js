@@ -98,10 +98,13 @@ class EventTemplates extends Component {
     const testTooltip = (<Tooltip id="testTooltip">Test this template.</Tooltip>);
 
     return this.props.event_templates.filter(template => template.system_template === false).map((template) => {
+
+      const style = (template.disabled)? {"textDecoration": "line-through"}: {};
+
       return (
         <tr key={template.id}>
-          <td className={(this.props.event_templateid === template.id)? "text-warning" : ""}>{template.event_name}</td>
-          <td>{template.event_value}</td>
+          <td style={style} className={(this.props.event_templateid === template.id)? "text-warning" : ""}>{template.event_name}</td>
+          <td style={style}>{template.event_value}</td>
           <td>
             <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleEventTemplateSelect(template.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>{' '}
             <OverlayTrigger placement="top" overlay={testTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleEventTemplateTest(template) } icon='vial' fixedWidth/></OverlayTrigger>{' '}
@@ -120,16 +123,19 @@ class EventTemplates extends Component {
 
     if(this.props.event_templates && this.props.event_templates.length > 0) {
 
-      let systemTemplates = this.props.event_templates.filter(template => template.system_template === true);
+      const systemTemplates = this.props.event_templates.filter(template => template.system_template === true);
       return systemTemplates.map((template) => {
 
-        let edit_icon = (this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleEventTemplateSelect(template.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>): null;
-        let test_icon = <OverlayTrigger placement="top" overlay={testTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleEventTemplateTest(template) } icon='vial' fixedWidth/></OverlayTrigger>;
-        let delete_icon = (this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleEventTemplateDelete(template.id) } icon='trash' fixedWidth/></OverlayTrigger>): null;
+        const edit_icon = (this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleEventTemplateSelect(template.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>): null;
+        const test_icon = <OverlayTrigger placement="top" overlay={testTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleEventTemplateTest(template) } icon='vial' fixedWidth/></OverlayTrigger>;
+        const delete_icon = (this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleEventTemplateDelete(template.id) } icon='trash' fixedWidth/></OverlayTrigger>): null;
+
+        const style = (template.disabled)? {"textDecoration": "line-through"}: {};
+    
         return (
           <tr key={template.id}>
-            <td className={(this.props.event_templateid === template.id)? "text-warning" : ""}>{template.event_name}</td>
-            <td>{template.event_value}</td>
+            <td style={style} className={(this.props.event_templateid === template.id)? "text-warning" : ""}>{template.event_name}</td>
+            <td style={style} >{template.event_value}</td>
             <td>
               {edit_icon}{' '}
               {test_icon}{' '}

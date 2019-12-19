@@ -39,36 +39,45 @@ class EventTemplateList extends Component {
     )]
 
     if(this.props.event_templates){
-      return (
-        <Tabs className="categoryTab" activeKey={(this.props.event_template_category)? this.props.event_template_category : "all"} id="controlled-tab-example" onSelect={(category) => this.props.updateEventTemplateCategory(category)}>
-          <Tab eventKey="all" title="All">
-            {
-              this.props.event_templates.filter((event_template) => typeof event_template.template_disabled === 'undefined' || !event_template.template_disabled).map((event_template) => {
+      if(template_categories.length > 0) {
+        return (
+          <Tabs className="categoryTab" activeKey={(this.props.event_template_category)? this.props.event_template_category : "all"} id="controlled-tab-example" onSelect={(category) => this.props.updateEventTemplateCategory(category)}>
+            <Tab eventKey="all" title="All">
+              {
+                this.props.event_templates.filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled).map((event_template) => {
 
+                  return (
+                    <Button className="btn btn-primary btn-squared" to="#" key={`template_${event_template.id}`} onClick={ () => this.handleEventSubmit(event_template) }>{ event_template.event_name }</Button>
+                  );
+                })
+              }
+            </Tab>
+            {
+              template_categories.map((template_category) => {
                 return (
-                  <Button className="btn btn-primary btn-squared" to="#" key={`template_${event_template.id}`} onClick={ () => this.handleEventSubmit(event_template) }>{ event_template.event_name }</Button>
-                );
+                  <Tab eventKey={template_category} title={template_category} key={template_category}>
+                    {
+                      this.props.event_templates.filter((event_template) => (typeof event_template.disabled === 'undefined' || !event_template.disabled) && event_template.template_categories.includes(template_category)).map((event_template) => {
+
+                        return (
+                          <Button className="btn btn-primary btn-squared" to="#" key={`template_${event_template.id}`} onClick={ () => this.handleEventSubmit(event_template) }>{ event_template.event_name }</Button>
+                        );
+                      })
+                    }
+                  </Tab>
+                )
               })
             }
-          </Tab>
-          {
-            template_categories.map((template_category) => {
-              return (
-                <Tab eventKey={template_category} title={template_category} key={template_category}>
-                  {
-                    this.props.event_templates.filter((event_template) => (typeof event_template.template_disabled === 'undefined' || !event_template.template_disabled) && event_template.template_categories.includes(template_category)).map((event_template) => {
-
-                      return (
-                        <Button className="btn btn-primary btn-squared" to="#" key={`template_${event_template.id}`} onClick={ () => this.handleEventSubmit(event_template) }>{ event_template.event_name }</Button>
-                      );
-                    })
-                  }
-                </Tab>
-              )
-            })
-          }
-        </Tabs>
-      )
+          </Tabs>
+        )
+      }
+      else {
+        return this.props.event_templates.filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled).map((event_template) => {
+          return (
+            <Button className="btn btn-primary btn-squared" to="#" key={`template_${event_template.id}`} onClick={ () => this.handleEventSubmit(event_template) }>{ event_template.event_name }</Button>
+          );
+        })
+      }
     }
 
     return (

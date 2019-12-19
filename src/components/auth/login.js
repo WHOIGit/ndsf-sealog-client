@@ -4,7 +4,8 @@ import { reduxForm, Field } from 'redux-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Row, Col, Container, Form, Card, Button, Alert, Image } from 'react-bootstrap';
+import { Row, Col, Container, Form, Card, Button, Image } from 'react-bootstrap';
+import { renderAlert, renderTextField } from '../form_elements';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as mapDispatchToProps from '../../actions';
 import { ROOT_PATH, LOGIN_SCREEN_TXT, LOGIN_IMAGE, RECAPTCHA_SITE_KEY } from '../../client_config';
@@ -28,38 +29,23 @@ class Login extends Component {
     this.setState({reCaptcha: token});
   }
 
-  renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    const labelComponent = (label)? <Form.Label>{label}{requiredField}</Form.Label> : null;
-
-    return (
-      <Form.Group as={Col} lg="12">
-        {labelComponent}
-        <Form.Control type={type} {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
   handleFormSubmit({ username, password }) {
     username = username.toLowerCase();
     let reCaptcha = this.state.reCaptcha;
     this.props.login({username, password, reCaptcha});
   }
 
-  renderAlert(){
-    if(this.props.errorMessage) {
+  renderMessage(errorMsg, msg){
+    if(errorMsg) {
       return (
         <Alert variant="danger">
-          <strong>Opps!</strong> {this.props.errorMessage}
+          <strong>Opps!</strong> {errorMsg}
         </Alert>
       );
-    } else if (this.props.successMessage) {
+    } else if (msg) {
       return (
         <Alert variant="success">
-          <strong>Sweet!</strong> {this.props.successMessage}
+          {msg}
         </Alert>
       );
     }
@@ -101,18 +87,22 @@ class Login extends Component {
                   <Form.Group>
                     <Field
                       name="username"
-                      component={this.renderTextField}
+                      component={renderTextField}
                       placeholder="Username"
+                      lg={12}
+                      sm={12}
                     />
                     <Field
                       name="password"
-                      component={this.renderTextField}
+                      component={renderTextField}
                       type="password"
                       placeholder="Password"
+                      lg={12}
+                      sm={12}
                     />
                   </Form.Group>
                   {recaptcha}
-                  {this.renderAlert()}
+                  {this.renderMessage(this.props.errorMessage, this.props.message)}
                   {loginButton}
                   {loginAsGuestButton}
                 </Form>

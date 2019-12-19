@@ -3,12 +3,11 @@ import { compose } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
-import Datetime from 'react-datetime';
 import moment from 'moment';
 import { Button, Card, Form } from 'react-bootstrap';
+import { renderDateTimePicker, renderTextField } from './form_elements';
 import * as mapDispatchToProps from '../actions';
 
-const dateFormat = "YYYY-MM-DD"
 const timeFormat = "HH:mm:ss"
 
 class EventFilterForm extends Component {
@@ -16,7 +15,6 @@ class EventFilterForm extends Component {
   constructor (props) {
     super(props);
 
-    this.renderDatePicker = this.renderDatePicker.bind(this);
     this.clearForm = this.clearForm.bind(this);
   }
 
@@ -86,31 +84,6 @@ class EventFilterForm extends Component {
     this.props.handlePostSubmit();
   }
 
-  renderTextField({ input, label, placeholder, required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : ''
-    let placeholder_txt = (placeholder)? placeholder: label
-
-    return (
-      <Form.Group>
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control type="text" {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    )
-  }
-
-  renderDatePicker({ input, defaultValue, label, required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : ''
-    
-    return (
-      <Form.Group>
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Datetime {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : defaultValue} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value, dateFormat) : null }/>
-        {touched && (error && <div style={{width: "100%", marginTop: "0.25rem", fontSize: "80%"}} className='text-danger'>{error}</div>)}
-      </Form.Group>
-    )
-  }
-
   render() {
 
     const { handleSubmit, submitting, valid } = this.props;
@@ -125,37 +98,49 @@ class EventFilterForm extends Component {
           <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
             <Field
               name="value"
-              component={this.renderTextField}
+              component={renderTextField}
               label="Event Value"
               placeholder="i.e. SAMPLE"
               disabled={this.props.disabled}
+              lg={12}
+              sm={12}
             />
             <Field
               name="author"
-              component={this.renderTextField}
+              component={renderTextField}
               label="Author"
               placeholder="i.e. jsmith"
               disabled={this.props.disabled}
+              lg={12}
+              sm={12}
             />
             <Field
               name="startTS"
-              component={this.renderDatePicker}
+              component={renderDateTimePicker}
               defaultValue={startTS}
+              timeFormat={timeFormat}
               label="Start Date/Time (UTC)"
               disabled={this.props.disabled}
+              lg={12}
+              sm={12}
             />
             <Field
               name="stopTS"
-              component={this.renderDatePicker}
+              component={renderDateTimePicker}
               defaultValue={stopTS}
+              timeFormat={timeFormat}
               label="Stop Date/Time (UTC)"
               disabled={this.props.disabled}
+              lg={12}
+              sm={12}
             />
             <Field
               name="freetext"
-              component={this.renderTextField}
+              component={renderTextField}
               label="Freeform Text"
               disabled={this.props.disabled}
+              lg={12}
+              sm={12}
             />
             <div className="float-right">
               <Button variant="secondary" size="sm" disabled={submitting || this.props.disabled} onClick={this.clearForm}>Reset</Button>

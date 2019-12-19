@@ -13,9 +13,10 @@ import HighchartsReact from 'highcharts-react-official';
 import moment from 'moment';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import { Alert, Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { renderAlert, renderMessage } from './form_elements';
 import UpdateLoweringStatsForm from './update_lowering_stats_form';
-import tilelayers from '../map_tilelayers';
+import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers';
 
 HighchartsExporting(Highcharts);
 HighchartsNoDataToDisplay(Highcharts);
@@ -45,8 +46,8 @@ class SetLoweringStatsModal extends Component {
       show_edit_form: false,
 
       zoom: 13,
-      center:{lat:41.522664576, lng:-70.657830702},
-      position:{lat:41.522664576, lng:-70.657830702},
+      center:DEFAULT_LOCATION,
+      position:DEFAULT_LOCATION,
       showMarker: false,
       height: "400px",
 
@@ -144,7 +145,9 @@ class SetLoweringStatsModal extends Component {
   }
 
   componentWillUnmount() {
-    this.props.initLowering(this.props.lowering.id)
+    if (this.props.lowering) {
+      this.props.initLowering(this.props.lowering.id)
+    }
   }
 
   async initEvents() {
@@ -372,30 +375,10 @@ class SetLoweringStatsModal extends Component {
     }
   }
 
-  renderAlert() {
-    if (this.props.errorMessage) {
-      return (
-        <Alert variant="danger">
-          <strong>Opps!</strong> {this.props.errorMessage}
-        </Alert>
-      )
-    }
-  }
-
-  renderMessage() {
-    if (this.props.message) {
-      return (
-        <Alert variant="success">
-          <strong>Success!</strong> {this.props.message}
-        </Alert>
-      )
-    }
-  }
-
   render() {
     const { show, handleHide } = this.props
 
-    const baseLayers = tilelayers.map((layer, index) => {
+    const baseLayers = TILE_LAYERS.map((layer, index) => {
       if(layer.wms) {
         return (
           <BaseLayer checked={layer.default} key={`baseLayer_${index}`} name={layer.name}>
@@ -498,8 +481,8 @@ class SetLoweringStatsModal extends Component {
               </Row>
               <Row style={{paddingTop: "8px"}}>
                 <Col xs={12}>
-                  {this.renderAlert()}
-                  {this.renderMessage()}
+                  {renderAlert(this.props.errorMessage)}
+                  {renderMessage(this.props.message)}
                 </Col>
               </Row>
               <Row style={{paddingTop: "8px"}}>

@@ -18,7 +18,7 @@ import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
 import { API_ROOT_URL } from '../client_config';
-import tilelayers from '../map_tilelayers';
+import { TILE_LAYERS, DEFAULT_LOCATION } from '../map_tilelayers';
 
 const { BaseLayer } = LayersControl;
 
@@ -28,7 +28,7 @@ const SliderWithTooltip = createSliderWithTooltip(Slider);
 
 const maxEventsPerPage = 10;
 
-const initCenterPosition = {lat:41.522664576, lng:-70.657830702}
+const initCenterPosition = DEFAULT_LOCATION;
 
 const positionAuxDataSources = ['vehicleRealtimeNavData'];
 
@@ -414,7 +414,7 @@ class LoweringMap extends Component {
 
   render() {
 
-    const baseLayers = tilelayers.map((layer, index) => {
+    const baseLayers = TILE_LAYERS.map((layer, index) => {
       if(layer.wms) {
         return (
           <BaseLayer checked={layer.default} key={`baseLayer_${index}`} name={layer.name}>

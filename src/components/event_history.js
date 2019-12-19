@@ -52,6 +52,7 @@ class EventHistory extends Component {
       // })
 
       const updateHandler = (update, flags) => {
+        console.log("update:", update);
         if(!(this.state.hideASNAP && update.event_value === "ASNAP")) {
           this.props.updateEventHistory(update);
         }
@@ -72,7 +73,7 @@ class EventHistory extends Component {
   }
 
   handleEventShowDetailsModal(event) {
-    this.props.showModal('eventShowDetails', { event: event, handleUpdateEvent: this.props.updateEvent });
+    this.props.showModal('eventShowDetails', { event: event });
   }
 
   handleEventCommentModal(event) {

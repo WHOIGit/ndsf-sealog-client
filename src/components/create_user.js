@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { reduxForm, Field, reset } from 'redux-form';
-import { Alert, Button, Col, Form, Card, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Button, Form, Card } from 'react-bootstrap';
+import { renderAlert, renderCheckboxGroup, renderMessage, renderSwitch, renderTextField } from './form_elements';
 import * as mapDispatchToProps from '../actions';
 import { standardUserRoleOptions } from '../standard_user_role_options';
 import { systemUserRoleOptions } from '../system_user_role_options';
@@ -21,138 +22,12 @@ class CreateUser extends Component {
     this.props.createUser(formProps);
   }
 
-  renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    return (
-      <Form.Group as={Col} lg="12">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control type={type} {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderTextArea({ input, label, placeholder, required, rows = 4, meta: { error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    return (
-      <Form.Group as={Col} lg="12">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control as="textarea" {...input} placeholder={placeholder_txt} rows={rows}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderSelectField({ input, label, placeholder, required, options, meta: { touched, error } }) {
-
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-    let defaultOption = ( <option key={`${input.name}.empty`} value=""></option> );
-    let optionList = options.map((option, index) => {
-      return (
-        <option key={`${input.name}.${index}`} value={`${option}`}>{ `${option}`}</option>
-      );
-    });
-
-    return (
-      <Form.Group as={Col} lg="12">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control as="select" {...input} placeholder={placeholder_txt} isInvalid={touched && error}>
-          { defaultOption }
-          { optionList }
-        </Form.Control>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderCheckboxGroup({ label, options, input, required, meta: { dirty, error } }) {
-
-    let requiredField = (required)? (<span className='text-danger'> *</span>) : '';
-    let checkboxList = options.map((option, index) => {
-
-      let tooltip = (option.description)? (<Tooltip id={`${option.value}_Tooltip`}>{option.description}</Tooltip>) : null;
-
-      return (
-        <OverlayTrigger key={`${label}.${index}`} placement="top" overlay={tooltip}>
-          <Form.Check
-            inline
-            label={option.value}
-            name={`${option.label}[${index}]`}
-            key={`${label}.${index}`}
-            value={option.value}
-            checked={input.value.indexOf(option.value) !== -1}
-            onChange={event => {
-              const newValue = [...input.value];
-              if(event.target.checked) {
-                newValue.push(option.value);
-              } else {
-                newValue.splice(newValue.indexOf(option.value), 1);
-              }
-              return input.onChange(newValue);
-            }}
-          />
-        </OverlayTrigger>
-      );
-    });
-
-    return (
-      <span>
-        <Form.Label>{label}{requiredField}</Form.Label><br/>
-        <Form.Group as={Col} xs="4">
-          {checkboxList}
-        </Form.Group>
-        <Form.Group as={Col} xs="12">
-          {dirty && (error && <div className="text-danger" style={{marginTop: "-16px", fontSize: "80%"}}>{error}</div>)}
-        </Form.Group>
-      </span>
-    );
-  }
-
-  renderCheckbox({ input, label, meta: { dirty, error } }) {    
-    return (
-      <Form.Group as={Col} lg="12">
-        <Form.Check
-          {...input}
-          label={label}
-          checked={input.value ? true : false}
-          onChange={(e) => input.onChange(e.target.checked)}
-          isInvalid={dirty && error}
-        >
-        </Form.Check>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderSwitch({ input, label, meta: { dirty, error } }) {    
-
-    return (
-      <Form.Group>
-        <Form.Switch
-          {...input}
-          id={input.name}
-          checked={input.value ? true : false}
-          onChange={(e) => input.onChange(e.target.checked)}
-          isInvalid={dirty && error}
-          label={label}
-        >
-        </Form.Switch>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
   renderSystemUserOption() {
     return (
       <Field
         name="system_user"
         label="System User"
-        component={this.renderSwitch}
+        component={renderSwitch}
       />
     );
   }
@@ -162,7 +37,7 @@ class CreateUser extends Component {
       <Field
         name="disabled"
         label="User Disabled"
-        component={this.renderSwitch}
+        component={renderSwitch}
       />
     );
   }
@@ -174,26 +49,6 @@ class CreateUser extends Component {
           {this.renderSystemUserOption()}
           {this.renderDisableUserOption()}
         </div>
-      );
-    }
-  }
-
-  renderAlert() {
-    if (this.props.errorMessage) {
-      return (
-        <Alert variant="danger">
-          <strong>Opps!</strong> {this.props.errorMessage}
-        </Alert>
-      );
-    }
-  }
-
-  renderMessage() {
-    if (this.props.message) {
-      return (
-        <Alert variant="success">
-          <strong>Success!</strong> {this.props.message}
-        </Alert>
       );
     }
   }
@@ -216,44 +71,54 @@ class CreateUser extends Component {
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <Field
                 name="username"
-                component={this.renderTextField}
+                component={renderTextField}
                 label="Username"
                 required={true}
+                lg={12}
+                sm={12}
               />
               <Field
                 name="fullname"
-                component={this.renderTextField}
+                component={renderTextField}
                 label="Full Name"
                 required={true}
+                lg={12}
+                sm={12}
               />
               <Field
                 name="email"
-                component={this.renderTextField}
+                component={renderTextField}
                 label="Email"
                 required={true}
+                lg={12}
+                sm={12}
               />
               <Field
                 name="password"
-                component={this.renderTextField}
+                component={renderTextField}
                 type="password"
                 label="Password"
+                lg={12}
+                sm={12}
               />
               <Field
                 name="confirmPassword"
-                component={this.renderTextField}
+                component={renderTextField}
                 type="password"
                 label="Confirm Password"
+                lg={12}
+                sm={12}
               />
               <Field
                 name="roles"
-                component={this.renderCheckboxGroup}
+                component={renderCheckboxGroup}
                 label="Roles"
                 options={userRoleOptions}
                 required={true}
               />
               {this.renderAdminOptions()}
-              {this.renderAlert()}
-              {this.renderMessage()}
+              {renderAlert(this.props.errorMessage)}
+              {renderMessage(this.props.message)}
               <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
                 <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
                 <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid}>Create</Button>

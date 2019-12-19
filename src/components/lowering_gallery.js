@@ -46,11 +46,10 @@ class LoweringGallery extends Component {
   componentWillUnmount(){
   }
 
-  initLoweringImages(id, auxDatasourceFilter = 'vehicleRealtimeFramegrabberData') {
+  async initLoweringImages(id, auxDatasourceFilter = 'vehicleRealtimeFramegrabberData') {
     this.setState({ fetching: true});
 
-    let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`;
-    axios.get(url,
+    const image_data = await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -68,14 +67,16 @@ class LoweringGallery extends Component {
         }
       });
 
-      this.setState({ aux_data: image_data, fetching: false });
+      return image_data;
     }).catch((error)=>{
-      if(error.response.data.statusCode === 404) {
-        this.setState({ aux_data: [], fetching: false });
-      } else {
-        console.log(error);
+      if(error.response.data.statusCode !== 404) {
+        console.error(error);
       }
+      return [];
     });
+
+    this.setState({ aux_data: image_data, fetching: false });
+
   }
 
   handleLoweringSelect(id) {
