@@ -27,6 +27,10 @@ class UpdateCruise extends Component {
   constructor (props) {
     super(props);
 
+    this.state = {
+      filepondPristine: true
+    }
+
     this.handleFileDownload = this.handleFileDownload.bind(this);
     this.handleFileDelete = this.handleFileDelete.bind(this);
   }
@@ -248,15 +252,11 @@ End of Cruise:   ${this.props.cruise.stop_ts}\n`
                 <Form.Label>Cruise Files</Form.Label>
                 {this.renderFiles()}
                 <FilePond ref={ref => this.pond = ref} allowMultiple={true} 
-                  maxFiles={5} 
+                  maxFiles={5}
                   server={{
                     url: API_ROOT_URL,
                     process: {
                       url: CRUISE_ROUTE + '/filepond/process/' + this.props.cruise.id,
-                      headers: { authorization: cookies.get('token') },
-                    },
-                    load: {
-                      url: CRUISE_ROUTE + '/filepond/load',
                       headers: { authorization: cookies.get('token') },
                     },
                     revert: {
@@ -264,13 +264,17 @@ End of Cruise:   ${this.props.cruise.stop_ts}\n`
                       headers: { authorization: cookies.get('token') },
                     }
                   }}
+                  onupdatefiles={() => {
+                    // Set currently active file objects to this.state
+                    this.setState({ filepondPristine: false });
+                  }}
                 >
                 </FilePond>
               {renderAlert(this.props.errorMessage)}
               {renderMessage(this.props.message)}
               <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
                 <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
-                <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid || pristine}>Update</Button>
+                <Button variant="primary" size="sm" type="submit" disabled={(submitting || !valid || pristine) && this.state.filepondPristine}>Update</Button>
               </div>
             </Form>
           </Card.Body>

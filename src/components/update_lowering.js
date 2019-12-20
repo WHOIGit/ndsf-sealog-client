@@ -30,6 +30,10 @@ class UpdateLowering extends Component {
   constructor (props) {
     super(props);
 
+    this.state = {
+      filepondPristine: true
+    }
+
     this.handleFileDownload = this.handleFileDownload.bind(this);
     this.handleFileDelete = this.handleFileDelete.bind(this);
     this.handleSetLoweringStatsModal = this.handleSetLoweringStatsModal.bind(this);
@@ -198,14 +202,14 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
                     url: LOWERING_ROUTE + '/filepond/process/' + this.props.lowering.id,
                     headers: { authorization: cookies.get('token') },
                   },
-                  load: {
-                    url: LOWERING_ROUTE + '/filepond/load',
-                    headers: { authorization: cookies.get('token') },
-                  },
                   revert: {
                     url: LOWERING_ROUTE + '/filepond/revert',
                     headers: { authorization: cookies.get('token') },
                   }
+                }}
+                onupdatefiles={() => {
+                  // Set currently active file objects to this.state
+                  this.setState({ filepondPristine: false });
                 }}
               >
               </FilePond>
@@ -214,7 +218,7 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
               <Button variant="warning" size="sm" onClick={this.handleSetLoweringStatsModal}>Milestones/Stats</Button>
               <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
                 <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
-                <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid || pristine}>Update</Button>
+                <Button variant="primary" size="sm" type="submit" disabled={(submitting || !valid || pristine) && this.state.filepondPristine}>Update</Button>
               </div>
             </Form>
           </Card.Body>
