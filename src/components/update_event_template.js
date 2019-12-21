@@ -283,7 +283,7 @@ function validate(formProps) {
     errors.event_value = 'Required';
   }
 
-  if (formProps.template_categories !== "") {
+  if (typeof formProps.template_categories === 'string' && formProps.template_categories !== '' ) {
     try {
       const valueArray = formProps.template_categories.split(',');
     }

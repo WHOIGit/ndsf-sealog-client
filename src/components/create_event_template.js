@@ -31,12 +31,12 @@ class CreateEventTemplate extends Component {
       formProps.disabled = false;
     }
 
-    if(formProps.template_categories) {
-      formProps.template_categories = formProps.template_categories.split(',');
-      formProps.template_categories = formProps.template_categories.map(string => {
-        return string.trim();
-      });
-    }    
+    // if(formProps.template_categories) {
+    //   formProps.template_categories = formProps.template_categories.split(',');
+    //   formProps.template_categories = formProps.template_categories.map(string => {
+    //     return string.trim();
+    //   });
+    // }    
 
     this.props.createEventTemplate(formProps);
   }
@@ -279,7 +279,7 @@ function validate(formProps) {
     errors.event_value = 'Required';
   }
 
-  if (formProps.template_categories) {
+  if (typeof formProps.template_categories === 'string' && formProps.template_categories !== '' ) {
     try {
       const valueArray = formProps.template_categories.split(',');
     }
@@ -356,6 +356,8 @@ function validate(formProps) {
       errors.event_options = event_optionsArrayErrors;
     }
   }
+
+  // console.log(errors);
   return errors;
 }
 
