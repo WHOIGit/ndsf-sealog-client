@@ -39,6 +39,16 @@ class CreateCruise extends Component {
       delete formProps.cruise_name;
     }
 
+    if(formProps.cruise_vessel) {
+      formProps.cruise_additional_meta.cruise_vessel = formProps.cruise_vessel;
+      delete formProps.cruise_vessel;
+    }
+
+    if(formProps.cruise_pi) {
+      formProps.cruise_additional_meta.cruise_pi = formProps.cruise_pi;
+      delete formProps.cruise_pi;
+    }
+
     if(formProps.cruise_departure_location) {
       formProps.cruise_additional_meta.cruise_departure_location = formProps.cruise_departure_location;
       delete formProps.cruise_departure_location;

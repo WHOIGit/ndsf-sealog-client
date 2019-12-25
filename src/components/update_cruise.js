@@ -64,6 +64,16 @@ class UpdateCruise extends Component {
       delete formProps.cruise_name
     }
 
+    if(formProps.cruise_vessel) {
+      formProps.cruise_additional_meta.cruise_vessel = formProps.cruise_vessel
+      delete formProps.cruise_vessel
+    }
+
+    if(formProps.cruise_pi) {
+      formProps.cruise_additional_meta.cruise_pi = formProps.cruise_pi
+      delete formProps.cruise_pi
+    }
+
     if(formProps.cruise_description) {
       formProps.cruise_additional_meta.cruise_description = formProps.cruise_description
       delete formProps.cruise_description
@@ -123,14 +133,14 @@ class UpdateCruise extends Component {
       return  (
 `Cruise:          ${this.props.cruise.cruise_id}
 Name:            ${(this.props.cruise.cruise_additional_meta.cruise_name) ? this.props.cruise.cruise_additional_meta.cruise_name : ""}
-Description:     ${(this.props.cruise.cruise_additional_meta.cruise_description) ? this.props.cruise.cruise_additional_meta.cruise_description : ""}
-Location:        ${this.props.cruise.cruise_location}
-Chief Scientist: ${this.props.cruise.cruise_pi}
-Vessel:          ${this.props.cruise.cruise_vessel}\n
+Chief Scientist: ${this.props.cruise.cruise_additional_meta.cruise_pi}
+Vessel:          ${this.props.cruise.cruise_additional_meta.cruise_vessel}
+Location:        ${this.props.cruise.cruise_location}\n
+Description:     ${(this.props.cruise.cruise_additional_meta.cruise_description) ? this.props.cruise.cruise_additional_meta.cruise_description : ""}\n
 Departure Port:  ${this.props.cruise.cruise_additional_meta.cruise_departure_location}
-Start of Cruise: ${this.props.cruise.start_ts}\n
+Start of Cruise: ${moment.utc(this.props.cruise.start_ts).format(dateFormat)}\n
 Arrival Port:    ${this.props.cruise.cruise_additional_meta.cruise_arrival_location}
-End of Cruise:   ${this.props.cruise.stop_ts}\n`
+End of Cruise:   ${moment.utc(this.props.cruise.stop_ts).format(dateFormat)}\n`
       )
     }
   }
@@ -365,6 +375,10 @@ function mapStateToProps(state) {
 
     if (initialValues.cruise_additional_meta.cruise_vessel) {
       initialValues.cruise_vessel = initialValues.cruise_additional_meta.cruise_vessel
+    }
+
+    if (initialValues.cruise_additional_meta.cruise_pi) {
+      initialValues.cruise_pi = initialValues.cruise_additional_meta.cruise_pi
     }
 
     if (initialValues.cruise_additional_meta.cruise_description) {

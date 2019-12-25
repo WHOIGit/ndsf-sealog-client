@@ -452,9 +452,9 @@ export function createUser({username, fullname, password = '', email, roles, sys
   };
 }
 
-export function createCruise({cruise_id, start_ts, stop_ts, cruise_location = '', cruise_pi = '', cruise_tags = [], cruise_hidden = false, cruise_vessel = '', cruise_additional_meta = {} }) {
+export function createCruise({cruise_id, start_ts, stop_ts, cruise_location = '', cruise_tags = [], cruise_hidden = false, cruise_additional_meta = {} }) {
   return async function (dispatch) {
-    return await axios.post(`${API_ROOT_URL}/api/v1/cruises`, {cruise_id, start_ts, stop_ts, cruise_location, cruise_pi, cruise_tags, cruise_hidden, cruise_vessel, cruise_additional_meta }, { headers: { authorization: cookies.get('token') } }
+    return await axios.post(`${API_ROOT_URL}/api/v1/cruises`, {cruise_id, start_ts, stop_ts, cruise_location, cruise_tags, cruise_hidden, cruise_additional_meta }, { headers: { authorization: cookies.get('token') } }
       ).then(() => {
         dispatch(createCruiseSuccess('Cruise created'));
         return dispatch(fetchCruises());
@@ -622,10 +622,6 @@ export function updateCruise(formProps) {
     fields.cruise_location = '';
   }
 
-  if(formProps.cruise_pi) {
-    fields.cruise_pi = formProps.cruise_pi;
-  }
-
   if(formProps.cruise_tags) {
     fields.cruise_tags = formProps.cruise_tags;
   } else {
@@ -642,10 +638,6 @@ export function updateCruise(formProps) {
 
   if(typeof(formProps.cruise_hidden) !== "undefined") {
     fields.cruise_hidden = formProps.cruise_hidden;
-  }
-
-  if(formProps.cruise_vessel) {
-    fields.cruise_vessel = formProps.cruise_vessel;
   }
 
   if(formProps.cruise_additional_meta) {
