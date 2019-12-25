@@ -79,7 +79,7 @@ class Cruises extends Component {
     if(fieldVal !== "") {
       this.setState({filteredCruises: this.props.cruises.filter((cruise) => {
         const regex = RegExp(fieldVal, 'i');
-        if(cruise.cruise_id.match(regex) || (cruise.cruise_vessel.match(regex)) || cruise.cruise_pi.match(regex) || cruise.cruise_location.match(regex) || cruise.cruise_tags.includes(fieldVal)) {
+        if(cruise.cruise_id.match(regex) || cruise.cruise_location.match(regex) || cruise.cruise_tags.includes(fieldVal) || cruise.cruise_additional_meta.cruise_vessel.match(regex)  || cruise.cruise_additional_meta.cruise_pi.match(regex)) {
           return cruise;
         }
         else if (cruise.cruise_additional_meta.cruise_departure_location && cruise.cruise_additional_meta.cruise_departure_location.match(regex)) {
@@ -148,8 +148,8 @@ class Cruises extends Component {
 
         let cruiseName = (cruise.cruise_additional_meta.cruise_name)? <span>Name: {cruise.cruise_additional_meta.cruise_name}<br/></span> : null;
         let cruiseLocation = (cruise.cruise_location)? <span>Location: {cruise.cruise_location}<br/></span> : null;
-        let cruiseVessel = (DEFAULT_VESSEL !== cruise.cruise_vessel)? <span>Vessel: {cruise.cruise_vessel}<br/></span> : null;
-        let cruisePi = (cruise.cruise_pi)? <span>PI: {cruise.cruise_pi}<br/></span> : null;
+        let cruiseVessel = (DEFAULT_VESSEL !== cruise.cruise_additional_meta.cruise_vessel)? <span>Vessel: {cruise.cruise_additional_meta.cruise_vessel}<br/></span> : null;
+        let cruisePi = (cruise.cruise_additional_meta.cruise_pi)? <span>PI: {cruise.cruise_additional_meta.cruise_pi}<br/></span> : null;
 
         return (
           <tr key={cruise.id}>
