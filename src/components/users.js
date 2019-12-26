@@ -78,7 +78,7 @@ class Users extends Component {
     this.props.showModal('importUsers');
   }
 
-  handleUserPermissionsModal(id) {
+  handleUserPermissionsModal(user_id) {
     this.props.showModal('userPermissions', { user_id: user_id});
   }
 
