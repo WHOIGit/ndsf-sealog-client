@@ -144,7 +144,7 @@ class EventFilterForm extends Component {
             />
             <div className="float-right">
               <Button variant="secondary" size="sm" disabled={submitting || this.props.disabled} onClick={this.clearForm}>Reset</Button>
-              <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid || this.props.disabled}>Update</Button>
+              <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid || this.props.disabled}>Filter</Button>
             </div>
           </form>
         </Card.Body>
