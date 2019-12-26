@@ -120,7 +120,7 @@ class LoweringReplay extends Component {
   }
 
   handleSliderChange(index) {
-    if(this.props.event.events && this.props.event.events.length > index) {
+    if(this.props.event.events && this.props.event.events[index]) {
       this.handleLoweringReplayPause();
       this.setState({replayEventIndex: index});
       this.props.advanceLoweringReplayTo(this.props.event.events[index].id);

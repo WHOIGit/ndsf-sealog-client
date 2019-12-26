@@ -211,7 +211,7 @@ class LoweringMap extends Component {
   }
 
   handleSliderChange(index) {
-    if(this.props.event.events && this.props.event.events.length > index) {
+    if(this.props.event.events && this.props.event.events[index]) {
       this.setState({replayEventIndex: index});
       this.props.advanceLoweringReplayTo(this.props.event.events[index].id);
       this.setState({activePage: Math.ceil((index+1)/maxEventsPerPage)});

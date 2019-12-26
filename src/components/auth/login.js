@@ -4,7 +4,7 @@ import { reduxForm, Field } from 'redux-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Row, Col, Container, Form, Card, Button, Image } from 'react-bootstrap';
+import { Alert, Row, Col, Container, Form, Card, Button, Image } from 'react-bootstrap';
 import { renderAlert, renderTextField } from '../form_elements';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as mapDispatchToProps from '../../actions';
