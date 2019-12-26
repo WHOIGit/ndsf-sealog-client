@@ -236,7 +236,7 @@ class UserPermissionsModal extends Component {
               id={`lowering_${lowering.id}`}
               label={`${lowering.lowering_id}${(lowering.lowering_location) ? ': ' + lowering.lowering_location : ''}`}
               checked={(lowering.lowering_access_list && lowering.lowering_access_list.includes(user_id))}
-              disabled={!(cruise.cruise_access_list && cruise.cruise_access_list.includes(id))}
+              disabled={!(cruise.cruise_access_list && cruise.cruise_access_list.includes(user_id))}
               onChange={ (e) => { this.updateLoweringPermissions(lowering.id, user_id, e.target.checked) }}
             />);
           })
