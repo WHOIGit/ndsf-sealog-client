@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { ListGroup, Card, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Button, ListGroup, Card, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import * as mapDispatchToProps from '../actions';
 import { Client } from '@hapi/nes/lib/client';
 import { WS_ROOT_URL } from '../client_config';
@@ -14,6 +14,7 @@ class EventHistory extends Component {
     super(props);
 
     this.state = {
+      page: 0,
       hideASNAP: true,
       showEventHistory: true,
       showEventHistoryFullscreen: false
@@ -27,6 +28,12 @@ class EventHistory extends Component {
     this.props.fetchEventHistory();
     if(this.props.authenticated) {
       this.connectToWS();
+    }
+  }
+
+  componentDidUpdate(prevState) {
+    if(prevState.page !== this.state.page) {
+      this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page);      
     }
   }
 
@@ -52,14 +59,13 @@ class EventHistory extends Component {
       // })
 
       const updateHandler = (update, flags) => {
-        console.log("update:", update);
         if(!(this.state.hideASNAP && update.event_value === "ASNAP")) {
           this.props.updateEventHistory(update);
         }
       };
 
       const deleteHandler = (update, flags) => {
-        this.props.fetchEventHistory(!this.state.hideASNAP);
+        this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page);
       };
 
       this.client.subscribe('/ws/status/newEvents', updateHandler);
@@ -148,8 +154,19 @@ class EventHistory extends Component {
 
   toggleASNAP() {
     this.setState( prevState => ({hideASNAP: !prevState.hideASNAP}));
-    this.props.fetchEventHistory(this.state.hideASNAP);
+    this.props.fetchEventHistory(this.state.hideASNAP, this.state.page);
   }
+
+  incrementPage() {
+    this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page+1);
+    this.setState( prevState => ({page: prevState.page+1}));
+  }
+
+  decrementPage() {
+    this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page-1);
+    this.setState( prevState => ({page: prevState.page-1}));
+  }
+
 
   renderEventHistory() {
 
@@ -179,15 +196,15 @@ class EventHistory extends Component {
         } 
 
         let eventOptions = (eventOptionsArray.length > 0)? '--> ' + eventOptionsArray.join(', '): '';
-        let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(event)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(event)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon className="text-secondary" icon='plus' fixedWidth inverse transform="shrink-4"/></span>;
+        let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(event)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(event)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon inverse icon='plus' fixedWidth transform="shrink-4"/></span>;
         let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
 
-        eventArray.push(<ListGroup.Item className="event-list-item" eventKey={event.id} key={event.id}><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{commentTooltip}</span></ListGroup.Item>);
+        eventArray.push(<ListGroup.Item className="event-list-item" key={event.id} ><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{commentTooltip}</span></ListGroup.Item>);
       }
       return eventArray;
     }
 
-    return (<ListGroup.Item eventKey="emptyHistory" key="emptyHistory" >No events found</ListGroup.Item>);
+    return (<ListGroup.Item className="event-list-item" key="emptyHistory" >No events found</ListGroup.Item>);
   }
 
   render() {
@@ -209,6 +226,10 @@ class EventHistory extends Component {
             <ListGroup ref={eventHistoryRef}>
               {this.renderEventHistory()}
             </ListGroup>
+            <Card.Footer>
+              {<Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>}
+              <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
+            </Card.Footer>
           </Card>
         );
       }
@@ -219,6 +240,10 @@ class EventHistory extends Component {
           <ListGroup className="eventHistory" ref={eventHistoryRef}>
             {this.renderEventHistory()}
           </ListGroup>
+          <Card.Footer>
+            {<Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>}
+            <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
+          </Card.Footer>
         </Card>
       );
     }

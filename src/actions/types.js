@@ -28,6 +28,7 @@ export const UPDATE_USER_ERROR = 'update_user_error';
 export const LEAVE_UPDATE_USER_FORM = 'leave_update_user_form';
 
 export const FETCH_USERS = 'fetch_users';
+export const DELETE_USER = 'destory_user';
 
 export const FETCH_EVENT_TEMPLATES_FOR_MAIN = 'fetch_event_templates_for_main';
 export const UPDATE_EVENT_TEMPLATE_CATEGORY = 'update_evebt_template_category';
@@ -39,23 +40,6 @@ export const FETCH_FILTERED_EVENTS = 'fetch_filtered_events';
 
 export const FETCH_EVENT_HISTORY = 'fetch_event_history';
 export const UPDATE_EVENT_HISTORY = 'update_event_history';
-
-export const DELETE_USER = 'destory_user';
-
-// export const INIT_EVENT_EXPORT_TEMPLATE = 'init_event_export_template';
-// export const UPDATE_EVENT_EXPORT_TEMPLATE = 'update_event_export_template';
-// export const UPDATE_EVENT_EXPORT_TEMPLATE_SUCCESS = 'update_event_export_template_success';
-// export const UPDATE_EVENT_EXPORT_TEMPLATE_ERROR = 'update_event_export_template_error';
-// export const LEAVE_UPDATE_EVENT_EXPORT_TEMPLATE_FORM = 'leave_update_event_export_template_form';
-
-// export const CREATE_EVENT_EXPORT_TEMPLATE = 'create_event_export_template';
-// export const CREATE_EVENT_EXPORT_TEMPLATE_SUCCESS = 'create_event_export_template_success';
-// export const CREATE_EVENT_EXPORT_TEMPLATE_ERROR = 'create_event_export_template_error';
-// export const LEAVE_CREATE_EVENT_EXPORT_TEMPLATE_FORM = 'leave_create_event_export_template_form';
-
-// export const FETCH_EVENT_EXPORT_TEMPLATES = 'fetch_event_export_templates';
-
-// export const DELETE_EVENT_EXPORT_TEMPLATE = 'destory_event_export_template';
 
 export const INIT_EVENT_TEMPLATE = 'init_event_template';
 export const UPDATE_EVENT_TEMPLATE = 'update_event_template';
@@ -103,7 +87,3 @@ export const CREATE_LOWERING_SUCCESS = 'create_lowering_success';
 export const CREATE_LOWERING_ERROR = 'create_lowering_error';
 export const LEAVE_CREATE_LOWERING_FORM = 'leave_create_lowering_form';
 export const FETCH_LOWERINGS = 'fetch_lowerings';
-
-export const INIT_LOWERING_REPLAY = 'init_lowering_replay';
-export const LOWERING_REPLAY_ADVANCE = 'lowering_replay_advance';
-export const LOWERING_REPLAY_REVERSE = 'lowering_replay_reverse';
