@@ -1248,9 +1248,11 @@ export function clearEvents() {
   };
 }
 
-export function fetchEventHistory(asnap = false) {
+export function fetchEventHistory(asnap=false, page=0) {
 
-  let url = API_ROOT_URL + '/api/v1/events?sort=newest&limit=20';
+  const eventsPerPage = 20;
+
+  let url = `${API_ROOT_URL}/api/v1/events?sort=newest&limit=${eventsPerPage}&offset=${eventsPerPage*page}`;
   if(!asnap) {
     url = url + '&value=!ASNAP';
   }
@@ -1268,7 +1270,6 @@ export function fetchEventHistory(asnap = false) {
     });
   };
 }
-
 
 export function fetchEventTemplates() {
 
