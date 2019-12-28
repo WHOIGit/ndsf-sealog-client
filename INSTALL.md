@@ -2,13 +2,13 @@
 
 ### Prerequisites
 
- - [sealog-server v1.0.0+](https://github.com/oceandatatools/sealog-server)
+ - [sealog-server v1.0.8+](https://github.com/oceandatatools/sealog-server)
  - [nodeJS v8.11.0+](https://nodejs.org)
  - [npm](https://www.npmjs.com)
  - [git](https://git-scm.com)
  
 #### Installing NodeJS/npm on Ubuntu 16.04LTS
-The standard Ubuntu repositories for Ubuntu 16.04 only provide install packages for NodeJS v4.  Sealog-client-jason (and Sealog-Server-Jason) require nodeJS >= v8.11
+The standard Ubuntu repositories for Ubuntu 16.04 only provide install packages for NodeJS v4.  Sealog-client-vehicle (and Sealog-Server) require nodeJS >= v8.11
  
 To install nodeJS v8.11 on Ubuntu 16.04LTS run the following commands:
  ```
