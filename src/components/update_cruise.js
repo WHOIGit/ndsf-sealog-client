@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
-import { Button, Card, Form, Tooltip, OverlayTrigger} from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 import { renderAlert, renderDatePicker, renderMessage, renderTextField, renderTextArea, dateFormat } from './form_elements';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import FileDownload from 'js-file-download';
 
 import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 
+import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import { API_ROOT_URL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
@@ -127,24 +127,6 @@ class UpdateCruise extends Component {
     });
   }
 
-
-  copyToClipboard() {
-    if(this.props.cruise.cruise_id) {
-      return  (
-`Cruise:          ${this.props.cruise.cruise_id}
-Name:            ${(this.props.cruise.cruise_additional_meta.cruise_name) ? this.props.cruise.cruise_additional_meta.cruise_name : ""}
-Chief Scientist: ${this.props.cruise.cruise_additional_meta.cruise_pi}
-Vessel:          ${this.props.cruise.cruise_additional_meta.cruise_vessel}
-Location:        ${this.props.cruise.cruise_location}\n
-Description:     ${(this.props.cruise.cruise_additional_meta.cruise_description) ? this.props.cruise.cruise_additional_meta.cruise_description : ""}\n
-Departure Port:  ${this.props.cruise.cruise_additional_meta.cruise_departure_location}
-Start of Cruise: ${moment.utc(this.props.cruise.start_ts).format(dateFormat)}\n
-Arrival Port:    ${this.props.cruise.cruise_additional_meta.cruise_arrival_location}
-End of Cruise:   ${moment.utc(this.props.cruise.stop_ts).format(dateFormat)}\n`
-      )
-    }
-  }
-
   renderFiles() {
     if(this.props.cruise.cruise_additional_meta && this.props.cruise.cruise_additional_meta.cruise_files && this.props.cruise.cruise_additional_meta.cruise_files.length > 0) {
       let files = this.props.cruise.cruise_additional_meta.cruise_files.map((file, index) => {
@@ -158,7 +140,7 @@ End of Cruise:   ${moment.utc(this.props.cruise.stop_ts).format(dateFormat)}\n`
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const updateCruiseFormHeader = (<div>Update Cruise<span className="float-right"><OverlayTrigger placement="top" overlay={<Tooltip id="copyToClipboardTooltip">Copy Cruise to Clipboard</Tooltip>}><CopyToClipboard text={this.copyToClipboard()} ><FontAwesomeIcon icon='clipboard' fixedWidth /></CopyToClipboard></OverlayTrigger></span></div>);
+    const updateCruiseFormHeader = (<div>Update Cruise<span className="float-right"><CopyCruiseToClipboard cruise={this.props.cruise}/></span></div>);
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 

@@ -522,7 +522,7 @@ export function createEventTemplate(formProps) {
         event_option.event_option_values = event_option.event_option_values.map(string => {
           return string.trim();
         });
-      } else if (event_option.event_option_type === 'text') {
+      } else if (event_option.event_option_type === 'text' || event_option.event_option_type === 'static text') {
         event_option.event_option_values = [];
       }
 
@@ -836,7 +836,7 @@ export function updateEventTemplate(formProps) {
         event_option.event_option_values = event_option.event_option_values.map(string => {
           return string.trim();
         });
-      } else if (event_option.event_option_type === 'text') {
+      } else if (event_option.event_option_type === 'text' || event_option.event_option_type === 'static text') {
         event_option.event_option_values = [];
       }
 

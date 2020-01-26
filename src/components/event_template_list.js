@@ -24,10 +24,27 @@ class EventTemplateList extends Component {
 
   async handleEventSubmit(event_template) {
 
-    let event = await this.props.createEvent(event_template.event_value, '', []);
 
-    if( event_template.event_options.length > 0 || event_template.event_free_text_required ) {
+    const needs_modal = event_template.event_options.reduce((needs, option) => {
+      return (option.event_option_type !== 'static text') ? true : needs;
+    }, false);
+
+    if( event_template.event_free_text_required || needs_modal ) {
+
+      const event = await this.props.createEvent(event_template.event_value, '', []);
+
       this.props.showModal('eventOptions', { eventTemplate: event_template, event: event, handleUpdateEvent: this.props.updateEvent, handleDeleteEvent: this.props.deleteEvent });
+
+    } else {
+      const event_options = event_template.event_options.reduce((eventOptions, option) => {
+
+        eventOptions.push({ event_option_name: option.event_option_name, event_option_value: option.event_option_default_value });
+      
+        return eventOptions;
+      
+      }, []);
+
+      const event = await this.props.createEvent(event_template.event_value, '', event_options);
     }
   }
 
@@ -36,7 +53,7 @@ class EventTemplateList extends Component {
     const template_categories = [...new Set(this.props.event_templates.reduce(function (flat, event_template) {
         return flat.concat(event_template.template_categories);
       }, [])
-    )]
+    )].sort();
 
     if(this.props.event_templates){
       if(template_categories.length > 0) {

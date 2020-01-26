@@ -7,6 +7,8 @@ import momentDurationFormatSetup from 'moment-duration-format';
 import { connect } from 'react-redux';
 import { Accordion, Row, Col, Card } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
+import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
+import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import { API_ROOT_URL, MAIN_SCREEN_TXT, DEFAULT_VESSEL } from '../client_config';
 
 import * as mapDispatchToProps from '../actions';
@@ -182,23 +184,42 @@ class CruiseMenu extends Component {
 
     if(this.state.activeLowering){
       let loweringStartTime = moment.utc(this.state.activeLowering.start_ts);
-      let loweringEndTime = moment.utc(this.state.activeLowering.stop_ts);
-      let loweringDurationValue = loweringEndTime.diff(loweringStartTime);
+      let loweringOnBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
+      let loweringOffBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
+      let loweringStopTime = moment.utc(this.state.activeLowering.stop_ts);
+
+      let loweringDurationValue = loweringStopTime.diff(loweringStartTime);
+      let decentDurationValue = (loweringOnBottomTime) ? loweringOnBottomTime.diff(loweringStartTime) : null;
+      let onBottomDurationValue = (loweringOnBottomTime && loweringOffBottomTime) ? loweringOffBottomTime.diff(loweringOnBottomTime) : null;
+      let ascentDurationValue = (loweringOffBottomTime) ? loweringStopTime.diff(loweringOffBottomTime) : null;
+
 
       let loweringDescription = (this.state.activeLowering.lowering_additional_meta.lowering_description)? <span><strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}<br/></span> : null;
       let loweringLocation = (this.state.activeLowering.lowering_location)? <span><strong>Location:</strong> {this.state.activeLowering.lowering_location}<br/></span> : null;
       let loweringStarted = <span><strong>Started:</strong> {loweringStartTime.format("YYYY-MM-DD HH:mm")}<br/></span>;
       let loweringDuration = <span><strong>Duration:</strong> {moment.duration(loweringDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span>;
+      let loweringDescentDuration = (decentDurationValue) ? <span><strong>Descent:</strong> {moment.duration(decentDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
+      let loweringOnBottomDuration = (onBottomDurationValue) ? <span><strong>On Bottom:</strong> {moment.duration(onBottomDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
+      let loweringAscentDuration = (ascentDurationValue) ? <span><strong>Ascent:</strong> {moment.duration(ascentDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
+
+      let loweringMaxDepth = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.max_depth)? <span><strong>Max Depth:</strong> {this.state.activeLowering.lowering_additional_meta.stats.max_depth}<br/></span>: null;
+      let loweringBoundingBox = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.bounding_box)? <span><strong>Bounding Box:</strong> {this.state.activeLowering.lowering_additional_meta.stats.bounding_box.join(', ')}<br/></span>: null;
+
       let loweringFiles = (this.state.activeLowering.lowering_additional_meta.lowering_files && this.state.activeLowering.lowering_additional_meta.lowering_files.length > 0)? <span><strong>Files:</strong><br/>{this.renderLoweringFiles(this.state.activeLowering.id, this.state.activeLowering.lowering_additional_meta.lowering_files)}</span>: null;
 
       return (          
         <Card key={`lowering_card`}>
-          <Card.Header>Lowering: <span className="text-warning">{this.state.activeLowering.lowering_id}</span></Card.Header>
+          <Card.Header>Lowering: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
           <Card.Body>
             {loweringDescription}
             {loweringLocation}
             {loweringStarted}
             {loweringDuration}
+            {loweringDescentDuration}
+            {loweringOnBottomDuration}
+            {loweringAscentDuration}
+            {loweringMaxDepth}
+            {loweringBoundingBox}
             {loweringFiles}
             <br/>
             <Row>
@@ -225,6 +246,10 @@ class CruiseMenu extends Component {
 
     if(this.state.activeCruise) {
 
+      let cruiseStartTime = moment.utc(this.state.activeCruise.start_ts);
+      let cruiseStopTime = moment.utc(this.state.activeCruise.stop_ts);
+      let cruiseDurationValue = cruiseStopTime.diff(cruiseStartTime);
+
       let cruiseFiles = (this.state.activeCruise.cruise_additional_meta.cruise_files && this.state.activeCruise.cruise_additional_meta.cruise_files.length > 0)? this.renderCruiseFiles(this.state.activeCruise.id, this.state.activeCruise.cruise_additional_meta.cruise_files): null;
 
       let cruiseName = (this.state.activeCruise.cruise_additional_meta.cruise_name)? <span><strong>Cruise Name:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_name}<br/></span> : null;
@@ -232,10 +257,12 @@ class CruiseMenu extends Component {
       let cruiseVessel = <span><strong>Vessel:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_vessel}<br/></span>;
       let cruiseLocation = (this.state.activeCruise.cruise_location)? <span><strong>Location:</strong> {this.state.activeCruise.cruise_location}<br/></span> : null;
       let cruisePorts = (this.state.activeCruise.cruise_additional_meta.cruise_departure_location)? <span><strong>Ports:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_departure_location} <FontAwesomeIcon icon='arrow-right' fixedWidth /> {this.state.activeCruise.cruise_additional_meta.cruise_arrival_location}<br/></span> : null;
-      let cruiseDates = <span><strong>Dates:</strong> {moment.utc(this.state.activeCruise.start_ts).format("YYYY/MM/DD")} <FontAwesomeIcon icon='arrow-right' fixedWidth /> {moment.utc(this.state.activeCruise.stop_ts).format("YYYY/MM/DD")}<br/></span>;
+      let cruiseDates = <span><strong>Dates:</strong> {cruiseStartTime.format("YYYY/MM/DD")} <FontAwesomeIcon icon='arrow-right' fixedWidth /> {cruiseStopTime.format("YYYY/MM/DD")}<br/></span>;
       let cruisePi = <span><strong>Chief Scientist:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_pi}<br/></span>;
-      let cruiseLowerings = this.props.lowerings.filter(lowering => moment.utc(lowering.start_ts).isBetween(moment.utc(this.state.activeCruise.start_ts), moment.utc(this.state.activeCruise.stop_ts)));
+      let cruiseLowerings = this.props.lowerings.filter(lowering => moment.utc(lowering.start_ts).isBetween(cruiseStartTime, cruiseStopTime));
       // let cruiseLinkToR2R = (this.state.activeCruise.cruise_additional_meta.cruise_linkToR2R)? <span><strong>R2R Cruise Link :</strong> <a href={`${this.state.activeCruise.cruise_additional_meta.cruise_linkToR2R}`} target="_blank"><FontAwesomeIcon icon='link' fixedWidth/></a><br/></span> : null
+
+      let cruiseDuration = <span><strong>Duration:</strong> {moment.duration(cruiseDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span>;
 
       let lowerings = (cruiseLowerings.length > 0)? (
         <ul>
@@ -252,15 +279,16 @@ class CruiseMenu extends Component {
 
       return (          
         <Card key={`cruise_${this.state.activeCruise.cruise_id}`}>
-          <Card.Header>Cruise: <span className="text-warning">{this.state.activeCruise.cruise_id}</span></Card.Header>
+          <Card.Header>Cruise: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
           <Card.Body>
             {cruiseName}
             {cruisePi}
             {cruiseDescription}
             {cruiseVessel}
             {cruiseLocation}
-            {cruisePorts}
             {cruiseDates}
+            {cruisePorts}
+            {cruiseDuration}
             {cruiseFiles}
             {
               (cruiseLowerings && cruiseLowerings.length > 0)? (

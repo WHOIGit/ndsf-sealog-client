@@ -93,7 +93,7 @@ class UpdateLoweringStatsForm extends Component {
 
   render() {
 
-    const { handleSubmit, submitting, valid } = this.props;
+    const { handleSubmit, submitting, valid, pristine } = this.props;
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
@@ -231,7 +231,7 @@ class UpdateLoweringStatsForm extends Component {
                 <Col xs={12}>
                   <div className="float-right">
                     <Button variant="secondary" size="sm" onClick={this.props.handleHide}>Cancel</Button>
-                    <Button variant="warning" size="sm" type="submit" disabled={submitting || !valid}>Done</Button>
+                    <Button variant="warning" size="sm" type="submit" disabled={pristine || submitting || !valid}>Done</Button>
                   </div>
                 </Col>
               </Row>
@@ -264,21 +264,24 @@ function validate(formProps) {
   }
 
   if ((formProps.start !== '') && (formProps.stop !== '')) {
-    if(moment(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment(formProps.start, dateFormat + " " + timeFormat))) {
-      errors.stop = 'Stop date must be later than start data'
+    if(moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
+      errors.stop = 'Stop date must be later than start date'
     }
   }
 
-  if ((formProps.on_bottom === '') && (formProps.off_bottom !== '')) {
-    errors.on_bottom = 'Required if Off Bottom specified'
-  } else if ((formProps.on_bottom !== '') && !moment.utc(formProps.on_bottom).isValid()) {
-    errors.on_bottom = 'Invalid timestamp'
+  if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat))) {
+    errors.off_bottom = 'Off bottom date must be before stop date';
   }
 
-  if ((formProps.off_bottom === '') && (formProps.on_bottom !== '')) {
-    errors.off_bottom = 'Required if On Bottom specified'
-  } else if ((formProps.off_bottom !== '') && !moment.utc(formProps.off_bottom).isValid()) {
-    errors.off_bottom = 'Invalid timestamp'
+  if(formProps.on_bottom && formProps.on_bottom !== '' && moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
+    errors.on_bottom = 'On bottom date must be after start date';
+  }
+
+  if (formProps.on_bottom && formProps.on_bottom !== '' && formProps.off_bottom && formProps.off_bottom !== '') {
+    if(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {
+      errors.on_bottom = 'Off bottom date must be later than on bottom date';
+      errors.off_bottom = 'Off bottom date must be later than on bottom date';
+    }
   }
 
   if (!(formProps.max_depth >= 0)) {

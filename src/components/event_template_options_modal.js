@@ -4,7 +4,7 @@ import { connectModal } from 'redux-modal';
 import { reduxForm, Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { renderCheckboxGroup, renderDateTimePicker, renderSelectField, renderTextArea, renderTextField } from './form_elements';
+import { renderCheckboxGroup, renderDateTimePicker, renderSelectField, renderStaticTextField, renderTextArea, renderTextField } from './form_elements';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { API_ROOT_URL } from '../client_config';
 
@@ -157,6 +157,18 @@ class EventTemplateOptionsModal extends Component {
               label={option.event_option_name}
               required={ option.event_option_required }
               validate={ option.event_option_required ? required : undefined }
+              lg={12}
+              sm={12}
+            />
+          </div>
+        )
+      } else if (option.event_option_type === 'static text') {
+        return (
+          <div key={`option_${index}`}>
+            <Field
+              name={`option_${index}`}
+              component={renderStaticTextField}
+              label={option.event_option_name}
               lg={12}
               sm={12}
             />
