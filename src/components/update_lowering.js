@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
-import { Button, Card, Form, Tooltip, OverlayTrigger} from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 import { renderAlert, renderDateTimePicker, renderMessage, renderTextField, renderTextArea } from './form_elements';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import FileDownload from 'js-file-download';
 
 import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 
+import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import { API_ROOT_URL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
@@ -136,7 +136,7 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const updateLoweringFormHeader = (<div>Update Lowering<span className="float-right"><OverlayTrigger placement="top" overlay={<Tooltip id="copyToClipboardTooltip">Copy Lowering to Clipboard</Tooltip>}><CopyToClipboard text={this.copyToClipboard()} ><FontAwesomeIcon icon='clipboard' fixedWidth /></CopyToClipboard></OverlayTrigger></span></div>);
+    const updateLoweringFormHeader = (<div>Update Lowering<span className="float-right"><CopyLoweringToClipboard lowering={this.props.lowering}/></span></div>);
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 

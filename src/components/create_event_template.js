@@ -42,7 +42,20 @@ class CreateEventTemplate extends Component {
   }
 
   renderOptionOptions(prefix, index) {
-    if(this.props.event_options[index].event_option_type === 'text') {
+    if(this.props.event_options[index].event_option_type === 'static text') {
+      return (
+        <div>
+          <Field
+            name={`${prefix}.event_option_default_value`}
+            component={renderTextField}
+            label="Value"
+            required={true}
+            lg={12}
+            sm={12}
+          />
+        </div>
+      );
+    } else if(this.props.event_options[index].event_option_type === 'text') {
       return (
         <div>
           <Field

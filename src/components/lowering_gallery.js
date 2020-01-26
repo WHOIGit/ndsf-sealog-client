@@ -63,7 +63,7 @@ class LoweringGallery extends Component {
             image_data[data.data_array[i].data_value] = { images: [] };
           }
 
-          image_data[data.data_array[i].data_value].images.unshift({ event_id: data.event_id, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(data.data_array[i+1].data_value) });
+          image_data[data.data_array[i].data_value].images.push({ event_id: data.event_id, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(data.data_array[i+1].data_value) });
         }
       });
 

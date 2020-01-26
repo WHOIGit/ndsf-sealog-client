@@ -6,6 +6,18 @@ import moment from 'moment';
 export const dateFormat = "YYYY-MM-DD";
 export const timeFormat = "HH:mm:ss";
 
+export function renderStaticTextField({ input, label, xs=12, sm=6, md=12, lg=6}) {
+  
+  const labelComponent = (label)? <Form.Label>{label}</Form.Label> : null;
+
+  return (
+    <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
+      {labelComponent}
+      <Form.Control type="text" {...input} disabled />
+    </Form.Group>
+  );
+}
+
 export function renderTextField({ input, label, placeholder, required, meta: { touched, error }, type="text", disabled=false, xs=12, sm=6, md=12, lg=6}) {
   const requiredField = (required)? <span className='text-danger'> *</span> : '';
   const labelComponent = (label)? <Form.Label>{label}{requiredField}</Form.Label> : null;
@@ -13,7 +25,7 @@ export function renderTextField({ input, label, placeholder, required, meta: { t
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       {labelComponent}
-      <Form.Control type={type} {...input} placeholder={placeholder} isInvalid={touched && error} />
+      <Form.Control type={type} {...input} placeholder={placeholder} isInvalid={touched && error} disabled={disabled} />
       <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
     </Form.Group>
   );

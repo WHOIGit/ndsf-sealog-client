@@ -14,7 +14,7 @@ For installation instruction please look at [INSTALL.md](./INSTALL.md)
 - admin account for demo: admin:demo
 
 # Current Users
-Sealog-Vehicle is currently in-use with the JASON ROV, the Alvin HOV and by the University of Rhode Islands Inner Space Center for shoreside event logging of the NOAA Ship Okeanos Explorer and E/V Nautilus.
+Sealog-Vehicle is currently in-use with the JASON ROV (WHOI), the Alvin HOV (WHOI), the Subastian ROV (SOI) and by the University of Rhode Islands Inner Space Center for shoreside event logging of the NOAA Ship Okeanos Explorer and E/V Nautilus.
 
 # Thanks and acknowledgments
 Sealog is in ongoing development thanks to the generosity of the Schmidt Ocean Institute (SOI) who have supported the project since 2018. Thanks also to the Woods Hole Oceanographic Institution (WHOI) who provided the initial inspiration for the project and are it's first users.
