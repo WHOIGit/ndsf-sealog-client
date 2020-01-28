@@ -167,6 +167,10 @@ class EventHistory extends Component {
     this.setState( prevState => ({page: prevState.page-1}));
   }
 
+  firstPage() {
+    this.props.fetchEventHistory(!this.state.hideASNAP, 0);
+    this.setState({page: 0});
+  }
 
   renderEventHistory() {
 
@@ -227,7 +231,8 @@ class EventHistory extends Component {
               {this.renderEventHistory()}
             </ListGroup>
             <Card.Footer>
-              {<Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>}
+              <Button size={"sm"} variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
+              <Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
               <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
             </Card.Footer>
           </Card>
@@ -241,7 +246,8 @@ class EventHistory extends Component {
             {this.renderEventHistory()}
           </ListGroup>
           <Card.Footer>
-            {<Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>}
+            <Button size={"sm"} variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
+            <Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
             <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
           </Card.Footer>
         </Card>

@@ -34,10 +34,7 @@ class UpdateLoweringStatsForm extends Component {
       bbox_north: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[0] : null,
       bbox_east: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[1] : null,
       bbox_south: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[2] : null,
-      bbox_west: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[3] : null,
-      origin_lat: (this.props.stats.dive_origin.length == 3) ? this.props.stats.dive_origin[0] : null,
-      origin_lng: (this.props.stats.dive_origin.length == 3) ? this.props.stats.dive_origin[1] : null,
-      origin_utm: (this.props.stats.dive_origin.length == 3) ? this.props.stats.dive_origin[2] : null,
+      bbox_west: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[3] : null
     }
 
     this.props.initialize(initialValues);
@@ -64,13 +61,6 @@ class UpdateLoweringStatsForm extends Component {
     }
     else {
       stats.bounding_box=[formProps.bbox_north, formProps.bbox_east, formProps.bbox_south, formProps.bbox_west]
-    }
-
-    if((formProps.origin_lat == null || formProps.origin_lat == "") || (formProps.origin_lng == null || formProps.origin_lng == "") || (formProps.origin_utm == null || formProps.origin_utm == "")) {
-      stats.dive_origin=[]
-    }
-    else {
-      stats.dive_origin=[formProps.origin_lat, formProps.origin_lng, formProps.origin_utm]
     }
 
     this.props.handleFormSubmit(milestones, stats)
@@ -191,40 +181,6 @@ class UpdateLoweringStatsForm extends Component {
                       />
                     </Col>
                   </Row>
-                  <Row>
-                    <Col xs={12}>
-                      <span>Origin:</span>
-                    </Col>
-                    <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
-                      <Field
-                        name="origin_lat"
-                        component={renderTextField}
-                        label="Latitude"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                    <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
-                      <Field
-                        name="origin_lng"
-                        component={renderTextField}
-                        label="Longitude"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                    <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
-                      <Field
-                        name="origin_utm"
-                        component={renderTextField}
-                        label="UTM Zone"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
                 </Col>
               </Row>
               <Row>
@@ -302,22 +258,6 @@ function validate(formProps) {
 
   if (!(formProps.bbox_west >= -180 && formProps.bbox_west <= 180)) {
     errors.bbox_west = 'Must be a number between +/- 180'
-  }
-
-  if (!(formProps.origin_lat >= -60 && formProps.origin_lat <= 60)) {
-    errors.origin_lat = 'Must be a number between +/- 60'
-  }
-
-  if (!(formProps.origin_lng >= -180 && formProps.origin_lng <= 180)) {
-    errors.origin_lng = 'Must be a number between +/- 180'
-  }
-
-  if (!(formProps.origin_lng >= -180 && formProps.origin_lng <= 180)) {
-    errors.origin_lng = 'Must be a number between +/- 180'
-  }
-
-  if (!(formProps.origin_utm >= 0 && formProps.origin_utm <= 60)) {
-    errors.origin_utm = 'Must be a number between 0 and 60'
   }
 
   return errors;
