@@ -62,9 +62,6 @@ class CopyLoweringToClipboard extends Component {
       text += '\n';
       text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? `Max Depth:     ${this.props.lowering.lowering_additional_meta.stats.max_depth}\n` : "";
       text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? `Bounding Box:  ${this.props.lowering.lowering_additional_meta.stats.bounding_box.join(', ')}\n` : "";
-      text += '\n';
-      text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.dive_origin.length >= 2) ? `Dive Origin:   ${this.props.lowering.lowering_additional_meta.stats.dive_origin[0]}, ${this.props.lowering.lowering_additional_meta.stats.dive_origin[1]}\n` : "";
-      text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.dive_origin.length == 3) ? `Dive UTM Zone: ${this.props.lowering.lowering_additional_meta.stats.dive_origin[2]}\n` : "";
 
       this.setState({text});
     }

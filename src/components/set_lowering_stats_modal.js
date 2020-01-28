@@ -60,8 +60,7 @@ class SetLoweringStatsModal extends Component {
       },
       stats: {
         max_depth: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? this.props.lowering.lowering_additional_meta.stats.max_depth : null,
-        bounding_box: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? this.props.lowering.lowering_additional_meta.stats.bounding_box : [],
-        dive_origin: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.dive_origin) ? this.props.lowering.lowering_additional_meta.stats.dive_origin : [],
+        bounding_box: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? this.props.lowering.lowering_additional_meta.stats.bounding_box : []
       },
       touched: false,
       depthChartOptions: {
@@ -137,11 +136,20 @@ class SetLoweringStatsModal extends Component {
   };
 
   componentDidMount() {
-    this.initEvents(this.props.lowering.id)
-    this.initLoweringTrackline(this.props.lowering.id)
+    this.initEvents(this.props.lowering.id);
+    this.initLoweringTrackline(this.props.lowering.id);
+    this.setPlotLines();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.milestones !== prevState.milestones) {
+      this.setPlotLines();
+    }
+
+    if(this.state.milestone_to_edit !== prevState.milestone_to_edit) {
+      this.setPlotLines();
+    }
+
   }
 
   componentWillUnmount() {
@@ -205,7 +213,7 @@ class SetLoweringStatsModal extends Component {
     })
 
     if(tracklines.vehicleRealtimeNavData) {
-      this.setState((prevState) => { return { events: events, tracklines: tracklines, fetching: false, depthChartOptions: Object.assign(prevState.depthChartOptions, { series: [ { data: tracklines.vehicleRealtimeNavData.depth } ] }) } });
+      this.setState((prevState) => { return { events: events, tracklines: tracklines, fetching: false, depthChartOptions: { ...prevState.depthChartOptions, series: [ { data: tracklines.vehicleRealtimeNavData.depth } ] } } });
     }
     else {
       this.setState({ events: events, tracklines: tracklines, fetching: false }); 
@@ -235,7 +243,7 @@ class SetLoweringStatsModal extends Component {
   handleCalculateBoundingBox() {
     if(this.state.tracklines.vehicleRealtimeNavData && !this.state.tracklines.vehicleRealtimeNavData.polyline.isEmpty()) {
       let lowering_bounds = this.state.tracklines.vehicleRealtimeNavData.polyline.getBounds()
-      this.setState((prevState) => { return { touched: true, stats: Object.assign(prevState.stats, { bounding_box: [lowering_bounds.getNorth(),lowering_bounds.getEast(),lowering_bounds.getSouth(),lowering_bounds.getWest()] }) } });
+      this.setState((prevState) => { return { touched: true, stats: { ...prevState.stats, bounding_box: [lowering_bounds.getNorth(),lowering_bounds.getEast(),lowering_bounds.getSouth(),lowering_bounds.getWest()] } } });
     }
   }
 
@@ -247,32 +255,41 @@ class SetLoweringStatsModal extends Component {
         return current_max_depth
       }, 0)
 
-      this.setState((prevState) => { return { touched: true, stats: Object.assign(prevState.stats, { max_depth: maxDepth }) } });
+      this.setState((prevState) => { return { touched: true, stats: { ...prevState.stats, max_depth: maxDepth } } });
       // this.setPlotLines()
     }
   }
 
   handleClick() {
     if(this.state.milestone_to_edit) {
-      this.setState((prevState) => { return { touched: true, milestones: Object.assign(prevState.milestones, { [prevState.milestone_to_edit]: prevState.event.ts }) } });
+      // this.setState((prevState) => { return { touched: true, milestones: Object.assign(prevState.milestones, { [prevState.milestone_to_edit]: prevState.event.ts }) } });
+      this.setState((prevState) => { return { touched: true, milestones: { ...prevState.milestones, [prevState.milestone_to_edit]: prevState.event.ts } } });
       this.setMilestoneToEdit()
     }
   }
 
   handleUpdateLowering() {
-    let loweringRecord = Object.assign({}, this.props.lowering)
-    let loweringMilestones = Object.assign({}, this.state.milestones)
-    let loweringStats = Object.assign({}, this.state.stats)
+    // let loweringRecord = Object.assign({}, this.props.lowering)
+    // let loweringMilestones = Object.assign({}, this.state.milestones)
+    // let loweringStats = Object.assign({}, this.state.stats)
 
-    loweringRecord.start_ts = loweringMilestones.lowering_start
-    loweringRecord.stop_ts = loweringMilestones.lowering_stop
-    delete loweringMilestones.lowering_start
-    delete loweringMilestones.lowering_stop
+    // loweringRecord.start_ts = loweringMilestones.lowering_start
+    // loweringRecord.stop_ts = loweringMilestones.lowering_stop
+    // delete loweringMilestones.lowering_start
+    // delete loweringMilestones.lowering_stop
 
-    loweringRecord.lowering_additional_meta.milestones = loweringMilestones
-    loweringRecord.lowering_additional_meta.stats = loweringStats
+    // loweringRecord.lowering_additional_meta.milestones = loweringMilestones
+    // loweringRecord.lowering_additional_meta.stats = loweringStats
 
-    this.props.handleUpdateLowering(loweringRecord)
+    const newMilestones = { ...this.state.milestones };
+    delete newMilestones.lowering_start;
+    delete newMilestones.lowering_stop;
+
+    const newLoweringAdditionalMeta = { ...this.props.lowering.lowering_additional_meta, milestones: newMilestones, stats: this.state.stats }
+
+    const newLoweringRecord = { ...this.props.lowering, start_ts: this.state.milestones.start_ts, stop_ts: this.state.milestones.stop_ts, lowering_additional_meta: newLoweringAdditionalMeta }
+
+    this.props.handleUpdateLowering(newLoweringRecord)
     this.setState({touched: false})
   }
 
@@ -286,39 +303,43 @@ class SetLoweringStatsModal extends Component {
     }
   }
 
-  // setPlotLines() {
+  setPlotLines() {
 
-  //   // let plotLines = []
+    let xAxis = this.state.depthChartOptions.xAxis
+    xAxis.plotLines = []
 
-  //   let xAxis = this.state.depthChartOptions.xAxis
-  //   xAxis.plotLines = []
+    for (const [key, value] of Object.entries(this.state.milestones)) {
+      if(value) {
+        if(key === this.state.milestone_to_edit) {
+          xAxis.plotLines.push({
+              color: '#FF0000',
+              width: 2,
+              value: moment.utc(value).valueOf()
+          })
+        }
+        else {
+          xAxis.plotLines.push({
+              color: '#CFCFCF',
+              width: 2,
+              value: moment.utc(value).valueOf()
+          })
+        }
+      }
+    }
 
-  //   let milestones = Object.values(this.state.milestones)
-  //   milestones.forEach((milestone) => {
-  //     // propertyName is what you want
-  //     // you can get the value like this: myObject[propertyName]
-  //     if(milestone) {
-  //       xAxis.plotLines.push({
-  //           color: '#000000',
-  //           width: 2,
-  //           value: moment.utc(milestone).valueOf()
-  //       })
-  //     }
-  //   })
+    // if(this.state.stats.max_depth) {
+    //   let maxDepthPair = this.state.tracklines.vehicleRealtimeNavData.depth.find((depth) => depth[1] === this.state.stats.max_depth)
+    //   if(maxDepthPair) {
+    //     xAxis.plotLines.push({
+    //         color: '#F0F0F',
+    //         width: 2,
+    //         value: maxDepthPair[0]
+    //     })
+    //   }
+    // }
 
-  //   if(this.state.stats.max_depth) {
-  //     let maxDepthPair = this.state.tracklines.vehicleRealtimeNavData.depth.find((depth) => depth[1] === this.state.stats.max_depth)
-  //     if(maxDepthPair) {
-  //       xAxis.plotLines.push({
-  //           color: '#FF0000',
-  //           width: 2,
-  //           value: maxDepthPair[0]
-  //       })
-  //     }
-  //   }
-
-  //   this.setState((prevState) => { return { depthChartOptions: Object.assign(prevState.depthChartOptions, { xAxis: xAxis }) } });
-  // }
+    this.setState((prevState) => { return { depthChartOptions: { ...prevState.depthChartOptions, xAxis: xAxis } } });
+  }
 
   clearEvent(){
     this.setState({event: null})
@@ -423,7 +444,6 @@ class SetLoweringStatsModal extends Component {
         <div>
           <span>Max Depth: {this.state.stats.max_depth} <OverlayTrigger placement="top" overlay={<Tooltip id="maxDepthTooltip">Click to calculate max depth from depth data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateMaxDepth() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
           <span>Bounding Box: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
-          <span>Dive Origin: {(this.state.stats.dive_origin) ? this.state.stats.dive_origin.join(", ") : ""}</span><br/>
         </div>
       </Col>]     
 

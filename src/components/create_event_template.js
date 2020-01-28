@@ -23,6 +23,7 @@ class CreateEventTemplate extends Component {
   }
 
   handleFormSubmit(formProps) {
+
     if(typeof formProps.system_template === 'undefined'){
       formProps.system_template = false;
     }
@@ -31,13 +32,15 @@ class CreateEventTemplate extends Component {
       formProps.disabled = false;
     }
 
-    // if(formProps.template_categories) {
-    //   formProps.template_categories = formProps.template_categories.split(',');
-    //   formProps.template_categories = formProps.template_categories.map(string => {
-    //     return string.trim();
-    //   });
-    // }    
+    if(formProps.template_categories) {
+      formProps.template_categories = formProps.template_categories.split(',');
+      formProps.template_categories = formProps.template_categories.map(string => {
+        return string.trim();
+      });
+    }    
 
+    console.log("formProps:", formProps);
+    
     this.props.createEventTemplate(formProps);
   }
 

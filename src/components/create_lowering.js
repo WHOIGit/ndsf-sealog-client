@@ -9,9 +9,20 @@ import * as mapDispatchToProps from '../actions';
 
 class CreateLowering extends Component {
 
+
+  componentDidMount() {
+    this.populateDefaultValues();
+  }
+
   componentWillUnmount() {
     this.props.leaveCreateLoweringForm();
   }
+
+  async populateDefaultValues() {
+    let loweringDefaultValues = { start_ts: moment.utc(), stop_ts: moment.utc().add(1, 'days') };
+    this.props.initialize(loweringDefaultValues);
+  }
+
 
   handleFormSubmit(formProps) {
     formProps.lowering_tags = (formProps.lowering_tags)? formProps.lowering_tags.map(tag => tag.trim()): [];
@@ -119,10 +130,6 @@ function validate(formProps) {
     errors.lowering_id = 'Must be 15 characters or less';
   }
 
-  if (!formProps.lowering_name) {
-    errors.lowering_name = 'Required';
-  }
-
   if (!formProps.start_ts) {
     errors.start_ts = 'Required';
   } else if (!moment.utc(formProps.start_ts).isValid()) {
@@ -149,6 +156,7 @@ function validate(formProps) {
     }
   }
 
+  // console.log('errors:', errors);
   return errors;
 
 }
@@ -172,6 +180,7 @@ export default compose(
     form: 'createLowering',
     enableReinitialize: true,
     validate: validate,
+    keepDirtyOnReinitialize : true,
     onSubmitSuccess: afterSubmit
   })
   )(CreateLowering)
