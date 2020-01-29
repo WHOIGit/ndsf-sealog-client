@@ -4,7 +4,7 @@ import { connectModal } from 'redux-modal';
 import { reduxForm, Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { renderCheckboxGroup, renderDateTimePicker, renderSelectField, renderStaticTextField, renderTextArea, renderTextField } from './form_elements';
+import { renderCheckboxGroup, renderDateTimePicker, renderRadioGroup, renderSelectField, renderStaticTextField, renderTextArea, renderTextField } from './form_elements';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { API_ROOT_URL } from '../client_config';
 
@@ -141,6 +141,30 @@ class EventTemplateOptionsModal extends Component {
               component={renderCheckboxGroup}
               label={option.event_option_name}
               options={optionList}
+              indication={true}
+              inline={true}
+              required={ option.event_option_required }
+              validate={ option.event_option_required ? requiredArray : undefined }
+              lg={12}
+              sm={12}
+            />
+          </div>
+        )
+      } else if (option.event_option_type === 'radio buttons') {
+
+        let optionList = option.event_option_values.map((option_value) => {
+          return { value: option_value, label: option_value }
+        });
+
+        return (
+          <div key={`option_${index}`}>
+            <Field
+              name={`option_${index}`}
+              component={renderRadioGroup}
+              label={option.event_option_name}
+              options={optionList}
+              indication={true}
+              inline={true}
               required={ option.event_option_required }
               validate={ option.event_option_required ? requiredArray : undefined }
               lg={12}
