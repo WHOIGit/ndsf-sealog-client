@@ -93,7 +93,7 @@ export function renderDateTimePicker({ input, label, required, meta: { touched, 
   )
 }
 
-export function renderCheckboxGroup({ label, options, input, required, meta: { dirty, error }, disabled=false }) {
+export function renderCheckboxGroup({ label, options, input, required, meta: { dirty, error }, disabled=false, inline=false, indication=false }) {
 
   const requiredField = (required)? (<span className='text-danger'> *</span>) : '';
   // console.log(options);
@@ -102,12 +102,13 @@ export function renderCheckboxGroup({ label, options, input, required, meta: { d
     const tooltip = (option.description)? (<Tooltip id={`${option.value}_Tooltip`}>{option.description}</Tooltip>) : null
     
     const checkbox = <Form.Check
-      label={option.value}
+      label={(indication && input.value.includes(option.value)) ? <span className="text-warning">{option.value}</span> : option.value }
       name={`${option.label}[${index}]`}
       key={`${label}.${index}`}
       value={option.value}
       checked={input.value.indexOf(option.value) !== -1}
       disabled={disabled}
+      inline={inline}
       onChange={event => {
         const newValue = [...input.value];
         if(event.target.checked) {
@@ -146,6 +147,57 @@ export function renderCheckbox({ input, label, meta: { dirty, error }, disabled=
     </Form.Group>
   );
 }
+
+
+export function renderRadioGroup({ label, options, input, required, meta: { dirty, error }, disabled=false, inline=false, indication=false }) {
+
+  const requiredField = (required)? (<span className='text-danger'> *</span>) : '';
+  // console.log(options);
+  const radioList = options.map((option, index) => {
+
+    const tooltip = (option.description)? (<Tooltip id={`${option.value}_Tooltip`}>{option.description}</Tooltip>) : null
+    
+    const radio = <Form.Check
+      label={(indication && input.value === option.value) ? <span className="text-warning">{option.value}</span> : option.value }
+      name={`${label}`}
+      key={`${label}.${index}`}
+      value={option.value}
+      checked={input.value === option.value}
+      disabled={disabled}
+      type="radio"
+      inline={inline}
+      onChange={event => {
+        return input.onChange(option.value);
+      }}
+    />
+
+    return (tooltip) ? <span key={`${label}.${index}`}><OverlayTrigger placement="right" overlay={tooltip}>{radio}</OverlayTrigger></span> : <span key={`${label}.${index}`}>{radio}</span>;
+  });
+
+  return (
+    <Form.Group as={Col}>
+      <Form.Label><span>{label}{requiredField}</span> {dirty && (error && <span className="text-danger" style={{marginTop: "-16px", fontSize: "80%"}}>{error}<br/></span>)}</Form.Label><br/>
+      {radioList}
+    </Form.Group>      
+  );
+}
+
+// export function renderRadio({ input, label, meta: { dirty, error }, disabled=false, xs=12, sm=6, md=12, lg=6 }) {    
+//   return (
+//     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
+//       <Form.Check
+//         {...input}
+//         label={label}
+//         checked={input.value ? true : false}
+//         onChange={(e) => input.onChange(e.target.checked)}
+//         isInvalid={dirty && error}
+//         disabled={disabled}
+//       >
+//       </Form.Check>
+//       <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
+//     </Form.Group>
+//   );
+// }
 
 export function renderSwitch({ input, label, meta: { dirty, error }, disabled=false }) {    
 

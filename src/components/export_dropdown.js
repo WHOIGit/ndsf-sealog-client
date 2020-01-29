@@ -18,7 +18,7 @@ class ExportDropdown extends Component {
   constructor (props) {
     super(props);
 
-    let cruiseOrLowering = null;
+    let cruiseOrLowering = "";
     if(this.props.cruiseID) {
       cruiseOrLowering = `/bycruise/${this.props.cruiseID}`
     }
@@ -52,6 +52,9 @@ class ExportDropdown extends Component {
     else if (this.props.loweringID !== prevProps.loweringID) {
       const cruiseOrLowering = `/bylowering/${this.props.loweringID}`
       this.setState({cruiseOrLowering: cruiseOrLowering});
+    }
+    else {
+      this.setState({cruiseOrLowering: ""});
     }
 
     if (this.props.prefix !== prevProps.prefix) {
@@ -160,7 +163,6 @@ class ExportDropdown extends Component {
 
   exportEvents(format='json') {
     this.fetchEvents(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
-      // console.log(results)
       let prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
       fileDownload((format == 'json')? JSON.stringify(results) : results, `${prefix}_sealog_eventExport.${format}`);
     }).catch((error) => {
