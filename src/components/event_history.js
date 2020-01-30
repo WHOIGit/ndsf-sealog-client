@@ -5,7 +5,16 @@ import { Button, ListGroup, Card, Tooltip, OverlayTrigger, Row, Col } from 'reac
 import ImagePreviewModal from './image_preview_modal';
 import * as mapDispatchToProps from '../actions';
 import { Client } from '@hapi/nes/lib/client';
-import { WS_ROOT_URL } from '../client_config';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+
+import { WS_ROOT_URL, API_ROOT_URL } from '../client_config';
+
+const cookies = new Cookies();
+
+const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData']
+
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData']
 
 const eventHistoryRef = "eventHistory";
 
@@ -44,8 +53,12 @@ class EventHistory extends Component {
       this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page);      
     }
 
-    if(prevProps.history !== this.props.history && this.props.history.length > 0) {
-      this.setState({event:{...this.props.history[0], aux_data: []}});
+    if(prevState.showNewEventDetails !== this.state.showNewEventDetails && this.props.history[0] && this.state.showNewEventDetails) {
+      this.fetchEventExport(this.props.history[0].id);      
+    }
+
+    if(prevProps.history[0] !== this.props.history[0] && this.state.showNewEventDetails && this.props.history[0]) {
+      this.fetchEventExport(this.props.history[0].id);
     }
   }
 
@@ -74,6 +87,7 @@ class EventHistory extends Component {
       };
 
       const updateAuxDataHandler = (update, flags) => {
+        console.log("updated aux data");
         if(this.state.showNewEventDetails && update.event_id === this.state.event.id) {
           this.fetchEventExport(this.state.event.id);
         }
@@ -86,6 +100,7 @@ class EventHistory extends Component {
       this.client.subscribe('/ws/status/newEvents', updateHandler);
       this.client.subscribe('/ws/status/updateEvents', updateHandler);
       this.client.subscribe('/ws/status/deleteEvents', deleteHandler);
+      this.client.subscribe('/ws/status/newEventAuxData', updateAuxDataHandler);
       this.client.subscribe('/ws/status/updateEventAuxData', updateAuxDataHandler);
 
     } catch(error) {
@@ -97,7 +112,7 @@ class EventHistory extends Component {
 
   async fetchEventExport(event_id) {
 
-    let url = `${API_ROOT_URL}/api/v1/event_aux_data/${id}`;
+    let url = `${API_ROOT_URL}/api/v1/event_exports/${event_id}`;
     const event_export = await axios.get(url, {
       headers: {
         authorization: cookies.get('token')
@@ -126,17 +141,17 @@ class EventHistory extends Component {
   renderEventHistoryHeader() {
 
     const Label = "Event History";
-    const expandTooltip = (<Tooltip id="expandHistoryTooltip">Expand this panel</Tooltip>);
+    const expandTooltip = (<Tooltip id="expandHistoryTooltip">Expand event history</Tooltip>);
     const expandNewestEventTooltip = (<Tooltip id="expandNewestEventTooltip">Expand last Event</Tooltip>);
-    const compressTooltip = (<Tooltip id="compressTooltip">Compress this panel</Tooltip>);
-    const showTooltip = (<Tooltip id="showHistoryTooltip">Show this panel</Tooltip>);
-    const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this panel</Tooltip>);
+    const compressTooltip = (<Tooltip id="compressTooltip">Compress event history</Tooltip>);
+    const showTooltip = (<Tooltip id="showHistoryTooltip">Show event history</Tooltip>);
+    const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
 
     const ASNAPToggleIcon = (this.state.hideASNAP)? "Show ASNAP" : "Hide ASNAP";
     const ASNAPToggle = (<span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleASNAP()}>{ASNAPToggleIcon} </span>);
 
-    const NewEventToggleIcon = (this.state.showNewEventDetails)? "Hide Newest Event Details" : "Show Newest Event Details";
-    const NewEventToggle = (<span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleNewEventDetails()}>{NewEventToggleIcon} </span>);
+    const NewEventToggleIcon = (this.state.showNewEventDetails)? null : "Show Newest Event Details";
+    const NewEventToggle = (NewEventToggleIcon) ? <span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleNewEventDetails()}>{NewEventToggleIcon} </span> : null;
 
     if(this.state.showEventHistory) {
 
@@ -366,6 +381,8 @@ class EventHistory extends Component {
 
   renderNewestEvent() {
 
+    const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
+
     // const event_free_text_card = (this.state.event.event_free_text)? (<Card><Card.Body className="data-card-body">Free-form Text: {this.state.event.event_free_text}</Card.Body></Card>) : null;
     const event_comment = (this.state.event.event_options) ? this.state.event.event_options.find((event_option) => (event_option.event_option_name === 'event_comment' && event_option.event_option_value.length > 0)) : null
 
@@ -375,7 +392,7 @@ class EventHistory extends Component {
     return (
       <Card>
         <ImagePreviewModal />
-        <Card.Header>{this.state.event.ts} {`<${this.state.event.event_author}>`}: {this.state.event.event_value} {(this.state.event.event_free_text) ? ` --> "${this.state.event.event_free_text}"` : null}</Card.Header>
+        <Card.Header>{this.state.event.ts} {`<${this.state.event.event_author}>`}: {this.state.event.event_value} {(this.state.event.event_free_text) ? ` --> "${this.state.event.event_free_text}"` : null}<OverlayTrigger placement="top" overlay={hideTooltip}><span className="float-right" variant="secondary" size="sm" onClick={ () => this.toggleNewEventDetails() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger></Card.Header>
 
         <Card.Body>
           <Row>
@@ -397,6 +414,7 @@ class EventHistory extends Component {
 
     let eventHistoryCard = null;
     let newEventDetailsCard = (this.state.showNewEventDetails && this.state.event) ? this.renderNewestEvent() : null
+
     console.log(newEventDetailsCard);
 
     if (!this.props.history) {
