@@ -88,7 +88,7 @@ class EventHistory extends Component {
       };
 
       const updateAuxDataHandler = (update, flags) => {
-        console.log("updated aux data");
+        // console.log("updated aux data");
         if(this.state.showNewEventDetails && update.event_id === this.state.event.id) {
           this.fetchEventExport(this.state.event.id);
         }
@@ -389,7 +389,7 @@ class EventHistory extends Component {
 
     const event_comment_card = (event_comment)?(<Card><Card.Body className="data-card-body">Comment: {event_comment.event_option_value}</Card.Body></Card>) : null;
 
-    console.log("show details");
+    // console.log("show details");
     return (
       <Card>
         <ImagePreviewModal />
@@ -416,7 +416,7 @@ class EventHistory extends Component {
     let eventHistoryCard = null;
     let newEventDetailsCard = (this.state.showNewEventDetails && this.state.event) ? this.renderNewestEvent() : null
 
-    console.log(newEventDetailsCard);
+    // console.log(newEventDetailsCard);
 
     if (!this.props.history) {
       eventHistoryCard = (
