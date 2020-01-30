@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { Button, ListGroup, Card, Tooltip, OverlayTrigger, Row, Col } from 'react-bootstrap';
+import { Button, ListGroup, Image, Card, Tooltip, OverlayTrigger, Row, Col } from 'react-bootstrap';
 import ImagePreviewModal from './image_preview_modal';
 import path from 'path';
 import * as mapDispatchToProps from '../actions';
