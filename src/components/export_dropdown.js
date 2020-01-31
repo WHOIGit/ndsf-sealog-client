@@ -53,9 +53,6 @@ class ExportDropdown extends Component {
       const cruiseOrLowering = `/bylowering/${this.props.loweringID}`
       this.setState({cruiseOrLowering: cruiseOrLowering});
     }
-    else {
-      this.setState({cruiseOrLowering: ""});
-    }
 
     if (this.props.prefix !== prevProps.prefix) {
       this.setState({prefix: this.props.prefix});
