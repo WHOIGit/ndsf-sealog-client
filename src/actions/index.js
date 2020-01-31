@@ -167,9 +167,17 @@ export function login({username, password, reCaptcha = null}) {
         dispatch({ type: AUTH_USER });
         return dispatch(updateProfileState());
       }).catch((error)=>{
-        console.error(error.response.data.message);
-        // If request is unauthenticated
-        return dispatch(authError(error.response.data.message));
+
+        if(error.response && error.response.status !== 401) {
+          // If request is unauthenticated
+          return dispatch(authError(error.response.data.message));
+        }
+        else if(error.message == "Network Error") {
+          return dispatch(authError("Unable to connect to server"));
+        }
+
+        console.error(JSON.stringify(error));
+
       });
   };
 }
