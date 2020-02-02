@@ -153,9 +153,16 @@ class LoweringMap extends Component {
           authorization: cookies.get('token')
         }
       }).then((response) => {
-        response.data.map((r_data) => {
-          tracklines[this.auxDatasourceFilters[index]].polyline.addLatLng([ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]);
-          tracklines[this.auxDatasourceFilters[index]].eventIDs.push(r_data['event_id']);
+        response.data.forEach((r_data) => {
+          try {
+            const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
+            if(latLng[0] != 0 && latLng[1] != 0) {
+              tracklines[this.auxDatasourceFilters[index]].polyline.addLatLng(latLng);
+              tracklines[this.auxDatasourceFilters[index]].eventIDs.push(r_data['event_id']);
+            }
+          } catch(err) {
+            console.log("No nav found")
+          }
         });
 
       }).catch((error)=>{
@@ -256,13 +263,18 @@ class LoweringMap extends Component {
     if(selected_event && selected_event.aux_data) {
       let vehicleRealtimeNavData = selected_event.aux_data.find(aux_data => aux_data.data_source == "vehicleRealtimeNavData");
       if(vehicleRealtimeNavData) {
-        let latObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "latitude");
-        let lonObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "longitude");
+        try {
+          let latObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "latitude");
+          let lonObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "longitude");
 
-        if(latObj && lonObj && latObj.data_value != this.state.position.lat && lonObj.data_value != this.state.position.lng) {
-          this.setState({ showMarker: true, position:{ lat:latObj.data_value, lng: lonObj.data_value}});
-        } else if(!latObj || !lonObj) {
-          this.setState({showMarker: false});
+          if(latObj && lonObj && latObj.data_value != this.state.position.lat && lonObj.data_value != this.state.position.lng) {
+            this.setState({ showMarker: true, position:{ lat:latObj.data_value, lng: lonObj.data_value}});
+          } else if(!latObj || !lonObj) {
+            this.setState({showMarker: false});
+          }
+        }
+        catch(err) {
+          console.log("unable to process nav");
         }
       }
     }
@@ -402,13 +414,19 @@ class LoweringMap extends Component {
     if(this.props.event.selected_event.aux_data && typeof this.props.event.selected_event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData') !== 'undefined') {
 
       const realtimeNavData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData');
-      return (
-        <Marker position={[ parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]}>
-          <Popup>
-            You are here! :-)
-          </Popup>
-        </Marker>
-      );
+      try {
+        const latLng = [ parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]
+        return (
+          <Marker position={latLng}>
+            <Popup>
+              You are here! :-)
+            </Popup>
+          </Marker>
+        );
+      }
+      catch(err) {
+        return null;
+      }
     }
   }
 
