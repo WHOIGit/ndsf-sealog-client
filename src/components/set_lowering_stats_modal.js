@@ -295,7 +295,9 @@ class SetLoweringStatsModal extends Component {
 
     const newLoweringAdditionalMeta = { ...this.props.lowering.lowering_additional_meta, milestones: newMilestones, stats: this.state.stats }
 
-    const newLoweringRecord = { ...this.props.lowering, start_ts: this.state.milestones.start_ts, stop_ts: this.state.milestones.stop_ts, lowering_additional_meta: newLoweringAdditionalMeta }
+    const newLoweringRecord = { ...this.props.lowering, start_ts: this.state.milestones.lowering_start, stop_ts: this.state.milestones.lowering_stop, lowering_additional_meta: newLoweringAdditionalMeta }
+
+    console.log(newLoweringRecord)
 
     this.props.handleUpdateLowering(newLoweringRecord)
     this.setState({touched: false})
