@@ -202,15 +202,22 @@ class SetLoweringStatsModal extends Component {
         let aux_data = event['aux_data'].find((aux_data => aux_data['data_source'] == auxDatasource))
         if(aux_data) {
           try {
-            const latLng = [ parseFloat(aux_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(aux_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]
-            if(latLng[0] != 0 && latLng[0] != 0) {
-              trackline.polyline.addLatLng(latLng);
+            const rawLat = aux_data['data_array'].find(data => data['data_name'] == 'latitude');
+            const rawLng = aux_data['data_array'].find(data => data['data_name'] == 'longitude');
+
+            if(rawLat && rawLng) {
+              const latLng = [ parseFloat(rawLat['data_value']), parseFloat(rawLng['data_value'])]
+              if(latLng[0] != 0 && latLng[0] != 0) {
+                trackline.polyline.addLatLng(latLng);
+              }
             }
+
             trackline.ts.push(moment.utc(event['ts']).valueOf());
             trackline.depth.push([trackline.ts[trackline.ts.length-1], parseFloat(aux_data['data_array'].find(data => data['data_name'] == 'depth')['data_value'])]);
           }
           catch(err) {
             console.log("No latLng found, skipping...");
+            console.error(err);
           }
         }
       })
@@ -396,13 +403,17 @@ class SetLoweringStatsModal extends Component {
     if(this.state.event) {
 
       const realtimeNavData = this.state.event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData');
-      return (
-        <Marker position={[ parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]}>
-          <Popup>
-            You are here! :-)
-          </Popup>
-        </Marker>
-      );
+      const rawLat = realtimeNavData['data_array'].find(data => data['data_name'] == 'latitude')
+      const rawLng = realtimeNavData['data_array'].find(data => data['data_name'] == 'longitude')
+      if( rawLat && rawLng ) {
+        return (
+          <Marker position={[ parseFloat(rawLat['data_value']), parseFloat(rawLng['data_value'])]}>
+            <Popup>
+              You are here! :-)
+            </Popup>
+          </Marker>
+        );
+      }
     }
   }
 

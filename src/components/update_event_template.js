@@ -308,8 +308,8 @@ function validate(formProps) {
 
   if (!formProps.event_name) {
     errors.event_name = 'Required';
-  } else if (formProps.event_name.length > 15) {
-    errors.event_name = 'Must be 15 characters or less';
+  } else if (formProps.event_name.length > 32) {
+    errors.event_name = 'Must be 32 characters or less';
   }
 
   if (!formProps.event_value) {
