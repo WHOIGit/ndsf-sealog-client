@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING } from '../client_config';
+import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING, ROOT_PATH } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 class Header extends Component {
@@ -130,7 +130,7 @@ class Header extends Component {
   render () {
     return (
       <Navbar collapseOnSelect expand="md" variant="dark" bg="dark" style={{"border": "none"}}>
-        <Navbar.Brand href="/">{HEADER_TITLE}</Navbar.Brand>
+        <Navbar.Brand href={ROOT_PATH}>{HEADER_TITLE}</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
         <Navbar.Collapse id="responsive-navbar-nav"className="justify-content-end">
           <Nav>
