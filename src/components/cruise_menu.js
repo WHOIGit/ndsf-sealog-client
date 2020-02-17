@@ -60,16 +60,30 @@ class CruiseMenu extends Component {
         const now = moment.utc();
         return (now.isBetween(moment.utc(cruise.start_ts), moment.utc(cruise.stop_ts)));
       }) : null;
-      // console.log("currentCruise:", currentCruise.cruise_id);
-      // console.log("currentYear:", moment.utc(currentCruise.start_ts).format("YYYY"));
       (currentCruise) ? this.buildLoweringList() : null;
 
       this.setState({ activeYear: (currentCruise) ? moment.utc(currentCruise.start_ts).format("YYYY") : null, activeCruise: (currentCruise) ? currentCruise : null, activeLowering: null });
 
     }
 
+    if(this.props.lowerings !== prevProps.lowerings && this.props.lowerings.length > 0 ) {
+      // console.log("lowering list changed");
+      const currentCruise = (this.props.cruises) ? this.props.cruises.find((cruise) => {
+        const now = moment.utc();
+        return (now.isBetween(moment.utc(cruise.start_ts), moment.utc(cruise.stop_ts)));
+      }) : null;
+
+      if(this.state.activeCruise === currentCruise && this.state.activeLowering === null) {
+        const cruiseLowerings = (currentCruise) ? this.props.lowerings.filter((lowering) => {
+          return moment.utc(lowering.start_ts).isBetween(moment.utc(currentCruise.start_ts), moment.utc(currentCruise.stop_ts));
+        }) : [];
+
+        this.setState({ activeLowering: (cruiseLowerings.length > 0) ? this.props.lowerings.find((lowering) => lowering.lowering_id == cruiseLowerings[0].lowering_id) : null });
+      }
+    }
+
     if(this.state.activeCruise !== prevState.activeCruise && this.props.lowerings.length > 0 ) {
-      console.log("active cruise changed");
+      // console.log("active cruise changed");
       this.buildLoweringList();
       this.setState({ activeLowering: null })
     }
@@ -91,13 +105,14 @@ class CruiseMenu extends Component {
 
     if(this.state.cruiseLowerings !== prevState.cruiseLowerings ) {
       // console.log("cruise lowerings changed");
-      const currentLowering = this.state.cruiseLowerings.find((lowering) => {
-        const now = moment.utc();
-        return (now.isBetween(moment.utc(lowering.start_ts), moment.utc(lowering.stop_ts)));
-      })
 
-      // console.log("currentLowering:", currentLowering);
-      this.setState({ activeLowering: (currentLowering) ? this.props.lowerings.find((lowering) => lowering.id == currentLowering.id) : null });
+      // if the active cruise was selected, set the active lowering to the most recent lowering
+      const currentCruise = (this.props.cruises) ? this.props.cruises.find((cruise) => {
+        const now = moment.utc();
+        return (now.isBetween(moment.utc(cruise.start_ts), moment.utc(cruise.stop_ts)));
+      }) : null;
+
+      this.setState({ activeLowering: (this.state.activeCruise == currentCruise && this.state.cruiseLowerings.length > 0) ? this.props.lowerings.find((lowering) => lowering.lowering_id == this.state.cruiseLowerings[0].lowering_id) : null });
     }
   }
 
@@ -201,26 +216,33 @@ class CruiseMenu extends Component {
   }
 
   renderLoweringCard() {
+    // console.log(this.state.activeLowering)
 
     if(this.state.activeLowering){
       let loweringStartTime = moment.utc(this.state.activeLowering.start_ts);
+      let loweringOffDeckTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_deck) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_deck) : null;
+      let loweringDescendingTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) : null;
       let loweringOnBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
+      let loweringFloatsOnSurfaceTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_floats_on_surface) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_floats_on_surface) : null;
       let loweringStopTime = moment.utc(this.state.activeLowering.stop_ts);
 
-      let loweringDurationValue = loweringStopTime.diff(loweringStartTime);
-      let decentDurationValue = (loweringOnBottomTime) ? loweringOnBottomTime.diff(loweringStartTime) : null;
+      let deck2DeckDurationValue = (loweringOffDeckTime) ? loweringStopTime.diff(loweringOffDeckTime) : null;
+      let deploymentDuration = (loweringOffDeckTime && loweringDescendingTime) ? loweringDescendingTime.diff(loweringOffDeckTime) : null;
+      let decentDurationValue = (loweringOnBottomTime && loweringDescendingTime) ? loweringOnBottomTime.diff(loweringDescendingTime) : null;
       let onBottomDurationValue = (loweringOnBottomTime && loweringOffBottomTime) ? loweringOffBottomTime.diff(loweringOnBottomTime) : null;
-      let ascentDurationValue = (loweringOffBottomTime) ? loweringStopTime.diff(loweringOffBottomTime) : null;
-
+      let ascentDurationValue = (loweringOffBottomTime && loweringFloatsOnSurfaceTime) ? loweringFloatsOnSurfaceTime.diff(loweringOffBottomTime) : null;
+      let recoveryDurationValue = (loweringStopTime && loweringFloatsOnSurfaceTime) ? loweringStopTime.diff(loweringFloatsOnSurfaceTime) : null;
 
       let loweringDescription = (this.state.activeLowering.lowering_additional_meta.lowering_description)? <span><strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}<br/></span> : null;
-      let loweringLocation = (this.state.activeLowering.lowering_location)? <span><strong>Location:</strong> {this.state.activeLowering.lowering_location}<br/></span> : null;
+      let loweringLocation = (this.state.activeLowering.lowering_location) ? <span><strong>Location:</strong> {this.state.activeLowering.lowering_location}<br/></span> : null;
       let loweringStarted = <span><strong>Started:</strong> {loweringStartTime.format("YYYY-MM-DD HH:mm")}<br/></span>;
-      let loweringDuration = <span><strong>Duration:</strong> {moment.duration(loweringDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span>;
+      let loweringDeck2DeckDuration = (deck2DeckDurationValue) ? <span><strong>Deck-to-Deck:</strong> {moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
+      let loweringDeploymentDuration = (deploymentDuration) ? <span><strong>Deployment:</strong> {moment.duration(deploymentDuration).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
       let loweringDescentDuration = (decentDurationValue) ? <span><strong>Descent:</strong> {moment.duration(decentDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
       let loweringOnBottomDuration = (onBottomDurationValue) ? <span><strong>On Bottom:</strong> {moment.duration(onBottomDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
       let loweringAscentDuration = (ascentDurationValue) ? <span><strong>Ascent:</strong> {moment.duration(ascentDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
+      let loweringRecoveryDuration = (ascentDurationValue) ? <span><strong>Recovery:</strong> {moment.duration(recoveryDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
 
       let loweringMaxDepth = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.max_depth)? <span><strong>Max Depth:</strong> {this.state.activeLowering.lowering_additional_meta.stats.max_depth}<br/></span>: null;
       let loweringBoundingBox = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.bounding_box)? <span><strong>Bounding Box:</strong> {this.state.activeLowering.lowering_additional_meta.stats.bounding_box.join(', ')}<br/></span>: null;
@@ -234,10 +256,12 @@ class CruiseMenu extends Component {
             {loweringDescription}
             {loweringLocation}
             {loweringStarted}
-            {loweringDuration}
+            {loweringDeck2DeckDuration}
+            {loweringDeploymentDuration}
             {loweringDescentDuration}
             {loweringOnBottomDuration}
             {loweringAscentDuration}
+            {loweringRecoveryDuration}
             {loweringMaxDepth}
             {loweringBoundingBox}
             {loweringFiles}

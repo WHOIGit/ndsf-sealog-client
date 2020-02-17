@@ -130,7 +130,7 @@ class Header extends Component {
   render () {
     return (
       <Navbar collapseOnSelect expand="md" variant="dark" bg="dark" style={{"border": "none"}}>
-        <Navbar.Brand onClick={this.props.gotoHome}>{HEADER_TITLE}</Navbar.Brand>
+        <Navbar.Brand href="/">{HEADER_TITLE}</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
         <Navbar.Collapse id="responsive-navbar-nav"className="justify-content-end">
           <Nav>

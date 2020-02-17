@@ -9,7 +9,7 @@ import { Client } from '@hapi/nes/lib/client';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
-import { WS_ROOT_URL, API_ROOT_URL, IMAGE_PATH } from '../client_config';
+import { WS_ROOT_URL, API_ROOT_URL, IMAGE_PATH, ROOT_PATH } from '../client_config';
 
 const cookies = new Cookies();
 
@@ -27,7 +27,8 @@ class EventHistory extends Component {
     this.state = {
       page: 0,
       event: null,
-      hideASNAP: true,
+      showASNAP: false,
+      showFRAMEGRAB: true,
       showNewEventDetails: false,
       showEventHistory: true,
       showEventHistoryFullscreen: false
@@ -47,11 +48,15 @@ class EventHistory extends Component {
   componentDidUpdate(prevProps, prevState) {
 
     if(prevState.page !== this.state.page) {
-      this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page);      
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);      
     }
 
-    if(prevState.hideASNAP !== this.state.hideASNAP) {
-      this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page);      
+    if(prevState.showASNAP !== this.state.showASNAP) {
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);      
+    }
+
+    if(prevState.showFRAMEGRAB !== this.state.showFRAMEGRAB) {
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);      
     }
 
     if(prevState.showNewEventDetails !== this.state.showNewEventDetails && this.props.history[0] && this.state.showNewEventDetails) {
@@ -82,7 +87,7 @@ class EventHistory extends Component {
       // })
 
       const updateHandler = (update, flags) => {
-        if(!(this.state.hideASNAP && update.event_value === "ASNAP")) {
+        if(!(this.state.showASNAP && update.event_value === "ASNAP")) {
           this.props.updateEventHistory(update);
         }
       };
@@ -95,7 +100,7 @@ class EventHistory extends Component {
       };
 
       const deleteHandler = (update, flags) => {
-        this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page);
+        this.props.fetchEventHistory(!this.state.showASNAP, this.state.page);
       };
 
       this.client.subscribe('/ws/status/newEvents', updateHandler);
@@ -148,8 +153,11 @@ class EventHistory extends Component {
     const showTooltip = (<Tooltip id="showHistoryTooltip">Show event history</Tooltip>);
     const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
 
-    const ASNAPToggleIcon = (this.state.hideASNAP)? "Show ASNAP" : "Hide ASNAP";
+    const ASNAPToggleIcon = (this.state.showASNAP)? "Hide ASNAP" : "Show ASNAP";
     const ASNAPToggle = (<span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleASNAP()}>{ASNAPToggleIcon} </span>);
+
+    const FRAMEGRABToggleIcon = (this.state.showFRAMEGRAB)? "Hide FRAMEGRAB" : "Show FRAMEGRAB";
+    const FRAMEGRABToggle = (<span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleFRAMEGRAB()}>{FRAMEGRABToggleIcon} </span>);
 
     const NewEventToggleIcon = (this.state.showNewEventDetails)? null : "Show Newest Event Details";
     const NewEventToggle = (NewEventToggleIcon) ? <span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleNewEventDetails()}>{NewEventToggleIcon} </span> : null;
@@ -162,6 +170,7 @@ class EventHistory extends Component {
             { Label }
             <div className="float-right">
               {NewEventToggle}
+              {FRAMEGRABToggle}
               {ASNAPToggle}
               <OverlayTrigger placement="top" overlay={compressTooltip}><span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={ () => this.handleHideEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
               <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
@@ -175,6 +184,7 @@ class EventHistory extends Component {
           { Label }
           <div className="float-right">
             {NewEventToggle}
+            {FRAMEGRABToggle}
             {ASNAPToggle}
             <OverlayTrigger placement="top" overlay={expandTooltip}><span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={ () => this.handleShowEventHistoryFullscreen() }><FontAwesomeIcon icon='expand' fixedWidth/></span></OverlayTrigger>{' '}
             <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
@@ -212,8 +222,13 @@ class EventHistory extends Component {
   }
 
   toggleASNAP() {
-    this.setState( prevState => ({hideASNAP: !prevState.hideASNAP}));
-    // this.props.fetchEventHistory(this.state.hideASNAP, this.state.page);
+    this.setState( prevState => ({showASNAP: !prevState.showASNAP}));
+    // this.props.fetchEventHistory(this.state.showASNAP, this.state.page);
+  }
+
+  toggleFRAMEGRAB() {
+    this.setState( prevState => ({showFRAMEGRAB: !prevState.showFRAMEGRAB}));
+    // this.props.fetchEventHistory(this.state.showFRAMEGRAB, this.state.page);
   }
 
   toggleNewEventDetails() {
@@ -222,17 +237,17 @@ class EventHistory extends Component {
   }
 
   incrementPage() {
-    // this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page+1);
+    // this.props.fetchEventHistory(!this.state.showASNAP, this.state.page+1);
     this.setState( prevState => ({page: prevState.page+1}));
   }
 
   decrementPage() {
-    // this.props.fetchEventHistory(!this.state.hideASNAP, this.state.page-1);
+    // this.props.fetchEventHistory(!this.state.showASNAP, this.state.page-1);
     this.setState( prevState => ({page: prevState.page-1}));
   }
 
   firstPage() {
-    // this.props.fetchEventHistory(!this.state.hideASNAP, 0);
+    // this.props.fetchEventHistory(!this.state.showASNAP, 0);
     this.setState({page: 0});
   }
 

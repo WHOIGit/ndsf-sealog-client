@@ -20,6 +20,7 @@ class LoweringGallery extends Component {
 
     this.state = {
       fetching: false,
+      showASNAP: false,
       aux_data: []
     };
 
@@ -40,16 +41,31 @@ class LoweringGallery extends Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+
+    if(prevState.showASNAP !== this.state.showASNAP) {
+      this.initLoweringImages(this.props.match.params.id, 'vehicleRealtimeFramegrabberData', this.state.showASNAP);
+    }
+  
+  }
+
+  toggleASNAP() {
+    this.setState( prevState => ({showASNAP: !prevState.showASNAP}));
   }
 
   componentWillUnmount(){
   }
 
-  async initLoweringImages(id, auxDatasourceFilter = 'vehicleRealtimeFramegrabberData') {
+  async initLoweringImages(id, auxDatasourceFilter = 'vehicleRealtimeFramegrabberData', showASNAP=false) {
     this.setState({ fetching: true});
 
-    const image_data = await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`,
+    let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`
+
+    if(!showASNAP) {
+      url += '&value=!ASNAP'
+    }
+
+    const image_data = await axios.get(url,
       {
         headers: {
           authorization: cookies.get('token')
@@ -123,6 +139,10 @@ class LoweringGallery extends Component {
 
     const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "loading...";
     const galleries = (this.state.fetching)? <div><hr className="border-secondary"/><span style={{paddingLeft: "8px"}}>Loading...</span></div> : this.renderGalleries();
+
+    const ASNAPToggleIcon = (this.state.showASNAP)? "Hide ASNAP" : "Show ASNAP";
+    const ASNAPToggle = (<span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleASNAP()}>{ASNAPToggleIcon} </span>);
+
     return (
       <div>
         <EventShowDetailsModal />
@@ -135,6 +155,7 @@ class LoweringGallery extends Component {
               {' '}/{' '}
               <span><LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Review", "Replay", "Map"]}/></span>
             </span>
+            <span className="float-right">{ASNAPToggle}</span>
           </Col>
           <Col lg={12}>
             {galleries}
