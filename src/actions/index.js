@@ -649,6 +649,12 @@ export function updateCruise(formProps) {
   }
 
   if(formProps.cruise_additional_meta) {
+
+    // FIX THIS
+    if (formProps.cruise_additional_meta.cruise_files) {
+      delete formProps.cruise_additional_meta.cruise_files
+    }
+
     fields.cruise_additional_meta = formProps.cruise_additional_meta;
   }
 
@@ -727,6 +733,12 @@ export function updateLowering(formProps) {
   }
 
   if(formProps.lowering_additional_meta) {
+
+    // FIX THIS
+    if (formProps.lowering_additional_meta.lowering_files) {
+      delete formProps.lowering_additional_meta.lowering_files
+    }
+
     fields.lowering_additional_meta = formProps.lowering_additional_meta;
   }
 
