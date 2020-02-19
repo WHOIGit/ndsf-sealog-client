@@ -10,6 +10,7 @@ import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import StatsForROVTeamModal from './stats_for_rov_team_modal';
+import SVProfileModal from './sv_profile_modal';
 
 import { API_ROOT_URL, MAIN_SCREEN_TXT, DEFAULT_VESSEL } from '../client_config';
 
@@ -203,6 +204,10 @@ class CruiseMenu extends Component {
       });
   }
 
+  handleEventShowSVProfileModal(lowering) {
+    this.props.showModal('svProfile', { lowering: lowering });
+  }
+
   handleEventShowStatForROVTeamModal(cruise) {
     this.props.showModal('statsForROVTeam', { cruise: cruise });
   }
@@ -257,7 +262,7 @@ class CruiseMenu extends Component {
 
       return (          
         <Card key={`lowering_card`}>
-          <Card.Header>Lowering: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
+          <Card.Header>Lowering: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><span onClick={() => this.handleEventShowSVProfileModal(this.state.activeLowering)}><OverlayTrigger placement="top" overlay={<Tooltip id="svProfileTooltip">SV Profile</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
           <Card.Body>
             {loweringDescription}
             {loweringLocation}
@@ -553,6 +558,7 @@ class CruiseMenu extends Component {
     return (
       <div>
         <StatsForROVTeamModal/>
+        <SVProfileModal/>
         <Row>
           <Col xs={12}>
             <h4>Welcome to Sealog</h4>

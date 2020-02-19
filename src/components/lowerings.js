@@ -9,6 +9,7 @@ import DeleteLoweringModal from './delete_lowering_modal';
 import ImportLoweringsModal from './import_lowerings_modal';
 import SetLoweringStatsModal from './set_lowering_stats_modal';
 import LoweringPermissionsModal from './lowering_permissions_modal';
+import SVProfileModal from './sv_profile_modal';
 import CustomPagination from './custom_pagination';
 import { USE_ACCESS_CONTROL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
@@ -17,7 +18,7 @@ let fileDownload = require('js-file-download');
 
 const maxLoweringsPerPage = 8;
 
-const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "100px" : "90px" };
+const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "90px" : "80px" };
 
 class Lowerings extends Component {
 
@@ -66,6 +67,10 @@ class Lowerings extends Component {
 
   handleLoweringImportModal() {
     this.props.showModal('importLowerings', { handleHide: this.handleLoweringImportClose });
+  }
+
+  handleSVProfileModal(lowering) {
+    this.props.showModal('svProfile', { lowering: lowering });
   }
 
   handleLoweringPermissions(lowering_id) {
@@ -124,14 +129,16 @@ class Lowerings extends Component {
 
     const editTooltip = (<Tooltip id="editTooltip">Edit this lowering.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this lowering.</Tooltip>);
-    const showTooltip = (<Tooltip id="showTooltip">Cruise is hidden, click to show.</Tooltip>);
-    const hideTooltip = (<Tooltip id="hideTooltip">Cruise is visible, click to hide.</Tooltip>);
+    const showSVProfile = (<Tooltip id="showTooltip">Show Downcast SV Profile.</Tooltip>);
+    const showTooltip = (<Tooltip id="showTooltip">Lowering is hidden, click to show.</Tooltip>);
+    const hideTooltip = (<Tooltip id="hideTooltip">Lowering is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
 
     const lowerings = (Array.isArray(this.state.filteredLowerings)) ? this.state.filteredLowerings : this.props.lowerings;
 
     return lowerings.map((lowering, index) => {
       if(index >= (this.state.activePage-1) * maxLoweringsPerPage && index < (this.state.activePage * maxLoweringsPerPage)) {
+        let svProfileLink = <OverlayTrigger placement="top" overlay={showSVProfile}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleSVProfileModal(lowering) } icon='table' fixedWidth/></OverlayTrigger>;
         let deleteLink = (this.props.roles.includes('admin'))? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleLoweringDeleteModal(lowering.id) } icon='trash' fixedWidth/></OverlayTrigger>: null;
         let hiddenLink = null;
 
@@ -156,7 +163,8 @@ class Lowerings extends Component {
             <td>
               <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleLoweringUpdate(lowering.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
               {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleLoweringPermissions(lowering.id) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
-              {hiddenLink}
+              {hiddenLink}{' '}
+              {svProfileLink}{' '}
               {deleteLink}
             </td>
           </tr>
@@ -222,6 +230,7 @@ class Lowerings extends Component {
           <DeleteLoweringModal />
           <ImportLoweringsModal handleExit={this.handleLoweringImportClose} />
           <SetLoweringStatsModal />
+          <SVProfileModal />
           <LoweringPermissionsModal />
           <Row>
             <Col sm={12} md={7} lg={6} xl={{span:5, offset:1}}>

@@ -9,6 +9,7 @@ import DeleteCruiseModal from './delete_cruise_modal';
 import ImportCruisesModal from './import_cruises_modal';
 import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
+import StatsForROVTeamModal from './stats_for_rov_team_modal';
 import { USE_ACCESS_CONTROL, DEFAULT_VESSEL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
@@ -16,7 +17,7 @@ let fileDownload = require('js-file-download');
 
 const maxCruisesPerPage = 6;
 
-const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "100px" : "85px" };
+const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "90px" : "80px" };
 
 class Cruises extends Component {
 
@@ -45,8 +46,12 @@ class Cruises extends Component {
     this.props.showModal('deleteCruise', { id: id, handleDelete: this.props.deleteCruise });
   }
 
-  handleCruisePermissions(cruise) {
+  handleCruisePermissionsModal(cruise) {
     this.props.showModal('cruisePermissions', { cruise_id: cruise.id });
+  }
+
+  handleStatsForROVTeamModal(cruise) {
+    this.props.showModal('statsForROVTeam', { cruise: cruise });
   }
 
   handleCruiseUpdate(id) {
@@ -129,6 +134,7 @@ class Cruises extends Component {
 
     const editTooltip = (<Tooltip id="editTooltip">Edit this cruise.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this cruise.</Tooltip>);
+    const showStatsForROVTeamTooltip = (<Tooltip id="showTooltip">Show cruise stats.</Tooltip>);    
     const showTooltip = (<Tooltip id="showTooltip">Cruise is hidden, click to show.</Tooltip>);
     const hideTooltip = (<Tooltip id="hideTooltip">Cruise is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
@@ -137,6 +143,7 @@ class Cruises extends Component {
 
     return cruises.map((cruise, index) => {
       if(index >= (this.state.activePage-1) * maxCruisesPerPage && index < (this.state.activePage * maxCruisesPerPage)) {
+        let statsForROVTeamLink = <OverlayTrigger placement="top" overlay={showStatsForROVTeamTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleStatsForROVTeamModal(cruise) } icon='table' fixedWidth/></OverlayTrigger>;
         let deleteLink = (this.props.roles.includes('admin'))? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleCruiseDeleteModal(cruise.id) } icon='trash' fixedWidth/></OverlayTrigger>: null;
         let hiddenLink = null;
 
@@ -157,8 +164,9 @@ class Cruises extends Component {
             <td>{cruiseName}{cruiseLocation}{cruisePi}{cruiseVessel}Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
             <td>
               <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCruiseUpdate(cruise.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
-              {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissions(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
-              {hiddenLink}
+              {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissionsModal(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
+              {hiddenLink}{' '}
+              {statsForROVTeamLink}{' '}
               {deleteLink}
             </td>
           </tr>
@@ -229,6 +237,7 @@ class Cruises extends Component {
         <div>
           <DeleteCruiseModal />
           <CruisePermissionsModal />
+          <StatsForROVTeamModal />
           <ImportCruisesModal  handleExit={this.handleCruiseImportClose} />
           <Row>
             <Col sm={12} md={7} lg={6} xl={{span:5, offset:1}}>

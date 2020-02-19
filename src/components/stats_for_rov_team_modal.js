@@ -26,7 +26,8 @@ class StatsForROVTeamModal extends Component {
       lowerings: null,
       lowering_stats: null,
       lowering_samples: null,
-      lowering_stat_totals: null
+      lowering_stat_totals: null,
+      status_msg: ''
     }
 
     this.handleClose = this.handleClose.bind(this);
@@ -63,6 +64,7 @@ class StatsForROVTeamModal extends Component {
 
   async fetchLoweringSamples() {
 
+    this.setState({status_msg: "Downloading sample counts..."})
     const samples = await this.state.lowerings.map(async (lowering) => {
       const samples_count = await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering.id}/count?value=SAMPLE`,
         {
@@ -86,12 +88,14 @@ class StatsForROVTeamModal extends Component {
     })
 
     Promise.all(samples).then((values) => {
-      this.setState({lowering_samples: values});
+      this.setState({lowering_samples: values, status_msg: ""});
     })
   }
 
 
   async fetchLowerings() {
+
+    this.setState({status_msg: "Downloading lowering data..."})
 
     const lowerings = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/bycruise/${this.props.cruise.id}`,
       {
@@ -113,7 +117,7 @@ class StatsForROVTeamModal extends Component {
   
     lowerings.reverse();
 
-    this.setState({lowerings})
+    this.setState({lowerings, status_msg: ""})
 
   }
 
@@ -318,14 +322,8 @@ class StatsForROVTeamModal extends Component {
     let CsvString = "";
     
     Results.forEach(function(RowItem, RowIndex) {
-    
-      RowItem.forEach(function(ColItem, ColIndex) {
-    
-        CsvString += ColItem + ',';
-    
-      });
-    
-      CsvString += "\r\n";
+        
+      CsvString += RowItem.join(',') + "\r\n";
     
     });
     
@@ -435,7 +433,7 @@ class StatsForROVTeamModal extends Component {
 
           <Modal.Body>
           {statsTable}
-          <span className="float-right"><Button variant="outline-primary" size="sm" onClick={this.exportDataToFile}>Export</Button></span>
+          <span className='text-warning'>{this.state.status_msg}</span><span className="float-right"><Button variant="outline-primary" size="sm" onClick={this.exportDataToFile}>Export</Button></span>
           </Modal.Body>
         </Modal>
       );
