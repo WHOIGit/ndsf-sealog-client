@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 import { connect } from 'react-redux';
-import { Accordion, Row, Col, Card } from 'react-bootstrap';
+import { Accordion, Row, Col, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
+import StatsForROVTeamModal from './stats_for_rov_team_modal';
+
 import { API_ROOT_URL, MAIN_SCREEN_TXT, DEFAULT_VESSEL } from '../client_config';
 
 import * as mapDispatchToProps from '../actions';
@@ -201,6 +203,10 @@ class CruiseMenu extends Component {
       });
   }
 
+  handleEventShowStatForROVTeamModal(cruise) {
+    this.props.showModal('statsForROVTeam', { cruise: cruise });
+  }
+
   renderCruiseFiles(cruiseID, files) {
     let output = files.map((file, index) => {
       return <li style={{ listStyleType: "none" }} key={`file_${index}`}><span onClick={() => this.handleCruiseFileDownload(cruiseID, file)}><FontAwesomeIcon className='text-primary' icon='download' fixedWidth /></span><span> {file}</span></li>;
@@ -323,7 +329,7 @@ class CruiseMenu extends Component {
 
       return (          
         <Card key={`cruise_${this.state.activeCruise.cruise_id}`}>
-          <Card.Header>Cruise: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
+          <Card.Header>Cruise: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><span onClick={() => this.handleEventShowStatForROVTeamModal(this.state.activeCruise)}><OverlayTrigger placement="top" overlay={<Tooltip id="statsForROVTeamTooltip">Stats for ROV Team</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
           <Card.Body>
             {cruiseName}
             {cruisePi}
@@ -546,6 +552,7 @@ class CruiseMenu extends Component {
   render(){
     return (
       <div>
+        <StatsForROVTeamModal/>
         <Row>
           <Col xs={12}>
             <h4>Welcome to Sealog</h4>
