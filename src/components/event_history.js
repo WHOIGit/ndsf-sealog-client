@@ -87,7 +87,8 @@ class EventHistory extends Component {
       // })
 
       const updateHandler = (update, flags) => {
-        if(!(this.state.showASNAP && update.event_value === "ASNAP")) {
+        // console.log("update:", update)
+        if(!(!this.state.showASNAP && update.event_value === "ASNAP") && !(!this.state.showFRAMEGRAB && update.event_value === "FRAMEGRAB")) {
           this.props.updateEventHistory(update);
         }
       };
@@ -100,7 +101,8 @@ class EventHistory extends Component {
       };
 
       const deleteHandler = (update, flags) => {
-        this.props.fetchEventHistory(!this.state.showASNAP, this.state.page);
+        // console.log("delete:", update)
+        this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);
       };
 
       this.client.subscribe('/ws/status/newEvents', updateHandler);
