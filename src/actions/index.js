@@ -1268,7 +1268,7 @@ export function clearEvents() {
   };
 }
 
-export function fetchEventHistory(asnap=false, framegrab=true, page=0) {
+export function fetchEventHistory(asnap=false, framegrab=true, filter='', page=0) {
 
   const eventsPerPage = 20;
 
@@ -1278,7 +1278,14 @@ export function fetchEventHistory(asnap=false, framegrab=true, page=0) {
   }
 
   if(!framegrab) {
-    url +='&value=!FRAMEGRAB';
+    url += '&value=!FRAMEGRAB';
+  }
+
+  if(filter != '') {
+    filter.split(',').forEach((filter_item) => {
+      filter_item.trim();
+      url += '&value='+filter_item;
+    })    
   }
 
   return async function (dispatch) {

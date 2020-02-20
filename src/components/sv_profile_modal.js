@@ -225,10 +225,19 @@ class SVProfileModal extends Component {
       },
       series: [
         {
-          data: profile_data
+          data: profile_data,
+          states: {
+            hover: {
+              enabled: false
+            }
+          }
         }
       ],
+      tooltip: {
+        enabled: false
+      },
       xAxis: {
+        gridLineWidth: 1,
         title: {
           text: 'Depth [m]',
         }

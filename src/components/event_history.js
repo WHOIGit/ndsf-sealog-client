@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { Button, ListGroup, Image, Card, Tooltip, OverlayTrigger, Row, Col } from 'react-bootstrap';
+import { Button, ListGroup, Image, Card, Tooltip, OverlayTrigger, Row, Col, Form, FormControl } from 'react-bootstrap';
 import ImagePreviewModal from './image_preview_modal';
 import path from 'path';
 import * as mapDispatchToProps from '../actions';
@@ -31,11 +31,15 @@ class EventHistory extends Component {
       showFRAMEGRAB: true,
       showNewEventDetails: false,
       showEventHistory: true,
-      showEventHistoryFullscreen: false
+      showEventHistoryFullscreen: false,
+      filterTimer: null,
+      filter: ''
     };
 
     this.client = new Client(`${WS_ROOT_URL}`);
     this.connectToWS = this.connectToWS.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+
   }
 
   componentDidMount() {
@@ -48,15 +52,22 @@ class EventHistory extends Component {
   componentDidUpdate(prevProps, prevState) {
 
     if(prevState.page !== this.state.page) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);      
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.filter, this.state.page);      
+    }
+
+    if(prevState.filter !== this.state.filter) {
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.filter, 0);
+      this.setState({page: 0});
     }
 
     if(prevState.showASNAP !== this.state.showASNAP) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);      
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.filter, 0);
+      this.setState({page: 0});
     }
 
     if(prevState.showFRAMEGRAB !== this.state.showFRAMEGRAB) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);      
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.filter, 0);
+      this.setState({page: 0});
     }
 
     if(prevState.showNewEventDetails !== this.state.showNewEventDetails && this.props.history[0] && this.state.showNewEventDetails) {
@@ -86,9 +97,28 @@ class EventHistory extends Component {
       //   }
       // })
 
+      //   this.setState({filteredLowerings: this.props.lowerings.filter((lowering) => {
+      //     const regex = RegExp(fieldVal, 'i');
+      //     if(lowering.lowering_id.match(regex) || lowering.lowering_location.match(regex)) {
+      //       return lowering;
+      //     }
+      //     else if (lowering.lowering_tags.includes(fieldVal)){
+      //       return lowering; 
+      //     }
+
+      const filteredEvent = (event_value) => {
+        return (this.state.filter == '') ? true : this.state.filter.split(',').reduce((answer, filter_item) => {
+          const regex = RegExp(filter_item, 'i');
+          if(event_value.match(regex)) {
+            return true;
+          }
+        }, false)
+      }
+
       const updateHandler = (update, flags) => {
         // console.log("update:", update)
-        if(!(!this.state.showASNAP && update.event_value === "ASNAP") && !(!this.state.showFRAMEGRAB && update.event_value === "FRAMEGRAB")) {
+        if(!(!this.state.showASNAP && update.event_value === "ASNAP") && !(!this.state.showFRAMEGRAB && update.event_value === "FRAMEGRAB") && filteredEvent(update.event_value)) {
+          // console.log("updating")
           this.props.updateEventHistory(update);
         }
       };
@@ -96,12 +126,14 @@ class EventHistory extends Component {
       const updateAuxDataHandler = (update, flags) => {
         // console.log("updated aux data");
         if(this.state.showNewEventDetails && update.event_id === this.state.event.id) {
+          // console.log("fetching aux data")
           this.fetchEventExport(this.state.event.id);
         }
       };
 
       const deleteHandler = (update, flags) => {
         // console.log("delete:", update)
+        // console.log("deleting")
         this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);
       };
 
@@ -154,13 +186,6 @@ class EventHistory extends Component {
     const compressTooltip = (<Tooltip id="compressTooltip">Compress event history</Tooltip>);
     const showTooltip = (<Tooltip id="showHistoryTooltip">Show event history</Tooltip>);
     const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
-
-    const ASNAPToggleIcon = (this.state.showASNAP)? "Hide ASNAP" : "Show ASNAP";
-    const ASNAPToggle = (<span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleASNAP()}>{ASNAPToggleIcon} </span>);
-
-    const FRAMEGRABToggleIcon = (this.state.showFRAMEGRAB)? "Hide FRAMEGRAB" : "Show FRAMEGRAB";
-    const FRAMEGRABToggle = (<span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleFRAMEGRAB()}>{FRAMEGRABToggleIcon} </span>);
-
     const NewEventToggleIcon = (this.state.showNewEventDetails)? null : "Show Newest Event Details";
     const NewEventToggle = (NewEventToggleIcon) ? <span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleNewEventDetails()}>{NewEventToggleIcon} </span> : null;
 
@@ -170,13 +195,12 @@ class EventHistory extends Component {
         return (
           <div>
             { Label }
-            <div className="float-right">
+            <Form inline className="float-right">
               {NewEventToggle}
-              {FRAMEGRABToggle}
-              {ASNAPToggle}
+              <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onChange={this.handleSearchChange}/>
               <OverlayTrigger placement="top" overlay={compressTooltip}><span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={ () => this.handleHideEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
               <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
-            </div>
+            </Form>
           </div>
         );
       }
@@ -184,13 +208,12 @@ class EventHistory extends Component {
       return (
         <div>
           { Label }
-          <div className="float-right">
+          <Form inline className="float-right">
             {NewEventToggle}
-            {FRAMEGRABToggle}
-            {ASNAPToggle}
-            <OverlayTrigger placement="top" overlay={expandTooltip}><span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={ () => this.handleShowEventHistoryFullscreen() }><FontAwesomeIcon icon='expand' fixedWidth/></span></OverlayTrigger>{' '}
+            <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onChange={this.handleSearchChange}/>
+            <OverlayTrigger placement="top" overlay={expandTooltip}><span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={ () => this.handleShowEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
             <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
-          </div>
+          </Form>
         </div>
       );
     }
@@ -219,37 +242,59 @@ class EventHistory extends Component {
     this.setState({showEventHistoryFullscreen: false});
   }
 
+  handleSearchChange(event) {
+
+    if(this.state.filterTimer) {
+      clearTimeout(this.state.filterTimer);
+    }
+
+    let fieldVal = event.target.value;
+    this.setState({ filterTimer: setTimeout(() => this.setState({filter: fieldVal}), 1500) })
+
+    // let fieldVal = event.target.value;
+    // if(fieldVal !== "") {
+    //   this.setState({filteredLowerings: this.props.lowerings.filter((lowering) => {
+    //     const regex = RegExp(fieldVal, 'i');
+    //     if(lowering.lowering_id.match(regex) || lowering.lowering_location.match(regex)) {
+    //       return lowering;
+    //     }
+    //     else if (lowering.lowering_tags.includes(fieldVal)){
+    //       return lowering; 
+    //     }
+    //   })
+    //   });
+    // }
+    // else {
+    //   this.setState({filteredLowerings: null});
+    // }
+    // this.handlePageSelect(1);
+  }
+
   handleShowEventHistoryFullscreen() {
     this.setState({showEventHistoryFullscreen: true});
   }
 
   toggleASNAP() {
     this.setState( prevState => ({showASNAP: !prevState.showASNAP}));
-    // this.props.fetchEventHistory(this.state.showASNAP, this.state.page);
   }
 
   toggleFRAMEGRAB() {
     this.setState( prevState => ({showFRAMEGRAB: !prevState.showFRAMEGRAB}));
-    // this.props.fetchEventHistory(this.state.showFRAMEGRAB, this.state.page);
   }
 
   toggleNewEventDetails() {
     this.setState( prevState => ({showNewEventDetails: !prevState.showNewEventDetails}));
-    // this.props.fetchEventHistory(this.state.showNewEventDetails, this.state.page);
   }
 
   incrementPage() {
-    // this.props.fetchEventHistory(!this.state.showASNAP, this.state.page+1);
     this.setState( prevState => ({page: prevState.page+1}));
   }
 
   decrementPage() {
-    // this.props.fetchEventHistory(!this.state.showASNAP, this.state.page-1);
     this.setState( prevState => ({page: prevState.page-1}));
   }
 
   firstPage() {
-    // this.props.fetchEventHistory(!this.state.showASNAP, 0);
     this.setState({page: 0});
   }
 
@@ -433,7 +478,8 @@ class EventHistory extends Component {
     let eventHistoryCard = null;
     let newEventDetailsCard = (this.state.showNewEventDetails && this.state.event) ? this.renderNewestEvent() : null
 
-    // console.log(newEventDetailsCard);
+    const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' checked={this.state.showASNAP} disabled={this.state.filter} onChange={() => this.toggleASNAP()} label="ASNAP"/>);
+    const FRAMEGRABToggle = (<Form.Check id="FRAMEGRAB" type='switch' inline checked={this.state.showFRAMEGRAB} disabled={this.state.filter} onChange={() => this.toggleFRAMEGRAB()} label='FRAMEGRAB'/>);
 
     if (!this.props.history) {
       eventHistoryCard = (
@@ -457,6 +503,10 @@ class EventHistory extends Component {
                 <Button size={"sm"} variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
                 <Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
                 <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
+                <Form className="float-right" inline>
+                  {FRAMEGRABToggle}
+                  {ASNAPToggle}
+                </Form>
               </Card.Footer>
             </Card>
           </div>
@@ -474,6 +524,10 @@ class EventHistory extends Component {
                 <Button size={"sm"} variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
                 <Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
                 <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
+                <Form className="float-right" inline>
+                  {FRAMEGRABToggle}
+                  {ASNAPToggle}
+                </Form>
               </Card.Footer>
             </Card>
           </div>
@@ -487,8 +541,6 @@ class EventHistory extends Component {
         </Card>
       );
     }
-
-
 
     return (
       <div>
