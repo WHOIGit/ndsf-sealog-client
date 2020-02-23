@@ -6,7 +6,7 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Map, TileLayer, WMSTileLayer, Marker, Polyline, Popup, LayersControl, ScaleControl } from 'react-leaflet';
 import L from 'leaflet';
-import { Row, Col, Card, Tooltip, OverlayTrigger, ListGroup } from 'react-bootstrap';
+import { Row, Col, Card, Tooltip, OverlayTrigger, ListGroup, Form } from 'react-bootstrap';
 import 'rc-slider/assets/index.css';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import EventShowDetailsModal from './event_show_details_modal';
@@ -340,9 +340,7 @@ class LoweringMap extends Component {
   renderEventListHeader() {
 
     const Label = "Filtered Events";
-
-    const ASNAPToggleIcon = (this.props.event.hideASNAP)? "Show ASNAP" : "Hide ASNAP";
-    const ASNAPToggle = (<span disabled={this.props.event.fetching} style={{ marginRight: "10px" }} onClick={() => this.toggleASNAP()}>{ASNAPToggleIcon}</span>);
+    const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.props.event.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='ASNAP'/>);
 
     return (
       <div>

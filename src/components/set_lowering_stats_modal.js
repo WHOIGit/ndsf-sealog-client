@@ -145,6 +145,7 @@ class SetLoweringStatsModal extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+
     if(this.state.milestones !== prevState.milestones) {
       this.setPlotLines();
     }
@@ -255,7 +256,22 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleTweak(milestones, stats) {
-    this.setState({milestones, stats, touched: true, show_edit_form: false})
+
+    this.setState({milestones, stats})
+
+    const start_ts = moment.utc(milestones.lowering_start);
+    const stop_ts = moment.utc(milestones.lowering_stop);
+    
+    const newMilestones = {...milestones}
+    delete newMilestones.lowering_start;
+    delete newMilestones.lowering_stop;
+
+    const lowering_additional_meta = { ...this.props.lowering.lowering_additional_meta, newMilestones, stats }
+
+    const newLoweringRecord = { ...this.props.lowering, start_ts, stop_ts, lowering_additional_meta }
+
+    this.props.handleUpdateLowering(newLoweringRecord)
+    this.setState({milestones, stats, touched: false, show_edit_form: false})
   }
 
   handleCalculateBoundingBox() {
@@ -287,18 +303,6 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleUpdateLowering() {
-    // let loweringRecord = Object.assign({}, this.props.lowering)
-    // let loweringMilestones = Object.assign({}, this.state.milestones)
-    // let loweringStats = Object.assign({}, this.state.stats)
-
-    // loweringRecord.start_ts = loweringMilestones.lowering_start
-    // loweringRecord.stop_ts = loweringMilestones.lowering_stop
-    // delete loweringMilestones.lowering_start
-    // delete loweringMilestones.lowering_stop
-
-    // loweringRecord.lowering_additional_meta.milestones = loweringMilestones
-    // loweringRecord.lowering_additional_meta.stats = loweringStats
-
     const newMilestones = { ...this.state.milestones };
     delete newMilestones.lowering_start;
     delete newMilestones.lowering_stop;
