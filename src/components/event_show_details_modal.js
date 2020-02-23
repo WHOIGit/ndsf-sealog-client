@@ -93,7 +93,7 @@ class EventShowDetailsModal extends Component {
         return (
           tmpData.map((camera) => {
             return (
-              <Col key={camera.source} xs={12} sm={6} md={6} lg={3}>
+              <Col key={camera.source} xs={12} sm={6} md={6} lg={4}>
                 {this.renderImage(camera.source, camera.filepath)}
               </Col>
             );
@@ -129,7 +129,7 @@ class EventShowDetailsModal extends Component {
 
   renderAuxDataCard() {
 
-    if(this.props.event && this.state.event.aux_data) {
+    if(this.state.event && this.state.event.aux_data) {
 
       const aux_data = this.state.event.aux_data.filter((data) => !excludeAuxDataSources.includes(data.data_source))
 
@@ -143,7 +143,7 @@ class EventShowDetailsModal extends Component {
         });
 
         return (
-          <Col key={`${aux_data.data_source}_col`} sm={6} md={4} lg={3} style={{paddingBottom: "8px"}}>
+          <Col key={`${aux_data.data_source}_col`} sm={6} md={6} lg={4} style={{paddingBottom: "8px"}}>
             <Card key={`${aux_data.data_source}`}>
               <Card.Header className="data-card-header">{aux_data.data_source}</Card.Header>
               <Card.Body className="data-card-body">
