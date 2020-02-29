@@ -267,7 +267,7 @@ function validate(formProps) {
 
   if ((formProps.start !== '') && (formProps.stop !== '')) {
     if(moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-      errors.stop = 'Stop date must be later than start date'
+      errors.stop = 'Stop date must be after than start date'
     }
   }
 
