@@ -3,7 +3,7 @@ import path from 'path';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import { Row, Col, Tabs, Tab } from 'react-bootstrap';
+import { Row, Col, Tabs, Tab, Form} from 'react-bootstrap';
 import EventShowDetailsModal from './event_show_details_modal';
 import LoweringGalleryTab from './lowering_gallery_tab';
 import LoweringDropdown from './lowering_dropdown';
@@ -40,16 +40,37 @@ class LoweringGallery extends Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+
+    if(prevProps.event.hideASNAP !== this.props.event.hideASNAP) {
+      this.initLoweringImages(this.props.match.params.id, 'vehicleRealtimeFramegrabberData', this.props.event.hideASNAP);
+    }  
+  }
+
+  toggleASNAP() {
+    this.props.eventUpdateLoweringReplay(this.props.match.params.id, this.props.event.hideASNAP);
+
+    if(this.props.event.hideASNAP) {
+      this.props.showASNAP();
+    }
+    else {
+      this.props.hideASNAP();
+    }
   }
 
   componentWillUnmount(){
   }
 
-  async initLoweringImages(id, auxDatasourceFilter = 'vehicleRealtimeFramegrabberData') {
+  async initLoweringImages(id, auxDatasourceFilter = 'vehicleRealtimeFramegrabberData', hideASNAP=false) {
     this.setState({ fetching: true});
 
-    const image_data = await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`,
+    let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`
+
+    if(hideASNAP) {
+      url += '&value=!ASNAP'
+    }
+
+    const image_data = await axios.get(url,
       {
         headers: {
           authorization: cookies.get('token')
@@ -81,7 +102,7 @@ class LoweringGallery extends Component {
 
   handleLoweringSelect(id) {
     this.props.gotoLoweringGallery(id);
-    this.props.initLowering(id, this.state.hideASNAP);
+    this.props.initLowering(id, this.props.event.hideASNAP);
     this.props.initCruiseFromLowering(id);
     this.initLoweringImages(id);
 
@@ -123,6 +144,9 @@ class LoweringGallery extends Component {
 
     const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "loading...";
     const galleries = (this.state.fetching)? <div><hr className="border-secondary"/><span style={{paddingLeft: "8px"}}>Loading...</span></div> : this.renderGalleries();
+
+    const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.props.event.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='ASNAP'/>);
+
     return (
       <div>
         <EventShowDetailsModal />
@@ -135,6 +159,7 @@ class LoweringGallery extends Component {
               {' '}/{' '}
               <span><LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Review", "Replay", "Map"]}/></span>
             </span>
+            <span className="float-right">{ASNAPToggle}</span>
           </Col>
           <Col lg={12}>
             {galleries}

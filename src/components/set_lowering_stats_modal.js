@@ -142,6 +142,7 @@ class SetLoweringStatsModal extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+
     if(this.state.milestones !== prevState.milestones) {
       this.setPlotLines();
     }
@@ -252,7 +253,22 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleTweak(milestones, stats) {
-    this.setState({milestones, stats, touched: true, show_edit_form: false})
+
+    this.setState({milestones, stats})
+
+    const start_ts = moment.utc(milestones.lowering_start);
+    const stop_ts = moment.utc(milestones.lowering_stop);
+    
+    const newMilestones = {...milestones}
+    delete newMilestones.lowering_start;
+    delete newMilestones.lowering_stop;
+
+    const lowering_additional_meta = { ...this.props.lowering.lowering_additional_meta, newMilestones, stats }
+
+    const newLoweringRecord = { ...this.props.lowering, start_ts, stop_ts, lowering_additional_meta }
+
+    this.props.handleUpdateLowering(newLoweringRecord)
+    this.setState({milestones, stats, touched: false, show_edit_form: false})
   }
 
   handleCalculateBoundingBox() {
@@ -284,18 +300,6 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleUpdateLowering() {
-    // let loweringRecord = Object.assign({}, this.props.lowering)
-    // let loweringMilestones = Object.assign({}, this.state.milestones)
-    // let loweringStats = Object.assign({}, this.state.stats)
-
-    // loweringRecord.start_ts = loweringMilestones.lowering_start
-    // loweringRecord.stop_ts = loweringMilestones.lowering_stop
-    // delete loweringMilestones.lowering_start
-    // delete loweringMilestones.lowering_stop
-
-    // loweringRecord.lowering_additional_meta.milestones = loweringMilestones
-    // loweringRecord.lowering_additional_meta.stats = loweringStats
-
     const newMilestones = { ...this.state.milestones };
     delete newMilestones.lowering_start;
     delete newMilestones.lowering_stop;
@@ -458,7 +462,7 @@ class SetLoweringStatsModal extends Component {
           <span className={(this.state.milestone_to_edit == 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}>Dive Start: {this.state.milestones.lowering_start}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}>On Bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}>Off Bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}>Dive End: {this.state.milestones.lowering_stop}</span>
+          <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}>Dive Stop: {this.state.milestones.lowering_stop}</span>
         </div>
       </Col>,
       <Col key="stats" md={6}>
@@ -553,15 +557,6 @@ class SetLoweringStatsModal extends Component {
     }
   }
 }
-
-                    // {this.renderMarker()}
-
-              // <Row style={{paddingTop: "8px"}}>
-                // <Col xs={12}>
-                  // {this.renderDepthCard()}
-                // </Col>
-              // </Row>
-
 
 function mapStateToProps(state) {
 

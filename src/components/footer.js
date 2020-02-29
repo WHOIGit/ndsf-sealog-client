@@ -26,19 +26,12 @@ class Footer extends Component {
     if ( !DISABLE_EVENT_LOGGING && this.props.authenticated ) {
       this.connectToWS();
     }
-    
-    // let intervalID = setInterval(this.handleASNAPNotification, 5000);
-    // this.setState({intervalID: intervalID});
-
   }
 
   componentWillUnmount() {
     if ( !DISABLE_EVENT_LOGGING && this.props.authenticated ) {
       this.client.disconnect();
     }
-
-    // clearInterval(this.state.intervalID);
-    // this.setState({intervalID: null});
   }
 
   async connectToWS() {
@@ -71,11 +64,6 @@ class Footer extends Component {
     if(this.props.authenticated) {
       this.props.fetchCustomVars();
     }
-
-    // if(this.props.asnapStatus && this.state.intervalID) {
-    //   clearInterval(this.state.intervalID);
-    //   this.setState({intervalID: null});
-    // }
   }
 
   render () {

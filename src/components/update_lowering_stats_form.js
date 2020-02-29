@@ -221,12 +221,16 @@ function validate(formProps) {
 
   if ((formProps.start !== '') && (formProps.stop !== '')) {
     if(moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-      errors.stop = 'Stop date must be later than start date'
+      errors.stop = 'Stop date must be after than start date'
     }
   }
 
-  if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat))) {
-    errors.off_bottom = 'Off bottom date must be before stop date';
+  if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.stop, dateFormat + " " + timeFormat))) {
+    errors.off_bottom = 'Stop date must be after off bottom date';
+  }
+
+  if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {
+    errors.off_bottom = 'Off bottom date must be after on bottom date';
   }
 
   if(formProps.on_bottom && formProps.on_bottom !== '' && moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
