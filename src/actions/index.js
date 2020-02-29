@@ -3,8 +3,8 @@ import Cookies from 'universal-cookie';
 import queryString from 'querystring';
 import { push } from 'connected-react-router';
 import { show } from 'redux-modal';
-import {change, untouch} from 'redux-form';
-import { API_ROOT_URL} from '../client_config';
+import { change, untouch } from 'redux-form';
+import { API_ROOT_URL } from '../client_config';
 
 import {
   AUTH_USER,
@@ -1268,13 +1268,20 @@ export function clearEvents() {
   };
 }
 
-export function fetchEventHistory(asnap=false, page=0) {
+export function fetchEventHistory(asnap=false, filter='', page=0) {
 
   const eventsPerPage = 20;
 
   let url = `${API_ROOT_URL}/api/v1/events?sort=newest&limit=${eventsPerPage}&offset=${eventsPerPage*page}`;
   if(!asnap) {
-    url = url + '&value=!ASNAP';
+    url += '&value=!ASNAP';
+  }
+
+  if(filter != '') {
+    filter.split(',').forEach((filter_item) => {
+      filter_item.trim();
+      url += '&value='+filter_item;
+    })    
   }
 
   return async function (dispatch) {

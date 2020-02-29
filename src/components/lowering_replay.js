@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import path from 'path';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Row, Col, Card, ListGroup, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Row, Col, Card, ListGroup, Image, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
 import 'rc-slider/assets/index.css';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import EventFilterForm from './event_filter_form';
@@ -28,7 +28,9 @@ const maxEventsPerPage = 10;
 
 const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData']
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+
+const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vehicleRealtimeCTDData'];
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
 
@@ -303,18 +305,14 @@ class LoweringReplay extends Component {
         }
 
         return (
-          <Row>
-            {
-              tmpData.map((camera) => {
-                return (
-                  <Col key={camera.source} xs={12} sm={6} md={4} lg={3}>
-                    {this.renderImage(camera.source, camera.filepath)}
-                  </Col>
-                );
-              })
-            }
-          </Row>
-        );
+          tmpData.map((camera) => {
+            return (
+              <Col key={camera.source} xs={12} sm={6} md={4} lg={3}>
+                {this.renderImage(camera.source, camera.filepath)}
+              </Col>
+            );
+          })
+        )
       }
     }
   }
@@ -332,7 +330,7 @@ class LoweringReplay extends Component {
       },[]);
 
       return (return_event_options.length > 0)? (
-        <Col xs={12} sm={6} md={4} lg={3}>
+        <Col xs={12} sm={6} md={4} lg={3} style={{paddingBottom: "8px"}}>
           <Card>
             <Card.Header className="data-card-header">Event Options</Card.Header>
             <Card.Body className="data-card-body">
@@ -349,30 +347,33 @@ class LoweringReplay extends Component {
   renderAuxDataCard() {
 
     if(this.props.event.selected_event && this.props.event.selected_event.aux_data) {
-      let return_aux_data = this.props.event.selected_event.aux_data.reduce((filtered, aux_data, index) => {
-        if(!excludeAuxDataSources.includes(aux_data.data_source)) {
-          let aux_data_points = aux_data.data_array.map((data, index) => {
-            return(<div key={`${aux_data.data_source}_data_point_${index}`}><span>{data.data_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
-          });
 
-          if(aux_data_points.length > 0) {
-            filtered.push(
-              <Col key={`${aux_data.data_source}_col`}sm={6} md={4} lg={3}>
-                <Card key={`${aux_data.data_source}`}>
-                  <Card.Header className="data-card-header">{aux_data.data_source}</Card.Header>
-                  <Card.Body className="data-card-body">
-                    <div style={{paddingLeft: "10px"}}>
-                      {aux_data_points}
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            );
-          }
-        }
+      console.log(this.props.event.selected_event.aux_data)
 
-        return filtered;
-      },[]);
+      const aux_data = this.props.event.selected_event.aux_data.filter((data) => !excludeAuxDataSources.includes(data.data_source))
+
+      aux_data.sort((a, b) => {
+        return (sortAuxDataSourceReference.indexOf(a.data_source) < sortAuxDataSourceReference.indexOf(b.data_source)) ? -1 : 1;
+      });
+
+      let return_aux_data = aux_data.map((aux_data, index) => {
+        const aux_data_points = aux_data.data_array.map((data, index) => {
+          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span>{data.data_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
+        });
+
+        return (
+          <Col key={`${aux_data.data_source}_col`} sm={6} md={4} lg={3} style={{paddingBottom: "8px"}}>
+            <Card key={`${aux_data.data_source}`}>
+              <Card.Header className="data-card-header">{aux_data.data_source}</Card.Header>
+              <Card.Body className="data-card-body">
+                <div style={{paddingLeft: "10px"}}>
+                  {aux_data_points}
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        );
+      });
 
       return return_aux_data;
     }
@@ -441,8 +442,7 @@ class LoweringReplay extends Component {
   renderEventListHeader() {
 
     const Label = "Filtered Events";
-    const ASNAPToggleIcon = (this.props.event.hideASNAP)? "Show ASNAP" : "Hide ASNAP";
-    const ASNAPToggle = (<span disabled={this.props.event.fetching} style={{ marginRight: "10px" }} onClick={() => this.toggleASNAP()}>{ASNAPToggleIcon}</span>);
+    const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.props.event.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='ASNAP'/>);
 
     return (
       <div>
@@ -528,13 +528,13 @@ class LoweringReplay extends Component {
           </Col>
         </Row>
         <Row>
-          <Col sm={12}>
-            {this.renderImageryCard()}
-          </Col>
-          {this.renderEventOptionsCard()}
+          {this.renderImageryCard()}
           {this.renderAuxDataCard()}
+          {this.renderEventOptionsCard()}
+        </Row>
+        <Row>
           <Col sm={12}>
-            <Row style={{paddingTop: "4px"}}>
+            <Row>
               <Col md={9} lg={9}>
                 {this.renderControlsCard()}
                 {this.renderEventCard()}

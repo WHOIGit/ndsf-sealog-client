@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { Row, Col, Card, ListGroup, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Row, Col, Card, ListGroup, Tooltip, OverlayTrigger, Form } from 'react-bootstrap';
 import EventFilterForm from './event_filter_form';
 import EventCommentModal from './event_comment_modal';
 import EventShowDetailsModal from './event_show_details_modal';
@@ -143,23 +143,22 @@ class LoweringReview extends Component {
   }
 
   toggleASNAP() {
-    this.props.eventUpdateLoweringReplay(this.props.match.params.id, !this.props.event.hideASNAP);
+    this.props.eventUpdateLoweringReplay(this.props.lowering.id, !this.props.event.hideASNAP);
 
     if(this.props.event.hideASNAP) {
       this.props.showASNAP();
-      this.handleEventClick(this.props.event.events[0]);
+      this.handleEventClick(0);
     }
     else {
       this.props.hideASNAP();
-      this.handleEventClick(this.props.event.events[0]);
+      this.handleEventClick(0);
     }
   }
 
   renderEventListHeader() {
 
     const Label = "Filtered Events";
-    const ASNAPToggleIcon = (this.props.event.hideASNAP)? "Show ASNAP" : "Hide ASNAP";
-    const ASNAPToggle = (<span disabled={this.props.event.fetching} style={{ marginRight: "10px" }} onClick={() => this.toggleASNAP()}>{ASNAPToggleIcon}</span>);
+    const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.props.event.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='ASNAP'/>);
 
     return (
       <div>

@@ -19,6 +19,8 @@ const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData']
 
 const imageAuxDataSources = ['vehicleRealtimeFramegrabberData']
 
+const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vehicleRealtimeCTDData'];
+
 class EventShowDetailsModal extends Component {
 
   constructor (props) {
@@ -89,17 +91,13 @@ class EventShowDetailsModal extends Component {
         }
 
         return (
-          <Row>
-            {
-              tmpData.map((camera) => {
-                return (
-                  <Col key={camera.source} xs={12} sm={6} md={6} lg={3}>
-                    {this.renderImage(camera.source, camera.filepath)}
-                  </Col>
-                )
-              })
-            }
-          </Row>
+          tmpData.map((camera) => {
+            return (
+              <Col key={camera.source} xs={12} sm={6} md={6} lg={4}>
+                {this.renderImage(camera.source, camera.filepath)}
+              </Col>
+            );
+          })
         )
       }
     }
@@ -131,36 +129,37 @@ class EventShowDetailsModal extends Component {
 
   renderAuxDataCard() {
 
-    if(this.props.event && this.state.event.aux_data) {
-      let return_aux_data = this.state.event.aux_data.reduce((filtered, aux_data) => {
-        if(!excludeAuxDataSources.includes(aux_data.data_source)) {
-          let aux_data_points = aux_data.data_array.map((data, index) => {
-            return(<div key={`${aux_data.data_source}_data_point_${index}`}><span>{data.data_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>)
-          })
+    if(this.state.event && this.state.event.aux_data) {
 
-          if(aux_data_points.length > 0) {
-            filtered.push(
-              <Col key={`${aux_data.data_source}_col`} xs={12} sm={6} md={6} lg={4}>
-                <Card key={`${aux_data.data_source}`}>
-                  <Card.Header className="data-card-header">{aux_data.data_source}</Card.Header>
-                  <Card.Body className="data-card-body">
-                    <div style={{paddingLeft: "10px"}}>
-                      {aux_data_points}
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            )
-          }
-        }
+      const aux_data = this.state.event.aux_data.filter((data) => !excludeAuxDataSources.includes(data.data_source))
 
-        return filtered
-      },[])
+      aux_data.sort((a, b) => {
+        return (sortAuxDataSourceReference.indexOf(a.data_source) < sortAuxDataSourceReference.indexOf(b.data_source)) ? -1 : 1;
+      });
 
-      return return_aux_data
+      let return_aux_data = aux_data.map((aux_data, index) => {
+        const aux_data_points = aux_data.data_array.map((data, index) => {
+          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span>{data.data_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
+        });
+
+        return (
+          <Col key={`${aux_data.data_source}_col`} sm={6} md={6} lg={4} style={{paddingBottom: "8px"}}>
+            <Card key={`${aux_data.data_source}`}>
+              <Card.Header className="data-card-header">{aux_data.data_source}</Card.Header>
+              <Card.Body className="data-card-body">
+                <div style={{paddingLeft: "10px"}}>
+                  {aux_data_points}
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        );
+      });
+
+      return return_aux_data;
     }
 
-    return null
+    return null;
   }
 
   render() {
@@ -183,14 +182,10 @@ class EventShowDetailsModal extends Component {
               <Modal.Body>
                 <span>User: {this.state.event.event_author}</span><br/>
                 <span>Date: {this.state.event.ts}</span>
-                <Row style={{paddingTop: "8px"}}>
-                  <Col xs={12}>
-                    {this.renderImageryCard()}
-                  </Col>
-                </Row>
-                <Row style={{paddingTop: "8px"}}>
-                  {this.renderEventOptionsCard()}
+                <Row>
+                  {this.renderImageryCard()}
                   {this.renderAuxDataCard()}
+                  {this.renderEventOptionsCard()}
                 </Row>
                 <Row style={{paddingTop: "8px"}}>
                   <Col xs={12}>
