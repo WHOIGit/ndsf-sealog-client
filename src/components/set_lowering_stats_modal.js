@@ -564,15 +564,6 @@ class SetLoweringStatsModal extends Component {
   }
 }
 
-                    // {this.renderMarker()}
-
-              // <Row style={{paddingTop: "8px"}}>
-                // <Col xs={12}>
-                  // {this.renderDepthCard()}
-                // </Col>
-              // </Row>
-
-
 function mapStateToProps(state) {
 
   return {
@@ -580,7 +571,6 @@ function mapStateToProps(state) {
     errorMessage: state.lowering.lowering_error,
     message: state.lowering.lowering_message,
   }
-
 }
 
 export default compose(

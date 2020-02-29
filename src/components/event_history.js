@@ -99,15 +99,6 @@ class EventHistory extends Component {
       //   }
       // })
 
-      //   this.setState({filteredLowerings: this.props.lowerings.filter((lowering) => {
-      //     const regex = RegExp(fieldVal, 'i');
-      //     if(lowering.lowering_id.match(regex) || lowering.lowering_location.match(regex)) {
-      //       return lowering;
-      //     }
-      //     else if (lowering.lowering_tags.includes(fieldVal)){
-      //       return lowering; 
-      //     }
-
       const filteredEvent = (event_value) => {
         return (this.state.filter == '') ? true : this.state.filter.split(',').reduce((answer, filter_item) => {
           const regex = RegExp(filter_item, 'i');

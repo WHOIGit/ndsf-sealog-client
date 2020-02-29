@@ -3,7 +3,7 @@ import Cookies from 'universal-cookie';
 import queryString from 'querystring';
 import { push } from 'connected-react-router';
 import { show } from 'redux-modal';
-import {change, untouch} from 'redux-form';
+import { change, untouch } from 'redux-form';
 import { API_ROOT_URL } from '../client_config';
 
 import {
