@@ -6,7 +6,7 @@ import CustomPagination from './custom_pagination';
 import * as mapDispatchToProps from '../actions';
 import { ROOT_PATH } from '../client_config';
 
-const maxImagesPerPage = 16
+// const maxImagesPerPage = 16
 
 class LoweringGalleryTab extends Component {
 
@@ -14,7 +14,7 @@ class LoweringGalleryTab extends Component {
     super(props);
 
     this.state = {
-      activePage: 1,
+      activePage: 1
     }
 
     this.handlePageSelect = this.handlePageSelect.bind(this);
@@ -22,7 +22,8 @@ class LoweringGalleryTab extends Component {
 
   static propTypes = {
     imagesSource: PropTypes.string.isRequired,
-    imagesData: PropTypes.object.isRequired
+    imagesData: PropTypes.object.isRequired,
+    maxImagesPerPage: PropTypes.number.isRequired
   };
 
   handlePageSelect(eventKey) {
@@ -49,7 +50,7 @@ class LoweringGalleryTab extends Component {
 
   renderGallery(imagesSource, imagesData) {
     return imagesData.images.map((image, index) => {
-      if(index >= (this.state.activePage-1) * maxImagesPerPage && index < (this.state.activePage * maxImagesPerPage)) {
+      if(index >= (this.state.activePage-1) * this.props.maxImagesPerPage && index < (this.state.activePage * this.props.maxImagesPerPage)) {
         return (
           <Col key={`${imagesSource}_${image.event_id}`} xs={12} sm={6} md={4} lg={3}>
             {this.renderImage(imagesSource, image.filepath, image.event_id)}
@@ -66,8 +67,8 @@ class LoweringGalleryTab extends Component {
           {this.renderGallery(this.props.imagesSource, this.props.imagesData)}
         </Row>
         <Row key={`${this.props.imagesSource}_images_pagination`}>
-          <Col xs={12}>
-            <CustomPagination page={this.state.activePage} count={(this.props.imagesData.images)? this.props.imagesData.images.length : 0} pageSelectFunc={this.handlePageSelect} maxPerPage={maxImagesPerPage}/>
+          <Col>
+            <CustomPagination page={this.state.activePage} count={(this.props.imagesData.images)? this.props.imagesData.images.length : 0} pageSelectFunc={this.handlePageSelect} maxPerPage={this.props.maxImagesPerPage}/>
           </Col>
         </Row>
       </div>
