@@ -20,10 +20,12 @@ class LoweringGallery extends Component {
 
     this.state = {
       fetching: false,
-      aux_data: []
+      aux_data: [],
+      maxImagesPerPage: 16
     };
 
     this.handleLoweringSelect = this.handleLoweringSelect.bind(this);
+    this.handleImageCountChange = this.handleImageCountChange.bind(this);
     this.handleLoweringModeSelect = this.handleLoweringModeSelect.bind(this);
 
   }
@@ -97,7 +99,10 @@ class LoweringGallery extends Component {
     });
 
     this.setState({ aux_data: image_data, fetching: false });
+  }
 
+  handleImageCountChange(event) {
+    this.setState({ maxImagesPerPage: parseInt(event.target.value)});
   }
 
   handleLoweringSelect(id) {
@@ -105,7 +110,6 @@ class LoweringGallery extends Component {
     this.props.initLowering(id, this.props.event.hideASNAP);
     this.props.initCruiseFromLowering(id);
     this.initLoweringImages(id);
-
   }
 
   handleLoweringModeSelect(mode) {
@@ -126,7 +130,7 @@ class LoweringGallery extends Component {
     for (const [key, value] of Object.entries(this.state.aux_data)) {
       galleries.push((
         <Tab key={`tab_${key}`} eventKey={`tab_${key}`} title={key}>
-          <LoweringGalleryTab imagesSource={key} imagesData={value}/>
+          <LoweringGalleryTab imagesSource={key} imagesData={value} maxImagesPerPage={this.state.maxImagesPerPage} />
         </Tab>
 
       ));
@@ -159,7 +163,21 @@ class LoweringGallery extends Component {
               {' '}/{' '}
               <span><LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Review", "Replay", "Map"]}/></span>
             </span>
-            <span className="float-right">{ASNAPToggle}</span>
+            <span className="float-right">
+              <Form style={{marginTop: '-4px'}} className='float-right' inline>
+                <Form.Group controlId="selectMaxImagesPerPage" >
+                  <Form.Control size="sm" as="select" onChange={this.handleImageCountChange}>
+                    <option>16</option>
+                    <option>32</option>
+                    <option>48</option>
+                    <option>64</option>
+                    <option>80</option>
+                  </Form.Control>
+                  <Form.Label>&nbsp;&nbsp;Images/Page&nbsp;&nbsp;</Form.Label>
+                </Form.Group>
+              </Form>
+              {ASNAPToggle}
+            </span>
           </Col>
           <Col lg={12}>
             {galleries}
