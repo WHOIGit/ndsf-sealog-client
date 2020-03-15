@@ -31,7 +31,7 @@ class EventHistory extends Component {
       event: null,
       showASNAP: false,
       showFRAMEGRAB: true,
-      showNewEventDetails: false,
+      showNewEventDetails: true,
       showEventHistory: true,
       showEventHistoryFullscreen: false,
       filterTimer: null,
