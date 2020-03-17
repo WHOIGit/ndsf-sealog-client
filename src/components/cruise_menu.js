@@ -410,7 +410,7 @@ class CruiseMenu extends Component {
 
       this.setState({ cruiseLowerings });
     }
-}
+  }
 
   renderYearListItems() {
 

@@ -150,6 +150,6 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'login',
-    validate: validate,
+    validate: validate
   })
 )(Login);
