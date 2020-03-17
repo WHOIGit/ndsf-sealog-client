@@ -30,7 +30,7 @@ class LoweringGalleryTab extends Component {
   }
 
   handleMissingImage(ev) {
-    ev.target.src = `${ROOT_PATH}images/noimage.jpeg`
+    ev.target.src = `${ROOT_PATH}/images/noimage.jpeg`
   }
 
   handleEventShowDetailsModal(event_id) {

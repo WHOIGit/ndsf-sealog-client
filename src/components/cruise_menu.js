@@ -69,7 +69,7 @@ class CruiseMenu extends Component {
     }
 
     if(this.state.activeCruise !== prevState.activeCruise && this.props.lowerings.length > 0 ) {
-      console.log("active cruise changed");
+      // console.log("active cruise changed");
       this.buildLoweringList();
       this.setState({ activeLowering: null })
     }
@@ -370,7 +370,7 @@ class CruiseMenu extends Component {
 
       this.setState({ cruiseLowerings });
     }
-}
+  }
 
   renderYearListItems() {
 
