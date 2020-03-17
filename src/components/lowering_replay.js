@@ -5,7 +5,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { Row, Col, Card, ListGroup, Image, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
 import 'rc-slider/assets/index.css';
-import Slider, { createSliderWithTooltip } from 'rc-slider';
+import Slider from 'rc-slider';
 import EventFilterForm from './event_filter_form';
 import ImagePreviewModal from './image_preview_modal';
 import EventCommentModal from './event_comment_modal';
@@ -32,7 +32,7 @@ const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
 const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vehicleRealtimeCTDData'];
 
-const SliderWithTooltip = createSliderWithTooltip(Slider);
+const SliderWithTooltip = Slider.createSliderWithTooltip(Slider);
 
 class LoweringReplay extends Component {
 
@@ -348,7 +348,7 @@ class LoweringReplay extends Component {
 
     if(this.props.event.selected_event && this.props.event.selected_event.aux_data) {
 
-      console.log(this.props.event.selected_event.aux_data)
+      // console.log(this.props.event.selected_event.aux_data)
 
       const aux_data = this.props.event.selected_event.aux_data.filter((data) => !excludeAuxDataSources.includes(data.data_source))
 
