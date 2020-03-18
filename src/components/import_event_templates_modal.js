@@ -36,7 +36,7 @@ class ImportEventTemplatesModal extends Component {
     this.props.handleHide()
   }
 
-  async insertEventTemplate({id, event_name, event_value, event_free_text_required = false, event_options = [], system_template = false }) {
+  async insertEventTemplate({id, event_name, event_value, event_free_text_required = false, event_options = [], system_template = false, template_categories = [] }) {
 
     try {
       const result = await axios.get(`${API_ROOT_URL}/api/v1/event_templates/${id}`,
@@ -63,7 +63,7 @@ class ImportEventTemplatesModal extends Component {
 
         try {
           const result = await axios.post(`${API_ROOT_URL}/api/v1/event_templates`,
-          {id, event_name, event_value, event_free_text_required, event_options, system_template },
+          {id, event_name, event_value, event_free_text_required, event_options, system_template, template_categories },
           {
             headers: {
               authorization: cookies.get('token'),
