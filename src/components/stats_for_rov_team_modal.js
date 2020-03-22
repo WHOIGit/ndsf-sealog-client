@@ -52,7 +52,7 @@ class StatsForROVTeamModal extends Component {
 
     if(this.state.lowerings && this.state.lowerings != prevState.lowerings) {
       // console.log("lowerings changed");
-      this.fetchLoweringSamples();
+      this.fetchLoweringSampleCount();
     }
 
     if(this.state.lowering_samples && this.state.lowering_samples != prevState.lowering_samples) {
@@ -62,11 +62,11 @@ class StatsForROVTeamModal extends Component {
 
   }
 
-  async fetchLoweringSamples() {
+  async fetchLoweringSampleCount() {
 
     this.setState({status_msg: "Downloading sample counts..."})
     const samples = await this.state.lowerings.map(async (lowering) => {
-      const samples_count = await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering.id}/count?value=SAMPLE`,
+      const samples_count = await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering.id}?value=SAMPLE`,
         {
           headers: {
           authorization: cookies.get('token')
@@ -74,9 +74,11 @@ class StatsForROVTeamModal extends Component {
         }      
       ).then((response) => {
 
-        return response.data.events;
+        const sample_events = response.data.filter((event) => event['event_value'] == 'SAMPLE');
+        return sample_events.length;
 
       }).catch((error) => {
+        console.log(error)
         if(error.response.status !== 404) {
           console.log(error)
         }
@@ -278,7 +280,8 @@ class StatsForROVTeamModal extends Component {
       'Seabed',
       'Ascent',
       'Recovery',
-      'Samples'
+      'Samples',
+      'Max Depth'
     ])
 
     this.state.lowering_stats.forEach((stat, index) => {
@@ -291,7 +294,8 @@ class StatsForROVTeamModal extends Component {
         moment.duration(stat.on_bottom_duration).format('HH:mm:ss', { trim: false }),
         moment.duration(stat.ascent_duration).format('HH:mm:ss', { trim: false }),
         moment.duration(stat.recovery_duration).format('HH:mm:ss', { trim: false }),
-        stat.samples_collected
+        stat.samples_collected,
+        stat.max_depth
       ])
     })
 
@@ -352,6 +356,7 @@ class StatsForROVTeamModal extends Component {
           <th>Ascent</th>
           <th>Recovery</th>
           <th>Samples</th>
+          <th>Max Depth</th>
         </tr>
       </thead>
     )
@@ -368,6 +373,7 @@ class StatsForROVTeamModal extends Component {
           <td>{`${moment.duration(stat.ascent_duration).format('HH:mm:ss', { trim: false })}`}</td>
           <td>{`${moment.duration(stat.recovery_duration).format('HH:mm:ss', { trim: false })}`}</td>
           <td>{stat.samples_collected}</td>
+          <td>{stat.max_depth}</td>
         </tr>
       )
     })
@@ -404,11 +410,12 @@ class StatsForROVTeamModal extends Component {
         <th>{`${moment.duration(lowering_stat_totals.ascent_duration).format('HH:mm:ss', { trim: false })}`}</th>
         <th>{`${moment.duration(lowering_stat_totals.recovery_duration).format('HH:mm:ss', { trim: false })}`}</th>
         <th>{lowering_stat_totals.samples_collected}</th>
+        <th></th>
       </tr>
     )
 
     return (
-      <Table striped bordered hover responsive size="sm">
+      <Table striped bordered hover responsive size="sm" style={{fontSize: '11px'}}>
         {statTableHeaders}
         <tbody>
           {statsTableData}
