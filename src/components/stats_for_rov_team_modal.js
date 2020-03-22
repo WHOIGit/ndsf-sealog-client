@@ -307,8 +307,18 @@ class StatsForROVTeamModal extends Component {
       totals.ascent_duration += lowering.ascent_duration;
       totals.recovery_duration += lowering.recovery_duration;
       totals.samples_collected += lowering.samples_collected;
+      totals.max_depth = (totals.max_depth >= lowering.max_depth) ? totals.max_depth : lowering.max_depth;
 
       return totals
+    },{
+      total_duration: 0,
+      deployment_duration: 0,
+      descent_duration: 0,
+      on_bottom_duration: 0,
+      ascent_duration: 0,
+      recovery_duration: 0,
+      samples_collected: 0,
+      max_depth: 0
     });
 
     Results.push([
@@ -320,7 +330,8 @@ class StatsForROVTeamModal extends Component {
       moment.duration(lowering_stat_totals.on_bottom_duration).format('HH:mm:ss', { trim: false }),
       moment.duration(lowering_stat_totals.ascent_duration).format('HH:mm:ss', { trim: false }),
       moment.duration(lowering_stat_totals.recovery_duration).format('HH:mm:ss', { trim: false }),
-      lowering_stat_totals.samples_collected
+      lowering_stat_totals.samples_collected,
+      lowering_stat_totals.max_depth
     ])
 
     let CsvString = "";
@@ -386,6 +397,7 @@ class StatsForROVTeamModal extends Component {
       totals.ascent_duration += lowering.ascent_duration;
       totals.recovery_duration += lowering.recovery_duration;
       totals.samples_collected += lowering.samples_collected;
+      totals.max_depth = (totals.max_depth >= lowering.max_depth) ? totals.max_depth : lowering.max_depth;
 
       return totals
 
@@ -396,7 +408,8 @@ class StatsForROVTeamModal extends Component {
       on_bottom_duration: 0,
       ascent_duration: 0,
       recovery_duration: 0,
-      samples_collected: 0
+      samples_collected: 0,
+      max_depth: 0
     })
 
     const statTableDataTotals = (
@@ -410,7 +423,7 @@ class StatsForROVTeamModal extends Component {
         <th>{`${moment.duration(lowering_stat_totals.ascent_duration).format('HH:mm:ss', { trim: false })}`}</th>
         <th>{`${moment.duration(lowering_stat_totals.recovery_duration).format('HH:mm:ss', { trim: false })}`}</th>
         <th>{lowering_stat_totals.samples_collected}</th>
-        <th></th>
+        <th>{lowering_stat_totals.max_depth}</th>
       </tr>
     )
 
