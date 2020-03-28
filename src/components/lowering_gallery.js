@@ -31,7 +31,7 @@ class LoweringGallery extends Component {
   }
 
   componentDidMount() {
-    this.initLoweringImages(this.props.match.params.id);
+    this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);
 
     if(!this.props.lowering.id || this.props.lowering.id !== this.props.match.params.id || this.props.event.events.length === 0) {
       this.props.initLowering(this.props.match.params.id);
@@ -45,7 +45,7 @@ class LoweringGallery extends Component {
   componentDidUpdate(prevProps, prevState) {
 
     if(prevProps.event.hideASNAP !== this.props.event.hideASNAP) {
-      this.initLoweringImages(this.props.match.params.id, 'vehicleRealtimeFramegrabberData', this.props.event.hideASNAP);
+      this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);
     }  
   }
 
@@ -63,7 +63,7 @@ class LoweringGallery extends Component {
   componentWillUnmount(){
   }
 
-  async initLoweringImages(id, auxDatasourceFilter = 'vehicleRealtimeFramegrabberData', hideASNAP=false) {
+  async initLoweringImages(id, hideASNAP=false, auxDatasourceFilter='vehicleRealtimeFramegrabberData') {
     this.setState({ fetching: true});
 
     let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`
@@ -109,7 +109,7 @@ class LoweringGallery extends Component {
     this.props.gotoLoweringGallery(id);
     this.props.initLowering(id, this.props.event.hideASNAP);
     this.props.initCruiseFromLowering(id);
-    this.initLoweringImages(id);
+    this.initLoweringImages(id, this.props.event.hideASNAP);
   }
 
   handleLoweringModeSelect(mode) {
@@ -128,11 +128,10 @@ class LoweringGallery extends Component {
 
     let galleries = [];
     for (const [key, value] of Object.entries(this.state.aux_data)) {
-      galleries.push((
+      galleries.unshift((
         <Tab key={`tab_${key}`} eventKey={`tab_${key}`} title={key}>
           <LoweringGalleryTab imagesSource={key} imagesData={value} maxImagesPerPage={this.state.maxImagesPerPage} />
         </Tab>
-
       ));
     }
 
