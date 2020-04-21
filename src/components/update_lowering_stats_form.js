@@ -96,124 +96,143 @@ class UpdateLoweringStatsForm extends Component {
       return (
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <Row>
-                <Col md={6}>
-                  <Field
-                    name="start"
-                    component={renderDateTimePicker}
-                    label="Start Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    required={true}
-                    sm={12}
-                  />
-                  <Field
-                    name="off_deck"
-                    component={renderDateTimePicker}
-                    label="Off Deck Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
-                  <Field
-                    name="descending"
-                    component={renderDateTimePicker}
-                    label="Descending Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
-                  <Field
-                    name="on_bottom"
-                    component={renderDateTimePicker}
-                    label="On Bottom Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
-                  <Field
-                    name="off_bottom"
-                    component={renderDateTimePicker}
-                    label="Off Bottom Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
-                  <Field
-                    name="floats_on_surface"
-                    component={renderDateTimePicker}
-                    label="Floats on Surface Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
-                  <Field
-                    name="stop"
-                    component={renderDateTimePicker}
-                    label="On Deck/Stop Date/Time (UTC)"
-                    required={true}
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
+                <Col className="px-1" sm={6}>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="start"
+                      component={renderDateTimePicker}
+                      label="Start Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      required={true}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="off_deck"
+                      component={renderDateTimePicker}
+                      label="Off Deck Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="descending"
+                      component={renderDateTimePicker}
+                      label="Descending Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="on_bottom"
+                      component={renderDateTimePicker}
+                      label="On Bottom Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="off_bottom"
+                      component={renderDateTimePicker}
+                      label="Off Bottom Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="floats_on_surface"
+                      component={renderDateTimePicker}
+                      label="Floats on Surface Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="stop"
+                      component={renderDateTimePicker}
+                      label="On Deck/Stop Date/Time (UTC)"
+                      required={true}
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
                 </Col>
-                <Col md={6}>
-                  <Row>
-                    <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
-                      <Field
-                        name="max_depth"
-                        component={renderTextField}
-                        label="Max Depth"
-                        placeholder="in meters"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={{span: 6, offset: 3}}>
-                      <Field
-                        name="bbox_north"
-                        component={renderTextField}
-                        label="North"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <Field
-                        name="bbox_west"
-                        component={renderTextField}
-                        label="West"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                    <Col>
-                      <Field
-                        name="bbox_east"
-                        component={renderTextField}
-                        label="East"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={{span: 6, offset: 3}}>
-                      <Field
-                        name="bbox_south"
-                        component={renderTextField}
-                        label="South"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
+                <Col className='px-1' sm={6}>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="max_depth"
+                      component={renderTextField}
+                      label="Max Depth"
+                      placeholder="in meters"
+                      lg={5}
+                      md={7}
+                      sm={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="bbox_north"
+                      component={renderTextField}
+                      label="North"
+                      placeholder="in ddeg"
+                      lg={5}
+                      md={6}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="bbox_west"
+                      component={renderTextField}
+                      label="West"
+                      placeholder="in ddeg"
+                      lg={5}
+                      md={6}
+                    />
+                    <Field
+                      name="bbox_east"
+                      component={renderTextField}
+                      label="East"
+                      placeholder="in ddeg"
+                      lg={5}
+                      md={6}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="bbox_south"
+                      component={renderTextField}
+                      label="South"
+                      placeholder="in ddeg"
+                      lg={5}
+                      md={6}
+                    />
+                  </Form.Row>
                 </Col>
               </Row>
               <Row>
                 <Col xs={12}>
                   <div className="float-right">
-                    <Button variant="secondary" size="sm" onClick={this.props.handleHide}>Cancel</Button>
+                    <Button className="mr-1" variant="secondary" size="sm" onClick={this.props.handleHide}>Cancel</Button>
                     <Button variant="warning" size="sm" type="submit" disabled={pristine || submitting || !valid}>Done</Button>
                   </div>
                 </Col>

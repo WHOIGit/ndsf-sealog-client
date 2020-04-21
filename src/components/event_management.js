@@ -187,7 +187,7 @@ class EventManagement extends Component {
           if(option.event_option_name === 'event_comment') {
             comment_exists = (option.event_option_value !== '')? true : false;
           } else {
-            filtered.push(`${option.event_option_name}: "${option.event_option_value}"`);
+            filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
           }
           return filtered;
         },[]);
@@ -203,20 +203,20 @@ class EventManagement extends Component {
         let deleteIcon = <FontAwesomeIcon className={"text-danger"} onClick={() => this.handleEventDeleteModal(event)} icon='trash' fixedWidth/>;
         let deleteTooltip = (this.props.roles && this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={<Tooltip id={`deleteTooltip_${event.id}`}>Delete this event</Tooltip>}>{deleteIcon}</OverlayTrigger>): null;
 
-        return (<ListGroup.Item className="event-list-item" key={event.id}><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{deleteTooltip} {commentTooltip}</span></ListGroup.Item>);
+        return (<ListGroup.Item className="event-list-item py-1" key={event.id}><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{deleteTooltip} {commentTooltip}</span></ListGroup.Item>);
       });
 
       return eventList;
     }
 
-    return (<ListGroup.Item key="emptyHistory" >No events found</ListGroup.Item>);
+    return (<ListGroup.Item className="event-list-item py-1" key="emptyHistory" >No events found</ListGroup.Item>);
   }
 
   renderEventCard() {
 
     if (!this.state.events) {
       return (
-        <Card>
+        <Card className="border-secondary">
           <Card.Header>{ this.renderEventListHeader() }</Card.Header>
           <Card.Body>Loading...</Card.Body>
         </Card>
@@ -224,9 +224,9 @@ class EventManagement extends Component {
     }
 
     return (
-      <Card>
+      <Card className="border-secondary">
         <Card.Header>{ this.renderEventListHeader() }</Card.Header>
-        <ListGroup>
+        <ListGroup className="eventList">
           {this.renderEvents()}
         </ListGroup>
       </Card>
@@ -240,11 +240,11 @@ class EventManagement extends Component {
         <DeleteEventModal />
         <EventShowDetailsModal />
         <Row>
-          <Col sm={12} md={8} lg={8}>
+          <Col className="px-1 pb-2" sm={12} md={9} lg={9}>
             {this.renderEventCard()}
-            <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={this.state.eventCount} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
+            <CustomPagination className="mt-2" page={this.state.activePage} count={this.state.eventCount} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
           </Col>
-          <Col sm={12} md={4} lg={4}>
+          <Col className="px-1 pb-2" sm={12} md={3} lg={3}>
             <EventFilterForm disabled={this.state.fetching} hideASNAP={this.state.hideASNAP} handlePostSubmit={ this.updateEventFilter } lowering_id={null}/>
           </Col>
         </Row>

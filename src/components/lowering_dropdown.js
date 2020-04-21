@@ -36,12 +36,10 @@ const LoweringDropdownMenu = React.forwardRef(
         className={className}
         aria-labelledby={labeledBy}
       >
-        <ul className="list-unstyled">
-          {React.Children.toArray(children).filter(
-            child =>
-              !value || child.props.children.toLowerCase().startsWith(value),
-          )}
-        </ul>
+        {React.Children.toArray(children).filter(
+          child =>
+            !value || child.props.children.toLowerCase().startsWith(value),
+        )}
       </div>
     );
   }
@@ -54,11 +52,8 @@ class LoweringDropdown extends Component {
     super(props);
 
     this.state = {
-      menuItems: [],
-      toggleText: this.props.active_lowering.lowering_id,
+      lowerings: [],
     }
-
-    this.menuItemStyle = {paddingLeft: "10px"};
   }
 
   static propTypes = {
@@ -68,25 +63,17 @@ class LoweringDropdown extends Component {
   };
 
   componentDidMount() {
+    this.fetchLowerings();
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.active_lowering !== this.props.active_lowering){
-      this.setState({toggleText: this.props.active_lowering.lowering_id})
-    }
-
     if(prevProps.active_cruise !== this.props.active_cruise){
-      this.buildMenuItems();
+      this.fetchLowerings();
     }
   }
 
-  async buildMenuItems() {
+  async fetchLowerings() {
 
-    // let lowering_start_ts = new Date(this.props.active_lowering.start_ts);
-    // let lowering_stop_ts = new Date(this.props.active_lowering.stop_ts);
-    // let startOfYear = new Date(Date.UTC(lowering_start_ts.getFullYear(), 0, 1, 0, 0, 0));
-    // let endOfYear = new Date(Date.UTC(lowering_start_ts.getFullYear(), 11, 31, 23, 59, 59));
-    
     if ( this.props.active_cruise.id ) {
       try {
         const response = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/bycruise/${this.props.active_cruise.id}`,
@@ -97,7 +84,7 @@ class LoweringDropdown extends Component {
         })
         
         const lowerings = await response.data;
-        this.setState({menuItems: lowerings.map((lowering) => (<Dropdown.Item className="text-primary" onClick={() => this.props.onClick(lowering.id)} key={lowering.id}>{lowering.lowering_id}</Dropdown.Item>))})
+        this.setState({lowerings})
       }
       catch(error){
         console.log(error)
@@ -108,10 +95,10 @@ class LoweringDropdown extends Component {
   render() {
 
     return (
-      <Dropdown as={'span'} id="dropdown-custom-menu">
-        <Dropdown.Toggle as={LoweringDropdownToggle}>{this.state.toggleText}</Dropdown.Toggle>
-        <Dropdown.Menu as={LoweringDropdownMenu} style={this.dropdownMenuStyle}>
-          {this.state.menuItems}
+      <Dropdown className="no-arrow" id="dropdown-custom-menu">
+        <Dropdown.Toggle as={LoweringDropdownToggle}>{(this.props.active_lowering.lowering_id) ? this.props.active_lowering.lowering_id : 'Loading...'}</Dropdown.Toggle>
+        <Dropdown.Menu as={LoweringDropdownMenu}>
+          {this.state.lowerings.map((lowering) => (<Dropdown.Item className="text-primary" onClick={() => this.props.onClick(lowering.id)} key={lowering.id}>{lowering.lowering_id}</Dropdown.Item>))}
         </Dropdown.Menu>
       </Dropdown>
     )

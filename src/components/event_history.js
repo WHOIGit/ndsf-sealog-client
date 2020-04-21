@@ -72,11 +72,11 @@ class EventHistory extends Component {
       this.setState({page: 0});
     }
 
-    if(prevState.showNewEventDetails !== this.state.showNewEventDetails && this.props.history[0] && this.state.showNewEventDetails) {
+    if(prevState.showNewEventDetails !== this.state.showNewEventDetails && this.state.showNewEventDetails && this.props.history[0]) {
       this.fetchEventExport(this.props.history[0].id);      
     }
 
-    if(prevProps.history[0] !== this.props.history[0] && this.state.showNewEventDetails && this.props.history[0]) {
+    if(prevProps.history[0] !== this.props.history[0] && this.props.history[0] && !this.state.event && this.state.showNewEventDetails) {
       this.fetchEventExport(this.props.history[0].id);
     }
   }
@@ -112,7 +112,10 @@ class EventHistory extends Component {
         // console.log("update:", update)
         if(!(!this.state.showASNAP && update.event_value === "ASNAP") && !(!this.state.showFRAMEGRAB && update.event_value === "FRAMEGRAB") && filteredEvent(update.event_value)) {
           // console.log("updating")
-          this.props.updateEventHistory(update);
+          if(this.state.page == 0) {
+            this.props.updateEventHistory(update);            
+          }
+          this.fetchEventExport(update.id);
         }
       };
 
@@ -127,6 +130,15 @@ class EventHistory extends Component {
       const deleteHandler = (update, flags) => {
         // console.log("delete:", update)
         // console.log("deleting")
+        if(update.id === this.state.event.id) {
+          if(this.props.history[0] && this.state.page == 0) {
+            this.fetchEventExport(this.props.history[0].id);
+          }
+          else {
+            this.fetchEventExport();
+          }
+        }
+
         this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);
       };
 
@@ -143,9 +155,31 @@ class EventHistory extends Component {
   }
 
 
-  async fetchEventExport(event_id) {
+  async fetchEventExport(event_id=null) {
 
-    let url = `${API_ROOT_URL}/api/v1/event_exports/${event_id}`;
+    if(!event_id) {
+      let url = `${API_ROOT_URL}/api/v1/events?sort=newest&limit=1`
+      const event = await axios.get(url, {
+        headers: {
+          authorization: cookies.get('token')
+        }
+      }).then((response) => {
+        return response.data;
+
+      }).catch((error)=>{
+        if(error.response && error.response.data.statusCode !== 404) {
+          console.log(error);
+        }
+        return null;
+      });
+
+      if(!event) {
+        return null;
+      }
+      event_id = event[0].id;
+    }
+
+    let url = `${API_ROOT_URL}/api/v1/event_exports/${event_id}`
     const event_export = await axios.get(url, {
       headers: {
         authorization: cookies.get('token')
@@ -180,7 +214,7 @@ class EventHistory extends Component {
     const showTooltip = (<Tooltip id="showHistoryTooltip">Show event history</Tooltip>);
     const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
     const NewEventToggleIcon = (this.state.showNewEventDetails)? null : "Show Newest Event Details";
-    const NewEventToggle = (NewEventToggleIcon) ? <span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={() => this.toggleNewEventDetails()}>{NewEventToggleIcon} </span> : null;
+    const NewEventToggle = (NewEventToggleIcon) ? <span className="mr-2" variant="secondary" size="sm" onClick={() => this.toggleNewEventDetails()}>{NewEventToggleIcon} </span> : null;
 
     if(this.state.showEventHistory) {
 
@@ -191,7 +225,7 @@ class EventHistory extends Component {
             <Form inline className="float-right">
               {NewEventToggle}
               <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onChange={this.handleSearchChange}/>
-              <OverlayTrigger placement="top" overlay={compressTooltip}><span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={ () => this.handleHideEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
+              <OverlayTrigger placement="top" overlay={compressTooltip}><span className="mr-2" variant="secondary" size="sm" onClick={ () => this.handleHideEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
               <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
             </Form>
           </div>
@@ -204,7 +238,7 @@ class EventHistory extends Component {
           <Form inline className="float-right">
             {NewEventToggle}
             <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onChange={this.handleSearchChange}/>
-            <OverlayTrigger placement="top" overlay={expandTooltip}><span style={{ marginRight: "10px" }} variant="secondary" size="sm" onClick={ () => this.handleShowEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
+            <OverlayTrigger placement="top" overlay={expandTooltip}><span className="mr-2" variant="secondary" size="sm" onClick={ () => this.handleShowEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
             <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
           </Form>
         </div>
@@ -243,24 +277,6 @@ class EventHistory extends Component {
 
     let fieldVal = event.target.value;
     this.setState({ filterTimer: setTimeout(() => this.setState({filter: fieldVal}), 1500) })
-
-    // let fieldVal = event.target.value;
-    // if(fieldVal !== "") {
-    //   this.setState({filteredLowerings: this.props.lowerings.filter((lowering) => {
-    //     const regex = RegExp(fieldVal, 'i');
-    //     if(lowering.lowering_id.match(regex) || lowering.lowering_location.match(regex)) {
-    //       return lowering;
-    //     }
-    //     else if (lowering.lowering_tags.includes(fieldVal)){
-    //       return lowering; 
-    //     }
-    //   })
-    //   });
-    // }
-    // else {
-    //   this.setState({filteredLowerings: null});
-    // }
-    // this.handlePageSelect(1);
   }
 
   handleShowEventHistoryFullscreen() {
@@ -301,11 +317,9 @@ class EventHistory extends Component {
 
   renderImage(source, filepath) {
     return (
-      <Card id={`image_${source}`}>
-        <Card.Body className="data-card-body">
-          <Image  fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
-          <div>{source}</div>
-        </Card.Body>
+      <Card className="event-image-data-card" id={`image_${source}`}>
+          <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
+          <span>{source}</span>
       </Card>
     )
   }
@@ -324,7 +338,7 @@ class EventHistory extends Component {
         return (
           tmpData.map((camera) => {
             return (
-              <Col key={camera.source} xs={12} sm={6} md={4} lg={3}>
+              <Col className="px-1 mb-2" key={camera.source} xs={12} sm={6} md={4} lg={3}>
                 {this.renderImage(camera.source, camera.filepath)}
               </Col>
             )
@@ -339,19 +353,17 @@ class EventHistory extends Component {
     // return null;
     let return_event_options = this.state.event.event_options.reduce((filtered, event_option, index) => {
       if(event_option.event_option_name !== 'event_comment') {
-        filtered.push(<div key={`event_option_${index}`}><span>{event_option.event_option_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
+        filtered.push(<div className="pl-1" key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
       }
       return filtered
     },[])
 
     return (return_event_options.length > 0)? (
-      <Col xs={12} sm={6} md={4} lg={3}>
-        <Card>
-          <Card.Header className="data-card-header">Event Options</Card.Header>
-          <Card.Body className="data-card-body">
-            <div style={{paddingLeft: "10px"}}>
-              {return_event_options}
-            </div>
+      <Col className="px-1 mb-2" xs={12} sm={6} md={4} lg={3}>
+        <Card className="event-data-card">
+          <Card.Header>Event Options</Card.Header>
+          <Card.Body>
+            {return_event_options}
           </Card.Body>
         </Card>
       </Col>
@@ -370,17 +382,15 @@ class EventHistory extends Component {
 
       let return_aux_data = aux_data.map((aux_data, index) => {
         const aux_data_points = aux_data.data_array.map((data, index) => {
-          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span>{data.data_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
+          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span className="data-name">{data.data_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
         });
 
         return (
-          <Col key={`${aux_data.data_source}_col`} sm={6} md={4} lg={3} style={{paddingBottom: "8px"}}>
-            <Card key={`${aux_data.data_source}`}>
-              <Card.Header className="data-card-header">{aux_data.data_source}</Card.Header>
-              <Card.Body className="data-card-body">
-                <div style={{paddingLeft: "10px"}}>
-                  {aux_data_points}
-                </div>
+          <Col className="px-1 pb-2" key={`${aux_data.data_source}_col`} sm={6} md={4} lg={3}>
+            <Card className="event-data-card" key={`${aux_data.data_source}`}>
+              <Card.Header>{aux_data.data_source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</Card.Header>
+              <Card.Body>
+                {aux_data_points}
               </Card.Body>
             </Card>
           </Col>
@@ -411,7 +421,7 @@ class EventHistory extends Component {
               comment_exists = true;
             }
           } else {
-            filtered.push(`${option.event_option_name}: "${option.event_option_value}"`);
+            filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
           }
           return filtered;
         },[]);
@@ -424,7 +434,7 @@ class EventHistory extends Component {
         let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(event)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(event)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon inverse icon='plus' fixedWidth transform="shrink-4"/></span>;
         let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
 
-        eventArray.push(<ListGroup.Item className="event-list-item" key={event.id} ><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{commentTooltip}</span></ListGroup.Item>);
+        eventArray.push(<ListGroup.Item className="event-list-item py-1" key={event.id} ><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{commentTooltip}</span></ListGroup.Item>);
       }
       return eventArray;
     }
@@ -436,18 +446,16 @@ class EventHistory extends Component {
 
     const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
 
-    // const event_free_text_card = (this.state.event.event_free_text)? (<Card><Card.Body className="data-card-body">Free-form Text: {this.state.event.event_free_text}</Card.Body></Card>) : null;
     const event_comment = (this.state.event.event_options) ? this.state.event.event_options.find((event_option) => (event_option.event_option_name === 'event_comment' && event_option.event_option_value.length > 0)) : null
 
     const event_comment_card = (event_comment)?(<Card><Card.Body className="data-card-body">Comment: {event_comment.event_option_value}</Card.Body></Card>) : null;
 
-    // console.log("show details");
     return (
-      <Card>
+      <Card className={this.props.className}>
         <ImagePreviewModal />
         <Card.Header>{this.state.event.ts} {`<${this.state.event.event_author}>`}: {this.state.event.event_value} {(this.state.event.event_free_text) ? ` --> "${this.state.event.event_free_text}"` : null}<OverlayTrigger placement="top" overlay={hideTooltip}><span className="float-right" variant="secondary" size="sm" onClick={ () => this.toggleNewEventDetails() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger></Card.Header>
 
-        <Card.Body>
+        <Card.Body className="pt-2 pb-1">
           <Row>
             {this.renderImageryCard()}
             {this.renderAuxDataCard()}
@@ -473,7 +481,7 @@ class EventHistory extends Component {
 
     if (!this.props.history) {
       eventHistoryCard = (
-        <Card>
+        <Card className={this.props.className}>
           <Card.Header>{ this.renderEventHistoryHeader() }</Card.Header>
           <Card.Body>Loading...</Card.Body>
         </Card>
@@ -481,65 +489,37 @@ class EventHistory extends Component {
     }
     else if(this.state.showEventHistory) {
 
-      if (this.state.showEventHistoryFullscreen) {
-        eventHistoryCard = (
-          <div>
-            <Card>
-              <Card.Header>{ this.renderEventHistoryHeader() }</Card.Header>
-              <ListGroup ref={eventHistoryRef}>
-                {this.renderEventHistory()}
-              </ListGroup>
-              <Card.Footer>
-                <Button size={"sm"} variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
-                <Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
-                <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
-                <Form className="float-right" inline>
-                  {FRAMEGRABToggle}
-                  {ASNAPToggle}
-                </Form>
-              </Card.Footer>
-            </Card>
-          </div>
-        );
-      }
-      else {
-        eventHistoryCard = (
-          <div>
-            <Card>
-              <Card.Header>{ this.renderEventHistoryHeader() }</Card.Header>
-              <ListGroup className="eventHistory" ref={eventHistoryRef}>
-                {this.renderEventHistory()}
-              </ListGroup>
-              <Card.Footer>
-                <Button size={"sm"} variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
-                <Button size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
-                <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
-                <Form className="float-right" inline>
-                  {FRAMEGRABToggle}
-                  {ASNAPToggle}
-                </Form>
-              </Card.Footer>
-            </Card>
-          </div>
-        );
-      }
+      eventHistoryCard = (
+        <Card className={`${this.props.className}`}>
+          <Card.Header>{ this.renderEventHistoryHeader() }</Card.Header>
+          <ListGroup className={`eventList ${(!this.state.showEventHistoryFullscreen) ? 'collapsed' : ''}`} ref={eventHistoryRef}>
+            {this.renderEventHistory()}
+          </ListGroup>
+          <Card.Footer>
+            <Button className="mr-1" size={"sm"} variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
+            <Button className="mr-1" size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
+            <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
+            <Form className="float-right" inline>
+              {FRAMEGRABToggle}
+              {ASNAPToggle}
+            </Form>
+          </Card.Footer>
+        </Card>
+      );
     }
     else {
       eventHistoryCard = (
-        <Card>
+        <Card className={this.props.className}>
           <Card.Header>{ this.renderEventHistoryHeader() }</Card.Header>
         </Card>
       );
     }
 
     return (
-      <div>
-        <Col>
-          {newEventDetailsCard}
-        </Col><Col>
-          {eventHistoryCard}
-        </Col>
-      </div>
+      <React.Fragment>
+        {newEventDetailsCard}
+        {eventHistoryCard}
+      </React.Fragment>
     );
   }
 }

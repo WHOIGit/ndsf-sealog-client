@@ -275,7 +275,7 @@ class SVProfileModal extends Component {
 
           <Modal.Body>
           {statsTable}
-          <div style={{ paddingTop: '10px' }}>
+          <div className="mt-2">
             <span className="text-warning">{this.state.status_msg}</span><span className="text-danger">{this.state.error_msg}</span><span className="float-right"><Button variant="outline-primary" size="sm" onClick={this.exportDataToFile} disabled={!this.state.ctd_data}>Export</Button></span>
           </div>
           </Modal.Body>

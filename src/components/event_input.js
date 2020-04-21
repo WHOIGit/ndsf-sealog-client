@@ -19,7 +19,7 @@ class EventInput extends Component {
     const { handleSubmit, submitting, valid } = this.props;
 
     return (
-      <Form style={this.props.style} onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+      <Form className={this.props.className} onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
         <InputGroup>
           <Field
             name="eventFreeText"

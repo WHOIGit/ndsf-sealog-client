@@ -73,8 +73,8 @@ export function renderDatePicker({ input, label, required, meta: { touched, erro
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat) : null} dateFormat={dateFormat} timeFormat={false} selected={input.value ? moment.utc(input.value, dateFormat) : null }/>
-      {touched && (error && <div style={{width: "100%", marginTop: "0.25rem", fontSize: "80%"}} className='text-danger'>{error}</div>)}
+      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat) : null} dateFormat={dateFormat} timeFormat={false} selected={input.value ? moment.utc(input.value, dateFormat) : null }/>
+      {touched && (error && <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div>)}
     </Form.Group>
   );
 }
@@ -87,8 +87,8 @@ export function renderDateTimePicker({ input, label, required, meta: { touched, 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null } />
-      {touched && (error && <div style={{width: "100%", marginTop: "0.25rem", fontSize: "80%"}} className='text-danger'>{error}</div>)}
+      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null } />
+      {touched && (error && <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div>)}
     </Form.Group>
   )
 }
@@ -125,7 +125,7 @@ export function renderCheckboxGroup({ label, options, input, required, meta: { d
 
   return (
     <Form.Group as={Col}>
-      <Form.Label><span>{label}{requiredField}</span> {dirty && (error && <span className="text-danger" style={{marginTop: "-16px", fontSize: "80%"}}>{error}<br/></span>)}</Form.Label><br/>
+      <Form.Label><span>{label}{requiredField}</span> {dirty && (error && <span className="text-danger" style={{fontSize: ".7rem"}}>{error}<br/></span>)}</Form.Label><br/>
       {checkboxList}
     </Form.Group>      
   );
@@ -176,33 +176,16 @@ export function renderRadioGroup({ label, options, input, required, meta: { dirt
 
   return (
     <Form.Group as={Col}>
-      <Form.Label><span>{label}{requiredField}</span> {dirty && (error && <span className="text-danger" style={{marginTop: "-16px", fontSize: "80%"}}>{error}<br/></span>)}</Form.Label><br/>
+      <Form.Label><span>{label}{requiredField}</span> {dirty && (error && <span className="text-danger" style={{fontSize: ".7rem"}}>{error}<br/></span>)}</Form.Label><br/>
       {radioList}
     </Form.Group>      
   );
 }
 
-// export function renderRadio({ input, label, meta: { dirty, error }, disabled=false, xs=12, sm=6, md=12, lg=6 }) {    
-//   return (
-//     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
-//       <Form.Check
-//         {...input}
-//         label={label}
-//         checked={input.value ? true : false}
-//         onChange={(e) => input.onChange(e.target.checked)}
-//         isInvalid={dirty && error}
-//         disabled={disabled}
-//       >
-//       </Form.Check>
-//       <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-//     </Form.Group>
-//   );
-// }
-
 export function renderSwitch({ input, label, meta: { dirty, error }, disabled=false }) {    
 
   return (
-    <Form.Group>
+    <Form.Group className="ml-2">
       <Form.Switch
         {...input}
         id={input.name}

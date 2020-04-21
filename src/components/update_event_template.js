@@ -245,48 +245,50 @@ class UpdateEventTemplate extends Component {
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes("template_manager"))) {
       return (
-        <Card className="form-standard">
+        <Card className="border-secondary">
           <Card.Header>{formHeader}</Card.Header>
           <Card.Body>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
-              <Field
-                name="event_name"
-                component={renderTextField}
-                label="Button Name"
-                required={true}
-                lg={12}
-                sm={12}
-              />
-              <Field
-                name="event_value"
-                component={renderTextField}
-                label="Event Value"
-                required={true}
-                lg={12}
-                sm={12}
-              />
-              <Field
-                name={"template_categories"}
-                component={renderTextField}
-                label="Template Categories (comma delimited)"
-                placeholder="i.e. biology,geology"
-                lg={12}
-                sm={12}
-              />
-              <Field
-                name='event_free_text_required'
-                id='event_free_text_required'
-                component={renderSwitch}
-                label={"Free text Required?"}
-                lg={12}
-                sm={12}
-              />
-              {this.renderAdminOptions()}
+              <Form.Row>
+                <Field
+                  name="event_name"
+                  component={renderTextField}
+                  label="Button Name"
+                  required={true}
+                  lg={12}
+                  sm={12}
+                />
+                <Field
+                  name="event_value"
+                  component={renderTextField}
+                  label="Event Value"
+                  required={true}
+                  lg={12}
+                  sm={12}
+                />
+                <Field
+                  name={"template_categories"}
+                  component={renderTextField}
+                  label="Template Categories (comma delimited)"
+                  placeholder="i.e. biology,geology"
+                  lg={12}
+                  sm={12}
+                />
+                <Field
+                  name='event_free_text_required'
+                  id='event_free_text_required'
+                  component={renderSwitch}
+                  label={"Free text Required?"}
+                  lg={12}
+                  sm={12}
+                />
+                {this.renderAdminOptions()}
+              </Form.Row>
               <FieldArray name="event_options" component={this.renderOptions}/>
               {renderAlert(this.props.errorMessage)}
               {renderMessage(this.props.message)}
-              <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
-                <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Form</Button>
+              <div className="float-right">
+                <Button className="mr-1" variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Form</Button>
                 <Button variant="primary" size="sm" type="submit" disabled={pristine || submitting || !valid}>Update</Button>
               </div>
             </Form>

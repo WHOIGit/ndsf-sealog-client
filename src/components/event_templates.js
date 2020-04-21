@@ -147,7 +147,7 @@ class EventTemplates extends Component {
 
     if(this.props.roles.includes("admin")) {
       return (
-        <Button variant="primary" size="sm" onClick={ () => this.handleEventTemplateImport()}>Import From File</Button>
+        <Button className="mr-1" variant="primary" size="sm" onClick={ () => this.handleEventTemplateImport()}>Import From File</Button>
       );
     }
   }
@@ -165,11 +165,12 @@ class EventTemplates extends Component {
     return templates.map((template) => {
 
       const style = (template.disabled)? {"textDecoration": "line-through"}: {};
+      const className = (this.props.event_templateid === template.id)? "text-warning" : "";
 
       return (
         <tr key={template.id}>
-          <td style={style} className={(this.props.event_templateid === template.id)? "text-warning" : ""}>{template.event_name}</td>
-          <td style={style}>{template.event_value}</td>
+          <td style={style} className={className}>{template.event_name}</td>
+          <td style={style} className={className}>{template.event_value}</td>
           <td>
             <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleEventTemplateSelect(template.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>{' '}
             <OverlayTrigger placement="top" overlay={testTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleEventTemplateTest(template) } icon='vial' fixedWidth/></OverlayTrigger>{' '}
@@ -189,27 +190,30 @@ class EventTemplates extends Component {
     let system_templates = (Array.isArray(this.state.filteredSystemTemplates)) ? this.state.filteredSystemTemplates : this.props.event_templates.filter(template => template.system_template === true);
     system_templates = system_templates.slice((this.state.activeSystemPage - 1) * maxSystemTemplatesPerPage, this.state.activeSystemPage * maxSystemTemplatesPerPage);
 
-    return system_templates.map((template) => {
+    if(system_templates.length > 0) {
+      return system_templates.map((template) => {
 
-      const edit_icon = (this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleEventTemplateSelect(template.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>): null;
-      const test_icon = <OverlayTrigger placement="top" overlay={testTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleEventTemplateTest(template) } icon='vial' fixedWidth/></OverlayTrigger>;
-      const delete_icon = (this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleEventTemplateDelete(template.id) } icon='trash' fixedWidth/></OverlayTrigger>): null;
+        const edit_icon = (this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleEventTemplateSelect(template.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>): null;
+        const test_icon = <OverlayTrigger placement="top" overlay={testTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleEventTemplateTest(template) } icon='vial' fixedWidth/></OverlayTrigger>;
+        const delete_icon = (this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleEventTemplateDelete(template.id) } icon='trash' fixedWidth/></OverlayTrigger>): null;
 
-      const style = (template.disabled)? {"textDecoration": "line-through"}: {};
-  
-      return (
-        <tr key={template.id}>
-          <td style={style} className={(this.props.event_templateid === template.id)? "text-warning" : ""}>{template.event_name}</td>
-          <td style={style} >{template.event_value}</td>
-          <td>
-            {edit_icon}{' '}
-            {test_icon}{' '}
-            {delete_icon}
-          </td>
-        </tr>
-      );
-    });
-
+        const style = (template.disabled)? {"textDecoration": "line-through"}: {};
+        const className = (this.props.event_templateid === template.id)? "text-warning" : "";
+    
+        return (
+          <tr key={template.id}>
+            <td style={style} className={className}>{template.event_name}</td>
+            <td style={style} className={className}>{template.event_value}</td>
+            <td>
+              {edit_icon}{' '}
+              {test_icon}{' '}
+              {delete_icon}
+            </td>
+          </tr>
+        );
+      });
+    }
+    
     return (
       <tr key="noEventTemplatesFound">
         <td colSpan="3"> No event templates found!</td>
@@ -221,7 +225,7 @@ class EventTemplates extends Component {
 
     if(this.props.event_templates && this.props.event_templates.filter(template => template.system_template === false).length > 0){
       return (
-        <Table responsive bordered striped>
+        <Table responsive bordered striped size="sm">
           <thead>
             <tr>
               <th>Button Name</th>
@@ -234,20 +238,19 @@ class EventTemplates extends Component {
           </tbody>
         </Table>
       );
-    } else {
-      return (
-        <Card.Body>
-          No Event Templates found!
-        </Card.Body>
-      );
     }
+    return (
+      <Card.Body>
+        No Event Templates found!
+      </Card.Body>
+    );
   }
 
   renderSystemEventTemplatesTable() {
 
     if(this.props.event_templates && this.props.event_templates.filter(template => template.system_template === true).length > 0){
       return (
-        <Table responsive bordered striped>
+        <Table responsive bordered striped size="sm">
           <thead>
             <tr>
               <th>Button Name</th>
@@ -260,11 +263,11 @@ class EventTemplates extends Component {
           </tbody>
         </Table>
       );
-    } else {
-      return (
-        <Card.Body>No System Event Templates found!</Card.Body>
-      );
     }
+
+    return (
+      <Card.Body>No System Event Templates found!</Card.Body>
+    );
   }
 
   renderEventTemplatesHeader() {
@@ -328,23 +331,23 @@ class EventTemplates extends Component {
           <EventTemplateOptionsModal />
           <ImportEventTemplatesModal handleExit={this.handleEventTemplateImportClose} />
           <Row>
-            <Col sm={12} md={8} lg={{span:6, offset:1}} xl={{span:5, offset:2}}>
-              <Card style={{marginBottom: "8px"}} >
+            <Col className="px-1" sm={12} md={8} lg={{span:6, offset:1}} xl={{span:5, offset:2}}>
+              <Card className="border-secondary" >
                 <Card.Header>{this.renderSystemEventTemplatesHeader()}</Card.Header>
                 {this.renderSystemEventTemplatesTable()}
-                <CustomPagination style={{marginTop: "8px"}} page={this.state.activeSystemPage} count={(this.state.filteredSystemTemplates)? this.state.filteredSystemTemplates.length : this.props.event_templates.filter(template => template.system_template === true).length} pageSelectFunc={this.handleSystemPageSelect} maxPerPage={maxSystemTemplatesPerPage}/>
+                <CustomPagination page={this.state.activeSystemPage} count={(this.state.filteredSystemTemplates)? this.state.filteredSystemTemplates.length : this.props.event_templates.filter(template => template.system_template === true).length} pageSelectFunc={this.handleSystemPageSelect} maxPerPage={maxSystemTemplatesPerPage}/>
               </Card>
-              <Card style={{marginBottom: "8px"}} >
+              <Card className="border-secondary mt-2" >
                 <Card.Header>{this.renderEventTemplatesHeader()}</Card.Header>
                 {this.renderEventTemplatesTable()}
-                <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={(this.state.filteredTemplates)? this.state.filteredTemplates.length : this.props.event_templates.filter(template => template.system_template === false).length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxTemplatesPerPage}/>
+                <CustomPagination page={this.state.activePage} count={(this.state.filteredTemplates)? this.state.filteredTemplates.length : this.props.event_templates.filter(template => template.system_template === false).length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxTemplatesPerPage}/>
               </Card>
-              <div className="float-right" style={{marginRight: "-8px", marginBottom: "8px"}}>
+              <div className="float-right my-2">
                 {this.renderImportEventTemplatesButton()}
                 {this.renderAddEventTemplateButton()}
               </div>
             </Col>
-            <Col sm={12} md={4} lg={4} xl={3}>
+            <Col className="px-1" sm={12} md={4} lg={4} xl={3}>
               { eventTemplatesForm }
             </Col>
           </Row>

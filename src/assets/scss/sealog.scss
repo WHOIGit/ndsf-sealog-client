@@ -1,0 +1,150 @@
+// Import Custom SB Admin 2 Variables (Overrides Default Bootstrap Variables)
+@import "variables.scss";
+
+// Import Bootstrap
+@import "../../../node_modules/bootstrap/scss/bootstrap.scss";
+
+// Import FontAwesome
+@import "../../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "../../../node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
+
+// Import Custom Bootswatch Mixins and Components
+@import "variables.scss";
+
+.nav-tabs,
+.nav-pills,
+.category-tabs {
+  .nav-link {
+    background-color: transparent;
+    color: $primary;
+    text-transform: uppercase;
+  
+    &:hover {
+      background-color: $gray-700;
+    }
+
+    &.disabled,
+    &.disabled:hover {
+      background-color: transparent;
+      color: $nav-link-disabled-color;
+    }
+
+    &.active {
+      color: $warning;
+      background-color: transparent;
+    }
+  }
+}
+
+@import "../../../node_modules/react-datetime/css/react-datetime.css";
+
+.btn-template {
+  font-size: .85rem;
+}
+
+.cruise-details, .lowering-details {
+  font-size: .75rem;
+}
+
+.eventList {
+  overflow-y: scroll;
+  font-size: .8rem;
+
+  &:focus { outline: none; }
+
+  &.collapsed { height: 220px; }
+}
+
+.event-data-card {
+
+  border-color: $secondary;
+  .card-header {
+    padding-left: .5rem !important;
+    padding-bottom: .25rem !important;
+    padding-top: .25rem !important;
+    text-transform: capitalize;
+  }
+
+  .card-body {
+    font-size: .8rem;
+    padding: .5rem;
+
+    .data-name {
+      text-transform: capitalize;
+    }
+  }
+}
+
+.event-image-data-card {
+  border: none;
+  background-color: transparent;
+  text-transform: capitalize;
+}
+
+
+// Utility class to hide arrow from dropdown
+
+.dropdown.no-arrow {
+  .dropdown-toggle::after {
+    display: none;
+  }
+}
+
+// react-datetime customizations
+
+.rdtPicker {
+  background: $body-bg;
+  border: 1px solid $secondary;
+  color: $white;
+}
+
+.rdtPicker td.rdtDay:hover,
+.rdtPicker td.rdtHour:hover,
+.rdtPicker td.rdtMinute:hover,
+.rdtPicker td.rdtSecond:hover,
+.rdtPicker .rdtTimeToggle:hover {
+  background: $white;
+  color: $body-bg;
+}
+
+.rdtPicker td.rdtToday:before {
+  border-bottom: 7px solid $primary;
+}
+
+.rdtPicker td.rdtActive,
+.rdtPicker td.rdtActive:hover {
+  background-color: $primary;
+  color: $white;
+}
+
+.rdtPicker td.rdtActive.rdtToday:before {
+  border-bottom-color: $secondary;
+}
+
+.rdtPicker th {
+  border-bottom: 1px solid $secondary;
+}
+
+.rdtPicker thead tr:first-child th:hover {
+  background: $white;
+  color: $body-bg;
+}
+
+.rdtPicker tfoot {
+  border-top: 1px solid $secondary;
+}
+
+td.rdtMonth:hover,
+td.rdtYear:hover {
+  background: $white;
+  color: $body-bg;
+}
+
+.rdtPicker th {
+  border-bottom: 1px solid $secondary;
+}
+
+.rdtCounter .rdtBtn:hover {
+  background: $white;
+  color: $body-bg;
+}

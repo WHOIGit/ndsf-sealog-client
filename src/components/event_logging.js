@@ -31,17 +31,17 @@ class EventLogging extends Component {
           <EventCommentModal/>
           <Row>
             <Col>
-              <EventTemplateList style={{marginBottom: "4px"}} />
+              <EventTemplateList />
             </Col>
           </Row>
           <Row>
             <Col>
-              <EventInput style={{marginBottom: "4px"}} />
+              <EventInput className="mt-2" />
             </Col>
           </Row>
           <Row>
             <Col>
-              <EventHistory />
+              <EventHistory className="mt-2"/>
             </Col>
           </Row>
         </div>

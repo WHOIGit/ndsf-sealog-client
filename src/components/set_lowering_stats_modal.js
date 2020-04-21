@@ -502,7 +502,7 @@ class SetLoweringStatsModal extends Component {
             </Modal.Header>
 
             <Modal.Body>
-              <Row style={{paddingTop: "8px"}}>
+              <Row className="mt-2">
                 <Col xs={12}>
                   <Map
                     style={{ height: this.state.height }}
@@ -522,26 +522,26 @@ class SetLoweringStatsModal extends Component {
                   </Map>
                 </Col>
               </Row>
-              <Row style={{paddingTop: "8px"}}>
+              <Row className="mt-2">
                 <Col xs={12}>
                   {depth_profile}
                 </Col>
               </Row>
-              <Row style={{paddingTop: "8px"}}>
+              <Row className="mt-2">
                 {milestones_and_stats}
               </Row>
-              <Row style={{paddingTop: "8px"}}>
+              <Row className="mt-2">
                 <Col xs={12}>
                   {renderAlert(this.props.errorMessage)}
                   {renderMessage(this.props.message)}
                 </Col>
               </Row>
-              <Row style={{paddingTop: "8px"}}>
+              <Row className="mt-2">
                 <Col xs={12}>
                   <span className="float-right">
-                    {(!this.state.show_edit_form) ? <Button variant="warning" size="sm" onClick={() => this.handleShowEditForm()}>Tweak!</Button> : null}
-                    {(!this.state.show_edit_form) ? <Button variant="secondary" size="sm" onClick={handleHide}>Close</Button> : null}
-                    {(!this.state.show_edit_form) ? <Button variant="primary" size="sm" disabled={!this.state.touched} onClick={() => this.handleUpdateLowering()}>Update</Button> : null}
+                    {(!this.state.show_edit_form) ? <Button className="mr-1" variant="warning" size="sm" onClick={() => this.handleShowEditForm()}>Tweak!</Button> : null}
+                    {(!this.state.show_edit_form) ? <Button className="mr-1" variant="secondary" size="sm" onClick={handleHide}>Close</Button> : null}
+                    {(!this.state.show_edit_form) ? <Button className="mr-1" variant="primary" size="sm" disabled={!this.state.touched} onClick={() => this.handleUpdateLowering()}>Update</Button> : null}
                   </span>
                 </Col>
               </Row>

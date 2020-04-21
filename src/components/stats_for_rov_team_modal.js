@@ -428,7 +428,7 @@ class StatsForROVTeamModal extends Component {
     )
 
     return (
-      <Table striped bordered hover responsive size="sm" style={{fontSize: '11px'}}>
+      <Table striped bordered hover responsive size="sm" style={{fontSize: '.8rem'}}>
         {statTableHeaders}
         <tbody>
           {statsTableData}

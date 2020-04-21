@@ -92,10 +92,10 @@ class EventFilterForm extends Component {
     const stopTS = (this.props.maxDate)? moment(this.props.maxDate): null
 
     return (
-      <Card className="form-standard">
+      <Card className="form-standard border-secondary">
         <Card.Header>{eventFilterFormHeader}</Card.Header>
-        <Card.Body>
-          <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+        <Card.Body className="px-0">
+          <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
             <Field
               name="value"
               component={renderTextField}
@@ -143,10 +143,10 @@ class EventFilterForm extends Component {
               sm={12}
             />
             <div className="float-right">
-              <Button variant="secondary" size="sm" disabled={submitting || this.props.disabled} onClick={this.clearForm}>Reset</Button>
-              <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid || this.props.disabled}>Filter</Button>
+              <Button className="mr-1" variant="secondary" size="sm" disabled={submitting || this.props.disabled} onClick={this.clearForm}>Reset</Button>
+              <Button className="mr-3" variant="primary" size="sm" type="submit" disabled={submitting || !valid || this.props.disabled}>Filter</Button>
             </div>
-          </form>
+          </Form>
         </Card.Body>
       </Card>
     )
@@ -156,13 +156,10 @@ class EventFilterForm extends Component {
 function validate(formProps) {
   const errors = {};
   return errors;
-
 }
 
 function mapStateToProps(state) {
-
   return {};
-
 }
 
 export default compose(

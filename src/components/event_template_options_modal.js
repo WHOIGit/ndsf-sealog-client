@@ -208,11 +208,11 @@ class EventTemplateOptionsModal extends Component {
 
     const footer = (this.state.event_id) ? 
       <span className="float-right">
-        <Button variant="secondary" disabled={submitting} onClick={this.handleFormHide}>Cancel</Button>
-        <Button variant="primary" type="submit" disabled={ submitting || !valid}>Submit</Button>
+        <Button className="mr-1" size="sm" variant="secondary" disabled={submitting} onClick={this.handleFormHide}>Cancel</Button>
+        <Button size="sm" variant="primary" type="submit" disabled={ submitting || !valid}>Submit</Button>
       </span>
       : 
-      <Button className="float-right" variant="secondary" onClick={this.handleFormHide}>Close</Button>
+      <Button size="sm" className="float-right" variant="secondary" onClick={this.handleFormHide}>Close</Button>
       
 
     if (eventTemplate) {

@@ -45,10 +45,14 @@ class CreateUser extends Component {
   renderAdminOptions() {
     if(this.props.roles.includes('admin')) {
       return (
-        <div>
-          {this.renderSystemUserOption()}
+        <React.Fragment>
+          <Form.Row>
+            {this.renderSystemUserOption()}
+          </Form.Row>
+          <Form.Row>
           {this.renderDisableUserOption()}
-        </div>
+          </Form.Row>
+        </React.Fragment>
       );
     }
   }
@@ -63,64 +67,64 @@ class CreateUser extends Component {
       let userRoleOptions = this.props.roles.includes('admin')? systemUserRoleOptions.concat(standardUserRoleOptions): standardUserRoleOptions;
 
       return (
-        <Card className="form-standard">
-          <Card.Header>
-            {createUserFormHeader}
-          </Card.Header>
+        <Card className="border-secondary">
+          <Card.Header>{createUserFormHeader}</Card.Header>
           <Card.Body>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
-              <Field
-                name="username"
-                component={renderTextField}
-                label="Username"
-                required={true}
-                lg={12}
-                sm={12}
-              />
-              <Field
-                name="fullname"
-                component={renderTextField}
-                label="Full Name"
-                required={true}
-                lg={12}
-                sm={12}
-              />
-              <Field
-                name="email"
-                component={renderTextField}
-                label="Email"
-                required={true}
-                lg={12}
-                sm={12}
-              />
-              <Field
-                name="password"
-                component={renderTextField}
-                type="password"
-                label="Password"
-                lg={12}
-                sm={12}
-              />
-              <Field
-                name="confirmPassword"
-                component={renderTextField}
-                type="password"
-                label="Confirm Password"
-                lg={12}
-                sm={12}
-              />
-              <Field
-                name="roles"
-                component={renderCheckboxGroup}
-                label="Roles"
-                options={userRoleOptions}
-                required={true}
-              />
+              <Form.Row>
+                <Field
+                  name="username"
+                  component={renderTextField}
+                  label="Username"
+                  required={true}
+                  lg={12}
+                  sm={12}
+                />
+                <Field
+                  name="fullname"
+                  component={renderTextField}
+                  label="Full Name"
+                  required={true}
+                  lg={12}
+                  sm={12}
+                />
+                <Field
+                  name="email"
+                  component={renderTextField}
+                  label="Email"
+                  required={true}
+                  lg={12}
+                  sm={12}
+                />
+                <Field
+                  name="password"
+                  component={renderTextField}
+                  type="password"
+                  label="Password"
+                  lg={12}
+                  sm={12}
+                />
+                <Field
+                  name="confirmPassword"
+                  component={renderTextField}
+                  type="password"
+                  label="Confirm Password"
+                  lg={12}
+                  sm={12}
+                />
+                <Field
+                  name="roles"
+                  component={renderCheckboxGroup}
+                  label="Roles"
+                  options={userRoleOptions}
+                  required={true}
+                />
+              </Form.Row>
               {this.renderAdminOptions()}
               {renderAlert(this.props.errorMessage)}
               {renderMessage(this.props.message)}
-              <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
-                <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
+              <div className="float-right">
+                <Button className="mr-1" variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
                 <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid}>Create</Button>
               </div>
             </Form>

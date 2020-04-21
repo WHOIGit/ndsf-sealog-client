@@ -6,8 +6,7 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Map, TileLayer, WMSTileLayer, Marker, Polyline, Popup, LayersControl, ScaleControl } from 'react-leaflet';
 import L from 'leaflet';
-import { Row, Col, Card, Tooltip, OverlayTrigger, ListGroup, Form } from 'react-bootstrap';
-import 'rc-slider/assets/index.css';
+import { ButtonToolbar, Row, Col, Card, Tooltip, OverlayTrigger, ListGroup, Form } from 'react-bootstrap';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import EventShowDetailsModal from './event_show_details_modal';
 import EventFilterForm from './event_filter_form';
@@ -311,19 +310,14 @@ class LoweringMap extends Component {
       const loweringDuration = loweringEndTime.diff(loweringStartTime);
       
       return (
-        <Card style={{marginBottom: "8px"}}>
-          <Card.Body>
-            <Row>
-              <Col xs={4}>
-                <span className="text-primary">00:00:00</span>
-              </Col>
-              <Col xs={{span:4, offset:4}}>
-                <div className="float-right">
-                  <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
-                </div>
-              </Col>
-            </Row>
+        <Card className="border-secondary" className="p-1">
+          <div className="d-flex align-items-center justify-content-between">
+              <span className="text-primary">00:00:00</span>
+              <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
+          </div>
+          <div className="d-flex align-items-center justify-content-between">
             <SliderWithTooltip
+              className="mx-2"
               value={this.state.replayEventIndex}
               tipFormatter={this.sliderTooltipFormatter}
               trackStyle={{ opacity: 0.5 }}
@@ -331,7 +325,7 @@ class LoweringMap extends Component {
               onChange={this.handleSliderChange}
               max={this.props.event.events.length-1}
             />
-          </Card.Body>
+          </div>
         </Card>
       );
     }
@@ -354,10 +348,11 @@ class LoweringMap extends Component {
   }
 
   renderEventCard() {
+
     return (
-      <Card>
+      <Card className="mt-2 border-secondary">
         <Card.Header>{ this.renderEventListHeader() }</Card.Header>
-        <ListGroup>
+        <ListGroup className="eventList" tabIndex="-1" onKeyDown={this.handleKeyPress} ref={(div) => { this.divFocus = div }}>
           {this.renderEvents()}
         </ListGroup>
       </Card>
@@ -377,7 +372,7 @@ class LoweringMap extends Component {
             if(option.event_option_name === 'event_comment') {
               comment_exists = (option.event_option_value !== '')? true : false;
             } else {
-              filtered.push(`${option.event_option_name}: "${option.event_option_value}"`);
+              filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
             }
             return filtered;
           },[]);
@@ -396,7 +391,7 @@ class LoweringMap extends Component {
 
           let eventDetails = <OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>View Details</Tooltip>}><FontAwesomeIcon onClick={() => this.handleEventShowDetailsModal(index)} icon='window-maximize' fixedWidth/></OverlayTrigger>;
 
-          return (<ListGroup.Item className="event-list-item" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventDetails} {eventComment}</span></ListGroup.Item>);
+          return (<ListGroup.Item className="py-1 event-list-item" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventDetails} {eventComment}</span></ListGroup.Item>);
 
         }
       });
@@ -466,53 +461,49 @@ class LoweringMap extends Component {
     const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "Loading...";
     
     return (
-      <div tabIndex="-1" onKeyDown={this.handleKeyPress} ref={(div) => { this.divFocus = div }}>
+      <div>
         <EventCommentModal />
         <EventShowDetailsModal />
         <Row>
-          <Col lg={12}>
-            <span style={{paddingLeft: "8px"}}>
-              <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
-              {' '}/{' '}
-              <span><LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/></span>
-              {' '}/{' '}
-              <span><LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Map"} modes={["Replay", "Review", "Gallery"]}/></span>
-            </span>
-          </Col>
-          <Col sm={12}>
-            <Card>
-              <Card.Body className="data-card-body">
-                <Map
-                  style={{ height: this.state.height }}
-                  center={this.state.center}
-                  zoom={this.state.zoom}
-                  onMoveEnd={this.handleMoveEnd}
-                  onZoomEnd={this.handleZoomEnd}
-                  ref={ (map) => this.map = map}
-                >
-                  <ScaleControl position="bottomleft" />
-                  <LayersControl position="topright">
-                    {baseLayers}
-                  </LayersControl>
-                  {realtimeTrack}
-                  {reNavTrack}
-                  {this.renderMarker()}
-                </Map>
-              </Card.Body>
+          <ButtonToolbar className="mb-2 ml-1 align-items-center">
+            <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
+            <FontAwesomeIcon icon="chevron-right" fixedWidth/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+            <FontAwesomeIcon icon="chevron-right" fixedWidth/>
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Map"} modes={["Replay", "Review", "Gallery"]}/>
+          </ButtonToolbar>
+        </Row>
+        <Row>
+          <Col className="px-1" sm={12}>
+            <Card className="border-secondary">
+              <Map
+                style={{ height: this.state.height }}
+                center={this.state.center}
+                zoom={this.state.zoom}
+                onMoveEnd={this.handleMoveEnd}
+                onZoomEnd={this.handleZoomEnd}
+                ref={ (map) => this.map = map}
+              >
+                <ScaleControl position="bottomleft" />
+                <LayersControl position="topright">
+                  {baseLayers}
+                </LayersControl>
+                {realtimeTrack}
+                {reNavTrack}
+                {this.renderMarker()}
+              </Map>
             </Card>
           </Col>
-          <Col sm={12}>
-            <Row style={{paddingTop: "4px"}}>
-              <Col md={9} lg={9}>
-                {this.renderControlsCard()}
-                {this.renderEventCard()}
-                <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
-              </Col>          
-              <Col md={3} lg={3}>
-                <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
-              </Col>          
-            </Row>
-          </Col>
+        </Row>
+        <Row className="mt-2">
+          <Col className="px-1 mb-1" md={9} lg={9}>
+            {this.renderControlsCard()}
+            {this.renderEventCard()}
+            <CustomPagination className="mt-2" page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
+          </Col>          
+          <Col className="px-1 mb-1" md={3} lg={3}>
+            <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
+          </Col>          
         </Row>
       </div>
     );

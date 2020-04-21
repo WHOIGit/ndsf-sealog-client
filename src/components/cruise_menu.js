@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 import { connect } from 'react-redux';
-import { Accordion, Row, Col, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Accordion, Button, Row, Col, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
@@ -172,8 +172,8 @@ class CruiseMenu extends Component {
     }
   }
 
-  async handleLoweringFileDownload(loweringID, filename) {
-    await axios.get(`${API_ROOT_URL}${LOWERING_ROUTE}/${loweringID}/${filename}`,
+  async handleLoweringFileDownload(filename) {
+    await axios.get(`${API_ROOT_URL}${LOWERING_ROUTE}/${this.state.activeLowering.id}/${filename}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -188,8 +188,8 @@ class CruiseMenu extends Component {
       });
   }
 
-  async handleCruiseFileDownload(cruiseID, filename) {
-    await axios.get(`${API_ROOT_URL}${CRUISE_ROUTE}/${cruiseID}/${filename}`,
+  async handleCruiseFileDownload(filename) {
+    await axios.get(`${API_ROOT_URL}${CRUISE_ROUTE}/${this.state.activeCruise.id}/${filename}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -212,16 +212,33 @@ class CruiseMenu extends Component {
     this.props.showModal('statsForROVTeam', { cruise: cruise });
   }
 
-  renderCruiseFiles(cruiseID, files) {
+
+  // renderFiles() {
+  //   if(this.props.cruise.cruise_additional_meta && this.props.cruise.cruise_additional_meta.cruise_files && this.props.cruise.cruise_additional_meta.cruise_files.length > 0) {
+  //     let files = this.props.cruise.cruise_additional_meta.cruise_files.map((file, index) => {
+  //       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleFileDownload(file)}>{file}</a> <FontAwesomeIcon onClick={() => this.handleFileDeleteModal(file)} className='text-danger' icon='trash' fixedWidth /></div>
+  //     })
+
+  //     return (
+  //       <div className="mb-2">
+  //         {files}
+  //       </div>
+  //     )
+  //   }
+      
+  //   return null
+  // }
+
+  renderCruiseFiles(files) {
     let output = files.map((file, index) => {
-      return <li style={{ listStyleType: "none" }} key={`file_${index}`}><span onClick={() => this.handleCruiseFileDownload(cruiseID, file)}><FontAwesomeIcon className='text-primary' icon='download' fixedWidth /></span><span> {file}</span></li>;
+      return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleCruiseFileDownload(file)}>{file}</a></div>
     });
     return <div>{output}<br/></div>;
   }
 
-  renderLoweringFiles(loweringID, files) {
+  renderLoweringFiles(files) {
     let output = files.map((file, index) => {
-      return <li style={{ listStyleType: "none" }} key={`file_${index}`}><span onClick={() => this.handleLoweringFileDownload(loweringID, file)}><FontAwesomeIcon className='text-primary' icon='download' fixedWidth /></span><span> {file}</span></li>;
+      return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleLoweringFileDownload(file)}>{file}</a></div>
     });
     return <div>{output}<br/></div>;
   }
@@ -245,7 +262,7 @@ class CruiseMenu extends Component {
       let ascentDurationValue = (loweringOffBottomTime && loweringFloatsOnSurfaceTime) ? loweringFloatsOnSurfaceTime.diff(loweringOffBottomTime) : null;
       let recoveryDurationValue = (loweringStopTime && loweringFloatsOnSurfaceTime) ? loweringStopTime.diff(loweringFloatsOnSurfaceTime) : null;
 
-      let loweringDescription = (this.state.activeLowering.lowering_additional_meta.lowering_description)? <span><strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}<br/></span> : null;
+      let loweringDescription = (this.state.activeLowering.lowering_additional_meta.lowering_description)? <p className="text-justify"><strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}</p> : null;
       let loweringLocation = (this.state.activeLowering.lowering_location) ? <span><strong>Location:</strong> {this.state.activeLowering.lowering_location}<br/></span> : null;
       let loweringStarted = <span><strong>Started:</strong> {loweringStartTime.format("YYYY-MM-DD HH:mm")}<br/></span>;
       let loweringDeck2DeckDuration = (deck2DeckDurationValue) ? <span><strong>Deck-to-Deck:</strong> {moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
@@ -258,10 +275,10 @@ class CruiseMenu extends Component {
       let loweringMaxDepth = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.max_depth)? <span><strong>Max Depth:</strong> {this.state.activeLowering.lowering_additional_meta.stats.max_depth}<br/></span>: null;
       let loweringBoundingBox = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.bounding_box)? <span><strong>Bounding Box:</strong> {this.state.activeLowering.lowering_additional_meta.stats.bounding_box.join(', ')}<br/></span>: null;
 
-      let loweringFiles = (this.state.activeLowering.lowering_additional_meta.lowering_files && this.state.activeLowering.lowering_additional_meta.lowering_files.length > 0)? <span><strong>Files:</strong><br/>{this.renderLoweringFiles(this.state.activeLowering.id, this.state.activeLowering.lowering_additional_meta.lowering_files)}</span>: null;
+      let loweringFiles = (this.state.activeLowering.lowering_additional_meta.lowering_files && this.state.activeLowering.lowering_additional_meta.lowering_files.length > 0)? <div><strong>Files:</strong>{this.renderLoweringFiles(this.state.activeLowering.lowering_additional_meta.lowering_files)}</div>: null;
 
       return (          
-        <Card key={`lowering_card`}>
+        <Card className="border-secondary" key={`lowering_card`}>
           <Card.Header>Lowering: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><span onClick={() => this.handleEventShowSVProfileModal(this.state.activeLowering)}><OverlayTrigger placement="top" overlay={<Tooltip id="svProfileTooltip">SV Profile</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
           <Card.Body>
             {loweringDescription}
@@ -276,20 +293,11 @@ class CruiseMenu extends Component {
             {loweringMaxDepth}
             {loweringBoundingBox}
             {loweringFiles}
-            <br/>
-            <Row>
-              <Col sm={12} md={6} xl={3}>
-                <div className="text-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Goto replay<FontAwesomeIcon icon='arrow-right' fixedWidth /></div>
-              </Col>
-              <Col sm={12} md={6} xl={3}>
-                <div className="text-primary" onClick={ () => this.handleLoweringSelectForReview() }>Goto review<FontAwesomeIcon icon='arrow-right' fixedWidth /></div>
-              </Col>
-              <Col sm={12} md={6} xl={3}>
-                <div className="text-primary" onClick={ () => this.handleLoweringSelectForMap() }>Goto map<FontAwesomeIcon icon='arrow-right' fixedWidth /></div>
-              </Col>
-              <Col sm={12} md={6} xl={3}>
-                <div className="text-primary" onClick={ () => this.handleLoweringSelectForGallery() }>Goto gallery<FontAwesomeIcon icon='arrow-right' fixedWidth /></div>
-              </Col>
+            <Row className="px-1 justify-content-center">
+              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Replay</Button>
+              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReview() }>Review</Button>
+              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForMap() }>Map</Button>
+              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForGallery() }>Gallery</Button>
             </Row>
           </Card.Body>
         </Card>
@@ -305,10 +313,10 @@ class CruiseMenu extends Component {
       let cruiseStopTime = moment.utc(this.state.activeCruise.stop_ts);
       let cruiseDurationValue = cruiseStopTime.diff(cruiseStartTime);
 
-      let cruiseFiles = (this.state.activeCruise.cruise_additional_meta.cruise_files && this.state.activeCruise.cruise_additional_meta.cruise_files.length > 0)? <span><strong>Files:</strong><br/>{this.renderCruiseFiles(this.state.activeCruise.id, this.state.activeCruise.cruise_additional_meta.cruise_files)}</span>: null;
+      let cruiseFiles = (this.state.activeCruise.cruise_additional_meta.cruise_files && this.state.activeCruise.cruise_additional_meta.cruise_files.length > 0)? <div><strong>Files:</strong>{this.renderCruiseFiles(this.state.activeCruise.cruise_additional_meta.cruise_files)}</div>: null;
 
       let cruiseName = (this.state.activeCruise.cruise_additional_meta.cruise_name)? <span><strong>Cruise Name:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_name}<br/></span> : null;
-      let cruiseDescription = (this.state.activeCruise.cruise_additional_meta.cruise_description)? <span><strong>Description:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_description}<br/></span> : null;
+      let cruiseDescription = (this.state.activeCruise.cruise_additional_meta.cruise_description)? <p className="text-justify"><strong>Description:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_description}<br/></p> : null;
       let cruiseVessel = <span><strong>Vessel:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_vessel}<br/></span>;
       let cruiseLocation = (this.state.activeCruise.cruise_location)? <span><strong>Location:</strong> {this.state.activeCruise.cruise_location}<br/></span> : null;
       let cruisePorts = (this.state.activeCruise.cruise_additional_meta.cruise_departure_location)? <span><strong>Ports:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_departure_location} <FontAwesomeIcon icon='arrow-right' fixedWidth /> {this.state.activeCruise.cruise_additional_meta.cruise_arrival_location}<br/></span> : null;
@@ -319,21 +327,18 @@ class CruiseMenu extends Component {
 
       let cruiseDuration = <span><strong>Duration:</strong> {moment.duration(cruiseDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span>;
 
-      let lowerings = (cruiseLowerings.length > 0)? (
-        <ul>
-          { cruiseLowerings.map((lowering) => {
-            if(this.state.activeLowering && lowering.id === this.state.activeLowering.id) {
-              return (<li key={`select_${lowering.id}`} ><span className="text-warning">{lowering.lowering_id}</span><br/></li>);
-            }
-
-            return (<li key={`select_${lowering.id}`} ><span className={(this.state.activeLowering && lowering.id === this.state.activeLowering.id) ? "text-warning" : "text-primary"} onClick={ () => this.handleLoweringSelect(lowering.id) }>{lowering.lowering_id}</span><br/></li>);
-          })
+      let lowerings = (cruiseLowerings.length > 0)?
+        cruiseLowerings.map((lowering) => {
+          if(this.state.activeLowering && lowering.id === this.state.activeLowering.id) {
+            return (<div key={`select_${lowering.id}`} className="text-warning ml-2">{lowering.lowering_id}</div>);
           }
-        </ul>
-      ): null;
+
+          return (<div key={`select_${lowering.id}`} className={(this.state.activeLowering && lowering.id === this.state.activeLowering.id) ? "text-warning ml-2" : "text-primary ml-2"} onClick={ () => this.handleLoweringSelect(lowering.id) }>{lowering.lowering_id}</div>);
+        })
+      : null;
 
       return (          
-        <Card key={`cruise_${this.state.activeCruise.cruise_id}`}>
+        <Card className="border-secondary" key={`cruise_${this.state.activeCruise.cruise_id}`}>
           <Card.Header>Cruise: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><span onClick={() => this.handleEventShowStatForROVTeamModal(this.state.activeCruise)}><OverlayTrigger placement="top" overlay={<Tooltip id="statsForROVTeamTooltip">Stats for ROV Team</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
           <Card.Body>
             {cruiseName}
@@ -348,7 +353,7 @@ class CruiseMenu extends Component {
             {
               (cruiseLowerings && cruiseLowerings.length > 0)? (
                 <div>
-                  <p><strong>Lowerings:</strong></p>
+                  <strong>Lowerings:</strong>
                   {lowerings}
                 </div>
               ): null
@@ -415,27 +420,22 @@ class CruiseMenu extends Component {
       Object.entries(this.state.yearCruises).forEach(([year,cruises])=>{
         // console.log(`${year}:${cruises.join(", ")}`)
 
-        let yearTxt = <span className="text-primary">{year}</span> 
+        let yearTxt = <span className={(year == this.state.activeYear || this.state.years.size == 1) ? "text-warning" : "text-primary"}>{year}</span> 
 
         let yearCruises = (
-          <ul>
-            {
-              cruises.map((cruise) => {
-                return (<li key={`select_${cruise.id}`} ><span className={(this.state.activeCruise && cruise.id === this.state.activeCruise.id) ? "text-warning" : "text-primary"} onClick={ () => this.handleCruiseSelect(cruise.id) }>{cruise.cruise_id}</span><br/></li>);
-              })
-            }
-          </ul>
+            cruises.map((cruise) => {
+              return (<div key={`select_${cruise.id}`} className={(this.state.activeCruise && cruise.id === this.state.activeCruise.id) ? "ml-2 text-warning" : "ml-2 text-primary"} onClick={ () => this.handleCruiseSelect(cruise.id) }>{cruise.cruise_id}</div>);
+            })
         );
 
         if (this.state.years.size > 1) {
           yearCards.unshift(
-            <Card key={`year_${year}`} >
+            <Card className="border-secondary" key={`year_${year}`} >
               <Accordion.Toggle as={Card.Header} eventKey={year}>
                 <h6>Year: {yearTxt}</h6>
               </Accordion.Toggle>
               <Accordion.Collapse eventKey={year}>
-                <Card.Body>
-                  <strong>Cruises:</strong>
+                <Card.Body className="py-2">
                   {yearCruises}
                 </Card.Body>
               </Accordion.Collapse>
@@ -444,10 +444,9 @@ class CruiseMenu extends Component {
         }
         else {
           yearCards.push(
-            <Card key={`year_${year}`} >
+            <Card className="border-secondary" key={`year_${year}`} >
               <Card.Header>Year: {yearTxt}</Card.Header>
-              <Card.Body>
-                <strong>Cruises:</strong>
+              <Card.Body className="py-2">
                 {yearCruises}
               </Card.Body>
             </Card>
@@ -465,12 +464,12 @@ class CruiseMenu extends Component {
     return this.props.cruises.map((cruise) => {
 
       let cruiseName = (cruise.cruise_additional_meta.cruise_name)? <span><strong>Cruise Name:</strong> {cruise.cruise_additional_meta.cruise_name}<br/></span> : null;
-      let cruiseDescription = (cruise.cruise_additional_meta.cruise_description)? <span><strong>Description:</strong> {cruise.cruise_additional_meta.cruise_description}<br/></span> : null;
+      let cruiseDescription = (cruise.cruise_additional_meta.cruise_description)? <p className="text-justify"><strong>Description:</strong> {cruise.cruise_additional_meta.cruise_description}</p> : null;
       let cruiseLocation = (cruise.cruise_location)? <span><strong>Location:</strong> {cruise.cruise_location}<br/></span> : null;
       let cruiseDates = <span><strong>Dates:</strong> {moment.utc(cruise.start_ts).format("YYYY/MM/DD")} - {moment.utc(cruise.stop_ts).format("YYYY/MM/DD")}<br/></span>;
       let cruisePI = <span><strong>Chief Scientist:</strong> {cruise.cruise_additional_meta.cruise_pi}<br/></span>;
       let cruiseVessel = <span><strong>Vessel:</strong> {cruise.cruise_additional_meta.cruise_vessel}<br/></span>;
-      let cruiseFiles = (cruise.cruise_additional_meta.cruise_files && cruise.cruise_additional_meta.cruise_files.length > 0)? <span><strong>Files:</strong><br/>{this.renderCruiseFiles(cruise.id, cruise.cruise_additional_meta.cruise_files)}</span>: null;
+      let cruiseFiles = (cruise.cruise_additional_meta.cruise_files && cruise.cruise_additional_meta.cruise_files.length > 0)? <span><strong>Files:</strong><br/>{this.renderCruiseFiles(cruise.cruise_additional_meta.cruise_files)}</span>: null;
       
       let lowerings = (this.state.cruiseLowerings)? (
         <ul>
@@ -486,7 +485,7 @@ class CruiseMenu extends Component {
       ): null;
 
       return (          
-        <Card key={cruise.id} >
+        <Card className="border-secondary" key={cruise.id} >
           <Accordion.Toggle as={Card.Header} eventKey={cruise.id}>
             <h6>Cruise: <span className="text-primary">{cruise.cruise_id}</span></h6>
           </Accordion.Toggle>
@@ -518,7 +517,7 @@ class CruiseMenu extends Component {
 
     if(this.state.years && this.state.years.size > 1) {
       return (
-        <Accordion id="accordion-controlled-year" activeKey={this.state.activeYear} onSelect={this.handleYearSelect}>
+        <Accordion className="border-secondary" id="accordion-controlled-year" activeKey={this.state.activeYear} onSelect={this.handleYearSelect}>
           {this.renderYearListItems()}
         </Accordion>
       );
@@ -529,7 +528,7 @@ class CruiseMenu extends Component {
     }
 
     return (
-      <Card>
+      <Card className="border-secondary" >
         <Card.Body>No cruises found!</Card.Body>
       </Card>
     );
@@ -547,7 +546,7 @@ class CruiseMenu extends Component {
     }
 
     return (
-      <Card>
+      <Card className="border-secondary" >
         <Card.Body>No cruises found!</Card.Body>
       </Card>
     );
@@ -560,20 +559,17 @@ class CruiseMenu extends Component {
         <StatsForROVTeamModal/>
         <SVProfileModal/>
         <Row>
-          <Col xs={12}>
             <h4>Welcome to Sealog</h4>
-            {MAIN_SCREEN_TXT}
-            <br/><br/>
-          </Col>
+            <p className="text-justify">{MAIN_SCREEN_TXT}</p>
         </Row>
-        <Row>
-          <Col sm={3} md={3} lg={2}>
+        <Row className="mt-2">
+          <Col className="px-1" sm={3} md={3} lg={2}>
             {this.renderYearList()}
           </Col>
-          <Col sm={4} md={4} lg={5}>
+          <Col className="px-1" sm={4} md={4} lg={5}>
             {this.renderCruiseCard()}
           </Col>
-          <Col sm={5} md={5} lg={5}>
+          <Col className="px-1" sm={5} md={5} lg={5}>
             {this.renderLoweringCard()}
           </Col>
         </Row>
