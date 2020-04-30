@@ -35,7 +35,7 @@
     "highcharts": "^8.0.4",
     "highcharts-react-official": "^3.0.0",
     "immutable": "^3.8.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "js-file-download": "^0.4.10",
     "leaflet": "^1.5.1",
     "moment": "^2.24.0",
