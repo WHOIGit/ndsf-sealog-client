@@ -34,6 +34,7 @@ class UpdateLowering extends Component {
 
     this.handleFileDownload = this.handleFileDownload.bind(this);
     this.handleFileDelete = this.handleFileDelete.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleSetLoweringStatsModal = this.handleSetLoweringStatsModal.bind(this);
   }
 
