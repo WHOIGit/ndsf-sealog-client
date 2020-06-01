@@ -7,4 +7,10 @@ services:
       dockerfile: Dockerfile
     image: oceandatatools/sealog-client-vehicle
     ports:
-      - "80:80"  # website
+      - "80:80"
+    volumes:
+      # Example of how to map a new client_config.js into the container
+      - ./src/client_config.js:/usr/src/app/src/client_config.js:ro
+
+      # Example of how to map a LOGIN_IMAGE into the container
+      - ./login.png:/usr/share/nginx/html/sealog/images/login.png:ro
