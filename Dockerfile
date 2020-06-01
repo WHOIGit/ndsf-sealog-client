@@ -27,10 +27,15 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 
 # Create the start script
-RUN (echo "#!/bin/sh -e"; \
-     echo "npm run-script build"; \
-     echo "cp -r ./dist /usr/share/nginx/html/sealog"; \
-     echo "nginx -g 'daemon off;'"; \
+RUN (echo '#!/bin/sh -e'; \
+     echo 'npm run-script build'; \
+     echo 'cp -r ./dist /usr/share/nginx/html/sealog'; \
+     echo 'ROOT_PATH=$(NODE_PATH=src node -e "console.log(require' \
+          '(\"client_config\").ROOT_PATH.replace(/\/$/, \"\"));")'; \
+     echo 'sed -i -e "s,%ROOT_PATH%,$ROOT_PATH,g" ' \
+          '/etc/nginx/conf.d/default.conf'; \
+     echo 'echo "Starting nginx"'; \
+     echo 'nginx -g "daemon off;"'; \
     ) > /start.sh \
  && chmod +x /start.sh
 CMD /start.sh
