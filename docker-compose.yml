@@ -13,4 +13,4 @@ services:
       - ./src/client_config.js:/usr/src/app/src/client_config.js:ro
 
       # Example of how to map a LOGIN_IMAGE into the container
-      - ./login.png:/usr/share/nginx/html/sealog/images/login.png:ro
+      - ./login.png:/usr/src/app/dist/images/login.png:ro
