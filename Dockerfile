@@ -28,13 +28,11 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create the start script
 RUN (echo '#!/bin/sh -e'; \
+     echo 'cd /usr/src/app'; \
      echo 'npm run-script build'; \
      echo 'ROOT_PATH=$(NODE_PATH=src node -e "console.log(require' \
           '(\"client_config\").ROOT_PATH.replace(/\/$/, \"\"));")'; \
      echo 'sed -i -e "s,%ROOT_PATH%,$ROOT_PATH,g" ' \
           '/etc/nginx/conf.d/default.conf'; \
-     echo 'echo "Starting nginx"'; \
-     echo 'nginx -g "daemon off;"'; \
-    ) > /start.sh \
- && chmod +x /start.sh
-CMD /start.sh
+    ) > /docker-entrypoint.d/99-build-sealog.sh \
+ && chmod +x /docker-entrypoint.d/99-build-sealog.sh
