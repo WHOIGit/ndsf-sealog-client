@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 
-class DeleteUserModal extends Component {
+class DeleteFileModal extends Component {
 
   constructor (props) {
     super(props);
@@ -12,21 +12,21 @@ class DeleteUserModal extends Component {
   }
 
   static propTypes = {
-    id: PropTypes.string,
+    file: PropTypes.string,
     handleDelete: PropTypes.func,
     handleHide: PropTypes.func.isRequired
   };
 
   handleConfirm() {
-    this.props.handleDelete(this.props.id);
+    this.props.handleDelete(this.props.file);
     this.props.handleHide();
   }
 
   render() {
 
-    const { show, handleHide, id } = this.props
+    const { show, handleHide, file } = this.props
 
-    if (id) {
+    if(file) {
       return (
         <Modal show={show} onHide={handleHide}>
           <Modal.Header closeButton>
@@ -34,7 +34,7 @@ class DeleteUserModal extends Component {
           </Modal.Header>
 
           <Modal.Body>
-            { 'Are you sure you want to delete this user?' }
+            { 'Are you sure you want to delete this file?' }
           </Modal.Body>
 
           <Modal.Footer>
@@ -43,10 +43,11 @@ class DeleteUserModal extends Component {
           </Modal.Footer>
         </Modal>
       );
-    } else {
+    }
+    else {
       return null;
     }
   }
 }
 
-export default connectModal({ name: 'deleteUser' })(DeleteUserModal)
+export default connectModal({ name: 'deleteFile' })(DeleteFileModal)

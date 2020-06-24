@@ -6,31 +6,51 @@ import CustomPagination from './custom_pagination';
 import * as mapDispatchToProps from '../actions';
 import { ROOT_PATH } from '../client_config';
 
-const maxImagesPerPage = 16
+// const maxImagesPerPage = 16
 
 class LoweringGalleryTab extends Component {
 
   constructor (props) {
     super(props);
 
+    this.divFocus = null;
+
     this.state = {
-      activePage: 1,
+      activePage: 1
     }
 
     this.handlePageSelect = this.handlePageSelect.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+
   }
 
   static propTypes = {
     imagesSource: PropTypes.string.isRequired,
-    imagesData: PropTypes.object.isRequired
+    imagesData: PropTypes.object.isRequired,
+    maxImagesPerPage: PropTypes.number.isRequired
   };
+
+  componentDidMount() {
+    this.divFocus.focus();
+  }
+
+  handleKeyPress(event) {
+    if(event.key === "ArrowRight" && this.state.activePage < Math.ceil(this.props.imagesData.images.length / this.props.maxImagesPerPage)) {
+      console.log("right");
+      this.handlePageSelect(this.state.activePage + 1)
+    }
+    else if(event.key === "ArrowLeft" && this.state.activePage > 1) {
+      console.log("left");
+      this.handlePageSelect(this.state.activePage - 1)
+    }
+  }
 
   handlePageSelect(eventKey) {
     this.setState({activePage: eventKey});
   }
 
   handleMissingImage(ev) {
-    ev.target.src = `${ROOT_PATH}/images/noimage.jpeg`
+    ev.target.src = `${ROOT_PATH}images/noimage.jpeg`;
   }
 
   handleEventShowDetailsModal(event_id) {
@@ -39,19 +59,18 @@ class LoweringGalleryTab extends Component {
 
   renderImage(source, filepath, event_id) {
     return (
-      <Card style={{marginBottom: "4px"}} id={`image_${source}`}>
-        <Card.Body className="data-card-body">
-          <Image fluid onClick={ () => this.handleEventShowDetailsModal(event_id) } onError={this.handleMissingImage} src={filepath}/>
-        </Card.Body>
+      <Card className="event-image-data-card" id={`image_${source}`}>
+        <Image fluid onClick={ () => this.handleEventShowDetailsModal(event_id) } onError={this.handleMissingImage} src={filepath}/>
       </Card>
     )
   }
 
+
   renderGallery(imagesSource, imagesData) {
     return imagesData.images.map((image, index) => {
-      if(index >= (this.state.activePage-1) * maxImagesPerPage && index < (this.state.activePage * maxImagesPerPage)) {
+      if(index >= (this.state.activePage-1) * this.props.maxImagesPerPage && index < (this.state.activePage * this.props.maxImagesPerPage)) {
         return (
-          <Col key={`${imagesSource}_${image.event_id}`} xs={12} sm={6} md={4} lg={3}>
+          <Col className="m-0 p-1" key={`${imagesSource}_${image.event_id}`} xs={12} sm={6} md={4} lg={3}>
             {this.renderImage(imagesSource, image.filepath, image.event_id)}
           </Col>
         )
@@ -61,16 +80,14 @@ class LoweringGalleryTab extends Component {
 
   render(){
     return (
-      <div style={{marginTop: "8px"}}>
-        <Row key={`${this.props.imagesSource}_images`}>
+      <React.Fragment>
+        <Row key={`${this.props.imagesSource}_images`} tabIndex="-1" onKeyDown={this.handleKeyPress} ref={(div) => { this.divFocus = div }}>
           {this.renderGallery(this.props.imagesSource, this.props.imagesData)}
         </Row>
         <Row key={`${this.props.imagesSource}_images_pagination`}>
-          <Col xs={12}>
-            <CustomPagination page={this.state.activePage} count={(this.props.imagesData.images)? this.props.imagesData.images.length : 0} pageSelectFunc={this.handlePageSelect} maxPerPage={maxImagesPerPage}/>
-          </Col>
+          <CustomPagination className="mt-2" page={this.state.activePage} count={(this.props.imagesData.images)? this.props.imagesData.images.length : 0} pageSelectFunc={this.handlePageSelect} maxPerPage={this.props.maxImagesPerPage}/>
         </Row>
-      </div>
+      </React.Fragment>
     )
   }
 }

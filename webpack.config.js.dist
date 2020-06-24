@@ -1,10 +1,13 @@
 const { ROOT_PATH, HEADER_TITLE } = require('./src/client_config');
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const isDevelopment = process.env.NODE_ENV === 'development'
 
 module.exports = {
-  // devtool: 'source-map',
+  devtool: 'source-map',
   entry: './src/index.js',
   output: {
     filename: '[name].bundle.js',
@@ -14,19 +17,28 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, 'dist'),
     publicPath: ROOT_PATH,
-    historyApiFallback: { index: ROOT_PATH }
+    historyApiFallback: {
+      disableDotRule: true,
+      index: ROOT_PATH
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
-        title: HEADER_TITLE,
-        filename: 'index.html',
-        template: path.resolve(__dirname, 'src/assets/index.html')
-      }),
-    new CopyPlugin([
-      { from: path.resolve(__dirname, 'node_modules/typeface-roboto/files/'), to: 'style/fonts' },
-      { from: path.resolve(__dirname, 'node_modules/leaflet/dist/images/'), to: 'style/images' },
-      { from: path.resolve(__dirname, 'src/assets/images/'), to: 'images' }
-    ]),
+      title: HEADER_TITLE,
+      filename: 'index.html',
+      template: path.resolve(__dirname, 'src/assets/index.html')
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, 'node_modules/typeface-roboto/files/'), to: 'style/fonts' },
+        { from: path.resolve(__dirname, 'node_modules/leaflet/dist/images/'), to: 'style/images' },
+        { from: path.resolve(__dirname, 'src/assets/images/'), to: 'images' },
+      ]
+    }),
+    new MiniCssExtractPlugin({
+      filename: isDevelopment ? 'style/[name].css' : 'style/[name].css',
+      chunkFilename: isDevelopment ? 'style/[id].css' : 'style/[id].css',
+    })
   ],
   module: {
     rules: [
@@ -38,10 +50,6 @@ module.exports = {
         }
       },
       {
-        test: /\.scss$/,
-        loader: 'style-loader!css-loader!sass-loader'
-      },
-      {
         test: /\.css$/,
         use: [
           {
@@ -50,7 +58,8 @@ module.exports = {
               injectType: 'linkTag',
             }
           },
-          { loader: 'file-loader',
+          {
+            loader: 'file-loader',
             options: {
               outputPath: 'style',
               publicPath: ROOT_PATH + 'style'
@@ -68,6 +77,39 @@ module.exports = {
             publicPath: ROOT_PATH + 'style/fonts'
           }
         }]
+      },
+      {
+        test: /\.s(a|c)ss$/,
+        exclude: /\.module.(s(a|c)ss)$/,
+        loader: [
+          isDevelopment ? 'style-loader' : { loader: MiniCssExtractPlugin.loader, options: {publicPath: './style'}},
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: isDevelopment
+            }
+          }
+        ]
+      },
+      {
+        test: /\.module\.s(a|c)ss$/,
+        loader: [
+          isDevelopment ? 'style-loader' : { loader: MiniCssExtractPlugin.loader, options: {publicPath: './style'}},
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              sourceMap: isDevelopment,
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: isDevelopment
+            }
+          }
+        ]
       }
     ]
   }

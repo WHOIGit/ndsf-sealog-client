@@ -3,7 +3,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
 import { reduxForm, Field } from 'redux-form';
-import { Alert, Button, Col, Form, Card} from 'react-bootstrap';
+import { Alert, Button, Col, Form, Card, Row} from 'react-bootstrap';
 import * as mapDispatchToProps from '../../actions';
 
 const cookies = new Cookies();
@@ -85,51 +85,58 @@ class UserProfile extends Component {
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
 
     return (
-      <Card className="form-standard" >
-        <Card.Body>
-          <form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
-            <Field
-              name="username"
-              component={this.renderTextField}
-              label="Username"
-              required={true}
-            />
-            <Field
-              name="fullname"
-              component={this.renderTextField}
-              label="Full Name"
-              required={true}
-            />
-            <Field
-              name="email"
-              component={this.renderTextField}
-              label="Email"
-              disabled={true}
-            />
-            <Field
-              name="password"
-              component={this.renderTextField}
-              type="password"
-              label="Password"
-            />
-            <Field
-              name="confirmPassword"
-              component={this.renderTextField}
-              type="password"
-              label="Confirm Password"
-            />
-            {this.renderAlert()}
-            {this.renderMessage()}
-            <div className="float-right" style={{marginRight: "-4px"}}>
-              <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
-              <Button variant="primary" size="sm" type="submit" disabled={pristine || submitting || !valid}>Update</Button>
-            </div>
-          </form>
-          <br/>
-          <br/>
-          {this.showToken()}
-        </Card.Body>
-      </Card>
+      <div className="mb-2">
+        <Row className="justify-content-center">
+          <Col sm={8} md={6} lg={4}>
+            <Card>
+              <Card.Body>
+                <Form className="mb-1" onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+                  <Form.Row>
+                    <Field
+                      name="username"
+                      component={this.renderTextField}
+                      label="Username"
+                      required={true}
+                    />
+                    <Field
+                      name="fullname"
+                      component={this.renderTextField}
+                      label="Full Name"
+                      required={true}
+                    />
+                    <Field
+                      name="email"
+                      component={this.renderTextField}
+                      label="Email"
+                      disabled={true}
+                    />
+                    <Field
+                      name="password"
+                      component={this.renderTextField}
+                      type="password"
+                      label="Password"
+                    />
+                    <Field
+                      name="confirmPassword"
+                      component={this.renderTextField}
+                      type="password"
+                      label="Confirm Password"
+                    />
+                  </Form.Row>
+                  {this.renderAlert()}
+                  {this.renderMessage()}
+                  <div className="float-right">
+                    <Button className="mr-1" variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
+                    <Button variant="primary" size="sm" type="submit" disabled={pristine || submitting || !valid}>Update</Button>
+                  </div>
+                </Form>
+                <br/><hr className="border-secondary"/>
+                {this.showToken()}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

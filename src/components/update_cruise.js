@@ -10,10 +10,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
-
 import { FilePond } from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
-
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import { API_ROOT_URL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
@@ -47,6 +44,11 @@ class UpdateCruise extends Component {
 
   componentWillUnmount() {
     this.props.leaveUpdateCruiseForm();
+  }
+
+  handleFileDeleteModal(file) {
+    console.log("delete", file)
+    this.props.showModal('deleteFile', { file: file, handleDelete: this.handleFileDelete });
   }
 
   handleFormSubmit(formProps) {
@@ -96,8 +98,8 @@ class UpdateCruise extends Component {
     this.props.handleFormSubmit()
   }
 
-  async handleFileDownload(cruiseID, filename) {
-    await axios.get(`${API_ROOT_URL}${CRUISE_ROUTE}/${cruiseID}/${filename}`,
+  async handleFileDownload(filename) {
+    await axios.get(`${API_ROOT_URL}${CRUISE_ROUTE}/${this.props.cruise.id}/${filename}`,
     {
       headers: {
         authorization: cookies.get('token')
@@ -112,15 +114,15 @@ class UpdateCruise extends Component {
     });
   }
 
-  async handleFileDelete(cruiseID, filename) {
-    await axios.delete(`${API_ROOT_URL}${CRUISE_ROUTE}/${cruiseID}/${filename}`,
+  async handleFileDelete(filename) {
+    await axios.delete(`${API_ROOT_URL}${CRUISE_ROUTE}/${this.props.cruise.id}/${filename}`,
     {
       headers: {
         authorization: cookies.get('token')
       }
     })
     .then(() => {
-        this.props.initCruise(cruiseID)
+        this.props.initCruise(this.props.cruise.id)
      })
     .catch(()=>{
       console.log("JWT is invalid, logging out");
@@ -130,10 +132,16 @@ class UpdateCruise extends Component {
   renderFiles() {
     if(this.props.cruise.cruise_additional_meta && this.props.cruise.cruise_additional_meta.cruise_files && this.props.cruise.cruise_additional_meta.cruise_files.length > 0) {
       let files = this.props.cruise.cruise_additional_meta.cruise_files.map((file, index) => {
-        return <li style={{ listStyleType: "none" }} key={`file_${index}`}><span onClick={() => this.handleFileDownload(this.props.cruise.id, file)}><FontAwesomeIcon className='text-primary' icon='download' fixedWidth /></span> <span onClick={() => this.handleFileDelete(this.props.cruise.id, file)}><FontAwesomeIcon className='text-danger' icon='trash' fixedWidth /></span><span> {file}</span></li>
+        return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleFileDownload(file)}>{file}</a> <FontAwesomeIcon onClick={() => this.handleFileDeleteModal(file)} className='text-danger' icon='trash' fixedWidth /></div>
       })
-      return <div>{files}<br/></div>
+
+      return (
+        <div className="mb-2">
+          {files}
+        </div>
+      )
     }
+      
     return null
   }
 
@@ -145,7 +153,7 @@ class UpdateCruise extends Component {
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
       return (
-        <Card>
+        <Card className="border-secondary">
           <Card.Header>{updateCruiseFormHeader}</Card.Header>
           <Card.Body>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
@@ -264,8 +272,8 @@ class UpdateCruise extends Component {
                 </FilePond>
               {renderAlert(this.props.errorMessage)}
               {renderMessage(this.props.message)}
-              <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
-                <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
+              <div className="float-right">
+                <Button className="mr-1" variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
                 <Button variant="primary" size="sm" type="submit" disabled={(submitting || !valid || pristine) && this.state.filepondPristine}>Update</Button>
               </div>
             </Form>

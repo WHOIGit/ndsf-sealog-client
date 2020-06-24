@@ -77,7 +77,7 @@ class CreateCruise extends Component {
       if(this.props.roles.includes("admin")) {
 
         return (
-          <Card>
+          <Card className="border-secondary">
             <Card.Header>{createCruiseFormHeader}</Card.Header>
             <Card.Body>
               <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
@@ -183,8 +183,8 @@ class CreateCruise extends Component {
                 </Form.Row>
                 {renderAlert(this.props.errorMessage)}
                 {renderMessage(this.props.message)}
-                <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
-                  <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Form</Button>
+                <div className="float-right">
+                  <Button className="mr-1" variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Form</Button>
                   <Button variant="primary" size="sm" type="submit" disabled={submitting || !valid}>Create</Button>
                 </div>
               </Form>

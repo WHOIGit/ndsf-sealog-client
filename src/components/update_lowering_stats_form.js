@@ -27,8 +27,11 @@ class UpdateLoweringStatsForm extends Component {
 
     let initialValues = {
       start: this.props.milestones.lowering_start,
+      off_deck: (this.props.milestones.lowering_off_deck) ? this.props.milestones.lowering_off_deck : null,
+      descending: (this.props.milestones.lowering_descending) ? this.props.milestones.lowering_descending : null,
       on_bottom: (this.props.milestones.lowering_on_bottom) ? this.props.milestones.lowering_on_bottom : null,
       off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
+      on_surface: (this.props.milestones.lowering_on_surface) ? this.props.milestones.lowering_on_surface : null,
       stop: this.props.milestones.lowering_stop,
       max_depth: (this.props.stats.max_depth) ? this.props.stats.max_depth : null,
       bbox_north: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[0] : null,
@@ -47,8 +50,11 @@ class UpdateLoweringStatsForm extends Component {
 
     let milestones = {
       lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : formProps.start,
+      lowering_off_deck: (formProps.off_deck && formProps.off_deck._isAMomentObject) ? formProps.off_deck.toISOString() : formProps.off_deck,
+      lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : formProps.descending,
       lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : formProps.on_bottom,
       lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : formProps.off_bottom,
+      lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString() : formProps.on_surface,
       lowering_stop: (formProps.stop._isAMomentObject) ? formProps.stop.toISOString() : formProps.stop,
     }
 
@@ -90,103 +96,143 @@ class UpdateLoweringStatsForm extends Component {
       return (
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <Row>
-                <Col md={6}>
-                  <Field
-                    name="start"
-                    component={renderDateTimePicker}
-                    label="Start Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    required={true}
-                    sm={12}
-                  />
-                  <Field
-                    name="on_bottom"
-                    component={renderDateTimePicker}
-                    label="On Bottom Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
-                  <Field
-                    name="off_bottom"
-                    component={renderDateTimePicker}
-                    label="Off Bottom Date/Time (UTC)"
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
-                  <Field
-                    name="stop"
-                    component={renderDateTimePicker}
-                    label="Stop Date/Time (UTC)"
-                    required={true}
-                    timeFormat={timeFormat}
-                    sm={12}
-                  />
+                <Col className="px-1" sm={6}>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="start"
+                      component={renderDateTimePicker}
+                      label="Start Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      required={true}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="off_deck"
+                      component={renderDateTimePicker}
+                      label="Off Deck Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="descending"
+                      component={renderDateTimePicker}
+                      label="Descending Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="on_bottom"
+                      component={renderDateTimePicker}
+                      label="On Bottom Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="off_bottom"
+                      component={renderDateTimePicker}
+                      label="Off Bottom Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="on_surface"
+                      component={renderDateTimePicker}
+                      label="On Surface Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="stop"
+                      component={renderDateTimePicker}
+                      label="On Deck/Stop Date/Time (UTC)"
+                      required={true}
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
                 </Col>
-                <Col md={6}>
-                  <Row>
-                    <Col xs={{span:6, offset:3}} sm={{span:6, offset:3}} md={{span:12, offset:0}} lg={{span:7, offset: 0}}>
-                      <Field
-                        name="max_depth"
-                        component={renderTextField}
-                        label="Max Depth"
-                        placeholder="in meters"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={{span: 6, offset: 3}}>
-                      <Field
-                        name="bbox_north"
-                        component={renderTextField}
-                        label="North"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <Field
-                        name="bbox_west"
-                        component={renderTextField}
-                        label="West"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                    <Col>
-                      <Field
-                        name="bbox_east"
-                        component={renderTextField}
-                        label="East"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={{span: 6, offset: 3}}>
-                      <Field
-                        name="bbox_south"
-                        component={renderTextField}
-                        label="South"
-                        placeholder="in ddeg"
-                        lg={12}
-                        sm={12}
-                      />
-                    </Col>
-                  </Row>
+                <Col className='px-1' sm={6}>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="max_depth"
+                      component={renderTextField}
+                      label="Max Depth"
+                      placeholder="in meters"
+                      lg={5}
+                      md={7}
+                      sm={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="bbox_north"
+                      component={renderTextField}
+                      label="North"
+                      placeholder="in ddeg"
+                      lg={5}
+                      md={6}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="bbox_west"
+                      component={renderTextField}
+                      label="West"
+                      placeholder="in ddeg"
+                      lg={5}
+                      md={6}
+                    />
+                    <Field
+                      name="bbox_east"
+                      component={renderTextField}
+                      label="East"
+                      placeholder="in ddeg"
+                      lg={5}
+                      md={6}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="bbox_south"
+                      component={renderTextField}
+                      label="South"
+                      placeholder="in ddeg"
+                      lg={5}
+                      md={6}
+                    />
+                  </Form.Row>
                 </Col>
               </Row>
               <Row>
                 <Col xs={12}>
                   <div className="float-right">
-                    <Button variant="secondary" size="sm" onClick={this.props.handleHide}>Cancel</Button>
+                    <Button className="mr-1" variant="secondary" size="sm" onClick={this.props.handleHide}>Cancel</Button>
                     <Button variant="warning" size="sm" type="submit" disabled={pristine || submitting || !valid}>Done</Button>
                   </div>
                 </Col>
@@ -221,20 +267,32 @@ function validate(formProps) {
 
   if ((formProps.start !== '') && (formProps.stop !== '')) {
     if(moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-      errors.stop = 'Stop date must be after than start date'
+      errors.stop = 'Stop date must be later than start date'
     }
   }
 
   if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.stop, dateFormat + " " + timeFormat))) {
-    errors.off_bottom = 'Stop date must be after off bottom date';
+    errors.off_bottom = 'Off bottom date must be before stop date';
+  }
+
+  if(formProps.on_surface && formProps.on_surface !== '' && moment.utc(formProps.on_surface, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat))) {
+    errors.on_surface = 'Floats on surface date must be after off bottom date';
   }
 
   if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {
     errors.off_bottom = 'Off bottom date must be after on bottom date';
   }
 
-  if(formProps.on_bottom && formProps.on_bottom !== '' && moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-    errors.on_bottom = 'On bottom date must be after start date';
+  if(formProps.on_bottom && formProps.on_bottom !== '' && moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.descending, dateFormat + " " + timeFormat))) {
+    errors.on_bottom = 'On bottom date must be after descending date';
+  }
+
+  if(formProps.descending && formProps.descending !== '' && moment.utc(formProps.descending, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_deck, dateFormat + " " + timeFormat))) {
+    errors.descending = 'Descending date must be after off_deck date';
+  }
+
+  if(formProps.off_deck && formProps.off_deck !== '' && moment.utc(formProps.off_deck, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
+    errors.off_deck = 'Off deck date must be after start date';
   }
 
   if (formProps.on_bottom && formProps.on_bottom !== '' && formProps.off_bottom && formProps.off_bottom !== '') {

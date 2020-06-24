@@ -12,8 +12,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 
 import { FilePond } from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
-
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import { API_ROOT_URL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
@@ -36,6 +34,7 @@ class UpdateLowering extends Component {
 
     this.handleFileDownload = this.handleFileDownload.bind(this);
     this.handleFileDelete = this.handleFileDelete.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleSetLoweringStatsModal = this.handleSetLoweringStatsModal.bind(this);
   }
 
@@ -53,6 +52,11 @@ class UpdateLowering extends Component {
     this.props.leaveUpdateLoweringForm();
   }
 
+  handleFileDeleteModal(file) {
+    console.log("delete", file)
+    this.props.showModal('deleteFile', { file: file, handleDelete: this.handleFileDelete });
+  }
+
   handleFormSubmit(formProps) {
     formProps.lowering_tags = (formProps.lowering_tags)? formProps.lowering_tags.map(tag => tag.trim()): [];
 
@@ -63,15 +67,17 @@ class UpdateLowering extends Component {
       delete formProps.lowering_description
     }
 
-    formProps.lowering_additional_meta.lowering_files = this.pond.getFiles().map(file => file.serverId)
+    if(this.pond) {
+      formProps.lowering_additional_meta.lowering_files = this.pond.getFiles().map(file => file.serverId);
+    }
 
     this.props.updateLowering({...formProps});
     this.pond.removeFiles();
     this.props.handleFormSubmit()
   }
 
-  async handleFileDownload(loweringID, filename) {
-    await axios.get(`${API_ROOT_URL}${LOWERING_ROUTE}/${loweringID}/${filename}`,
+  async handleFileDownload(filename) {
+    await axios.get(`${API_ROOT_URL}${LOWERING_ROUTE}/${this.props.lowering.id}/${filename}`,
     {
       headers: {
         authorization: cookies.get('token')
@@ -86,15 +92,15 @@ class UpdateLowering extends Component {
     });
   }
 
-  async handleFileDelete(loweringID, filename) {
-    await axios.delete(`${API_ROOT_URL}${LOWERING_ROUTE}/${loweringID}/${filename}`,
+  async handleFileDelete(filename) {
+    await axios.delete(`${API_ROOT_URL}${LOWERING_ROUTE}/${this.props.lowering.id}/${filename}`,
     {
       headers: {
         authorization: cookies.get('token')
       }
     })
     .then(() => {
-        this.props.initLowering(loweringID)
+        this.props.initLowering(this.props.lowering.id)
      })
     .catch(()=>{
       console.log("JWT is invalid, logging out");
@@ -102,7 +108,7 @@ class UpdateLowering extends Component {
   }
 
   handleSetLoweringStatsModal() {
-    this.props.showModal('setLoweringStats', { lowering: this.props.lowering, handleUpdateLowering: this.props.updateLowering });
+    this.props.showModal('setLoweringStats', { lowering: this.props.lowering, handleUpdateLowering: this.handleFormSubmit });
   }
 
   copyToClipboard() {
@@ -124,10 +130,16 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
   renderFiles() {
     if(this.props.lowering.lowering_additional_meta && this.props.lowering.lowering_additional_meta.lowering_files && this.props.lowering.lowering_additional_meta.lowering_files.length > 0) {
       let files = this.props.lowering.lowering_additional_meta.lowering_files.map((file, index) => {
-        return <li style={{ listStyleType: "none" }} key={`file_${index}`}><span onClick={() => this.handleFileDownload(this.props.lowering.id, file)}><FontAwesomeIcon className='text-primary' icon='download' fixedWidth /></span> <span onClick={() => this.handleFileDelete(this.props.lowering.id, file)}><FontAwesomeIcon className='text-danger' icon='trash' fixedWidth /></span><span> {file}</span></li>
+        return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleFileDownload(file)}>{file}</a> <FontAwesomeIcon onClick={() => this.handleFileDeleteModal(file)} className='text-danger' icon='trash' fixedWidth /></div>
       })
-      return <div>{files}<br/></div>
+
+      return (
+        <div className="mb-2">
+          {files}
+        </div>
+      )
     }
+
     return null
   }
 
@@ -139,7 +151,7 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
       return (
-        <Card>
+        <Card className="border-secondary">
           <Card.Header>{updateLoweringFormHeader}</Card.Header>
           <Card.Body>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
@@ -192,7 +204,9 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
               </Form.Row>
               <Form.Label>Lowering Files</Form.Label>
               {this.renderFiles()}
-              <FilePond ref={ref => this.pond = ref} allowMultiple={true} 
+              <FilePond
+                ref={ref => this.pond = ref}
+                allowMultiple={true} 
                 maxFiles={5} 
                 server={{
                   url: API_ROOT_URL,
@@ -214,8 +228,8 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
               {renderAlert(this.props.errorMessage)}
               {renderMessage(this.props.message)}
               <Button variant="warning" size="sm" onClick={this.handleSetLoweringStatsModal}>Milestones/Stats</Button>
-              <div className="float-right" style={{marginRight: "-20px", marginBottom: "-8px"}}>
-                <Button variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
+              <div className="float-right">
+                <Button className="mr-1" variant="secondary" size="sm" disabled={pristine || submitting} onClick={reset}>Reset Values</Button>
                 <Button variant="primary" size="sm" type="submit" disabled={(submitting || !valid || pristine) && this.state.filepondPristine}>Update</Button>
               </div>
             </Form>

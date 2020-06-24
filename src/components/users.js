@@ -134,9 +134,7 @@ class Users extends Component {
   renderAddUserButton() {
     if (!this.props.showform) {
       return (
-        <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleUserCreate() } disabled={!this.props.userid} >Add User</Button>
-        </div>
+        <Button variant="primary" size="sm" onClick={ () => this.handleUserCreate() } disabled={!this.props.userid} >Add User</Button>
       );
     }
   }
@@ -144,9 +142,7 @@ class Users extends Component {
   renderImportUsersButton() {
     if(this.props.roles.includes("admin")) {
       return (
-        <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleUserImportModal()}>Import From File</Button>
-        </div>
+        <Button className="mr-1" variant="primary" size="sm" onClick={ () => this.handleUserImportModal()}>Import From File</Button>
       );
     }
   }
@@ -163,10 +159,11 @@ class Users extends Component {
 
     return users.map((user) => {
       const style = (user.disabled)? {"textDecoration": "line-through"}: {};
+      const className = (this.props.userid === user.id)? "text-warning" : "";
       return (
         <tr key={user.id}>
-          <td style={style} className={(this.props.userid === user.id)? "text-warning" : ""}>{user.username}</td>
-          <td style={style}>{user.fullname}</td>
+          <td style={style} className={className}>{user.username}</td>
+          <td style={style} className={className}>{user.fullname}</td>
           <td>
             <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleUserUpdate(user.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>{' '}
             {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleUserPermissionsModal(user.id) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
@@ -211,7 +208,7 @@ class Users extends Component {
   renderUserTable() {
     if(this.props.users.filter(user => user.system_user === false).length > 0){
       return (
-        <Table responsive bordered striped>
+        <Table responsive bordered striped size="sm">
           <thead>
             <tr>
               <th>User Name</th>
@@ -234,7 +231,7 @@ class Users extends Component {
   renderSystemUserTable() {
     if (this.props.users.filter(user => user.system_user === true).length > 0){
       return (
-        <Table responsive bordered striped>
+        <Table responsive bordered striped size="sm">
           <thead>
             <tr>
               <th>User Name</th>
@@ -317,23 +314,23 @@ class Users extends Component {
           <NonSystemUsersWipeModal />
           <UserPermissionsModal />
           <Row>
-            <Col sm={12} md={7} lg={{span:6, offset:1}} xl={{span:5, offset:2}}>
-              <Card key="system_users_card" style={{marginBottom: "8px"}} >
+            <Col className="px-1" sm={12} md={7} lg={{span:6, offset:1}} xl={{span:5, offset:2}}>
+              <Card className="border-secondary" key="system_users_card">
                 <Card.Header>{this.renderSystemUsersHeader()}</Card.Header>
                 {this.renderSystemUserTable()}
+                <CustomPagination className="mt-2" page={this.state.activeSystemPage} count={(this.state.filteredSystemUsers)? this.state.filteredSystemUsers.length : this.props.users.filter(user => user.system_user === true).length} pageSelectFunc={this.handleSystemPageSelect} maxPerPage={maxSystemUsersPerPage}/>
               </Card>
-              <CustomPagination style={{marginTop: "8px"}} page={this.state.activeSystemPage} count={(this.state.filteredSystemUsers)? this.state.filteredSystemUsers.length : this.props.users.filter(user => user.system_user === true).length} pageSelectFunc={this.handleSystemPageSelect} maxPerPage={maxSystemUsersPerPage}/>
-              <Card style={{marginBottom: "8px"}} >
+              <Card className="border-secondary mt-2" >
                 <Card.Header>{this.renderUsersHeader()}</Card.Header>
                 {this.renderUserTable()}
+                <CustomPagination className="mt-2" page={this.state.activePage} count={(this.state.filteredUsers)? this.state.filteredUsers.length : this.props.users.filter(user => user.system_user === false).length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxUsersPerPage}/>
               </Card>
-              <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={(this.state.filteredUsers)? this.state.filteredUsers.length : this.props.users.filter(user => user.system_user === false).length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxUsersPerPage}/>
-              <div style={{marginTop: "8px", marginRight: "-8px"}}>
-                {this.renderAddUserButton()}
+              <div className="float-right mt-2">
                 {this.renderImportUsersButton()}
+                {this.renderAddUserButton()}
               </div>
             </Col>
-            <Col sm={12} md={5} lg={4} xl={3}>
+            <Col className="px-1" sm={12} md={5} lg={4} xl={3}>
               { userForm }
             </Col>
           </Row>
