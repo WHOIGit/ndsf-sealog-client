@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { Row, Col, Card, ListGroup, Tooltip, OverlayTrigger, Form } from 'react-bootstrap';
+import { ButtonToolbar, Row, Col, Card, ListGroup, Tooltip, OverlayTrigger, Form } from 'react-bootstrap';
 import EventFilterForm from './event_filter_form';
 import EventCommentModal from './event_comment_modal';
 import EventShowDetailsModal from './event_show_details_modal';
@@ -143,15 +143,15 @@ class LoweringReview extends Component {
   }
 
   toggleASNAP() {
-    this.props.eventUpdateLoweringReplay(this.props.lowering.id, !this.props.event.hideASNAP);
+    this.props.eventUpdateLoweringReplay(this.props.match.params.id, !this.props.event.hideASNAP);
 
     if(this.props.event.hideASNAP) {
       this.props.showASNAP();
-      this.handleEventClick(0);
+      this.handleEventClick(this.props.event.events[0]);
     }
     else {
       this.props.hideASNAP();
-      this.handleEventClick(0);
+      this.handleEventClick(this.props.event.events[0]);
     }
   }
 
@@ -175,7 +175,7 @@ class LoweringReview extends Component {
 
     if (!this.props.event.events) {
       return (
-        <Card>
+        <Card className="border-secondary">
           <Card.Header>{ this.renderEventListHeader() }</Card.Header>
           <Card.Body>Loading...</Card.Body>
         </Card>
@@ -183,9 +183,9 @@ class LoweringReview extends Component {
     }
 
     return (
-      <Card>
+      <Card className="border-secondary">
         <Card.Header>{ this.renderEventListHeader() }</Card.Header>
-        <ListGroup>
+        <ListGroup className="eventList" tabIndex="-1" onKeyDown={this.handleKeyPress} ref={(div) => { this.divFocus = div }}>
           {this.renderEvents()}
         </ListGroup>
       </Card>
@@ -205,7 +205,7 @@ class LoweringReview extends Component {
             if(option.event_option_name === 'event_comment') {
               comment_exists = (option.event_option_value !== '')? true : false;
             } else {
-              filtered.push(`${option.event_option_name}: "${option.event_option_value}"`);
+              filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
             }
             return filtered;
           },[]);
@@ -224,7 +224,7 @@ class LoweringReview extends Component {
 
           let eventDetails = <OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>View Details</Tooltip>}><FontAwesomeIcon onClick={() => this.handleEventShowDetailsModal(event)} icon='window-maximize' fixedWidth/></OverlayTrigger>;
 
-          return (<ListGroup.Item className="event-list-item" key={event.id} active={active} ><span onClick={() => this.handleEventClick(event)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventDetails} {eventComment}</span></ListGroup.Item>);
+          return (<ListGroup.Item className="py-1 event-list-item" key={event.id} active={active} ><span onClick={() => this.handleEventClick(event)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventDetails} {eventComment}</span></ListGroup.Item>);
 
         }
       });
@@ -232,7 +232,7 @@ class LoweringReview extends Component {
       return eventList;
     }
 
-    return (<ListGroup.Item>No events found</ListGroup.Item>);
+    return (<ListGroup.Item className="py-1">No events found</ListGroup.Item>);
   }
 
   render(){
@@ -240,28 +240,26 @@ class LoweringReview extends Component {
     const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "Loading...";
 
     return (
-      <div tabIndex="-1" onKeyDown={this.handleKeyPress} ref={(div) => { this.divFocus = div }}>
+      <div>
         <EventCommentModal />
         <EventShowDetailsModal />
         <Row>
-          <Col lg={12}>
-            <span style={{paddingLeft: "8px"}}>
-              <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
-              {' '}/{' '}
-              <span><LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/></span>
-              {' '}/{' '}
-              <span><LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Review"} modes={["Replay", "Map", "Gallery"]}/></span>
-            </span>
-          </Col>
+          <ButtonToolbar className="mb-2 ml-1 align-items-center">
+            <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
+            <FontAwesomeIcon icon="chevron-right" fixedWidth/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+            <FontAwesomeIcon icon="chevron-right" fixedWidth/>
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Review"} modes={["Replay", "Map", "Gallery"]}/>
+          </ButtonToolbar>
         </Row>
-        <Row style={{paddingTop: "8px"}}>
-          <Col sm={7} md={8} lg={9}>
+        <Row>
+          <Col className="px-1 mb-1" sm={12} md={8} lg={9}>
             {this.renderEventCard()}
-            <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
+            <CustomPagination className="mt-2" page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
           </Col>
-          <Col sm={5} md={4} lg={3}>
-            <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
-          </Col>
+          <Col className="px-1 mb-1" sm={6} md={4} lg={3}>
+            <EventFilterForm className="mt-2" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
+          </Col>          
         </Row>
       </div>
     );

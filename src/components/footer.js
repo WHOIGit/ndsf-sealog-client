@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { Client } from '@hapi/nes/lib/client';
+import { Link } from 'react-router-dom';
 import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from '../client_config';
 
 import * as mapDispatchToProps from '../actions';
@@ -94,13 +95,11 @@ class Footer extends Component {
     }
 
     return (
-      <div>
-        <div style={{marginTop: "4px"}}>
-          {asnapStatus}
-          <span className="float-right">
-            <a href={`/github`} target="_blank">Sealog</a> is licensed under the <a href={`/license`} target="_blank">MIT</a> public license
-          </span>
-        </div>
+      <div className="mt-2 justify-content-center">
+        {asnapStatus}
+        <span className="float-right">
+          <Link to="/github" target="_blank">Sealog</Link> is licensed under the <Link to="/license" target="_blank">MIT</Link> public license
+        </span>
       </div>
     );
   }

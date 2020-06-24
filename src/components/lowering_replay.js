@@ -3,9 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import path from 'path';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Row, Col, Card, ListGroup, Image, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
-import 'rc-slider/assets/index.css';
-import Slider from 'rc-slider';
+import { ButtonToolbar, Row, Col, Card, ListGroup, Image, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
+import Slider, { createSliderWithTooltip } from 'rc-slider';
 import EventFilterForm from './event_filter_form';
 import ImagePreviewModal from './image_preview_modal';
 import EventCommentModal from './event_comment_modal';
@@ -30,9 +29,9 @@ const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
 const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
-const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vehicleRealtimeCTDData'];
+const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
-const SliderWithTooltip = Slider.createSliderWithTooltip(Slider);
+const SliderWithTooltip = createSliderWithTooltip(Slider);
 
 class LoweringReplay extends Component {
 
@@ -213,11 +212,9 @@ class LoweringReplay extends Component {
 
   renderImage(source, filepath) {
     return (
-      <Card id={`image_${source}`}>
-        <Card.Body className="data-card-body">
-          <Image  fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImageClick(source, filepath)} />
-          <div style={{marginTop: "5px"}}>{source}</div>
-        </Card.Body>
+      <Card  className="event-image-data-card" id={`image_${source}`}>
+        <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImageClick(source, filepath)} />
+        <span>{source}</span>
       </Card>
     );
   }
@@ -307,7 +304,7 @@ class LoweringReplay extends Component {
         return (
           tmpData.map((camera) => {
             return (
-              <Col key={camera.source} xs={12} sm={6} md={4} lg={3}>
+              <Col className="px-1 mb-2" key={camera.source} xs={12} sm={6} md={4} lg={3}>
                 {this.renderImage(camera.source, camera.filepath)}
               </Col>
             );
@@ -323,20 +320,18 @@ class LoweringReplay extends Component {
 
       let return_event_options = this.props.event.selected_event.event_options.reduce((filtered, event_option, index) => {
         if(event_option.event_option_name !== 'event_comment') {
-          filtered.push(<div key={`event_option_${index}`}><span>{event_option.event_option_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
+          filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
         }
 
         return filtered;
       },[]);
 
       return (return_event_options.length > 0)? (
-        <Col xs={12} sm={6} md={4} lg={3} style={{paddingBottom: "8px"}}>
-          <Card>
-            <Card.Header className="data-card-header">Event Options</Card.Header>
-            <Card.Body className="data-card-body">
-              <div style={{paddingLeft: "10px"}}>
-                {return_event_options}
-              </div>
+        <Col className="px-1 mb-2" xs={12} sm={6} md={4} lg={3}>
+          <Card className="event-data-card">
+            <Card.Header>Event Options</Card.Header>
+            <Card.Body>
+              {return_event_options}
             </Card.Body>
           </Card>
         </Col>
@@ -348,8 +343,6 @@ class LoweringReplay extends Component {
 
     if(this.props.event.selected_event && this.props.event.selected_event.aux_data) {
 
-      // console.log(this.props.event.selected_event.aux_data)
-
       const aux_data = this.props.event.selected_event.aux_data.filter((data) => !excludeAuxDataSources.includes(data.data_source))
 
       aux_data.sort((a, b) => {
@@ -358,17 +351,15 @@ class LoweringReplay extends Component {
 
       let return_aux_data = aux_data.map((aux_data, index) => {
         const aux_data_points = aux_data.data_array.map((data, index) => {
-          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span>{data.data_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
+          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span className="data-name">{data.data_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
         });
 
         return (
-          <Col key={`${aux_data.data_source}_col`} sm={6} md={4} lg={3} style={{paddingBottom: "8px"}}>
-            <Card key={`${aux_data.data_source}`}>
-              <Card.Header className="data-card-header">{aux_data.data_source}</Card.Header>
-              <Card.Body className="data-card-body">
-                <div style={{paddingLeft: "10px"}}>
-                  {aux_data_points}
-                </div>
+          <Col className="px-1 pb-2" key={`${aux_data.data_source}_col`} sm={6} md={4} lg={3}>
+            <Card className="event-data-card" key={`${aux_data.data_source}`}>
+              <Card.Header>{aux_data.data_source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</Card.Header>
+              <Card.Body>
+                {aux_data_points}
               </Card.Body>
             </Card>
           </Col>
@@ -391,40 +382,33 @@ class LoweringReplay extends Component {
       const playPause = (this.state.replayState !== 1)? <FontAwesomeIcon className="text-primary" key={`pause_${this.props.lowering.id}`} onClick={ () => this.handleLoweringReplayPause() } icon="pause"/> : <FontAwesomeIcon className="text-primary" key={`play_${this.props.lowering.id}`} onClick={ () => this.handleLoweringReplayPlay() } icon="play"/>;
 
       const buttons = (this.props.event.selected_event.ts && !this.props.event.fetching)? (
-        <div className="text-center">
+        <span className="w-100 text-center">
           <FontAwesomeIcon className="text-primary" key={`start_${this.props.lowering.id}`} onClick={ () => this.handleLoweringReplayStart() } icon="step-backward"/>{' '}
           <FontAwesomeIcon className="text-primary" key={`frev_${this.props.lowering.id}`} onClick={ () => this.handleLoweringReplayFRev() } icon="backward"/>{' '}
           {playPause}{' '}
           <FontAwesomeIcon className="text-primary" key={`ffwd_${this.props.lowering.id}`} onClick={ () => this.handleLoweringReplayFFwd() } icon="forward"/>{' '}
           <FontAwesomeIcon className="text-primary" key={`end_${this.props.lowering.id}`} onClick={ () => this.handleLoweringReplayEnd() } icon="step-forward"/>
-        </div>
+        </span>
       ):(
-        <div className="text-center">
+        <span className="text-center">
           <FontAwesomeIcon icon="step-backward"/>{' '}
           <FontAwesomeIcon icon="backward"/>{' '}
           <FontAwesomeIcon icon="play"/>{' '}
           <FontAwesomeIcon icon="forward"/>{' '}
           <FontAwesomeIcon icon="step-forward"/>
-        </div>
+        </span>
       );
 
       return (
-        <Card style={{marginBottom: "8px"}}>
-          <Card.Body>
-            <Row>
-              <Col xs={4}>
-                <span className="text-primary">00:00:00</span>
-              </Col>
-              <Col xs={4}>
-                {buttons}
-              </Col>
-              <Col xs={4}>
-                <div className="float-right">
-                  <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
-                </div>
-              </Col>
-            </Row>
+        <Card className="border-secondary" className="p-1">
+          <div className="d-flex align-items-center justify-content-between">
+              <span className="text-primary">00:00:00</span>
+              {buttons}
+              <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
+          </div>
+          <div className="d-flex align-items-center justify-content-between">
             <SliderWithTooltip
+              className="mx-2"
               value={this.state.replayEventIndex}
               tipFormatter={this.sliderTooltipFormatter}
               trackStyle={{ opacity: 0.5 }}
@@ -433,7 +417,7 @@ class LoweringReplay extends Component {
               onChange={this.handleSliderChange}
               max={this.props.event.events.length-1}
             />
-          </Card.Body>
+          </div>
         </Card>
       );
     }
@@ -468,7 +452,7 @@ class LoweringReplay extends Component {
             if(option.event_option_name === 'event_comment') {
               comment_exists = (option.event_option_value !== '')? true : false;
             } else {
-              filtered.push(`${option.event_option_name}: "${option.event_option_value}"`);
+              filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
             }
             return filtered;
           },[]);
@@ -485,7 +469,7 @@ class LoweringReplay extends Component {
           let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
           let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null;
 
-          return (<ListGroup.Item className="event-list-item" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventComment}</span></ListGroup.Item>);
+          return (<ListGroup.Item className="event-list-item py-1" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventComment}</span></ListGroup.Item>);
 
         }
       });
@@ -493,14 +477,14 @@ class LoweringReplay extends Component {
       return eventList;
     }
 
-    return (this.props.event.fetching)? (<ListGroup.Item className="event-list-item">Loading...</ListGroup.Item>) : (<ListGroup.Item>No events found</ListGroup.Item>);
+    return (this.props.event.fetching)? (<ListGroup.Item className="event-list-item py-1">Loading...</ListGroup.Item>) : (<ListGroup.Item className="event-list-item py-1">No events found</ListGroup.Item>);
   }
 
   renderEventCard() {
     return (
-      <Card>
+      <Card className="border-secondary mt-2">
         <Card.Header>{ this.renderEventListHeader() }</Card.Header>
-        <ListGroup>
+        <ListGroup className="eventList" tabIndex="-1" onKeyDown={this.handleKeyPress} ref={(div) => { this.divFocus = div }}>
           {this.renderEvents()}
         </ListGroup>
       </Card>
@@ -510,22 +494,19 @@ class LoweringReplay extends Component {
   render(){
 
     const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "Loading...";
-    // console.log("cruise:", this.props.cruise);
 
     return (
-      <div tabIndex="-1" onKeyDown={this.handleKeyPress} ref={(div) => { this.divFocus = div }}>
+      <React.Fragment>
         <ImagePreviewModal />
         <EventCommentModal />
         <Row>
-          <Col lg={12}>
-            <span style={{paddingLeft: "8px"}}>
-              <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
-              {' '}/{' '}
-              <span><LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/></span>
-              {' '}/{' '}
-              <span><LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Replay"} modes={["Review", "Map", "Gallery"]}/></span>
-            </span>
-          </Col>
+          <ButtonToolbar className="mb-2 ml-1 align-items-center">
+            <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
+            <FontAwesomeIcon icon="chevron-right" fixedWidth/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+            <FontAwesomeIcon icon="chevron-right" fixedWidth/>
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Replay"} modes={["Review", "Map", "Gallery"]}/>
+          </ButtonToolbar>
         </Row>
         <Row>
           {this.renderImageryCard()}
@@ -533,20 +514,16 @@ class LoweringReplay extends Component {
           {this.renderEventOptionsCard()}
         </Row>
         <Row>
-          <Col sm={12}>
-            <Row>
-              <Col md={9} lg={9}>
-                {this.renderControlsCard()}
-                {this.renderEventCard()}
-                <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
-              </Col>          
-              <Col md={3} lg={3}>
-                <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
-              </Col>          
-            </Row>
+          <Col className="px-1 mb-1" md={9} lg={9}>
+            {this.renderControlsCard()}
+            {this.renderEventCard()}
+            <CustomPagination className="mt-2" page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
           </Col>
+          <Col className="px-1 mb-1" md={3} lg={3}>
+            <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
+          </Col>          
         </Row>
-      </div>
+      </React.Fragment>
     );
   }
 }

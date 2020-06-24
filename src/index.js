@@ -30,12 +30,12 @@ import ResetPassword from './components/auth/reset_password';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons/faArrowLeft';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight';
 import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward';
 import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator';
-import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons/faClipboard';
 import { faComment } from '@fortawesome/free-solid-svg-icons/faComment';
 import { faCompress } from '@fortawesome/free-solid-svg-icons/faCompress';
@@ -55,14 +55,14 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { faVial } from '@fortawesome/free-solid-svg-icons/faVial';
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
-import { faUserLock } from '@fortawesome/free-solid-svg-icons/faUserLock';
 import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaximize';
 
-library.add(faArrowLeft,faArrowRight,faBackward,faCalculator,faChevronDown,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
+library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faWindowMaximize);
 
-import './assets/style/bootstrap.min.css';
+import "filepond/dist/filepond.min.css";
+import 'rc-slider/assets/index.css';
 import 'leaflet/dist/leaflet.css';
-import './assets/style/style.css';
+import "./assets/scss/sealog.scss?v=1.1.0";
 
 import configureStore from './store';
 import history from './history';
@@ -80,32 +80,30 @@ if (token) {
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <div>
-        <Header />
-        <Switch>
-          <Route path={ `/` } exact={true} component={RequireAuth((DISABLE_EVENT_LOGGING) ? CruiseMenu : EventLogging )}/>
-          <Route path={ `/github`} exact={true} component={() => window.location = 'https://github.com/oceandatatools/sealog-client-vehicle'}/>
-          <Route path={ `/license`} exact={true} component={() => window.location = 'https://github.com/oceandatatools/sealog-client-vehicle/blob/master/LICENSE'}/>
-          <Route path={ `/profile` } exact={true} component={RequireAuth(Profile)} />
-          <Route path={ `/register` } exact={true} component={Register} />
-          <Route path={ `/forgotPassword` } exact={true} component={ForgotPassword} />
-          <Route path={ `/resetPassword/:token` } exact={true} component={ResetPassword} />
-          <Route path={ `/login` } exact={true} component={RequireUnauth(Login)} />
-          <Route path={ `/logout` } exact={true} component={Logout} />
-          <Route path={ `/users` } exact={true} component={RequireAuth(Users)} />
-          <Route path={ `/tasks` } exact={true} component={RequireAuth(Tasks)} />
-          <Route path={ `/cruises` } exact={true} component={RequireAuth(Cruises)} />
-          <Route path={ `/cruise_menu` } exact={true} component={RequireAuth(CruiseMenu)} />
-          <Route path={ `/lowerings` } exact={true} component={RequireAuth(Lowerings)} />
-          <Route path={ `/lowering_gallery/:id` } exact={true} component={RequireAuth(LoweringGallery)} />
-          <Route path={ `/lowering_map/:id` } exact={true} component={RequireAuth(LoweringMap)} />
-          <Route path={ `/lowering_replay/:id` } exact={true} component={RequireAuth(LoweringReplay)} />
-          <Route path={ `/lowering_review/:id` } exact={true} component={RequireAuth(LoweringReview)} />
-          <Route path={ `/event_management` } exact={true} component={RequireAuth(EventManagement)} />
-          <Route path={ `/event_templates` } exact={true} component={RequireAuth(EventTemplates)} />
-        </Switch>
-        <Footer />
-      </div>
+      <Header />
+      <Switch>
+        <Route path={ `/` } exact={true} component={RequireAuth((DISABLE_EVENT_LOGGING) ? CruiseMenu : EventLogging )}/>
+        <Route path={ `/github`} exact={true} component={() => window.location = 'https://github.com/oceandatatools/sealog-client-vehicle'}/>
+        <Route path={ `/license`} exact={true} component={() => window.location = 'https://github.com/oceandatatools/sealog-client-vehicle/blob/master/LICENSE'}/>
+        <Route path={ `/profile` } exact={true} component={RequireAuth(Profile)} />
+        <Route path={ `/register` } exact={true} component={Register} />
+        <Route path={ `/forgotPassword` } exact={true} component={ForgotPassword} />
+        <Route path={ `/resetPassword/:token` } exact={true} component={ResetPassword} />
+        <Route path={ `/login` } exact={true} component={RequireUnauth(Login)} />
+        <Route path={ `/logout` } exact={true} component={Logout} />
+        <Route path={ `/users` } exact={true} component={RequireAuth(Users)} />
+        <Route path={ `/tasks` } exact={true} component={RequireAuth(Tasks)} />
+        <Route path={ `/cruises` } exact={true} component={RequireAuth(Cruises)} />
+        <Route path={ `/cruise_menu` } exact={true} component={RequireAuth(CruiseMenu)} />
+        <Route path={ `/lowerings` } exact={true} component={RequireAuth(Lowerings)} />
+        <Route path={ `/lowering_gallery/:id` } exact={true} component={RequireAuth(LoweringGallery)} />
+        <Route path={ `/lowering_map/:id` } exact={true} component={RequireAuth(LoweringMap)} />
+        <Route path={ `/lowering_replay/:id` } exact={true} component={RequireAuth(LoweringReplay)} />
+        <Route path={ `/lowering_review/:id` } exact={true} component={RequireAuth(LoweringReview)} />
+        <Route path={ `/event_management` } exact={true} component={RequireAuth(EventManagement)} />
+        <Route path={ `/event_templates` } exact={true} component={RequireAuth(EventTemplates)} />
+      </Switch>
+      <Footer />
     </ConnectedRouter>
   </Provider>
   , document.querySelector('.container'));

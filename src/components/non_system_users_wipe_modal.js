@@ -37,8 +37,8 @@ class NonSystemUsersWipeModal extends Component {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleHide}>Cancel</Button>
-            <Button variant="danger" onClick={this.handleConfirm}>Yup!</Button>
+            <Button size="sm" variant="secondary" onClick={handleHide}>Cancel</Button>
+            <Button size="sm" variant="danger" onClick={this.handleConfirm}>Yup!</Button>
           </Modal.Footer>
         </Modal>
       );

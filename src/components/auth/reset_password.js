@@ -128,11 +128,13 @@ class ResetPassword extends Component {
 
   render() {
     return(
-      <Row>
-        <Col>
-          {this.renderForm()}
-        </Col>
-      </Row>
+      <div className="mb-2">
+        <Row>
+          <Col>
+            {this.renderForm()}
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

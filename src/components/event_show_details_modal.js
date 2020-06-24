@@ -19,7 +19,7 @@ const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData']
 
 const imageAuxDataSources = ['vehicleRealtimeFramegrabberData']
 
-const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vehicleRealtimeCTDData'];
+const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
 class EventShowDetailsModal extends Component {
 
@@ -70,14 +70,23 @@ class EventShowDetailsModal extends Component {
 
   renderImage(source, filepath) {
     return (
-      <Card id={`image_${source}`}>
-        <Card.Body className="data-card-body">
-          <Image  fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
-          <div>{source}</div>
-        </Card.Body>
+      <Card  className="event-image-data-card" id={`image_${source}`}>
+        <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
+        <span>{source}</span>
       </Card>
-    )
+    );
   }
+
+  // renderImage(source, filepath) {
+  //   return (
+  //     <Card id={`image_${source}`}>
+  //       <Card.Body className="data-card-body">
+  //         <Image  fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
+  //         <div>{source}</div>
+  //       </Card.Body>
+  //     </Card>
+  //   )
+  // }
 
   renderImageryCard() {
     if(this.props.event && this.state.event.aux_data) { 
@@ -93,7 +102,7 @@ class EventShowDetailsModal extends Component {
         return (
           tmpData.map((camera) => {
             return (
-              <Col key={camera.source} xs={12} sm={6} md={6} lg={4}>
+              <Col className="px-1 pb-2" key={camera.source} xs={12} sm={6} md={6} lg={4}>
                 {this.renderImage(camera.source, camera.filepath)}
               </Col>
             );
@@ -108,19 +117,17 @@ class EventShowDetailsModal extends Component {
     // return null;
     let return_event_options = this.state.event.event_options.reduce((filtered, event_option, index) => {
       if(event_option.event_option_name !== 'event_comment') {
-        filtered.push(<div key={`event_option_${index}`}><span>{event_option.event_option_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
+        filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
       }
       return filtered
     },[])
 
     return (return_event_options.length > 0)? (
-      <Col xs={12} sm={6} md={6} lg={4}>
-        <Card>
-          <Card.Header className="data-card-header">Event Options</Card.Header>
-          <Card.Body className="data-card-body">
-            <div style={{paddingLeft: "10px"}}>
-              {return_event_options}
-            </div>
+      <Col className="px-1 pb-2" xs={12} sm={6} md={6} lg={4}>
+        <Card className="event-data-card">
+          <Card.Header>Event Options</Card.Header>
+          <Card.Body>
+            {return_event_options}
           </Card.Body>
         </Card>
       </Col>
@@ -139,17 +146,15 @@ class EventShowDetailsModal extends Component {
 
       let return_aux_data = aux_data.map((aux_data, index) => {
         const aux_data_points = aux_data.data_array.map((data, index) => {
-          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span>{data.data_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
+          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span className="data-name">{data.data_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
         });
 
         return (
-          <Col key={`${aux_data.data_source}_col`} sm={6} md={6} lg={4} style={{paddingBottom: "8px"}}>
-            <Card key={`${aux_data.data_source}`}>
-              <Card.Header className="data-card-header">{aux_data.data_source}</Card.Header>
-              <Card.Body className="data-card-body">
-                <div style={{paddingLeft: "10px"}}>
-                  {aux_data_points}
-                </div>
+          <Col className="px-1 pb-2" key={`${aux_data.data_source}_col`} sm={6} md={6} lg={4}>
+            <Card className="event-data-card" key={`${aux_data.data_source}`}>
+              <Card.Header>{aux_data.data_source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</Card.Header>
+              <Card.Body>
+                {aux_data_points}
               </Card.Body>
             </Card>
           </Col>
@@ -165,10 +170,10 @@ class EventShowDetailsModal extends Component {
   render() {
     const { show, event } = this.props
 
-    const event_free_text_card = (this.state.event.event_free_text)? (<Card><Card.Body className="data-card-body">Free-form Text: {this.state.event.event_free_text}</Card.Body></Card>) : null;
+    const event_free_text_card = (this.state.event.event_free_text)? (<Col className="px-1 pb-2" xs={12}><Card className="event-data-card"><Card.Body>Free-form Text: {this.state.event.event_free_text}</Card.Body></Card></Col>) : null;
     const event_comment = (this.state.event.event_options) ? this.state.event.event_options.find((event_option) => (event_option.event_option_name === 'event_comment' && event_option.event_option_value.length > 0)) : null
 
-    const event_comment_card = (event_comment)?(<Card><Card.Body className="data-card-body">Comment: {event_comment.event_option_value}</Card.Body></Card>) : null;
+    const event_comment_card = (event_comment)?(<Col className="px-1" xs={12}><Card className="event-data-card"><Card.Body>Comment: {event_comment.event_option_value}</Card.Body></Card></Col>) : null;
     
     if (event ) {
       if(this.state.event.event_options) {
@@ -179,23 +184,25 @@ class EventShowDetailsModal extends Component {
                 <Modal.Title as="h5">Event Details: {this.state.event.event_value}</Modal.Title>
               </Modal.Header>
 
-              <Modal.Body>
-                <span>User: {this.state.event.event_author}</span><br/>
-                <span>Date: {this.state.event.ts}</span>
+              <Modal.Body className="px-4">
+                <Row>
+                  <Col className="px-1 pb-2" xs={12}>
+                    <Card className="event-data-card">
+                      <Card.Body>
+                        <span>User: {this.state.event.event_author}</span>
+                        <span className="float-right">Date: {this.state.event.ts}</span>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
                 <Row>
                   {this.renderImageryCard()}
                   {this.renderAuxDataCard()}
                   {this.renderEventOptionsCard()}
                 </Row>
-                <Row style={{paddingTop: "8px"}}>
-                  <Col xs={12}>
-                    {event_free_text_card}
-                  </Col>
-                </Row>
-                <Row style={{paddingTop: "8px"}}>
-                  <Col xs={12}>
-                    {event_comment_card}
-                  </Col>
+                <Row>
+                  {event_free_text_card}
+                  {event_comment_card}
                 </Row>
               </Modal.Body>
           </Modal>

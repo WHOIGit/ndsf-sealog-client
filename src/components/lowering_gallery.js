@@ -3,7 +3,8 @@ import path from 'path';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import { Row, Col, Tabs, Tab, Form} from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ButtonToolbar, Row, Col, Tabs, Tab, Form, FormGroup } from 'react-bootstrap';
 import EventShowDetailsModal from './event_show_details_modal';
 import LoweringGalleryTab from './lowering_gallery_tab';
 import LoweringDropdown from './lowering_dropdown';
@@ -31,7 +32,7 @@ class LoweringGallery extends Component {
   }
 
   componentDidMount() {
-    this.initLoweringImages(this.props.match.params.id);
+    this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);
 
     if(!this.props.lowering.id || this.props.lowering.id !== this.props.match.params.id || this.props.event.events.length === 0) {
       this.props.initLowering(this.props.match.params.id);
@@ -45,7 +46,7 @@ class LoweringGallery extends Component {
   componentDidUpdate(prevProps, prevState) {
 
     if(prevProps.event.hideASNAP !== this.props.event.hideASNAP) {
-      this.initLoweringImages(this.props.match.params.id, 'vehicleRealtimeFramegrabberData', this.props.event.hideASNAP);
+      this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);
     }  
   }
 
@@ -63,7 +64,7 @@ class LoweringGallery extends Component {
   componentWillUnmount(){
   }
 
-  async initLoweringImages(id, auxDatasourceFilter = 'vehicleRealtimeFramegrabberData', hideASNAP=false) {
+  async initLoweringImages(id, hideASNAP=false, auxDatasourceFilter='vehicleRealtimeFramegrabberData') {
     this.setState({ fetching: true});
 
     let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`
@@ -109,7 +110,7 @@ class LoweringGallery extends Component {
     this.props.gotoLoweringGallery(id);
     this.props.initLowering(id, this.props.event.hideASNAP);
     this.props.initCruiseFromLowering(id);
-    this.initLoweringImages(id);
+    this.initLoweringImages(id, this.props.event.hideASNAP);
   }
 
   handleLoweringModeSelect(mode) {
@@ -128,58 +129,57 @@ class LoweringGallery extends Component {
 
     let galleries = [];
     for (const [key, value] of Object.entries(this.state.aux_data)) {
-      galleries.push((
+      galleries.unshift((
         <Tab key={`tab_${key}`} eventKey={`tab_${key}`} title={key}>
           <LoweringGalleryTab imagesSource={key} imagesData={value} maxImagesPerPage={this.state.maxImagesPerPage} />
         </Tab>
-
       ));
     }
 
     return (galleries.length > 0 )?
       (
-        <Tabs id="galleries">
+        <Tabs className="category-tab" variant="pills" id="galleries">
           { galleries }
         </Tabs>
-      ) :  (<div><hr className="border-secondary"/><span style={{paddingLeft: "8px"}}>No images found</span></div>);
+      ) :  (<div><hr className="border-secondary"/><span className="pl-2">No images found</span></div>);
   }
 
   render(){
 
     const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "loading...";
-    const galleries = (this.state.fetching)? <div><hr className="border-secondary"/><span style={{paddingLeft: "8px"}}>Loading...</span></div> : this.renderGalleries();
+    const galleries = (this.state.fetching)? <div><hr className="border-secondary"/><span className="pl-2">Loading...</span></div> : this.renderGalleries();
 
     const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.props.event.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='ASNAP'/>);
 
     return (
       <div>
         <EventShowDetailsModal />
+        <Row className="d-flex align-items-center justify-content-between">
+          <ButtonToolbar className="mb-2 ml-1 align-items-center">
+            <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
+            <FontAwesomeIcon icon="chevron-right" fixedWidth/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+            <FontAwesomeIcon icon="chevron-right" fixedWidth/>
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Replay", "Review", "Map"]}/>
+          </ButtonToolbar>
+          <span className="float-right">
+            <Form style={{marginTop: '-4px'}} className='float-right' inline>
+              <Form.Group controlId="selectMaxImagesPerPage" >
+                <Form.Control size="sm" as="select" onChange={this.handleImageCountChange}>
+                  <option>16</option>
+                  <option>32</option>
+                  <option>48</option>
+                  <option>64</option>
+                  <option>80</option>
+                </Form.Control>
+                <Form.Label>&nbsp;&nbsp;Images/Page&nbsp;&nbsp;</Form.Label>
+              </Form.Group>
+            </Form>
+            {ASNAPToggle}
+          </span>
+        </Row>
         <Row>
-          <Col lg={12}>
-            <span style={{paddingLeft: "8px"}}>
-              <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
-              {' '}/{' '}
-              <span><LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/></span>
-              {' '}/{' '}
-              <span><LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Review", "Replay", "Map"]}/></span>
-            </span>
-            <span className="float-right">
-              <Form style={{marginTop: '-4px'}} className='float-right' inline>
-                <Form.Group controlId="selectMaxImagesPerPage" >
-                  <Form.Control size="sm" as="select" onChange={this.handleImageCountChange}>
-                    <option>16</option>
-                    <option>32</option>
-                    <option>48</option>
-                    <option>64</option>
-                    <option>80</option>
-                  </Form.Control>
-                  <Form.Label>&nbsp;&nbsp;Images/Page&nbsp;&nbsp;</Form.Label>
-                </Form.Group>
-              </Form>
-              {ASNAPToggle}
-            </span>
-          </Col>
-          <Col lg={12}>
+          <Col>
             {galleries}
           </Col>
         </Row>

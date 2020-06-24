@@ -6,6 +6,7 @@ import moment from 'moment';
 import CreateCruise from './create_cruise';
 import UpdateCruise from './update_cruise';
 import DeleteCruiseModal from './delete_cruise_modal';
+import DeleteFileModal from './delete_file_modal';
 import ImportCruisesModal from './import_cruises_modal';
 import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
@@ -16,7 +17,7 @@ let fileDownload = require('js-file-download');
 
 const maxCruisesPerPage = 6;
 
-const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "100px" : "85px" };
+const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "90px" : "70px" };
 
 class Cruises extends Component {
 
@@ -45,7 +46,7 @@ class Cruises extends Component {
     this.props.showModal('deleteCruise', { id: id, handleDelete: this.props.deleteCruise });
   }
 
-  handleCruisePermissions(cruise) {
+  handleCruisePermissionsModal(cruise) {
     this.props.showModal('cruisePermissions', { cruise_id: cruise.id });
   }
 
@@ -108,9 +109,7 @@ class Cruises extends Component {
   renderAddCruiseButton() {
     if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
       return (
-        <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.props.cruiseid}>Add Cruise</Button>
-        </div>
+        <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.props.cruiseid}>Add Cruise</Button>
       );
     }
   }
@@ -118,9 +117,7 @@ class Cruises extends Component {
   renderImportCruisesButton() {
     if(this.props.roles.includes("admin")) {
       return (
-        <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleCruiseImportModal()}>Import From File</Button>
-        </div>
+        <Button className="mr-1" variant="primary" size="sm" onClick={ () => this.handleCruiseImportModal()}>Import From File</Button>
       );
     }
   }
@@ -129,6 +126,7 @@ class Cruises extends Component {
 
     const editTooltip = (<Tooltip id="editTooltip">Edit this cruise.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this cruise.</Tooltip>);
+    const showStatsForROVTeamTooltip = (<Tooltip id="showTooltip">Show cruise stats.</Tooltip>);    
     const showTooltip = (<Tooltip id="showTooltip">Cruise is hidden, click to show.</Tooltip>);
     const hideTooltip = (<Tooltip id="hideTooltip">Cruise is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
@@ -154,11 +152,11 @@ class Cruises extends Component {
         return (
           <tr key={cruise.id}>
             <td className={(this.props.cruiseid === cruise.id)? "text-warning" : ""}>{cruise.cruise_id}</td>
-            <td>{cruiseName}{cruiseLocation}{cruisePi}{cruiseVessel}Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
+            <td className={`cruise-details ${(this.props.cruiseid === cruise.id)? "text-warning" : ""}`}>{cruiseName}{cruiseLocation}{cruisePi}{cruiseVessel}Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
             <td>
               <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCruiseUpdate(cruise.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
-              {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissions(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
-              {hiddenLink}
+              {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissionsModal(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
+              {hiddenLink}{' '}
               {deleteLink}
             </td>
           </tr>
@@ -170,7 +168,7 @@ class Cruises extends Component {
   renderCruiseTable() {
     if(this.props.cruises && this.props.cruises.length > 0) {
       return (
-        <Table responsive bordered striped>
+        <Table responsive bordered striped size="sm">
           <thead>
             <tr>
               <th>Cruise</th>
@@ -228,21 +226,22 @@ class Cruises extends Component {
       return (
         <div>
           <DeleteCruiseModal />
+          <DeleteFileModal />
           <CruisePermissionsModal />
-          <ImportCruisesModal  handleExit={this.handleCruiseImportClose} />
+          <ImportCruisesModal handleExit={this.handleCruiseImportClose} />
           <Row>
-            <Col sm={12} md={7} lg={6} xl={{span:5, offset:1}}>
-              <Card>
+            <Col className="px-1" sm={12} md={7} lg={6} xl={{span:5, offset:1}}>
+              <Card className="border-secondary">
                 <Card.Header>{this.renderCruiseHeader()}</Card.Header>
                 {this.renderCruiseTable()}
               </Card>
-              <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={(this.state.filteredCruises)? this.state.filteredCruises.length : this.props.cruises.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxCruisesPerPage}/>
-              <div style={{marginTop: "8px", marginRight: "-8px"}}>
-                {this.renderAddCruiseButton()}
+              <CustomPagination className="mt-2" page={this.state.activePage} count={(this.state.filteredCruises)? this.state.filteredCruises.length : this.props.cruises.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxCruisesPerPage}/>
+              <div className="my-2 float-right">
                 {this.renderImportCruisesButton()}
+                {this.renderAddCruiseButton()}
               </div>
             </Col>
-            <Col sm={12} md={5} lg={6} xl={5}>
+            <Col className="px-1" sm={12} md={5} lg={6} xl={5}>
               { cruiseForm }
             </Col>
           </Row>

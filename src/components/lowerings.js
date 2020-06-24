@@ -5,6 +5,7 @@ import { Row, Button, Col, Card, Form, FormControl, Table, OverlayTrigger, Toolt
 import moment from 'moment';
 import CreateLowering from './create_lowering';
 import UpdateLowering from './update_lowering';
+import DeleteFileModal from './delete_file_modal';
 import DeleteLoweringModal from './delete_lowering_modal';
 import ImportLoweringsModal from './import_lowerings_modal';
 import SetLoweringStatsModal from './set_lowering_stats_modal';
@@ -17,7 +18,7 @@ let fileDownload = require('js-file-download');
 
 const maxLoweringsPerPage = 8;
 
-const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "100px" : "90px" };
+const tableHeaderStyle = { width: (USE_ACCESS_CONTROL) ? "90px" : "80px" };
 
 class Lowerings extends Component {
 
@@ -103,9 +104,7 @@ class Lowerings extends Component {
   renderAddLoweringButton() {
     if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
       return (
-        <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleLoweringCreate()} disabled={!this.props.loweringid}>Add Lowering</Button>
-        </div>
+        <Button variant="primary" size="sm" onClick={ () => this.handleLoweringCreate()} disabled={!this.props.loweringid}>Add Lowering</Button>
       );
     }
   }
@@ -113,9 +112,7 @@ class Lowerings extends Component {
   renderImportLoweringsButton() {
     if(this.props.roles.includes("admin")) {
       return (
-        <div className="float-right">
-          <Button variant="primary" size="sm" onClick={ () => this.handleLoweringImportModal()}>Import From File</Button>
-        </div>
+        <Button className="mr-1" variant="primary" size="sm" onClick={ () => this.handleLoweringImportModal()}>Import From File</Button>
       );
     }
   }
@@ -124,8 +121,9 @@ class Lowerings extends Component {
 
     const editTooltip = (<Tooltip id="editTooltip">Edit this lowering.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this lowering.</Tooltip>);
-    const showTooltip = (<Tooltip id="showTooltip">Cruise is hidden, click to show.</Tooltip>);
-    const hideTooltip = (<Tooltip id="hideTooltip">Cruise is visible, click to hide.</Tooltip>);
+    const showSVProfile = (<Tooltip id="showTooltip">Show Downcast SV Profile.</Tooltip>);
+    const showTooltip = (<Tooltip id="showTooltip">Lowering is hidden, click to show.</Tooltip>);
+    const hideTooltip = (<Tooltip id="hideTooltip">Lowering is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
 
     const lowerings = (Array.isArray(this.state.filteredLowerings)) ? this.state.filteredLowerings : this.props.lowerings;
@@ -152,11 +150,11 @@ class Lowerings extends Component {
         return (
           <tr key={lowering.id}>
             <td className={(this.props.loweringid === lowering.id)? "text-warning" : ""}>{lowering.lowering_id}</td>
-            <td>{loweringLocation}{loweringStarted}{loweringDurationStr}</td>
+            <td className={`lowering-details ${(this.props.loweringid === lowering.id)? "text-warning" : ""}`}>{loweringLocation}{loweringStarted}{loweringDurationStr}</td>
             <td>
               <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleLoweringUpdate(lowering.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
               {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleLoweringPermissions(lowering.id) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
-              {hiddenLink}
+              {hiddenLink}{' '}
               {deleteLink}
             </td>
           </tr>
@@ -168,7 +166,7 @@ class Lowerings extends Component {
   renderLoweringTable() {
     if(this.props.lowerings && this.props.lowerings.length > 0){
       return (
-        <Table responsive bordered striped>
+        <Table responsive bordered striped size="sm">
           <thead>
             <tr>
               <th>Lowering</th>
@@ -219,23 +217,24 @@ class Lowerings extends Component {
 
       return (
         <div>
+          <DeleteFileModal />
           <DeleteLoweringModal />
           <ImportLoweringsModal handleExit={this.handleLoweringImportClose} />
           <SetLoweringStatsModal />
           <LoweringPermissionsModal />
           <Row>
-            <Col sm={12} md={7} lg={6} xl={{span:5, offset:1}}>
-              <Card>
+            <Col className="px-1" sm={12} md={7} lg={6} xl={{span:5, offset:1}}>
+              <Card className="border-secondary">
                 <Card.Header>{this.renderLoweringHeader()}</Card.Header>
                 {this.renderLoweringTable()}
               </Card>
-              <CustomPagination style={{marginTop: "8px"}} page={this.state.activePage} count={(this.state.filteredLowerings)? this.state.filteredLowerings.length : this.props.lowerings.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxLoweringsPerPage}/>
-              <div style={{marginTop: "8px", marginRight: "-8px"}}>
-                {this.renderAddLoweringButton()}
+              <CustomPagination className="mt-2" page={this.state.activePage} count={(this.state.filteredLowerings)? this.state.filteredLowerings.length : this.props.lowerings.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxLoweringsPerPage}/>
+              <div className="float-right my-2">
                 {this.renderImportLoweringsButton()}
+                {this.renderAddLoweringButton()}
               </div>
             </Col>
-            <Col sm={12} md={5} lg={6} xl={5}>
+            <Col className="px-1" sm={12} md={5} lg={6} xl={5}>
               { loweringForm }
             </Col>
           </Row>
