@@ -44,14 +44,12 @@ class EventHistory extends Component {
 
   }
 
-
   componentDidMount() {
     this.props.fetchEventHistory();
     if(this.props.authenticated) {
       this.connectToWS();
     }
   }
-
 
   componentDidUpdate(prevProps, prevState) {
 
@@ -83,13 +81,11 @@ class EventHistory extends Component {
     }
   }
 
-
   componentWillUnmount() {
     if(this.props.authenticated) {
       this.client.disconnect();
     }
   }
-
 
   async connectToWS() {
 
@@ -201,16 +197,13 @@ class EventHistory extends Component {
     this.setState({event: event_export});
   }
 
-
   handleEventShowDetailsModal(event) {
     this.props.showModal('eventShowDetails', { event: event });
   }
 
-
   handleEventCommentModal(event) {
     this.props.showModal('eventComment', { event: event, handleUpdateEvent: this.props.updateEvent });
   }
-
 
   renderEventHistoryHeader() {
 
@@ -268,16 +261,13 @@ class EventHistory extends Component {
     this.setState({showEventHistory: false});
   }
 
-
   handleShowEventHistory() {
     this.setState({showEventHistory: true});
   }
 
-
   handleHideEventHistoryFullscreen() {
     this.setState({showEventHistoryFullscreen: false});
   }
-
 
   handleSearchChange(event) {
 
@@ -289,11 +279,9 @@ class EventHistory extends Component {
     this.setState({ filterTimer: setTimeout(() => this.setState({filter: fieldVal}), 1500) })
   }
 
-
   handleShowEventHistoryFullscreen() {
     this.setState({showEventHistoryFullscreen: true});
   }
-
 
   toggleASNAP() {
     this.setState( prevState => ({showASNAP: !prevState.showASNAP}));
@@ -307,31 +295,25 @@ class EventHistory extends Component {
     this.setState( prevState => ({showNewEventDetails: !prevState.showNewEventDetails}));
   }
 
-
   incrementPage() {
     this.setState( prevState => ({page: prevState.page+1}));
   }
-
 
   decrementPage() {
     this.setState( prevState => ({page: prevState.page-1}));
   }
 
-
   firstPage() {
     this.setState({page: 0});
   }
-
 
   handleMissingImage(ev) {
     ev.target.src = `${ROOT_PATH}images/noimage.jpeg`
   }
 
-
   handleImagePreviewModal(source, filepath) {
     this.props.showModal('imagePreview', { name: source, filepath: filepath })
   }
-
 
   renderImage(source, filepath) {
     return (
@@ -341,7 +323,6 @@ class EventHistory extends Component {
       </Card>
     )
   }
-
 
   renderImageryCard() {
     if(this.state.event && this.state.event.aux_data) { 
@@ -367,7 +348,6 @@ class EventHistory extends Component {
     }
   }
 
-
   renderEventOptionsCard() {
 
     // return null;
@@ -389,7 +369,6 @@ class EventHistory extends Component {
       </Col>
     ) : null
   }
-
 
   renderAuxDataCard() {
 
@@ -423,7 +402,6 @@ class EventHistory extends Component {
 
     return null;
   }
-
 
   renderEventHistory() {
 
@@ -464,7 +442,6 @@ class EventHistory extends Component {
     return (<ListGroup.Item className="event-list-item" key="emptyHistory" >No events found</ListGroup.Item>);
   }
 
-
   renderNewestEvent() {
 
     const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
@@ -493,7 +470,6 @@ class EventHistory extends Component {
       </Card>
     );
   }
-
 
   render() {
 
@@ -547,7 +523,6 @@ class EventHistory extends Component {
     );
   }
 }
-
 
 function mapStateToProps(state) {
 

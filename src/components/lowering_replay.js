@@ -31,7 +31,7 @@ const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
 const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData','vehicleRealtimeCTDData','vehicleRealtimeO2Data','vehicleRealtimeParoData','vehicleRealtimePHData'];
 
-const SliderWithTooltip = Slider.createSliderWithTooltip(Slider);
+const SliderWithTooltip = createSliderWithTooltip(Slider);
 
 class LoweringReplay extends Component {
 

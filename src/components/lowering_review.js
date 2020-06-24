@@ -143,15 +143,15 @@ class LoweringReview extends Component {
   }
 
   toggleASNAP() {
-    this.props.eventUpdateLoweringReplay(this.props.lowering.id, !this.props.event.hideASNAP);
+    this.props.eventUpdateLoweringReplay(this.props.match.params.id, !this.props.event.hideASNAP);
 
     if(this.props.event.hideASNAP) {
       this.props.showASNAP();
-      this.handleEventClick(0);
+      this.handleEventClick(this.props.event.events[0]);
     }
     else {
       this.props.hideASNAP();
-      this.handleEventClick(0);
+      this.handleEventClick(this.props.event.events[0]);
     }
   }
 
