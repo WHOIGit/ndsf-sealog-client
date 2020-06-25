@@ -14,7 +14,7 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
-import { ROOT_PATH, API_ROOT_URL, IMAGE_PATH } from '../client_config';
+import { ROOT_PATH, API_ROOT_URL, get_image_url } from '../client_config';
 
 const playTimer = 3000;
 const ffwdTimer = 1000;
@@ -301,7 +301,10 @@ class LoweringReplay extends Component {
       if(frameGrabberData.length > 0) {
         for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
     
-          tmpData.push({source: frameGrabberData[0].data_array[i].data_value, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(frameGrabberData[0].data_array[i+1].data_value)} );
+          tmpData.push({
+            source: frameGrabberData[0].data_array[i].data_value,
+            filepath: get_image_url(frameGrabberData[0].data_array[i+1].data_value)
+          });
         }
 
         return (

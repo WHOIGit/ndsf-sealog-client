@@ -11,7 +11,7 @@ import ImagePreviewModal from './image_preview_modal';
 
 import * as mapDispatchToProps from '../actions';
 
-import { API_ROOT_URL, IMAGE_PATH, ROOT_PATH } from '../client_config';
+import { API_ROOT_URL, ROOT_PATH, get_image_url } from '../client_config';
 
 const cookies = new Cookies();
 
@@ -87,7 +87,10 @@ class EventShowDetailsModal extends Component {
       if(frameGrabberData.length > 0) {
         for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
     
-          tmpData.push({source: frameGrabberData[0].data_array[i].data_value, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(frameGrabberData[0].data_array[i+1].data_value)} )
+          tmpData.push({
+            source: frameGrabberData[0].data_array[i].data_value,
+            filepath: get_image_url(frameGrabberData[0].data_array[i+1].data_value)
+          })
         }
 
         return (
@@ -231,4 +234,3 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   connectModal({ name: 'eventShowDetails', destroyOnHide: true }) 
 )(EventShowDetailsModal)
-

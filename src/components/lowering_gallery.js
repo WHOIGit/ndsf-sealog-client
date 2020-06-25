@@ -9,7 +9,7 @@ import LoweringGalleryTab from './lowering_gallery_tab';
 import LoweringDropdown from './lowering_dropdown';
 import LoweringModeDropdown from './lowering_mode_dropdown';
 import * as mapDispatchToProps from '../actions';
-import { API_ROOT_URL, IMAGE_PATH } from '../client_config';
+import { API_ROOT_URL, get_image_url } from '../client_config';
 
 const cookies = new Cookies();
 
@@ -86,7 +86,10 @@ class LoweringGallery extends Component {
             image_data[data.data_array[i].data_value] = { images: [] };
           }
 
-          image_data[data.data_array[i].data_value].images.push({ event_id: data.event_id, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(data.data_array[i+1].data_value) });
+          image_data[data.data_array[i].data_value].images.push({
+            event_id: data.event_id,
+            filepath: get_image_url(data.data_array[i+1].data_value)
+          });
         }
       });
 

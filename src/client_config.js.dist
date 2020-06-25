@@ -9,8 +9,16 @@ const WS_ROOT_URL = (typeof window !== 'undefined') &&
 // Change this if not hosting the client at the webserver's document root i.e. '/sealog/'
 const ROOT_PATH = "/sealog/";
 
-// Where the images are hosted on the webserver.
-const IMAGE_PATH = "/files/images";
+// This function constructs a URL to an image served by the Sealog server.
+// Normally, this should correspond to the server's IMAGE_ROUTE setting
+// (defined in routes/default.js).
+//
+// Override this function to serve images through alternate methods, such as a
+// caching proxy.
+function get_image_url(path) {
+  const IMAGE_ROUTE = "/files/images";
+  return API_ROOT_URL + IMAGE_ROUTE + path;
+}
 
 // Site customization
 // Add a reCaptcha site kit to enable recaptcha bot protection
@@ -44,7 +52,6 @@ module.exports = {
   API_ROOT_URL,
   WS_ROOT_URL,
   ROOT_PATH,
-  IMAGE_PATH,
   RECAPTCHA_SITE_KEY,
   LOGIN_SCREEN_TXT,
   LOGIN_IMAGE,
@@ -53,5 +60,6 @@ module.exports = {
   DEFAULT_VESSEL,
   USE_MAPTILE_PROXY,
   USE_ACCESS_CONTROL,
-  DISABLE_EVENT_LOGGING
+  DISABLE_EVENT_LOGGING,
+  get_image_url
 }
