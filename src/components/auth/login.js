@@ -20,14 +20,19 @@ class Login extends Component {
     };
 
     this.recaptchaRef = React.createRef();
+
   }
 
   componentWillUnmount() {
     this.props.leaveLoginForm();
   }
 
-  async handleFormSubmit({ username, password }) {
-    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
+  onCaptchaChange(token) {
+    this.setState({reCaptcha: token});
+  }
+
+  handleFormSubmit({ username, password }) {
+    this.recaptchaRef.current.execute();
     username = username.toLowerCase();
     this.props.login({username, password, reCaptcha});
   }
