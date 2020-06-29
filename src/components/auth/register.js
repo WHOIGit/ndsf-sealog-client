@@ -14,10 +14,6 @@ class Register extends Component {
   constructor (props) {
     super(props);
 
-    this.state = { 
-      reCaptcha: null
-    };
-
     this.recaptchaRef = React.createRef();
 
   }
@@ -26,14 +22,10 @@ class Register extends Component {
     this.props.leaveRegisterForm();
   }
 
-  handleFormSubmit({username, fullname, email, password}) {
-    this.recaptchaRef.current.execute();
-    let reCaptcha = this.state.reCaptcha;
+  async handleFormSubmit({username, fullname, email, password}) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
+    username = username.toLowerCase();
     this.props.registerUser({username, fullname, email, password, reCaptcha});
-  }
-
-  onCaptchaChange(token) {
-    this.setState({reCaptcha: token});
   }
 
   renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {

@@ -16,7 +16,6 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      reCaptcha: null,
       stdUsers: true
     };
 
@@ -28,14 +27,9 @@ class Login extends Component {
     this.props.leaveLoginForm();
   }
 
-  onCaptchaChange(token) {
-    this.setState({reCaptcha: token});
-  }
-
-  handleFormSubmit({ username, password }) {
-    this.recaptchaRef.current.execute();
+  async handleFormSubmit({ username, password }) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
     username = username.toLowerCase();
-    let reCaptcha = this.state.reCaptcha;
     this.props.login({username, password, reCaptcha});
   }
 
@@ -66,7 +60,6 @@ class Login extends Component {
           sitekey={RECAPTCHA_SITE_KEY}
           theme="dark"
           size="invisible"
-          onChange={this.onCaptchaChange.bind(this)}
         />
         <br/>
       </span>
