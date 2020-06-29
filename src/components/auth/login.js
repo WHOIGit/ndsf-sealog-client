@@ -19,6 +19,9 @@ class Login extends Component {
       reCaptcha: null,
       stdUsers: true
     };
+
+    this.recaptchaRef = React.createRef();
+
   }
 
   componentWillUnmount() {
@@ -30,6 +33,7 @@ class Login extends Component {
   }
 
   handleFormSubmit({ username, password }) {
+    this.recaptchaRef.current.execute();
     username = username.toLowerCase();
     let reCaptcha = this.state.reCaptcha;
     this.props.login({username, password, reCaptcha});
