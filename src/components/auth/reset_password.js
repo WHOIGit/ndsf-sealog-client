@@ -14,10 +14,6 @@ class ResetPassword extends Component {
   constructor (props) {
     super(props);
 
-    this.state = { 
-      reCaptcha: null
-    };
-
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.recaptchaRef = React.createRef();
 
@@ -27,15 +23,10 @@ class ResetPassword extends Component {
     this.props.leaveLoginForm();
   }
 
-  handleFormSubmit({ password }) {
-    this.recaptchaRef.current.execute();
-    let reCaptcha = this.state.reCaptcha;
+  async handleFormSubmit({ password }) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
     let token = this.props.match.params.token;
     this.props.resetPassword({token, password, reCaptcha});
-  }
-
-  onCaptchaChange(token) {
-    this.setState({reCaptcha: token});
   }
 
   renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
