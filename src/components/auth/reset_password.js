@@ -19,6 +19,8 @@ class ResetPassword extends Component {
     };
 
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.recaptchaRef = React.createRef();
+
   }
 
   componentWillUnmount() {
@@ -26,6 +28,7 @@ class ResetPassword extends Component {
   }
 
   handleFormSubmit({ password }) {
+    this.recaptchaRef.current.execute();
     let reCaptcha = this.state.reCaptcha;
     let token = this.props.match.params.token;
     this.props.resetPassword({token, password, reCaptcha});
@@ -78,6 +81,7 @@ class ResetPassword extends Component {
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
+            ref={this.recaptchaRef}
             sitekey={RECAPTCHA_SITE_KEY}
             theme="dark"
             size="invisible"

@@ -17,6 +17,9 @@ class ForgotPassword extends Component {
     this.state = { 
       reCaptcha: null
     };
+
+    this.recaptchaRef = React.createRef();
+
   }
 
   componentWillUnmount() {
@@ -24,6 +27,7 @@ class ForgotPassword extends Component {
   }
 
   handleFormSubmit({ email }) {
+    this.recaptchaRef.current.execute();
     let reCaptcha = this.state.reCaptcha;
     this.props.forgotPassword({email, reCaptcha});
   }
@@ -92,10 +96,11 @@ class ForgotPassword extends Component {
       const panelHeader = (<h5 className="form-signin-heading">Forgot Password</h5>);
       const { handleSubmit, submitting, valid } = this.props;
 
-      const submitButton = (RECAPTCHA_SITE_KEY !== "")?  <Button variant="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Submit</Button> : <Button variant="primary" type="submit" block disabled={submitting || !valid}>Submit</Button>;
+      const submitButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Submit</Button>;
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
+            ref={this.recaptchaRef}
             sitekey={RECAPTCHA_SITE_KEY}
             theme="dark"
             size="invisible"

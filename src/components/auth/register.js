@@ -17,6 +17,9 @@ class Register extends Component {
     this.state = { 
       reCaptcha: null
     };
+
+    this.recaptchaRef = React.createRef();
+
   }
 
   componentWillUnmount() {
@@ -24,8 +27,8 @@ class Register extends Component {
   }
 
   handleFormSubmit({username, fullname, email, password}) {
+    this.recaptchaRef.current.execute();
     let reCaptcha = this.state.reCaptcha;
-
     this.props.registerUser({username, fullname, email, password, reCaptcha});
   }
 
@@ -87,6 +90,7 @@ class Register extends Component {
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
+            ref={this.recaptchaRef}
             sitekey={RECAPTCHA_SITE_KEY}
             theme="dark"
             size="invisible"
