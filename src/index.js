@@ -30,6 +30,7 @@ import ResetPassword from './components/auth/reset_password';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight';
 import { faBackward } from '@fortawesome/free-solid-svg-icons/faBackward';
 import { faCalculator } from '@fortawesome/free-solid-svg-icons/faCalculator';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
@@ -57,7 +58,7 @@ import { faVial } from '@fortawesome/free-solid-svg-icons/faVial';
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
 import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaximize';
 
-library.add(faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTable,faTimes,faTrash,faVial,faUser,faWindowMaximize);
+library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTable,faTimes,faTrash,faVial,faUser,faWindowMaximize);
 
 import "filepond/dist/filepond.min.css";
 import 'rc-slider/assets/index.css';

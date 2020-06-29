@@ -60,7 +60,7 @@ class CopyLoweringToClipboard extends Component {
       text += (loweringDescendingTime) ? `Descending:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_descending}\n` : "";
       text += (loweringOnBottomTime) ? `On Bottom:         ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
       text += (loweringOffBottomTime) ? `Off Bottom:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";
-      text += (loweringFloatsOnSurfaceTime) ? `Floats of Surface: ${this.props.lowering.lowering_additional_meta.milestones.lowering_floats_on_surface}\n` : "";
+      text += (loweringFloatsOnSurfaceTime) ? `Floats on Surface: ${this.props.lowering.lowering_additional_meta.milestones.lowering_floats_on_surface}\n` : "";
       text += `On Deck:           ${this.props.lowering.stop_ts}\n`;
       text += '\n';
       text += (deck2DeckDurationValue) ? `Deck-to-Deck: ${moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";

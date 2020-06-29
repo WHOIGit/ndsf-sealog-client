@@ -24,15 +24,17 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-        title: HEADER_TITLE,
-        filename: 'index.html',
-        template: path.resolve(__dirname, 'src/assets/index.html')
-      }),
-    new CopyPlugin([
-      { from: path.resolve(__dirname, 'node_modules/typeface-roboto/files/'), to: 'style/fonts' },
-      { from: path.resolve(__dirname, 'node_modules/leaflet/dist/images/'), to: 'style/images' },
-      { from: path.resolve(__dirname, 'src/assets/images/'), to: 'images' }
-    ]),
+      title: HEADER_TITLE,
+      filename: 'index.html',
+      template: path.resolve(__dirname, 'src/assets/index.html')
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, 'node_modules/typeface-roboto/files/'), to: 'style/fonts' },
+        { from: path.resolve(__dirname, 'node_modules/leaflet/dist/images/'), to: 'style/images' },
+        { from: path.resolve(__dirname, 'src/assets/images/'), to: 'images' },
+      ]
+    }),
     new MiniCssExtractPlugin({
       filename: isDevelopment ? 'style/[name].css' : 'style/[name].css',
       chunkFilename: isDevelopment ? 'style/[id].css' : 'style/[id].css',
