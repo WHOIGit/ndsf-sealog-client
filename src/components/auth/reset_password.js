@@ -23,9 +23,8 @@ class ResetPassword extends Component {
     this.props.leaveLoginForm();
   }
 
-  handleFormSubmit({ password }) {
-    this.recaptchaRef.current.execute();
-    let reCaptcha = this.state.reCaptcha;
+  async handleFormSubmit({ password }) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
     let token = this.props.match.params.token;
     this.props.resetPassword({token, password, reCaptcha});
   }

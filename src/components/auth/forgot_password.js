@@ -14,10 +14,6 @@ class ForgotPassword extends Component {
   constructor (props) {
     super(props);
 
-    this.state = { 
-      reCaptcha: null
-    };
-
     this.recaptchaRef = React.createRef();
 
   }
@@ -26,9 +22,8 @@ class ForgotPassword extends Component {
     this.props.leaveLoginForm();
   }
 
-  handleFormSubmit({ email }) {
-    this.recaptchaRef.current.execute();
-    let reCaptcha = this.state.reCaptcha;
+  async handleFormSubmit({ email }) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
     this.props.forgotPassword({email, reCaptcha});
   }
 
