@@ -33,6 +33,11 @@ class Login extends Component {
     this.props.login({username, password, reCaptcha});
   }
 
+  async switch2Guest() {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
+    this.props.switch2Guest(reCaptcha);
+  }
+
   renderMessage(errorMsg, msg){
     if(errorMsg) {
       return (
@@ -66,7 +71,7 @@ class Login extends Component {
     ): null;
 
     const loginButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button>;
-    const loginAsGuestButton = <Button variant="success" onClick={() => this.props.switch2Guest()} block>Login as Guest</Button>;
+    const loginAsGuestButton = <Button variant="success" onClick={() => this.switch2Guest()} block>Login as Guest</Button>;
 
     const loginImage = ( LOGIN_IMAGE !== "" )? 
     <div className="d-flex justify-content-center">
