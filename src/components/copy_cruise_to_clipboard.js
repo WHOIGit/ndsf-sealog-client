@@ -42,11 +42,12 @@ class CopyCruiseToClipboard extends Component {
       let cruiseDurationValue = cruiseStopTime.diff(cruiseStartTime);
 
       let text = "";
-      text += `Cruise:      ${this.props.cruise.cruise_id}\n`;
-      text += (this.props.cruise.cruise_additional_meta.cruise_name) ? `Name:        ${this.props.cruise.cruise_additional_meta.cruise_name}\n` : "";
-      text += (this.props.cruise.cruise_additional_meta.cruise_description) ? `Description: ${this.props.cruise.cruise_additional_meta.cruise_description}\n` : "";
-      text += (this.props.cruise.cruise_additional_meta.cruise_vessel) ? `Vessel:      ${this.props.cruise.cruise_additional_meta.cruise_vessel}\n` : "";
-      text += `Location:    ${this.props.cruise.cruise_location}\n`;
+      text += `Cruise ID:       ${this.props.cruise.cruise_id}\n`;
+      text += (this.props.cruise.cruise_additional_meta.cruise_name) ? `Cruise Name:     ${this.props.cruise.cruise_additional_meta.cruise_name}\n` : "";
+      text += (this.props.cruise.cruise_additional_meta.cruise_pi) ? `Chief Scientist: ${this.props.cruise.cruise_additional_meta.cruise_pi}\n` : "";
+      text += (this.props.cruise.cruise_additional_meta.cruise_description) ? `Description:     ${this.props.cruise.cruise_additional_meta.cruise_description}\n` : "";
+      text += (this.props.cruise.cruise_additional_meta.cruise_vessel) ? `Vessel:          ${this.props.cruise.cruise_additional_meta.cruise_vessel}\n` : "";
+      text += (this.props.cruise.cruise_location) ? `Location:        ${this.props.cruise.cruise_location}\n` : "";
       text += '\n';
       text += `Start of Cruise: ${cruiseStartTime.format("YYYY/MM/DD")}\n`;
       text += (this.props.cruise.cruise_additional_meta.cruise_departure_location) ? `Departure Port:  ${this.props.cruise.cruise_additional_meta.cruise_departure_location}\n` : "";

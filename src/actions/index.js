@@ -176,7 +176,7 @@ export function login({username, password, reCaptcha = null}) {
           return dispatch(authError("Unable to connect to server"));
         }
 
-        console.error(JSON.stringify(error));
+        return dispatch(authError(error.response.data.message));
 
       });
   };

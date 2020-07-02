@@ -8,6 +8,7 @@ import UpdateCruise from './update_cruise';
 import DeleteCruiseModal from './delete_cruise_modal';
 import DeleteFileModal from './delete_file_modal';
 import ImportCruisesModal from './import_cruises_modal';
+import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
 import { USE_ACCESS_CONTROL, DEFAULT_VESSEL } from '../client_config';
@@ -158,6 +159,7 @@ class Cruises extends Component {
               {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissionsModal(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
               {hiddenLink}{' '}
               {deleteLink}
+              <CopyCruiseToClipboard cruise={cruise} />
             </td>
           </tr>
         );

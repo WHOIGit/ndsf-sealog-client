@@ -53,11 +53,11 @@ class UpdateLowering extends Component {
   }
 
   handleFileDeleteModal(file) {
-    console.log("delete", file)
+    // console.log("delete", file)
     this.props.showModal('deleteFile', { file: file, handleDelete: this.handleFileDelete });
   }
 
-  handleFormSubmit(formProps) {
+  async handleFormSubmit(formProps) {
     formProps.lowering_tags = (formProps.lowering_tags)? formProps.lowering_tags.map(tag => tag.trim()): [];
 
     // formProps.lowering_additional_meta = {}
@@ -71,7 +71,7 @@ class UpdateLowering extends Component {
       formProps.lowering_additional_meta.lowering_files = this.pond.getFiles().map(file => file.serverId);
     }
 
-    this.props.updateLowering({...formProps});
+    await this.props.updateLowering({...formProps});
     this.pond.removeFiles();
     this.props.handleFormSubmit()
   }
