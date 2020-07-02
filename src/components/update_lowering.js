@@ -52,7 +52,7 @@ class UpdateLowering extends Component {
   }
 
   handleFileDeleteModal(file) {
-    console.log("delete", file)
+    // console.log("delete", file)
     this.props.showModal('deleteFile', { file: file, handleDelete: this.handleFileDelete });
   }
 
