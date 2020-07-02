@@ -86,7 +86,6 @@ class Register extends Component {
             sitekey={RECAPTCHA_SITE_KEY}
             theme="dark"
             size="invisible"
-            onChange={this.onCaptchaChange.bind(this)}
           />
           <br/>
         </span>
