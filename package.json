@@ -1,6 +1,6 @@
 {
   "name": "sealog-client-vehicle",
-  "version": "2.0.0-rc2",
+  "version": "2.0.0-rc3",
   "license": "MIT",
   "description": "Sealog Client intended for use with vehicles deployed from research vessels such as ROVs, AUVs and HOVs",
   "bugs": {
