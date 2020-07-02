@@ -8,6 +8,7 @@ import UpdateCruise from './update_cruise';
 import DeleteCruiseModal from './delete_cruise_modal';
 import DeleteFileModal from './delete_file_modal';
 import ImportCruisesModal from './import_cruises_modal';
+import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
 import StatsForROVTeamModal from './stats_for_rov_team_modal';
@@ -165,6 +166,7 @@ class Cruises extends Component {
               {hiddenLink}{' '}
               {statsForROVTeamLink}{' '}
               {deleteLink}
+              <CopyCruiseToClipboard cruise={cruise} />
             </td>
           </tr>
         );

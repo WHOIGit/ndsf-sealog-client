@@ -14,22 +14,16 @@ class ForgotPassword extends Component {
   constructor (props) {
     super(props);
 
-    this.state = { 
-      reCaptcha: null
-    };
+    this.recaptchaRef = React.createRef();
   }
 
   componentWillUnmount() {
     this.props.leaveLoginForm();
   }
 
-  handleFormSubmit({ email }) {
-    let reCaptcha = this.state.reCaptcha;
+  async handleFormSubmit({ email }) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
     this.props.forgotPassword({email, reCaptcha});
-  }
-
-  onCaptchaChange(token) {
-    this.setState({reCaptcha: token});
   }
 
   renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
@@ -92,14 +86,13 @@ class ForgotPassword extends Component {
       const panelHeader = (<h5 className="form-signin-heading">Forgot Password</h5>);
       const { handleSubmit, submitting, valid } = this.props;
 
-      const submitButton = (RECAPTCHA_SITE_KEY !== "")?  <Button variant="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Submit</Button> : <Button variant="primary" type="submit" block disabled={submitting || !valid}>Submit</Button>;
+      const submitButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Submit</Button>;
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
             sitekey={RECAPTCHA_SITE_KEY}
             theme="dark"
-            size="normal"
-            onChange={this.onCaptchaChange.bind(this)}
+            size="invisible"
           />
           <br/>
         </span>

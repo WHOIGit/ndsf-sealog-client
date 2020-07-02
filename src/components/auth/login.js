@@ -16,23 +16,25 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      reCaptcha: null,
       stdUsers: true
     };
+
+    this.recaptchaRef = React.createRef();
   }
 
   componentWillUnmount() {
     this.props.leaveLoginForm();
   }
 
-  onCaptchaChange(token) {
-    this.setState({reCaptcha: token});
+  async handleFormSubmit({ username, password }) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
+    username = username.toLowerCase();
+    this.props.login({username, password, reCaptcha});
   }
 
-  handleFormSubmit({ username, password }) {
-    username = username.toLowerCase();
-    let reCaptcha = this.state.reCaptcha;
-    this.props.login({username, password, reCaptcha});
+  async switch2Guest() {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
+    this.props.switch2Guest(reCaptcha);
   }
 
   renderMessage(errorMsg, msg){
@@ -60,15 +62,14 @@ class Login extends Component {
         <ReCAPTCHA
           sitekey={RECAPTCHA_SITE_KEY}
           theme="dark"
-          size="normal"
-          onChange={this.onCaptchaChange.bind(this)}
+          size="invisible"
         />
         <br/>
       </span>
     ): null;
 
-    const loginButton = ( RECAPTCHA_SITE_KEY === "")? <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button> : <Button variant="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Login</Button>;
-    const loginAsGuestButton = ( RECAPTCHA_SITE_KEY === "")? <Button variant="success" onClick={() => this.props.switch2Guest()} block>Login as Guest</Button> : <Button variant="success" onClick={() => this.props.switch2Guest(this.state.reCaptcha)} block disabled={!this.state.reCaptcha}>Login as Guest</Button>;
+    const loginButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button>;
+    const loginAsGuestButton = <Button variant="success" onClick={() => this.switch2Guest()} block>Login as Guest</Button>;
 
     const loginImage = ( LOGIN_IMAGE !== "" )? 
     <div className="d-flex justify-content-center">

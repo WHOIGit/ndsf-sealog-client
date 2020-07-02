@@ -14,25 +14,19 @@ class ResetPassword extends Component {
   constructor (props) {
     super(props);
 
-    this.state = { 
-      reCaptcha: null
-    };
-
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.recaptchaRef = React.createRef();
+
   }
 
   componentWillUnmount() {
     this.props.leaveLoginForm();
   }
 
-  handleFormSubmit({ password }) {
-    let reCaptcha = this.state.reCaptcha;
+  async handleFormSubmit({ password }) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
     let token = this.props.match.params.token;
     this.props.resetPassword({token, password, reCaptcha});
-  }
-
-  onCaptchaChange(token) {
-    this.setState({reCaptcha: token});
   }
 
   renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
@@ -74,14 +68,13 @@ class ResetPassword extends Component {
       const loginCardHeader = (<h5 className="form-signin-heading">Reset Password</h5>);
       const { handleSubmit, submitting, valid } = this.props;
 
-      const loginButton = ( RECAPTCHA_SITE_KEY === "")? <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button> : <Button variant="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Login</Button>;
+      const loginButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button>;
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
             sitekey={RECAPTCHA_SITE_KEY}
             theme="dark"
-            size="normal"
-            onChange={this.onCaptchaChange.bind(this)}
+            size="invisible"
           />
           <br/>
         </span>

@@ -10,7 +10,6 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
-
 import { FilePond } from 'react-filepond';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import { API_ROOT_URL } from '../client_config';
@@ -57,7 +56,7 @@ class UpdateLowering extends Component {
     this.props.showModal('deleteFile', { file: file, handleDelete: this.handleFileDelete });
   }
 
-  handleFormSubmit(formProps) {
+  async handleFormSubmit(formProps) {
     formProps.lowering_tags = (formProps.lowering_tags)? formProps.lowering_tags.map(tag => tag.trim()): [];
 
     // formProps.lowering_additional_meta = {}
@@ -71,7 +70,7 @@ class UpdateLowering extends Component {
       formProps.lowering_additional_meta.lowering_files = this.pond.getFiles().map(file => file.serverId);
     }
 
-    this.props.updateLowering({...formProps});
+    await this.props.updateLowering({...formProps});
     this.pond.removeFiles();
     this.props.handleFormSubmit()
   }
