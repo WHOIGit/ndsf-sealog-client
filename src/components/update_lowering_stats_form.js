@@ -37,7 +37,12 @@ class UpdateLoweringStatsForm extends Component {
       off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
       on_surface: (this.props.milestones.lowering_on_surface) ? this.props.milestones.lowering_on_surface : null,
       stop: this.props.milestones.lowering_stop,
-      aborted: (this.props.milestones.lowering_aborted) ? this.props.milestones.lowering_aborted : null,
+      
+      deployment_surface_conditions: (this.props.stats.deployment_surface_conditions) ? this.props.stats.deployment_surface_conditions : null,
+      deployment_subsea_currents: (this.props.stats.deployment_subsea_currents) ? this.props.stats.deployment_subsea_currents : null,
+      recovery_surface_conditions: (this.props.stats.recovery_surface_conditions) ? this.props.stats.recovery_surface_conditions : null,
+      recovery_subsea_currents: (this.props.stats.recovery_subsea_currents) ? this.props.stats.recovery_subsea_currents : null,
+
       max_depth: (this.props.stats.max_depth) ? this.props.stats.max_depth : null,
       bbox_north: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[0] : null,
       bbox_east: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[1] : null,
@@ -64,6 +69,10 @@ class UpdateLoweringStatsForm extends Component {
     }
 
     let stats= {
+      deployment_surface_conditions: formProps.deployment_surface_conditions,
+      deployment_subsea_currents: formProps.deployment_subsea_currents,
+      recovery_surface_conditions: formProps.recovery_surface_conditions,
+      recovery_subsea_currents: formProps.recovery_subsea_currents,
       max_depth: formProps.max_depth,
     }
 
@@ -183,6 +192,46 @@ class UpdateLoweringStatsForm extends Component {
                   </Form.Row>
                 </Col>
                 <Col className='px-1' sm={6}>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="deployment_surface_conditions"
+                      component={renderTextField}
+                      label="Deployment Surface Conditions"
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="deployment_subsea_currents"
+                      component={renderTextField}
+                      label="Deployment Subsea Currents"
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="recovery_surface_conditions"
+                      component={renderTextField}
+                      label="Recovery Surface Conditions"
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">
+                    <Field
+                      name="recovery_subsea_currents"
+                      component={renderTextField}
+                      label="Recovery Subsea Currents"
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
                   <Form.Row className="justify-content-sm-center">
                     <Field
                       name="max_depth"

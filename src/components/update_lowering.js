@@ -64,6 +64,21 @@ class UpdateLowering extends Component {
       delete formProps.lowering_description
     }
 
+    if(formProps.pilot) {
+      formProps.lowering_additional_meta.pilot = formProps.pilot;
+      delete formProps.pilot;
+    }
+
+    if(formProps.surface_officer) {
+      formProps.lowering_additional_meta.surface_officer = formProps.surface_officer;
+      delete formProps.surface_officer;
+    }
+
+    if(formProps.lowering_passengers) {
+      formProps.lowering_additional_meta.lowering_passengers = formProps.lowering_passengers.map(tag => tag.trim());
+      delete formProps.lowering_passengers
+    }
+
     if(this.pond) {
       formProps.lowering_additional_meta.lowering_files = this.pond.getFiles().map(file => file.serverId);
     }
@@ -162,6 +177,31 @@ class UpdateLowering extends Component {
               </Form.Row>
               <Form.Row>
                 <Field
+                  name="pilot"
+                  component={renderTextField}
+                  label="Pilot"
+                  placeholder="i.e. Toby Mitchell"
+                  required={true}
+                />
+                <Field
+                  name="surface_officer"
+                  component={renderTextField}
+                  label="Lowering Location"
+                  placeholder="i.e. Colin Wollerman"
+                  required={true}
+                />
+              </Form.Row>
+              <Form.Row>
+                <Field
+                  name="lowering_passengers"
+                  component={renderTextArea}
+                  label="Passengers, comma delimited"
+                  placeholder="i.e. Mark Dalio, Vincent Pieribone"
+                  rows={1}
+                />
+              </Form.Row>
+              <Form.Row>
+                <Field
                   name="start_ts"
                   component={renderDateTimePicker}
                   label="Start Date/Time (UTC)"
@@ -240,6 +280,14 @@ function validate(formProps) {
     errors.lowering_name = 'Required'
   }
 
+  if (!formProps.pilot) {
+    errors.pilot = 'Required'
+  }
+
+  if (!formProps.surface_officer) {
+    errors.surface_officer = 'Required'
+  }
+
   if (formProps.start_ts === '') {
     errors.start_ts = 'Required'
   } else if (!moment.utc(formProps.start_ts).isValid()) {
@@ -266,6 +314,14 @@ function validate(formProps) {
     }
   }
 
+  if (typeof formProps.lowering_passengers === "string") {
+    if (formProps.lowering_passengers === '') {
+      formProps.lowering_passengers = []
+    } else {
+      formProps.lowering_passengers = formProps.lowering_passengers.split(',');
+    }
+  }
+
   return errors;
 
 }
@@ -285,12 +341,27 @@ function mapStateToProps(state) {
 
   let initialValues = { ...state.lowering.lowering }
 
+  // if (initialValues.lowering_tags) {
+  //   initialValues.lowering_tags = initialValues.lowering_tags.join(', ')
+  // }
+
   if (initialValues.lowering_additional_meta) {
 
     if (initialValues.lowering_additional_meta.lowering_description) {
       initialValues.lowering_description = initialValues.lowering_additional_meta.lowering_description
     }
 
+    if (initialValues.lowering_additional_meta.pilot) {
+      initialValues.pilot = initialValues.lowering_additional_meta.pilot
+    }
+
+    if (initialValues.lowering_additional_meta.surface_officer) {
+      initialValues.surface_officer = initialValues.lowering_additional_meta.surface_officer
+    }
+
+    if (initialValues.lowering_additional_meta.lowering_passengers) {
+      initialValues.lowering_passengers = initialValues.lowering_additional_meta.lowering_passengers
+    }
     // delete initialValues.lowering_additional_meta
   }
 

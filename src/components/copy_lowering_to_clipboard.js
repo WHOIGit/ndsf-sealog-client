@@ -53,26 +53,39 @@ class CopyLoweringToClipboard extends Component {
       let recoveryDurationValue = (loweringStopTime && loweringOnSurfaceTime) ? loweringStopTime.diff(loweringOnSurfaceTime) : null;
 
       let text = "";
+      text += `Lowering:        ${this.props.lowering.lowering_id}\n`;
+      text += (this.props.lowering.lowering_additional_meta.lowering_description) ? `Description:     ${this.props.lowering.lowering_additional_meta.lowering_description}\n` : "";
+      text += `Location:        ${this.props.lowering.lowering_location}\n\n`;
+      text += `Pilot:           ${this.props.lowering.lowering_additional_meta.pilot}\n`;
+      text += `Surface Officer: ${this.props.lowering.lowering_additional_meta.surface_officer}\n`;
+      text += (this.props.lowering.lowering_additional_meta.lowering_passengers) ? `Passengers:      ${this.props.lowering.lowering_additional_meta.lowering_passengers.join(', ')}\n` : "";
+      text += '\n';
+      text += `Start of Dive: ${this.props.lowering.start_ts}\n`;
+      text += (loweringOffDeckTime) ?    `Off Deck:      ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck}\n` : "";
+      text += (loweringDescendingTime) ? `Descending:    ${this.props.lowering.lowering_additional_meta.milestones.lowering_descending}\n` : "";
+      text += (loweringOnBottomTime) ?   `On Bottom:     ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
+      text += (loweringOffBottomTime) ?  `Off Bottom:    ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";
+      text += (loweringOnSurfaceTime) ?  `On Surface:    ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface}\n` : "";
+      text += `On Deck:       ${this.props.lowering.stop_ts}\n`;
+      text += '\n';
+      text += (deck2DeckDurationValue) ?  `Deck-to-Deck:  ${moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (deploymentDurationValue) ? `Deployment:    ${moment.duration(deploymentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (decentDurationValue) ?     `Decent:        ${moment.duration(decentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (onBottomDurationValue) ?   `On bottom:     ${moment.duration(onBottomDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (ascentDurationValue) ?     `Ascent:        ${moment.duration(ascentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (recoveryDurationValue) ?   `Recovery:      ${moment.duration(recoveryDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += '\n';
 
-      text += `${this.state.lowering_name} ID:${' '.repeat(9-this.state.lowering_name.length)}${this.props.lowering.lowering_id}\n`;
-      text += (this.props.lowering.lowering_additional_meta.lowering_description) ? `Description: ${this.props.lowering.lowering_additional_meta.lowering_description}\n` : "";
-      text += `Location: ${this.props.lowering.lowering_location}\n`;
-      text += '\n';
-      text += `Start of ${this.state.lowering_name}:${' '.repeat(9-this.state.lowering_name.length)}${this.props.lowering.start_ts}\n`;
-      text += (loweringDescendingTime) ? `Descending:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_descending}\n` : "";
-      text += (loweringOnBottomTime) ? `On Bottom:         ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
-      text += (loweringOffBottomTime) ? `Off Bottom:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";
-      text += (loweringOnSurfaceTime) ? `On Surface:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface}\n` : "";
-      text += `On Deck:           ${this.props.lowering.stop_ts}\n`;
-      text += '\n';
-      text += (deck2DeckDurationValue) ? `Deck-to-Deck: ${moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (deploymentDurationValue) ? `Deployment:   ${moment.duration(deploymentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (decentDurationValue) ? `Decent:       ${moment.duration(decentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (onBottomDurationValue) ? `On bottom:    ${moment.duration(onBottomDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (ascentDurationValue) ? `Ascent:       ${moment.duration(ascentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (recoveryDurationValue) ? `Recovery:     ${moment.duration(recoveryDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += '\n';
-      text += (loweringAbortTime) ? `Aborted: ${loweringAbortTime.format("YYYY-MM-DD HH:mm")}\n\n` : "";
+      if(this.props.lowering.lowering_additional_meta.stats && (this.props.lowering.lowering_additional_meta.stats.deployment_surface_conditions || this.props.lowering.lowering_additional_meta.stats.deployment_subsea_currents || this.props.lowering.lowering_additional_meta.stats.recovery_surface_conditions || this.props.lowering.lowering_additional_meta.stats.recovery_subsea_currents)) {
+        text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.deployment_surface_conditions) ? `Deployment Surface Conditions: ${this.props.lowering.lowering_additional_meta.stats.deployment_surface_conditions}\n` : "";
+        text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.deployment_subsea_currents) ? `Deployment Subsea Currents:    ${this.props.lowering.lowering_additional_meta.stats.deployment_subsea_currents}\n` : "";
+        text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.recovery_surface_conditions) ? `Recovery Surface Conditions:   ${this.props.lowering.lowering_additional_meta.stats.recovery_surface_conditions}\n` : "";
+        text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.recovery_subsea_currents) ? `Recovery Subsea Currents:      ${this.props.lowering.lowering_additional_meta.stats.recovery_subsea_currents}\n` : "";
+        text += '\n';
+      }
+
+      text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? `Max Depth:     ${this.props.lowering.lowering_additional_meta.stats.max_depth}m\n` : "";
+      text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? `Bounding Box:  ${this.props.lowering.lowering_additional_meta.stats.bounding_box.join(', ')}\n` : "";
 
       text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? `Max Depth:    ${this.props.lowering.lowering_additional_meta.stats.max_depth}m\n` : "";
       text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? `Bounding Box: ${this.props.lowering.lowering_additional_meta.stats.bounding_box.join(', ')}\n` : "";

@@ -63,6 +63,10 @@ class SetLoweringStatsModal extends Component {
         lowering_aborted: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? this.props.lowering.lowering_additional_meta.milestones.lowering_aborted : null,
       },
       stats: {
+        deployment_surface_conditions: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.deployment_surface_conditions) ? this.props.lowering.lowering_additional_meta.stats.deployment_surface_conditions : null,
+        deployment_subsea_currents: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.deployment_subsea_currents) ? this.props.lowering.lowering_additional_meta.stats.deployment_subsea_currents : null,
+        recovery_surface_conditions: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.recovery_surface_conditions) ? this.props.lowering.lowering_additional_meta.stats.recovery_surface_conditions : null,
+        recovery_subsea_currents: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.recovery_subsea_currents) ? this.props.lowering.lowering_additional_meta.stats.recovery_subsea_currents : null,
         max_depth: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? this.props.lowering.lowering_additional_meta.stats.max_depth : null,
         bounding_box: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? this.props.lowering.lowering_additional_meta.stats.bounding_box : []
       },
@@ -119,7 +123,8 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    this.auxDatasourceFilters = ['vehicleRealtimeNavData','vehicleRealtimeUSBLData'];
+    // this.auxDatasourceFilters = ['vehicleRealtimeHipapData', 'vehicleReNavData'];
+    this.auxDatasourceFilters = ['vehicleRealtimeHipapData'];
 
     this.handleMoveEnd = this.handleMoveEnd.bind(this);
     this.handleZoomEnd = this.handleZoomEnd.bind(this);
@@ -232,14 +237,8 @@ class SetLoweringStatsModal extends Component {
       }
     })
 
-    for (let index=0;index<this.auxDatasourceFilters.length;index++) {
-      if (tracklines[this.auxDatasourceFilters[index]]) {
-        this.setState((prevState) => {
-          return { events: events, tracklines: tracklines, fetching: false, depthChartOptions: { ...prevState.depthChartOptions, series: [ { data: tracklines[this.auxDatasourceFilters[index]].depth } ] }, posDataSource: this.auxDatasourceFilters[index] }
-        });
-
-        break;
-      }
+    if(tracklines.vehicleRealtimeHipapData) {
+      this.setState((prevState) => { return { events: events, tracklines: tracklines, fetching: false, depthChartOptions: { ...prevState.depthChartOptions, series: [ { data: tracklines.vehicleRealtimeHipapData.depth } ] } } });
     }
 
     if(this.state.fetching) {
@@ -254,6 +253,10 @@ class SetLoweringStatsModal extends Component {
     if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
       this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter());
       this.map.leafletElement.fitBounds(this.state.tracklines[this.state.posDataSource].polyline.getBounds());
+    }
+    else if(this.state.tracklines.vehicleRealtimeHipapData && !this.state.tracklines.vehicleRealtimeHipapData.polyline.isEmpty()) {
+      this.map.leafletElement.panTo(this.state.tracklines.vehicleRealtimeHipapData.polyline.getBounds().getCenter());
+      this.map.leafletElement.fitBounds(this.state.tracklines.vehicleRealtimeHipapData.polyline.getBounds());
     }
   }
 
@@ -281,15 +284,16 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleCalculateBoundingBox() {
-    if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
-      let lowering_bounds = this.state.tracklines[this.state.posDataSource].polyline.getBounds()
+    if(this.state.tracklines.vehicleRealtimeHipapData && !this.state.tracklines.vehicleRealtimeHipapData.polyline.isEmpty()) {
+      let lowering_bounds = this.state.tracklines.vehicleRealtimeHipapData.polyline.getBounds()
       this.setState((prevState) => { return { touched: true, stats: { ...prevState.stats, bounding_box: [lowering_bounds.getNorth(),lowering_bounds.getEast(),lowering_bounds.getSouth(),lowering_bounds.getWest()] } } });
     }
   }
 
   handleCalculateMaxDepth() {
-    if(this.state.tracklines[this.state.posDataSource] && this.state.tracklines[this.state.posDataSource].depth.length > 0) {
-      let maxDepth = this.state.tracklines[this.state.posDataSource].depth.reduce((current_max_depth, depth) => {
+
+    if(this.state.tracklines.vehicleRealtimeHipapData && this.state.tracklines.vehicleRealtimeHipapData.depth.length > 0) {
+      let maxDepth = this.state.tracklines.vehicleRealtimeHipapData.depth.reduce((current_max_depth, depth) => {
         current_max_depth = (depth[1] > current_max_depth) ? depth[1] : current_max_depth
         return current_max_depth
       }, 0)
@@ -395,9 +399,9 @@ class SetLoweringStatsModal extends Component {
 
     if(this.state.event) {
 
-      const posData = this.state.event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
-      const rawLat = posData['data_array'].find(data => data['data_name'] == 'latitude')
-      const rawLng = posData['data_array'].find(data => data['data_name'] == 'longitude')
+      const realtimeNavData = this.state.event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeHipapData');
+      const rawLat = realtimeNavData['data_array'].find(data => data['data_name'] == 'latitude')
+      const rawLng = realtimeNavData['data_array'].find(data => data['data_name'] == 'longitude')
       if( rawLat && rawLng ) {
         return (
           <Marker position={[ parseFloat(rawLat['data_value']), parseFloat(rawLng['data_value'])]}>
@@ -455,8 +459,13 @@ class SetLoweringStatsModal extends Component {
       </Col>,
       <Col key="stats" md={6}>
         <div>
+          <span>Deployment Surface Conditions: {this.state.stats.deployment_surface_conditions}</span><br/>
+          <span>Deployment Subsea Currents: {this.state.stats.deployment_subsea_currents}</span><br/>
+          <span>Recovery Surface Conditions: {this.state.stats.recovery_surface_conditions}</span><br/>
+          <span>Recovery Subsea Currents: {this.state.stats.recovery_subsea_currents}</span><br/>
+          <br/>
           <span>Max Depth: {this.state.stats.max_depth} <OverlayTrigger placement="top" overlay={<Tooltip id="maxDepthTooltip">Click to calculate max depth from depth data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateMaxDepth() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
-          <span>Bounding Box: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
+          <span>BBox: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
         </div>
       </Col>]     
 
@@ -467,9 +476,13 @@ class SetLoweringStatsModal extends Component {
         oneToOne={true}
       />
 
-    const trackLine = (this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) ?
-      <Polyline color="lime" positions={this.state.tracklines[this.state.posDataSource].polyline.getLatLngs()} />
-    : null;
+    const realtimeTrack = (this.state.tracklines.vehicleRealtimeHipapData && !this.state.tracklines.vehicleRealtimeHipapData.polyline.isEmpty()) ? 
+      <Polyline color="lime" positions={this.state.tracklines.vehicleRealtimeHipapData.polyline.getLatLngs()} />
+      : null;
+
+    const reNavTrack = (this.state.tracklines.vehicleReNavData && !this.state.tracklines.vehicleReNavData.polyline.isEmpty()) ? 
+      <Polyline color="red" positions={this.state.tracklines.vehicleReNavData.polyline.getLatLngs()} />
+      : null;
     
     if(this.props.lowering) {
       if(!this.state.fetching) {
