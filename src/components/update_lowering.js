@@ -186,7 +186,7 @@ class UpdateLowering extends Component {
                 <Field
                   name="surface_officer"
                   component={renderTextField}
-                  label="Lowering Location"
+                  label="Surface Officer"
                   placeholder="i.e. Colin Wollerman"
                   required={true}
                 />
