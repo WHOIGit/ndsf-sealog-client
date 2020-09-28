@@ -205,7 +205,7 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
                 <Field
                   name="surface_officer"
                   component={renderTextField}
-                  label="Lowering Location"
+                  label="Surface Officer"
                   placeholder="i.e. Colin Wollerman"
                   required={true}
                 />
