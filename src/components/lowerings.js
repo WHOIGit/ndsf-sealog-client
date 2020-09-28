@@ -10,6 +10,7 @@ import DeleteLoweringModal from './delete_lowering_modal';
 import ImportLoweringsModal from './import_lowerings_modal';
 import SetLoweringStatsModal from './set_lowering_stats_modal';
 import LoweringPermissionsModal from './lowering_permissions_modal';
+import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CustomPagination from './custom_pagination';
 import { USE_ACCESS_CONTROL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
@@ -82,8 +83,11 @@ class Lowerings extends Component {
     if(fieldVal !== "") {
       this.setState({filteredLowerings: this.props.lowerings.filter((lowering) => {
         const regex = RegExp(fieldVal, 'i');
-        if(lowering.lowering_id.match(regex) || lowering.lowering_location.match(regex)) {
+        if(lowering.lowering_id.match(regex) || lowering.lowering_location.match(regex) || lowering.lowering_additional_meta.pilot.match(regex) || lowering.lowering_additional_meta.surface_officer.match(regex)) {
           return lowering;
+        }
+        else if (lowering.lowering_additional_meta.lowering_passengers && lowering.lowering_additional_meta.lowering_passengers.includes(fieldVal)){
+          return lowering; 
         }
         else if (lowering.lowering_tags.includes(fieldVal)){
           return lowering; 
@@ -144,18 +148,21 @@ class Lowerings extends Component {
         let loweringEndTime = moment.utc(lowering.stop_ts);
         let loweringStarted = <span>Started: {loweringStartTime.format("YYYY-MM-DD HH:mm")}<br/></span>;
         let loweringDuration = loweringEndTime.diff(loweringStartTime);
+        let loweringPilot = (lowering.lowering_additional_meta.pilot)? <span>Pilot: {lowering.lowering_additional_meta.pilot}<br/></span> : null;
+        let loweringPassengers = (lowering.lowering_additional_meta.lowering_passengers)? <span>Passengers: {lowering.lowering_additional_meta.lowering_passengers.join(", ")}<br/></span> : null;
 
         let loweringDurationStr = <span>Duration: {moment.duration(loweringDuration).format("d [days] h [hours] m [minutes]")}<br/></span>;
 
         return (
           <tr key={lowering.id}>
             <td className={(this.props.loweringid === lowering.id)? "text-warning" : ""}>{lowering.lowering_id}</td>
-            <td className={`lowering-details ${(this.props.loweringid === lowering.id)? "text-warning" : ""}`}>{loweringLocation}{loweringStarted}{loweringDurationStr}</td>
+            <td className={`lowering-details ${(this.props.loweringid === lowering.id)? "text-warning" : ""}`}>{loweringLocation}{loweringPilot}{loweringPassengers}{loweringStarted}{loweringDurationStr}</td>
             <td>
               <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleLoweringUpdate(lowering.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
               {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleLoweringPermissions(lowering.id) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
               {hiddenLink}{' '}
               {deleteLink}
+              <CopyLoweringToClipboard lowering={lowering} />
             </td>
           </tr>
         );

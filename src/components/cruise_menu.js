@@ -262,6 +262,8 @@ class CruiseMenu extends Component {
 
       let loweringDescription = (this.state.activeLowering.lowering_additional_meta.lowering_description)? <p className="text-justify"><strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}</p> : null;
       let loweringLocation = (this.state.activeLowering.lowering_location) ? <span><strong>Location:</strong> {this.state.activeLowering.lowering_location}<br/></span> : null;
+      let loweringPilot = (this.state.activeLowering.lowering_additional_meta.pilot)? <span><strong>Pilot:</strong> {this.state.activeLowering.lowering_additional_meta.pilot}<br/></span> : null;
+      let loweringPassengers = (this.state.activeLowering.lowering_additional_meta.lowering_passengers)? <span><strong>Passengers:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_passengers.join(', ')}<br/></span> : null;
       let loweringStarted = <span><strong>Started:</strong> {loweringStartTime.format("YYYY-MM-DD HH:mm")}<br/></span>;
       let loweringDeck2DeckDuration = (deck2DeckDurationValue) ? <span><strong>Deck-to-Deck:</strong> {moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
       let loweringDeploymentDuration = (deploymentDuration) ? <span><strong>Deployment:</strong> {moment.duration(deploymentDuration).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
@@ -281,6 +283,8 @@ class CruiseMenu extends Component {
           <Card.Body>
             {loweringDescription}
             {loweringLocation}
+            {loweringPilot}
+            {loweringPassengers}
             {loweringStarted}
             {loweringDeck2DeckDuration}
             {loweringDeploymentDuration}
@@ -291,6 +295,7 @@ class CruiseMenu extends Component {
             {loweringMaxDepth}
             {loweringBoundingBox}
             {loweringFiles}
+            <br/>
             <Row className="px-1 justify-content-center">
               <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Replay</Button>
               <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReview() }>Review</Button>

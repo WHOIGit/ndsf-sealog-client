@@ -29,6 +29,21 @@ class CreateLowering extends Component {
  
     formProps.lowering_additional_meta = {};
 
+    if(formProps.pilot) {
+      formProps.lowering_additional_meta.pilot = formProps.pilot;
+      delete formProps.pilot;
+    }
+
+    if(formProps.surface_officer) {
+      formProps.lowering_additional_meta.surface_officer = formProps.surface_officer;
+      delete formProps.surface_officer;
+    }
+
+    if(formProps.lowering_passengers) {
+      formProps.lowering_additional_meta.lowering_passengers = formProps.lowering_passengers.map(participant => participant.trim());
+      delete formProps.lowering_passengers;
+    }
+
     if(formProps.lowering_description) {
       formProps.lowering_additional_meta.lowering_description = formProps.lowering_description;
       delete formProps.lowering_description;
@@ -56,7 +71,7 @@ class CreateLowering extends Component {
                     name="lowering_id"
                     component={renderTextField}
                     label="Lowering ID"
-                    placeholder="i.e. J2-1000"
+                    placeholder="i.e. NDR987"
                     required={true}
                   />
                   <Field
@@ -73,6 +88,31 @@ class CreateLowering extends Component {
                     label="Lowering Description"
                     placeholder="i.e. A brief description of the lowering"
                     rows={8}
+                  />
+                </Form.Row>
+                <Form.Row>
+                  <Field
+                    name="pilot"
+                    component={renderTextField}
+                    label="Pilot"
+                    placeholder="i.e. Toby Mitchell"
+                    required={true}
+                  />
+                  <Field
+                    name="surface_officer"
+                    component={renderTextField}
+                    label="Surface Officer"
+                    placeholder="i.e. Colin Wollerman"
+                    required={true}
+                  />
+                </Form.Row>
+                <Form.Row>
+                  <Field
+                    name="lowering_passengers"
+                    component={renderTextArea}
+                    label="Passengers, comma delimited"
+                    placeholder="i.e. Mark Dalio, Vincent Pieribone"
+                    rows={1}
                   />
                 </Form.Row>
                 <Form.Row>
@@ -130,6 +170,22 @@ function validate(formProps) {
     errors.lowering_id = 'Must be 15 characters or less';
   }
 
+  if (!formProps.pilot) {
+    errors.pilot = 'Required';
+  }
+
+  if (!formProps.surface_officer) {
+    errors.surface_officer = 'Required';
+  }
+
+  if (typeof formProps.lowering_passengers === "string") {
+    if (formProps.lowering_passengers === '') {
+      formProps.lowering_passengers = [];
+    } else {
+      formProps.lowering_passengers = formProps.lowering_passengers.split(',');
+    }
+  }
+
   if (!formProps.start_ts) {
     errors.start_ts = 'Required';
   } else if (!moment.utc(formProps.start_ts).isValid()) {
@@ -155,6 +211,7 @@ function validate(formProps) {
       formProps.lowering_tags = formProps.lowering_tags.split(',');
     }
   }
+
 
   // console.log('errors:', errors);
   return errors;
