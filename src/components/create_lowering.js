@@ -6,6 +6,7 @@ import { Button, Form, Card } from 'react-bootstrap';
 import { renderAlert, renderDateTimePicker, renderMessage, renderSwitch, renderTextField, renderTextArea, dateFormat, timeFormat } from './form_elements';
 import moment from 'moment';
 import * as mapDispatchToProps from '../actions';
+import { LOWERING_ID_REGEX } from '../client_config';
 
 class CreateLowering extends Component {
 
@@ -168,7 +169,7 @@ function validate(formProps) {
     errors.lowering_id = 'Required';
   } else if (formProps.lowering_id.length > 15) {
     errors.lowering_id = 'Must be 15 characters or less';
-  }
+  } 
 
   if (!formProps.pilot) {
     errors.pilot = 'Required';
@@ -218,6 +219,17 @@ function validate(formProps) {
 
 }
 
+function warn(formProps) {
+
+  const warnings = {}
+
+  if (formProps.lowering_id && LOWERING_ID_REGEX != null && !formProps.lowering_id.match(LOWERING_ID_REGEX)) {
+    warnings.lowering_id = 'Non-standard ID';
+  }
+
+  return warnings;
+}
+
 
 const afterSubmit = (result, dispatch) =>
   dispatch(reset('createLowering'));
@@ -237,6 +249,7 @@ export default compose(
     form: 'createLowering',
     enableReinitialize: true,
     validate: validate,
+    warn: warn,
     keepDirtyOnReinitialize : true,
     onSubmitSuccess: afterSubmit
   })
