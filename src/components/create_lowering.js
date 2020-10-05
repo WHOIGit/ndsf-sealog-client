@@ -7,6 +7,7 @@ import { renderAlert, renderDateTimePicker, renderMessage, renderTextField, rend
 import moment from 'moment';
 import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
+import { LOWERING_ID_REGEX } from '../client_config';
 
 class CreateLowering extends Component {
 
@@ -176,7 +177,7 @@ function validate(formProps) {
     errors.lowering_id = 'Required';
   } else if (formProps.lowering_id.length > 15) {
     errors.lowering_id = 'Must be 15 characters or less';
-  }
+  } 
 
   if (!formProps.pilot) {
     errors.pilot = 'Required';
@@ -236,6 +237,7 @@ function warn(formProps) {
 
   return warnings;
 }
+
 
 const afterSubmit = (result, dispatch) =>
   dispatch(reset('createLowering'));

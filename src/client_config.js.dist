@@ -26,10 +26,10 @@ const LOGIN_IMAGE = "";
 const MAIN_SCREEN_TXT = "Please select a cruise from the list below.  Once a cruise is selected please select a lowering from the list of lowerings associated with that cruise that appear at the bottom of the cruise information panel.  Selecting a lowering will open the lowering information panel.  At the bottom of the cruise information panel there will be links for proceeding to the lowering replay section, the lowering review section and the lowering gallery section of Sealog. If at any time you wish to return to this page please click the \"Review Cruises/Lowerings\" text in upper navigation bar.";
 
 // Title displayed on the left side of the title bar
-const HEADER_TITLE = `Sealog for Vehicles v${Pkg.version}`;
+const HEADER_TITLE = `Sealog for Nadir/Neptune v${Pkg.version}`;
 
 // Set default vessel
-const DEFAULT_VESSEL = "";
+const DEFAULT_VESSEL = "OceanXplorer1";
 
 // Use an internal tile server (true), or pull tiles directly from the Internet (false).
 const USE_MAPTILE_PROXY = false;
@@ -50,7 +50,7 @@ const CRUISE_ID_REGEX = null;
 const LOWERING_ID_PLACEHOLDER = "";
 
 // RegExp object to use when verifying LoweringID i.e. RegExp(/^CHR[0-9]{4}$/)
-const LOWERING_ID_REGEX = null;
+const LOWERING_ID_REGEX = RegExp(/NDR[0-9]{4}/);
 
 // What to call "cruise/cruises", format: null OR ["single version","plural version"] use lowercase
 const CUSTOM_CRUISE_NAME = null;

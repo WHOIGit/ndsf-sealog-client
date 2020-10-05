@@ -52,21 +52,32 @@ class SetLoweringStatsModal extends Component {
       showMarker: false,
       height: "400px",
 
+
+
       milestone_to_edit: null,
       milestones: {
         lowering_start: this.props.lowering.start_ts,
-        lowering_descending: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_descending) ? this.props.lowering.lowering_additional_meta.milestones.lowering_descending : null,
+        lowering_hatch_secured: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_hatch_secured) ? this.props.lowering.lowering_additional_meta.milestones.lowering_hatch_secured : null,
+        lowering_off_deck: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck : null,
+        lowering_in_water: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_in_water) ? this.props.lowering.lowering_additional_meta.milestones.lowering_in_water : null,
+        lowering_vents_open: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_vents_open) ? this.props.lowering.lowering_additional_meta.milestones.lowering_vents_open : null,
+        lowering_sub_surface: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_sub_surface) ? this.props.lowering.lowering_additional_meta.milestones.lowering_sub_surface : null,
+        lowering_vents_secured: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_vents_secured) ? this.props.lowering.lowering_additional_meta.milestones.lowering_vents_secured : null,
         lowering_on_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom : null,
+        lowering_clear_to_ascend: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_clear_to_ascend) ? this.props.lowering.lowering_additional_meta.milestones.lowering_clear_to_ascend : null,
         lowering_off_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom : null,
+        lowering_holding_50m: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_holding_50m) ? this.props.lowering.lowering_additional_meta.milestones.lowering_holding_50m : null,
+        lowering_clear_to_surface: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_clear_to_surface) ? this.props.lowering.lowering_additional_meta.milestones.lowering_clear_to_surface : null,
         lowering_on_surface: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface : null,
+        lowering_tanks_blown: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_tanks_blown) ? this.props.lowering.lowering_additional_meta.milestones.lowering_tanks_blown : null,
+        lowering_on_tow: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_tow) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_tow : null,
+        lowering_lift_attached: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_lift_attached) ? this.props.lowering.lowering_additional_meta.milestones.lowering_lift_attached : null,
         lowering_stop: this.props.lowering.stop_ts,
         lowering_aborted: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? this.props.lowering.lowering_additional_meta.milestones.lowering_aborted : null,
       },
       stats: {
-        deployment_surface_conditions: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.deployment_surface_conditions) ? this.props.lowering.lowering_additional_meta.stats.deployment_surface_conditions : null,
-        deployment_subsea_currents: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.deployment_subsea_currents) ? this.props.lowering.lowering_additional_meta.stats.deployment_subsea_currents : null,
-        recovery_surface_conditions: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.recovery_surface_conditions) ? this.props.lowering.lowering_additional_meta.stats.recovery_surface_conditions : null,
-        recovery_subsea_currents: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.recovery_subsea_currents) ? this.props.lowering.lowering_additional_meta.stats.recovery_subsea_currents : null,
+        surface_conditions: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.surface_conditions) ? this.props.lowering.lowering_additional_meta.stats.surface_conditions : null,
+        subsea_conditions: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.subsea_conditions) ? this.props.lowering.lowering_additional_meta.stats.subsea_conditions : null,
         max_depth: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? this.props.lowering.lowering_additional_meta.stats.max_depth : null,
         bounding_box: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? this.props.lowering.lowering_additional_meta.stats.bounding_box : []
       },
@@ -448,22 +459,30 @@ class SetLoweringStatsModal extends Component {
       </Col>
     : [<Col key="milestones" md={6}>
         <div>
-          <span className={(this.state.milestone_to_edit == 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}>Off Deck: {this.state.milestones.lowering_start}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_descending')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_descending')}>Descending: {this.state.milestones.lowering_descending}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}>On Bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}>Off Bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_on_surface')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_surface')}>On Surface: {this.state.milestones.lowering_on_surface}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}>On Deck: {this.state.milestones.lowering_stop}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}>Aborted: {this.state.milestones.lowering_aborted}</span>
+          <span className={(this.state.milestone_to_edit == 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}> Dive start: {this.state.milestones.lowering_start}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_hatch_secured')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_hatch_secured')}> Hatch secured: {this.state.milestones.lowering_hatch_secured}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_off_deck')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_deck')}> Off deck: {this.state.milestones.lowering_off_deck}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_in_water')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_in_water')}> In water: {this.state.milestones.lowering_in_water}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_vents_open')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_vents_open')}> Vents open: {this.state.milestones.lowering_vents_open}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_sub_surface')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_sub_surface')}> Subsurface: {this.state.milestones.lowering_sub_surface}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_vents_secured')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_vents_secured')}> Vents secured: {this.state.milestones.lowering_vents_secured}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}> On bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_clear_to_ascend')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_clear_to_ascend')}> Clear to ascend: {this.state.milestones.lowering_clear_to_ascend}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}> Off bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_holding_50m')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_holding_50m')}> Holding 50m: {this.state.milestones.lowering_holding_50m}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_clear_to_surface')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_clear_to_surface')}> Clear to surface: {this.state.milestones.lowering_clear_to_surface}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_on_surface')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_surface')}> On surface: {this.state.milestones.lowering_on_surface}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_tanks_blown')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_tanks_blown')}> Tanks blown: {this.state.milestones.lowering_tanks_blown}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_on_tow')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_tow')}> On tow: {this.state.milestones.lowering_on_tow}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_lift_attached')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_lift_attached')}> Lift attached: {this.state.milestones.lowering_lift_attached}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}> On deck: {this.state.milestones.lowering_stop}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}> Dive Aborted: {this.state.milestones.lowering_aborted}</span><br/>
         </div>
       </Col>,
       <Col key="stats" md={6}>
         <div>
-          <span>Deployment Surface Conditions: {this.state.stats.deployment_surface_conditions}</span><br/>
-          <span>Deployment Subsea Currents: {this.state.stats.deployment_subsea_currents}</span><br/>
-          <span>Recovery Surface Conditions: {this.state.stats.recovery_surface_conditions}</span><br/>
-          <span>Recovery Subsea Currents: {this.state.stats.recovery_subsea_currents}</span><br/>
-          <br/>
+          <span>Surface Conditions:<br/>{this.state.stats.surface_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)})}</span>
+          <span>Subsea Conditions:<br/>{this.state.stats.subsea_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)})}</span>
           <span>Max Depth: {this.state.stats.max_depth} <OverlayTrigger placement="top" overlay={<Tooltip id="maxDepthTooltip">Click to calculate max depth from depth data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateMaxDepth() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
           <span>BBox: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
         </div>
