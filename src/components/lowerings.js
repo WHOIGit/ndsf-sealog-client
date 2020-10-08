@@ -8,6 +8,7 @@ import UpdateLowering from './update_lowering';
 import DeleteFileModal from './delete_file_modal';
 import DeleteLoweringModal from './delete_lowering_modal';
 import ImportLoweringsModal from './import_lowerings_modal';
+import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import SetLoweringStatsModal from './set_lowering_stats_modal';
 import LoweringPermissionsModal from './lowering_permissions_modal';
 import SVProfileModal from './sv_profile_modal';
@@ -163,6 +164,7 @@ class Lowerings extends Component {
               {hiddenLink}{' '}
               {svProfileLink}{' '}
               {deleteLink}
+              <CopyLoweringToClipboard lowering={lowering} />
             </td>
           </tr>
         );

@@ -42,6 +42,12 @@ const USE_ACCESS_CONTROL = false;
 // Remove ability to add new events
 const DISABLE_EVENT_LOGGING = false;
 
+// Placeholder text displayed in LoweringID textfield "i.e. CHR0001"
+const LOWERING_ID_PLACEHOLDER = "";
+
+// RegExp object to use when verifying LoweringID i.e. RegExp(/CHR[0-9]{4}/)
+const LOWERING_ID_REGEX = null;
+
 module.exports = {
   API_ROOT_URL,
   WS_ROOT_URL,
@@ -55,5 +61,7 @@ module.exports = {
   DEFAULT_VESSEL,
   USE_MAPTILE_PROXY,
   USE_ACCESS_CONTROL,
-  DISABLE_EVENT_LOGGING
+  DISABLE_EVENT_LOGGING,
+  LOWERING_ID_PLACEHOLDER,
+  LOWERING_ID_REGEX
 }
