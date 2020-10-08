@@ -18,15 +18,15 @@ export function renderStaticTextField({ input, label, xs=12, sm=6, md=12, lg=6})
   );
 }
 
-export function renderTextField({ input, label, placeholder, required, meta: { touched, error }, type="text", disabled=false, xs=12, sm=6, md=12, lg=6}) {
+export function renderTextField({ input, label, placeholder, required, meta: { touched, error, warning }, type="text", disabled=false, xs=12, sm=6, md=12, lg=6}) {
   const requiredField = (required)? <span className='text-danger'> *</span> : '';
   const labelComponent = (label)? <Form.Label>{label}{requiredField}</Form.Label> : null;
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       {labelComponent}
-      <Form.Control type={type} {...input} placeholder={placeholder} isInvalid={touched && error} disabled={disabled} />
-      <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
+      <Form.Control type={type} {...input} placeholder={placeholder} isInvalid={touched && (warning || error)} disabled={disabled} />
+      <Form.Control.Feedback className={(warning) ? 'text-warning': ''} type="invalid">{error}{warning}</Form.Control.Feedback>
     </Form.Group>
   );
 }
