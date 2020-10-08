@@ -246,15 +246,16 @@ class CruiseMenu extends Component {
 
     if(this.state.activeLowering){
       let loweringStartTime = moment.utc(this.state.activeLowering.start_ts);
-      let loweringOffDeckTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_deck) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_deck) : null;
+      // let loweringOffDeckTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_deck) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_deck) : null;
       let loweringDescendingTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) : null;
       let loweringOnBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
       let loweringOnSurfaceTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_surface) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_surface) : null;
       let loweringStopTime = moment.utc(this.state.activeLowering.stop_ts);
-
-      let deck2DeckDurationValue = (loweringOffDeckTime) ? loweringStopTime.diff(loweringOffDeckTime) : null;
-      let deploymentDuration = (loweringOffDeckTime && loweringDescendingTime) ? loweringDescendingTime.diff(loweringOffDeckTime) : null;
+      let loweringAbortTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) : null;
+      
+      let deck2DeckDurationValue = loweringStopTime.diff(loweringStartTime);
+      let deploymentDuration = (loweringStartTime && loweringDescendingTime) ? loweringDescendingTime.diff(loweringStartTime) : null;
       let decentDurationValue = (loweringOnBottomTime && loweringDescendingTime) ? loweringOnBottomTime.diff(loweringDescendingTime) : null;
       let onBottomDurationValue = (loweringOnBottomTime && loweringOffBottomTime) ? loweringOffBottomTime.diff(loweringOnBottomTime) : null;
       let ascentDurationValue = (loweringOffBottomTime && loweringOnSurfaceTime) ? loweringOnSurfaceTime.diff(loweringOffBottomTime) : null;
@@ -269,6 +270,7 @@ class CruiseMenu extends Component {
       let loweringOnBottomDuration = (onBottomDurationValue) ? <span><strong>On Bottom:</strong> {moment.duration(onBottomDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
       let loweringAscentDuration = (ascentDurationValue) ? <span><strong>Ascent:</strong> {moment.duration(ascentDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
       let loweringRecoveryDuration = (ascentDurationValue) ? <span><strong>Recovery:</strong> {moment.duration(recoveryDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span> : null;
+      let loweringAborted = (loweringAbortTime) ? <span><strong>Aborted:</strong> {loweringAbortTime.format("YYYY-MM-DD HH:mm")}<br/></span> : null;
 
       let loweringMaxDepth = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.max_depth)? <span><strong>Max Depth:</strong> {this.state.activeLowering.lowering_additional_meta.stats.max_depth}<br/></span>: null;
       let loweringBoundingBox = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.bounding_box)? <span><strong>Bounding Box:</strong> {this.state.activeLowering.lowering_additional_meta.stats.bounding_box.join(', ')}<br/></span>: null;
@@ -288,9 +290,11 @@ class CruiseMenu extends Component {
             {loweringOnBottomDuration}
             {loweringAscentDuration}
             {loweringRecoveryDuration}
+            {loweringAborted}
             {loweringMaxDepth}
             {loweringBoundingBox}
             {loweringFiles}
+            <br/>
             <Row className="px-1 justify-content-center">
               <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Replay</Button>
               <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReview() }>Review</Button>

@@ -5,6 +5,7 @@ import { reduxForm, Field, reset } from 'redux-form';
 import { Button, Form, Card } from 'react-bootstrap';
 import { renderAlert, renderDateTimePicker, renderMessage, renderSwitch, renderTextField, renderTextArea, dateFormat, timeFormat } from './form_elements';
 import moment from 'moment';
+import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 class CreateLowering extends Component {
@@ -56,7 +57,7 @@ class CreateLowering extends Component {
                     name="lowering_id"
                     component={renderTextField}
                     label="Lowering ID"
-                    placeholder="i.e. J2-1000"
+                    placeholder={LOWERING_ID_PLACEHOLDER}
                     required={true}
                   />
                   <Field
@@ -161,6 +162,17 @@ function validate(formProps) {
 
 }
 
+function warn(formProps) {
+
+  const warnings = {}
+
+  if (formProps.lowering_id && LOWERING_ID_REGEX != null && !formProps.lowering_id.match(LOWERING_ID_REGEX)) {
+    warnings.lowering_id = 'Non-standard ID';
+  }
+
+  return warnings;
+}
+
 
 const afterSubmit = (result, dispatch) =>
   dispatch(reset('createLowering'));
@@ -180,6 +192,7 @@ export default compose(
     form: 'createLowering',
     enableReinitialize: true,
     validate: validate,
+    warn: warn,
     keepDirtyOnReinitialize : true,
     onSubmitSuccess: afterSubmit
   })
