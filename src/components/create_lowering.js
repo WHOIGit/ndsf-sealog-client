@@ -6,7 +6,7 @@ import { Button, Form, Card } from 'react-bootstrap';
 import { renderAlert, renderDateTimePicker, renderMessage, renderSwitch, renderTextField, renderTextArea, dateFormat, timeFormat } from './form_elements';
 import moment from 'moment';
 import * as mapDispatchToProps from '../actions';
-import { LOWERING_ID_REGEX } from '../client_config';
+import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER } from '../client_config';
 
 class CreateLowering extends Component {
 
@@ -72,7 +72,7 @@ class CreateLowering extends Component {
                     name="lowering_id"
                     component={renderTextField}
                     label="Lowering ID"
-                    placeholder="i.e. NDR987"
+                    placeholder={LOWERING_ID_PLACEHOLDER}
                     required={true}
                   />
                   <Field

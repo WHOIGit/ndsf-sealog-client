@@ -42,6 +42,10 @@ const USE_ACCESS_CONTROL = false;
 // Remove ability to add new events
 const DISABLE_EVENT_LOGGING = false;
 
+// Placeholder text displayed in LoweringID textfield "i.e. NDR0001"
+const LOWERING_ID_PLACEHOLDER = "i.e. NDR0001";
+
+// RegExp object to use when verifying LoweringID i.e. RegExp(/NDR[0-9]{4}/)
 const LOWERING_ID_REGEX = RegExp(/NDR[0-9]{4}/);
 
 module.exports = {
@@ -58,5 +62,6 @@ module.exports = {
   USE_MAPTILE_PROXY,
   USE_ACCESS_CONTROL,
   DISABLE_EVENT_LOGGING,
+  LOWERING_ID_PLACEHOLDER,
   LOWERING_ID_REGEX
 }
