@@ -46,10 +46,10 @@ const CRUISE_ID_PLACEHOLDER = "";
 // RegExp object to use when verifying CruiseID i.e. RegExp(/^OXR20[0-9]{2}[0-1][0-9][0-3][0-9]$/)
 const CRUISE_ID_REGEX = null;
 
-// Placeholder text displayed in LoweringID textfield "i.e. CHR0001"
-const LOWERING_ID_PLACEHOLDER = "";
+// Placeholder text displayed in LoweringID textfield "i.e. NDR0001"
+const LOWERING_ID_PLACEHOLDER = "i.e. NDR0001";
 
-// RegExp object to use when verifying LoweringID i.e. RegExp(/^CHR[0-9]{4}$/)
+// RegExp object to use when verifying LoweringID i.e. RegExp(/NDR[0-9]{4}/)
 const LOWERING_ID_REGEX = RegExp(/NDR[0-9]{4}/);
 
 // What to call "cruise/cruises", format: null OR ["single version","plural version"] use lowercase

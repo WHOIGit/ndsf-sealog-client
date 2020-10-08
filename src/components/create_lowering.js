@@ -7,7 +7,7 @@ import { renderAlert, renderDateTimePicker, renderMessage, renderTextField, rend
 import moment from 'moment';
 import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
-import { LOWERING_ID_REGEX } from '../client_config';
+import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER } from '../client_config';
 
 class CreateLowering extends Component {
 
