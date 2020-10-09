@@ -383,7 +383,7 @@ class SetLoweringStatsModal extends Component {
     if(this.state.event.event_value === 'FREE_FORM') {
       event_txt = `<span>${event_txt}<br/><b>Text:</b> ${this.state.event.event_free_text}</span>`
     }
-    else if(this.state.event.event_value === 'VEHICLE') {
+    else if(this.state.event.event_value === 'SUBMERSIBLE') {
       const milestone = this.state.event.event_options.find((option) => option['event_option_name'] === 'milestone')
       if(milestone) {
         event_txt = `<span>${event_txt}<br/><b>Milestone:</b> ${milestone['event_option_value']}</span>`
@@ -481,8 +481,8 @@ class SetLoweringStatsModal extends Component {
       </Col>,
       <Col key="stats" md={6}>
         <div>
-          <span>Surface Conditions:<br/>{this.state.stats.surface_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)})}</span>
-          <span>Subsea Conditions:<br/>{this.state.stats.subsea_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)})}</span>
+          <span>Surface Conditions:<br/>{(this.state.stats.surface_conditions) ? this.state.stats.surface_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)}) : '' }</span>
+          <span>Subsea Conditions:<br/>{(this.state.stats.subsea_conditions) ? this.state.stats.subsea_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)}) : '' }</span>
           <span>Max Depth: {this.state.stats.max_depth} <OverlayTrigger placement="top" overlay={<Tooltip id="maxDepthTooltip">Click to calculate max depth from depth data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateMaxDepth() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
           <span>BBox: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
         </div>
