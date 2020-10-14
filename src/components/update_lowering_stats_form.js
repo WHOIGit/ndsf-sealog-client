@@ -32,10 +32,12 @@ class UpdateLoweringStatsForm extends Component {
 
     let initialValues = {
       start: this.props.milestones.lowering_start,
+      in_water: (this.props.milestones.lowering_in_water) ? this.props.milestones.lowering_in_water : null,
       descending: (this.props.milestones.lowering_descending) ? this.props.milestones.lowering_descending : null,
       on_bottom: (this.props.milestones.lowering_on_bottom) ? this.props.milestones.lowering_on_bottom : null,
       off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
       on_surface: (this.props.milestones.lowering_on_surface) ? this.props.milestones.lowering_on_surface : null,
+      out_ofwater: (this.props.milestones.lowering_out_ofwater) ? this.props.milestones.lowering_out_ofwater : null,
       stop: this.props.milestones.lowering_stop,
       aborted: (this.props.milestones.lowering_aborted) ? this.props.milestones.lowering_aborted : null,
       max_depth: (this.props.stats.max_depth) ? this.props.stats.max_depth : null,
@@ -55,10 +57,12 @@ class UpdateLoweringStatsForm extends Component {
 
     let milestones = {
       lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : formProps.start,
+      lowering_in_water: (formProps.in_water && formProps.in_water._isAMomentObject) ? formProps.in_water.toISOString() : formProps.in_water,
       lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : formProps.descending,
       lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : formProps.on_bottom,
       lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : formProps.off_bottom,
       lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString() : formProps.on_surface,
+      lowering_out_of_water: (formProps.out_of_water && formProps.out_of_water._isAMomentObject) ? formProps.out_of_water.toISOString() : formProps.out_of_water,
       lowering_stop: (formProps.stop._isAMomentObject) ? formProps.stop.toISOString() : formProps.stop,
       lowering_aborted: (formProps.aborted && formProps.aborted._isAMomentObject) ? formProps.aborted.toISOString() : formProps.aborted,
     }
@@ -115,6 +119,17 @@ class UpdateLoweringStatsForm extends Component {
                   </Form.Row>
                   <Form.Row className="justify-content-sm-center">  
                     <Field
+                      name="in_water"
+                      component={renderDateTimePicker}
+                      label="In Water Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
                       name="descending"
                       component={renderDateTimePicker}
                       label="Descending Date/Time (UTC)"
@@ -151,6 +166,17 @@ class UpdateLoweringStatsForm extends Component {
                       name="on_surface"
                       component={renderDateTimePicker}
                       label="On Surface Date/Time (UTC)"
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="out_of_water"
+                      component={renderDateTimePicker}
+                      label="Out of Water Date/Time (UTC)"
                       timeFormat={timeFormat}
                       sm={11}
                       md={11}
