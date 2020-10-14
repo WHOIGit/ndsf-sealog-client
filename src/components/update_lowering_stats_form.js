@@ -37,7 +37,7 @@ class UpdateLoweringStatsForm extends Component {
       on_bottom: (this.props.milestones.lowering_on_bottom) ? this.props.milestones.lowering_on_bottom : null,
       off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
       on_surface: (this.props.milestones.lowering_on_surface) ? this.props.milestones.lowering_on_surface : null,
-      out_ofwater: (this.props.milestones.lowering_out_ofwater) ? this.props.milestones.lowering_out_ofwater : null,
+      out_of_water: (this.props.milestones.lowering_out_of_water) ? this.props.milestones.lowering_out_of_water : null,
       stop: this.props.milestones.lowering_stop,
       aborted: (this.props.milestones.lowering_aborted) ? this.props.milestones.lowering_aborted : null,
       max_depth: (this.props.stats.max_depth) ? this.props.stats.max_depth : null,
