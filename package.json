@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "@hapi/nes": "^12.0.4",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "connected-react-router": "^6.8.0",
     "filepond": "^4.25.1",
