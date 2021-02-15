@@ -1,5 +1,7 @@
 # sealog-client-vehicle
-React-Redux based client for the Sealog Eventlogging Server
+React-Redux based client for the Sealog Eventlogging Server.
+
+This variant is tailored towards event-logging individual dives conducted by a submersible or remotely operated vehicle.
 
 ![Screenshot 0](/docs/sealog-framecapture-0.jpg)
 ![Screenshot 1](/docs/sealog-framecapture-1.jpg)
