@@ -6,7 +6,7 @@ import axios from 'axios';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { Collapse, Form, ListGroup, Modal } from 'react-bootstrap';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 
 const updateType = {
     ADD: true,
@@ -21,7 +21,8 @@ class RenderTableRow extends Component {
     super(props);
 
     this.state = {
-      open: false
+      open: false,
+      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
     }
 
     this.toggleRowCollapse = this.toggleRowCollapse.bind(this);
@@ -228,7 +229,7 @@ class UserPermissionsModal extends Component {
         let endOfCruise = new Date(cruise.stop_ts);
 
         const cruiseLoweringsTemp = this.state.lowerings.filter(lowering => moment.utc(lowering.start_ts).isBetween(moment.utc(startOfCruise), moment.utc(endOfCruise)));
-        const loweringCheckboxes = <ul>Lowerings:<br/>{
+        const loweringCheckboxes = <ul>{this.state.lowerings_name}:<br/>{
           cruiseLoweringsTemp.map((lowering) => { 
             return (<Form.Check
               type="switch"

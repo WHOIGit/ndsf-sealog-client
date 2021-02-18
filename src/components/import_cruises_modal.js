@@ -5,7 +5,7 @@ import { Button, Modal, Row, Col } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 import ReactFileReader from 'react-file-reader';
 import Cookies from 'universal-cookie';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL, CUSTOM_CRUISE_NAME } from '../client_config';
 
 const cookies = new Cookies();
 
@@ -20,6 +20,7 @@ class ImportCruisesModal extends Component {
       errors: 0,
       skipped: 0,
       quit: false,
+      cruises_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[1].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[1].slice(1) : "Cruises"
     }
 
     this.quitImport = this.quitImport.bind(this);
@@ -48,7 +49,6 @@ class ImportCruisesModal extends Component {
       })
 
       if(result) {
-        // console.log("Cruise Already Exists");
         this.setState( prevState => (
           {
             skipped: prevState.skipped + 1,
@@ -58,7 +58,6 @@ class ImportCruisesModal extends Component {
       }
     } catch(error) {
       if(error.response.data.statusCode === 404) {
-        // console.log("Attempting to add cruise")
 
         try {
           const result = await axios.post(`${API_ROOT_URL}/api/v1/cruises`,
@@ -80,10 +79,10 @@ class ImportCruisesModal extends Component {
           }
         } catch(error) {
           
-          if(error.response.data.statusCode === 400) {
-            // console.log("Cruise Data malformed or incomplete");
-          } else {
+          if(error.response.data.statusCode !== 400) {
             console.log(error);  
+          // } else {
+            // console.log("Cruise Data malformed or incomplete");
           }
           
           this.setState( prevState => (
@@ -172,7 +171,7 @@ class ImportCruisesModal extends Component {
       return (
         <Modal show={show} onExit={handleExit} onHide={this.quitImport}>
           <Modal.Header closeButton>
-            <Modal.Title>Import Cruises</Modal.Title>
+            <Modal.Title>Import {this.state.cruises_name}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
