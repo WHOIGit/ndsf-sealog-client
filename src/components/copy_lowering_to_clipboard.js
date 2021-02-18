@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip, OverlayTrigger} from 'react-bootstrap';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import * as mapDispatchToProps from '../actions';
+import { CUSTOM_LOWERING_NAME } from '../client_config';
 
 class CopyLoweringToClipboard extends Component {
 
@@ -14,7 +15,8 @@ class CopyLoweringToClipboard extends Component {
     super(props);
 
     this.state = {
-      text: ''
+      text: '',
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
     }
   }
 
@@ -53,7 +55,8 @@ class CopyLoweringToClipboard extends Component {
       let recoveryDurationValue = (loweringStopTime && loweringOnSurfaceTime) ? loweringStopTime.diff(loweringOnSurfaceTime) : null;
 
       let text = "";
-      text += `Lowering:      ${this.props.lowering.lowering_id}\n`;
+
+      text += `${this.state.lowering_name}:${' '.repeat(13-this.state.lowering_name.length)}${this.props.lowering.lowering_id}\n`;
       text += (this.props.lowering.lowering_additional_meta.lowering_description) ? `Description:   ${this.props.lowering.lowering_additional_meta.lowering_description}\n` : "";
       text += `Location:      ${this.props.lowering.lowering_location}\n`;
       text += '\n';
