@@ -15,6 +15,7 @@ class ForgotPassword extends Component {
     super(props);
 
     this.recaptchaRef = React.createRef();
+
   }
 
   componentWillUnmount() {
@@ -90,6 +91,7 @@ class ForgotPassword extends Component {
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
+            ref={this.recaptchaRef}
             sitekey={RECAPTCHA_SITE_KEY}
             theme="dark"
             size="invisible"

@@ -1,4 +1,4 @@
-// Import Custom SB Admin 2 Variables (Overrides Default Bootstrap Variables)
+// Import Custom Bootswatch Mixins and Components
 @import "variables.scss";
 
 // Import Bootstrap
@@ -7,9 +7,6 @@
 // Import FontAwesome
 @import "../../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";
 @import "../../../node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
-
-// Import Custom Bootswatch Mixins and Components
-@import "variables.scss";
 
 .nav-tabs,
 .nav-pills,

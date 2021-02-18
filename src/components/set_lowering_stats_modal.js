@@ -54,7 +54,6 @@ class SetLoweringStatsModal extends Component {
       milestone_to_edit: null,
       milestones: {
         lowering_start: this.props.lowering.start_ts,
-        lowering_off_deck: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck : null,
         lowering_descending: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_descending) ? this.props.lowering.lowering_additional_meta.milestones.lowering_descending : null,
         lowering_on_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom : null,
         lowering_off_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom : null,
@@ -266,7 +265,7 @@ class SetLoweringStatsModal extends Component {
     delete newMilestones.lowering_start;
     delete newMilestones.lowering_stop;
 
-    const lowering_additional_meta = { ...this.props.lowering.lowering_additional_meta, newMilestones, stats }
+    const lowering_additional_meta = { ...this.props.lowering.lowering_additional_meta, milestones: newMilestones, stats }
 
     const newLoweringRecord = { ...this.props.lowering, start_ts, stop_ts, lowering_additional_meta }
 
@@ -456,14 +455,16 @@ class SetLoweringStatsModal extends Component {
     //   console.log("depth:", this.state.tracklines.vehicleRealtimeNavData.depth)
     // }
 
+    // <span className={(this.state.milestone_to_edit == 'lowering_off_deck')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_deck')}>Off Deck: {this.state.milestones.lowering_off_deck}</span><br/>
+          
+
     const milestones_and_stats = (this.state.show_edit_form) ?
       <Col md={12}>
         <UpdateLoweringStatsForm milestones={this.state.milestones} stats={this.state.stats} handleHide={this.handleShowEditForm} handleFormSubmit={this.handleTweak}/>
       </Col>
     : [<Col key="milestones" md={6}>
         <div>
-          <span className={(this.state.milestone_to_edit == 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}>Dive Start: {this.state.milestones.lowering_start}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_off_deck')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_deck')}>Off Deck: {this.state.milestones.lowering_off_deck}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}>Off Deck: {this.state.milestones.lowering_start}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_descending')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_descending')}>Descending: {this.state.milestones.lowering_descending}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}>On Bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}>Off Bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
@@ -498,7 +499,7 @@ class SetLoweringStatsModal extends Component {
         return (
           <Modal size="lg" show={show} onHide={handleHide}>
             <Modal.Header closeButton>
-              <Modal.Title as="h5">Lowering Details: {this.props.lowering.lowering_id}</Modal.Title>
+              <Modal.Title as="h5">{this.props.lowering.lowering_id} - Milestones / Stats</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>

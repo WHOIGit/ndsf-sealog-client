@@ -14,7 +14,8 @@ class Register extends Component {
   constructor (props) {
     super(props);
 
-    this.recaptchaRef = React.createRef();  
+    this.recaptchaRef = React.createRef();
+
   }
 
 
@@ -24,7 +25,7 @@ class Register extends Component {
 
   async handleFormSubmit({username, fullname, email, password}) {
     let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
-
+    username = username.toLowerCase();
     this.props.registerUser({username, fullname, email, password, reCaptcha});
   }
 
@@ -82,6 +83,7 @@ class Register extends Component {
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
+            ref={this.recaptchaRef}
             sitekey={RECAPTCHA_SITE_KEY}
             theme="dark"
             size="invisible"

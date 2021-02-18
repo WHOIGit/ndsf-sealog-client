@@ -2,19 +2,19 @@
 
 ### Prerequisites
 
- - [sealog-server v1.0.8+](https://github.com/oceandatatools/sealog-server)
- - [nodeJS v8.11.0+](https://nodejs.org)
+ - [sealog-server v2.0.0+](https://github.com/oceandatatools/sealog-server)
+ - [nodeJS v12.x+](https://nodejs.org)
  - [npm](https://www.npmjs.com)
  - [git](https://git-scm.com)
  
-#### Installing NodeJS/npm on Ubuntu 16.04LTS
-The standard Ubuntu repositories for Ubuntu 16.04 only provide install packages for NodeJS v4.  Sealog-client-vehicle (and Sealog-Server) require nodeJS >= v8.11
+#### Installing NodeJS/npm on Ubuntu 18.04LTS
+The standard Ubuntu repositories for Ubuntu 18.04 only provide install packages for NodeJS v10.  Sealog-client-vehicle (and Sealog-Server) require nodeJS >= v12.x
  
-To install nodeJS v8.11 on Ubuntu 16.04LTS run the following commands:
+To install nodeJS v12.x on Ubuntu 18.04LTS run the following commands:
  ```
 sudo apt-get install curl build-essential
 cd ~
-curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh
 sudo bash nodesource_setup.sh
 sudo apt-get install nodejs
 

@@ -20,6 +20,7 @@ class Login extends Component {
     };
 
     this.recaptchaRef = React.createRef();
+
   }
 
   componentWillUnmount() {
@@ -60,6 +61,7 @@ class Login extends Component {
     const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
       <span>
         <ReCAPTCHA
+          ref={this.recaptchaRef}
           sitekey={RECAPTCHA_SITE_KEY}
           theme="dark"
           size="invisible"
