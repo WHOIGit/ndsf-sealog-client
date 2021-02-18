@@ -2,13 +2,20 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING, ROOT_PATH } from '../client_config';
+import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING, ROOT_PATH, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 class Header extends Component {
 
   constructor (props) {
     super(props);
+
+    this.state = {
+      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise",
+      cruises_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[1].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[1].slice(1) : "Cruises",
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
+      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings",
+    }
   }
 
   componentDidMount() {
@@ -38,7 +45,7 @@ class Header extends Component {
   renderEventLoggingOptions() {
     if ( this.props.authenticated && !DISABLE_EVENT_LOGGING ) {
       return (
-        <Nav.Link onClick={this.props.gotoCruiseMenu}>Review Cruises/Lowerings</Nav.Link>
+        <Nav.Link onClick={this.props.gotoCruiseMenu}>Review {this.state.cruises_name}/{this.state.lowerings_name}</Nav.Link>
       );
     }
   }
@@ -62,7 +69,7 @@ class Header extends Component {
   renderLoweringOptions() {
     if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
       return (
-        <NavDropdown.Item onClick={this.props.gotoLowerings}>Lowerings</NavDropdown.Item>
+        <NavDropdown.Item onClick={this.props.gotoLowerings}>{this.state.lowerings_name}</NavDropdown.Item>
       );
     }
   }
@@ -70,7 +77,7 @@ class Header extends Component {
   renderCruiseOptions() {
     if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
       return (
-        <NavDropdown.Item onClick={this.props.gotoCruises}>Cruises</NavDropdown.Item>
+        <NavDropdown.Item onClick={this.props.gotoCruises}>{this.state.cruises_name}</NavDropdown.Item>
       );
     }
   }
