@@ -6,7 +6,7 @@ import axios from 'axios';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { Form, ListGroup, Modal } from 'react-bootstrap';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL, CUSTOM_CRUISE_NAME } from '../client_config';
 
 const updateType = {
     ADD: true,
@@ -23,7 +23,8 @@ class CruisePermissionsModal extends Component {
     this.state = {
       users: null,
       cruise: null,
-      Permissions: {}
+      Permissions: {},
+      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise"
     }
 
     this.fetchUsers = this.fetchUsers.bind(this);
@@ -145,7 +146,7 @@ class CruisePermissionsModal extends Component {
         <Modal show={show} onHide={this.props.handleHide}>
           <form>
             <Modal.Header closeButton>
-              <Modal.Title>Cruise Permissions</Modal.Title>
+              <Modal.Title>{this.state.cruise_name} Permissions</Modal.Title>
             </Modal.Header>
               <ListGroup>
                 { body }

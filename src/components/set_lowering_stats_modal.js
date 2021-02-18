@@ -501,7 +501,7 @@ class SetLoweringStatsModal extends Component {
         return (
           <Modal size="lg" show={show} onHide={handleHide}>
             <Modal.Header closeButton>
-              <Modal.Title as="h5">Lowering Details: {this.props.lowering.lowering_id}</Modal.Title>
+              <Modal.Title as="h5">{this.props.lowering.lowering_id} - Milestones / Stats</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>

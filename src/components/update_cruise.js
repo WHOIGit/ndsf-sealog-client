@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 import { FilePond } from 'react-filepond';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL, CUSTOM_CRUISE_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const CRUISE_ROUTE = "/files/cruises";
@@ -25,7 +25,8 @@ class UpdateCruise extends Component {
     super(props);
 
     this.state = {
-      filepondPristine: true
+      filepondPristine: true,
+      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise"
     }
 
     this.handleFileDownload = this.handleFileDownload.bind(this);
@@ -148,7 +149,7 @@ class UpdateCruise extends Component {
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const updateCruiseFormHeader = (<div>Update Cruise<span className="float-right"><CopyCruiseToClipboard cruise={this.props.cruise}/></span></div>);
+    const updateCruiseFormHeader = (<div>Update {this.state.cruise_name}<span className="float-right"><CopyCruiseToClipboard cruise={this.props.cruise}/></span></div>);
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
@@ -161,14 +162,14 @@ class UpdateCruise extends Component {
                 <Field
                   name="cruise_id"
                   component={renderTextField}
-                  label="Cruise ID"
+                  label={`${this.state.cruise_name} ID`}
                   placeholder="i.e. AT42-01"
                   required={true}
                 />
                 <Field
                   name="cruise_name"
                   component={renderTextField}
-                  label="Cruise Name"
+                  label={`${this.state.cruise_name} Name`}
                   placeholder="i.e. Lost City 2018"
                 />
                 <Field
@@ -188,7 +189,7 @@ class UpdateCruise extends Component {
                 <Field
                   name="cruise_location"
                   component={renderTextField}
-                  label="Cruise Location"
+                  label={`${this.state.cruise_name} Location`}
                   placeholder="i.e. Lost City, Mid Atlantic Ridge"
                   lg={12}
                   sm={12}
@@ -198,8 +199,8 @@ class UpdateCruise extends Component {
                 <Field
                   name="cruise_description"
                   component={renderTextArea}
-                  label="Cruise Description"
-                  placeholder="i.e. A brief summary of the cruise"
+                  label={`${this.state.cruise_name} Description`}
+                  placeholder={`i.e. A brief description of the ${this.state.cruise_name.toLowerCase()}`}
                   rows={8}
                 />
               </Form.Row>
@@ -237,19 +238,19 @@ class UpdateCruise extends Component {
                 <Field
                   name="cruise_participants"
                   component={renderTextArea}
-                  label="Cruise Participants, comma delimited"
+                  label={`${this.state.cruise_name} Participants, comma delimited`}
                   placeholder="i.e. Dave Butterfield,Sharon Walker"
                   rows={2}
                 />
                 <Field
                   name="cruise_tags"
                   component={renderTextArea}
-                  label="Cruise Tags, comma delimited"
+                  label={`${this.state.cruise_name} Tags, comma delimited`}
                   placeholder="i.e. coral,chemistry,engineering"
                   rows={2}
                 />
               </Form.Row>
-                <Form.Label>Cruise Files</Form.Label>
+                <Form.Label>{this.state.cruise_name} Files</Form.Label>
                 {this.renderFiles()}
                 <FilePond 
                   ref={ref => this.pond = ref}

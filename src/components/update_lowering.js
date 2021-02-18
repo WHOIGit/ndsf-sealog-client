@@ -10,10 +10,9 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
-
 import { FilePond } from 'react-filepond';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const dateFormat = "YYYY-MM-DD"
@@ -29,7 +28,8 @@ class UpdateLowering extends Component {
     super(props);
 
     this.state = {
-      filepondPristine: true
+      filepondPristine: true,
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
     }
 
     this.handleFileDownload = this.handleFileDownload.bind(this);
@@ -114,7 +114,7 @@ class UpdateLowering extends Component {
   copyToClipboard() {
     if(this.props.lowering.lowering_id) {
       return  (
-`Lowering:      ${this.props.lowering.lowering_id}
+`${this.state.lowering_name}:      ${this.props.lowering.lowering_id}
 Description:   ${(this.props.lowering.lowering_additional_meta.lowering_description) ? this.props.lowering.lowering_additional_meta.lowering_description : ""}
 Location:      ${this.props.lowering.lowering_location}\n
 Start of Dive: ${this.props.lowering.start_ts}
@@ -146,7 +146,7 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const updateLoweringFormHeader = (<div>Update Lowering<span className="float-right"><CopyLoweringToClipboard lowering={this.props.lowering}/></span></div>);
+    const updateLoweringFormHeader = (<div>Update {this.state.lowering_name}<span className="float-right"><CopyLoweringToClipboard lowering={this.props.lowering}/></span></div>);
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
@@ -159,14 +159,14 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
                 <Field
                   name="lowering_id"
                   component={renderTextField}
-                  label="Lowering ID"
+                  label={`${this.state.lowering_name} ID`}
                   placeholder="i.e. J2-1000"
                   required={true}
                 />
                 <Field
                   name="lowering_location"
                   component={renderTextField}
-                  label="Lowering Location"
+                  label={`${this.state.lowering_name} Location`}
                   placeholder="i.e. Kelvin Seamount"
                 />
               </Form.Row>
@@ -174,8 +174,8 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
                 <Field
                   name="lowering_description"
                   component={renderTextArea}
-                  label="Lowering Description"
-                  placeholder="i.e. A brief description of the lowering"
+                  label={`${this.state.lowering_name} Description`}
+                  placeholder={`i.e. A brief description of the ${this.state.lowering_name.toLowerCase()}`}
                   rows={8}
                 />
               </Form.Row>
@@ -197,12 +197,12 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
                 <Field
                   name="lowering_tags"
                   component={renderTextArea}
-                  label="Lowering Tags, comma delimited"
+                  label={`${this.state.lowering_name} Tags, comma delimited`}
                   placeholder="i.e. coral,chemistry,engineering"
                   rows={2}
                 />
               </Form.Row>
-              <Form.Label>Lowering Files</Form.Label>
+              <Form.Label>{this.state.lowering_name} Files</Form.Label>
               {this.renderFiles()}
               <FilePond
                 ref={ref => this.pond = ref}
