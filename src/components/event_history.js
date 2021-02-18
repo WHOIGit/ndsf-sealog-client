@@ -18,7 +18,7 @@ const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtim
 const imageAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeFramegrabber2Data']
 const videoAuxDataSources = ['vehicleRealtimeVideoFileData','vehicleRealtimeVideoFile2Data']
 
-const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
+const sortAuxDataSourceReference = ['vehicleRealtimeVideoFileData','vehicleRealtimeAttitudeData','vehicleRealtimeHipapData','vehicleRealtimeNavData','vesselRealtimeNavData'];
 
 const eventHistoryRef = "eventHistory";
 
