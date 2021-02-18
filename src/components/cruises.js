@@ -11,7 +11,7 @@ import ImportCruisesModal from './import_cruises_modal';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
-import { USE_ACCESS_CONTROL, DEFAULT_VESSEL } from '../client_config';
+import { USE_ACCESS_CONTROL, DEFAULT_VESSEL, CUSTOM_CRUISE_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 let fileDownload = require('js-file-download');
@@ -27,7 +27,9 @@ class Cruises extends Component {
 
     this.state = {
       activePage: 1,
-      filteredCruises: null
+      filteredCruises: null,
+      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise",
+      cruises_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[1].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[1].slice(1) : "Cruises",
     };
 
     this.handlePageSelect = this.handlePageSelect.bind(this);
@@ -110,7 +112,7 @@ class Cruises extends Component {
   renderAddCruiseButton() {
     if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
       return (
-        <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.props.cruiseid}>Add Cruise</Button>
+        <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.props.cruiseid}>Add {this.state.cruise_name}</Button>
       );
     }
   }
@@ -125,11 +127,11 @@ class Cruises extends Component {
 
   renderCruises() {
 
-    const editTooltip = (<Tooltip id="editTooltip">Edit this cruise.</Tooltip>);
-    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this cruise.</Tooltip>);
-    const showStatsForROVTeamTooltip = (<Tooltip id="showTooltip">Show cruise stats.</Tooltip>);    
-    const showTooltip = (<Tooltip id="showTooltip">Cruise is hidden, click to show.</Tooltip>);
-    const hideTooltip = (<Tooltip id="hideTooltip">Cruise is visible, click to hide.</Tooltip>);
+    const editTooltip = (<Tooltip id="editTooltip">Edit this {this.state.cruise_name.toLowerCase()}.</Tooltip>);
+    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {this.state.cruise_name.toLowerCase()}.</Tooltip>);
+    const showStatsForROVTeamTooltip = (<Tooltip id="showTooltip">Show {this.state.cruise_name.toLowerCase()} stats.</Tooltip>);    
+    const showTooltip = (<Tooltip id="showTooltip">{this.state.cruise_name} is hidden, click to show.</Tooltip>);
+    const hideTooltip = (<Tooltip id="hideTooltip">{this.state.cruise_name} is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
 
     const cruises = (Array.isArray(this.state.filteredCruises)) ? this.state.filteredCruises : this.props.cruises;
@@ -173,7 +175,7 @@ class Cruises extends Component {
         <Table responsive bordered striped size="sm">
           <thead>
             <tr>
-              <th>Cruise</th>
+              <th>{this.state.cruise_name}</th>
               <th>Details</th>
               <th style={tableHeaderStyle}>Actions</th>
             </tr>
@@ -185,19 +187,18 @@ class Cruises extends Component {
       );
     } else {
       return (
-        <Card.Body>No Cruises found!</Card.Body>
+        <Card.Body>No {this.state.cruises_name} found!</Card.Body>
       );
     }
   }
 
   renderCruiseHeader() {
 
-    const Label = "Cruises";
-    const exportTooltip = (<Tooltip id="exportTooltip">Export Cruises</Tooltip>);
+    const exportTooltip = (<Tooltip id="exportTooltip">Export {this.state.cruises_name}</Tooltip>);
 
     return (
       <div>
-        { Label }
+        {this.state.cruises_name}
         <span className="float-right">
           <Form inline>
             <FormControl size="sm" type="text" placeholder="Search" className="mr-sm-2" onChange={this.handleSearchChange}/>
