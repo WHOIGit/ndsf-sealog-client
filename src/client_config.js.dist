@@ -48,6 +48,12 @@ const LOWERING_ID_PLACEHOLDER = "";
 // RegExp object to use when verifying LoweringID i.e. RegExp(/CHR[0-9]{4}/)
 const LOWERING_ID_REGEX = null;
 
+// What to call "cruise/cruises", format: null OR ["single version","plural version"] use lowercase
+const CUSTOM_CRUISE_NAME = null;
+
+// What to call "lowering/lowerings", format: null OR ["single version","plural version"] use lowercase
+const CUSTOM_LOWERING_NAME = null;
+
 module.exports = {
   API_ROOT_URL,
   WS_ROOT_URL,
@@ -63,5 +69,7 @@ module.exports = {
   USE_ACCESS_CONTROL,
   DISABLE_EVENT_LOGGING,
   LOWERING_ID_PLACEHOLDER,
-  LOWERING_ID_REGEX
+  LOWERING_ID_REGEX,
+  CUSTOM_CRUISE_NAME,
+  CUSTION_LOWERING_NAME
 }
