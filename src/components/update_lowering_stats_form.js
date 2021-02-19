@@ -6,6 +6,7 @@ import { Button, Col, Form, Row} from 'react-bootstrap';
 import { renderDateTimePicker, renderTextField, dateFormat } from './form_elements';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import { CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const timeFormat = "HH:mm:ss.SSS";
@@ -14,6 +15,10 @@ class UpdateLoweringStatsForm extends Component {
 
   constructor (props) {
     super(props);
+
+    this.state = {
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
+    }
   }
 
   static propTypes = {
@@ -27,7 +32,6 @@ class UpdateLoweringStatsForm extends Component {
 
     let initialValues = {
       start: this.props.milestones.lowering_start,
-      // off_deck: (this.props.milestones.lowering_off_deck) ? this.props.milestones.lowering_off_deck : null,
       descending: (this.props.milestones.lowering_descending) ? this.props.milestones.lowering_descending : null,
       on_bottom: (this.props.milestones.lowering_on_bottom) ? this.props.milestones.lowering_on_bottom : null,
       off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
@@ -51,7 +55,6 @@ class UpdateLoweringStatsForm extends Component {
 
     let milestones = {
       lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : formProps.start,
-      // lowering_off_deck: (formProps.off_deck && formProps.off_deck._isAMomentObject) ? formProps.off_deck.toISOString() : formProps.off_deck,
       lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : formProps.descending,
       lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : formProps.on_bottom,
       lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : formProps.off_bottom,
@@ -88,20 +91,6 @@ class UpdateLoweringStatsForm extends Component {
       </Form.Group>
     )
   }
-
-
-                  // <Form.Row className="justify-content-sm-center">
-                  //   <Field
-                  //     name="start"
-                  //     component={renderDateTimePicker}
-                  //     label="Start Date/Time (UTC)"
-                  //     timeFormat={timeFormat}
-                  //     required={true}
-                  //     sm={11}
-                  //     md={11}
-                  //     lg={7}
-                  //   />
-                  // </Form.Row>
 
   render() {
 
@@ -292,7 +281,7 @@ function validate(formProps) {
   }
 
   if(formProps.on_surface && formProps.on_surface !== '' && moment.utc(formProps.on_surface, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat))) {
-    errors.on_surface = 'Floats on surface date must be after off bottom date';
+    errors.on_surface = 'On surface date must be after off bottom date';
   }
 
   if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {
@@ -306,10 +295,6 @@ function validate(formProps) {
   if(formProps.descending && formProps.descending !== '' && moment.utc(formProps.descending, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
     errors.descending = 'Descending date must be after off_deck date';
   }
-
-  // if(formProps.off_deck && formProps.off_deck !== '' && moment.utc(formProps.off_deck, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-  //   errors.off_deck = 'Off deck date must be after start date';
-  // }
 
   if (formProps.on_bottom && formProps.on_bottom !== '' && formProps.off_bottom && formProps.off_bottom !== '') {
     if(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {

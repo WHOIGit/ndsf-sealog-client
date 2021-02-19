@@ -53,14 +53,11 @@ class UpdateLowering extends Component {
   }
 
   handleFileDeleteModal(file) {
-    // console.log("delete", file)
     this.props.showModal('deleteFile', { file: file, handleDelete: this.handleFileDelete });
   }
 
   async handleFormSubmit(formProps) {
     formProps.lowering_tags = (formProps.lowering_tags)? formProps.lowering_tags.map(tag => tag.trim()): [];
-
-    // formProps.lowering_additional_meta = {}
 
     if(formProps.lowering_description) {
       formProps.lowering_additional_meta.lowering_description = formProps.lowering_description
@@ -111,22 +108,6 @@ class UpdateLowering extends Component {
     this.props.showModal('setLoweringStats', { lowering: this.props.lowering, handleUpdateLowering: this.handleFormSubmit });
   }
 
-  copyToClipboard() {
-    if(this.props.lowering.lowering_id) {
-      return  (
-`${this.state.lowering_name}:      ${this.props.lowering.lowering_id}
-Description:   ${(this.props.lowering.lowering_additional_meta.lowering_description) ? this.props.lowering.lowering_additional_meta.lowering_description : ""}
-Location:      ${this.props.lowering.lowering_location}\n
-Start of Dive: ${this.props.lowering.start_ts}
-On Bottom:     ${(this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom : ""}
-Off Bottom:    ${(this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom : ""}
-End of Dive:   ${this.props.lowering.stop_ts}\n
-Max Depth:     ${(this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? this.props.lowering.lowering_additional_meta.stats.max_depth : ""}
-Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? this.props.lowering.lowering_additional_meta.stats.bounding_box.join(', ') : ""}\n`
-      )
-    }
-  }
-
   renderFiles() {
     if(this.props.lowering.lowering_additional_meta && this.props.lowering.lowering_additional_meta.lowering_files && this.props.lowering.lowering_additional_meta.lowering_files.length > 0) {
       let files = this.props.lowering.lowering_additional_meta.lowering_files.map((file, index) => {
@@ -160,7 +141,7 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
                   name="lowering_id"
                   component={renderTextField}
                   label={`${this.state.lowering_name} ID`}
-                  placeholder={LOWERING_ID_PLACEHOLDER}
+                  placeholder={(LOWERING_ID_PLACEHOLDER) ? LOWERING_ID_PLACEHOLDER : "i.e. ROV-0042"}
                   required={true}
                 />
                 <Field
@@ -220,7 +201,6 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
                   }
                 }}
                 onupdatefiles={() => {
-                  // Set currently active file objects to this.state
                   this.setState({ filepondPristine: false });
                 }}
               >
@@ -300,7 +280,6 @@ function warn(formProps) {
 
   return warnings;
 }
-
 
 function mapStateToProps(state) {
 

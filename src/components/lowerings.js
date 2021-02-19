@@ -122,8 +122,8 @@ class Lowerings extends Component {
 
   renderLowerings() {
 
-    const editTooltip = (<Tooltip id="editTooltip">Edit this lowering.</Tooltip>);
-    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this lowering.</Tooltip>);
+    const editTooltip = (<Tooltip id="editTooltip">Edit this {this.state.lowering_name.toLowerCase()}.</Tooltip>);
+    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {this.state.lowering_name.toLowerCase()}.</Tooltip>);
     const showSVProfile = (<Tooltip id="showTooltip">Show Downcast SV Profile.</Tooltip>);
     const showTooltip = (<Tooltip id="showTooltip">{this.state.lowering_name} is hidden, click to show.</Tooltip>);
     const hideTooltip = (<Tooltip id="hideTooltip">{this.state.lowering_name} is visible, click to hide.</Tooltip>);

@@ -16,14 +16,12 @@ import Cookies from 'universal-cookie';
 import { Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { renderAlert, renderMessage } from './form_elements';
 import UpdateLoweringStatsForm from './update_lowering_stats_form';
+import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers';
+import * as mapDispatchToProps from '../actions';
 
 HighchartsExporting(Highcharts);
 HighchartsNoDataToDisplay(Highcharts);
-
-import * as mapDispatchToProps from '../actions';
-
-import { API_ROOT_URL } from '../client_config';
 
 const { BaseLayer } = LayersControl
 
@@ -36,6 +34,7 @@ class SetLoweringStatsModal extends Component {
 
     this.state = {
       lowering: {},
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
 
       event: null,
 
@@ -95,6 +94,7 @@ class SetLoweringStatsModal extends Component {
           title: {
             text: null,
           },
+          min: 0,
           reversed: true
         },
         plotOptions: {
@@ -117,7 +117,6 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    // this.auxDatasourceFilters = ['vehicleRealtimeNavData', 'vehicleReNavData'];
     this.auxDatasourceFilters = ['vehicleRealtimeNavData'];
 
     this.handleMoveEnd = this.handleMoveEnd.bind(this);
@@ -282,7 +281,6 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleCalculateMaxDepth() {
-
     if(this.state.tracklines.vehicleRealtimeNavData && this.state.tracklines.vehicleRealtimeNavData.depth.length > 0) {
       let maxDepth = this.state.tracklines.vehicleRealtimeNavData.depth.reduce((current_max_depth, depth) => {
         current_max_depth = (depth[1] > current_max_depth) ? depth[1] : current_max_depth
@@ -290,13 +288,11 @@ class SetLoweringStatsModal extends Component {
       }, 0)
 
       this.setState((prevState) => { return { touched: true, stats: { ...prevState.stats, max_depth: maxDepth } } });
-      // this.setPlotLines()
     }
   }
 
   handleClick() {
     if(this.state.milestone_to_edit) {
-      // this.setState((prevState) => { return { touched: true, milestones: Object.assign(prevState.milestones, { [prevState.milestone_to_edit]: prevState.event.ts }) } });
       this.setState((prevState) => { return { touched: true, milestones: { ...prevState.milestones, [prevState.milestone_to_edit]: prevState.event.ts } } });
       this.setMilestoneToEdit()
     }
@@ -311,8 +307,6 @@ class SetLoweringStatsModal extends Component {
 
     const newLoweringRecord = { ...this.props.lowering, start_ts: this.state.milestones.lowering_start, stop_ts: this.state.milestones.lowering_stop, lowering_additional_meta: newLoweringAdditionalMeta }
 
-    // console.log(newLoweringRecord)
-
     this.props.handleUpdateLowering(newLoweringRecord)
     this.setState({touched: false})
   }
@@ -320,7 +314,6 @@ class SetLoweringStatsModal extends Component {
   setMilestoneToEdit(milestone = null) {
     if(milestone !== null && milestone !== this.state.milestone_to_edit) {
       this.setState({milestone_to_edit: milestone})
-      // this.setPlotLines()
     }
     else {
       this.setState({milestone_to_edit: null}) 
@@ -351,17 +344,6 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    // if(this.state.stats.max_depth) {
-    //   let maxDepthPair = this.state.tracklines.vehicleRealtimeNavData.depth.find((depth) => depth[1] === this.state.stats.max_depth)
-    //   if(maxDepthPair) {
-    //     xAxis.plotLines.push({
-    //         color: '#F0F0F',
-    //         width: 2,
-    //         value: maxDepthPair[0]
-    //     })
-    //   }
-    // }
-
     this.setState((prevState) => { return { depthChartOptions: { ...prevState.depthChartOptions, xAxis: xAxis } } });
   }
 
@@ -375,7 +357,6 @@ class SetLoweringStatsModal extends Component {
   }
 
   tooltipFormatter() {
-    // console.log(this)
     let event_txt = `<b>EVENT: ${this.state.event.event_value}</b>`
     if(this.state.event.event_value === 'FREE_FORM') {
       event_txt = `<span>${event_txt}<br/><b>Text:</b> ${this.state.event.event_free_text}</span>`
@@ -393,14 +374,12 @@ class SetLoweringStatsModal extends Component {
 
   handleZoomEnd() {
     if(this.map) {
-      // console.log("zoom end:", this.map.leafletElement.getZoom())
       this.setState({zoom: this.map.leafletElement.getZoom()});
     }
   }
 
   handleMoveEnd() {
     if(this.map) {
-      // console.log("move end:", this.map.leafletElement.getCenter())
       this.setState({center: this.map.leafletElement.getCenter()});
     }
   }
@@ -451,13 +430,6 @@ class SetLoweringStatsModal extends Component {
         )
       }
     })
-
-    // if (this.state.tracklines.vehicleRealtimeNavData && this.state.tracklines.vehicleRealtimeNavData.depth) {
-    //   console.log("depth:", this.state.tracklines.vehicleRealtimeNavData.depth)
-    // }
-
-    // <span className={(this.state.milestone_to_edit == 'lowering_off_deck')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_deck')}>Off Deck: {this.state.milestones.lowering_off_deck}</span><br/>
-          
 
     const milestones_and_stats = (this.state.show_edit_form) ?
       <Col md={12}>
