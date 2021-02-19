@@ -10,7 +10,7 @@ import ImportUsersModal from './import_users_modal';
 import DeleteUserModal from './delete_user_modal';
 import UserPermissionsModal from './user_permissions_modal';
 import CustomPagination from './custom_pagination';
-import { USE_ACCESS_CONTROL } from '../client_config';
+import { USE_ACCESS_CONTROL, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const disabledAccounts = ['admin', 'guest', 'pi'];
@@ -31,7 +31,10 @@ class Users extends Component {
       activePage: 1,
       activeSystemPage: 1,
       filteredUsers: null,
-      filteredSystemUsers: null
+      filteredSystemUsers: null,
+      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise",
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
+
     };
 
     this.handlePageSelect = this.handlePageSelect.bind(this);
@@ -152,7 +155,7 @@ class Users extends Component {
     const editTooltip = (<Tooltip id="editTooltip">Edit this user.</Tooltip>);
     const tokenTooltip = (<Tooltip id="tokenTooltip">Show user&apos;s JWT token.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this user.</Tooltip>);
-    const permissionTooltip = (<Tooltip id="permissionTooltip">Cruise/Lowering permissions.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">${this.state.cruise_name}/{this.state.lowering_name} permissions.</Tooltip>);
 
     let users = (Array.isArray(this.state.filteredUsers)) ? this.state.filteredUsers : this.props.users.filter(user => user.system_user === false);
     users = users.slice((this.state.activePage - 1) * maxUsersPerPage, this.state.activePage * maxUsersPerPage);
@@ -180,7 +183,7 @@ class Users extends Component {
     const editTooltip = (<Tooltip id="editTooltip">Edit this user.</Tooltip>);
     const tokenTooltip = (<Tooltip id="tokenTooltip">Show user&apos;s JWT token.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this user.</Tooltip>);
-    const permissionTooltip = (<Tooltip id="permissionTooltip">Cruise/Lowering permissions.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">${this.state.cruise_name}/{this.state.lowering_name} permissions.</Tooltip>);
 
     let system_users = (Array.isArray(this.state.filteredSystemUsers)) ? this.state.filteredSystemUsers : this.props.users.filter(user => user.system_user === true);
     system_users = system_users.slice((this.state.activeSystemPage - 1) * maxSystemUsersPerPage, this.state.activeSystemPage * maxSystemUsersPerPage);

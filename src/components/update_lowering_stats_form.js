@@ -6,6 +6,7 @@ import { Button, Col, Form, Row} from 'react-bootstrap';
 import { renderDateTimePicker, renderTextField, renderTextArea, dateFormat } from './form_elements';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import { CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const timeFormat = "HH:mm:ss.SSS";
@@ -14,6 +15,10 @@ class UpdateLoweringStatsForm extends Component {
 
   constructor (props) {
     super(props);
+
+    this.state = {
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
+    }
   }
 
   static propTypes = {
@@ -26,7 +31,6 @@ class UpdateLoweringStatsForm extends Component {
   componentDidMount() {
 
     let initialValues = {
-
       start: this.props.milestones.lowering_start,
       hatch_secured: (this.props.milestones.lowering_hatch_secured) ? this.props.milestones.lowering_hatch_secured : null,
       off_deck: (this.props.milestones.lowering_off_deck) ? this.props.milestones.lowering_off_deck : null,
@@ -46,18 +50,8 @@ class UpdateLoweringStatsForm extends Component {
       stop: this.props.milestones.lowering_stop,
       aborted: (this.props.milestones.lowering_aborted) ? this.props.milestones.lowering_aborted : null,
 
-      // start: this.props.milestones.lowering_start,
-      // off_deck: (this.props.milestones.lowering_off_deck) ? this.props.milestones.lowering_off_deck : null,
-      // descending: (this.props.milestones.lowering_descending) ? this.props.milestones.lowering_descending : null,
-      // on_bottom: (this.props.milestones.lowering_on_bottom) ? this.props.milestones.lowering_on_bottom : null,
-      // off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
-      // on_surface: (this.props.milestones.lowering_on_surface) ? this.props.milestones.lowering_on_surface : null,
-      // stop: this.props.milestones.lowering_stop,
-      
       surface_conditions: (this.props.stats.surface_conditions) ? this.props.stats.surface_conditions : null,
       subsea_conditions: (this.props.stats.subsea_conditions) ? this.props.stats.subsea_conditions : null,
-      // recovery_surface_conditions: (this.props.stats.recovery_surface_conditions) ? this.props.stats.recovery_surface_conditions : null,
-      // recovery_subsea_currents: (this.props.stats.recovery_subsea_currents) ? this.props.stats.recovery_subsea_currents : null,
 
       max_depth: (this.props.stats.max_depth) ? this.props.stats.max_depth : null,
       bbox_north: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[0] : null,
@@ -75,40 +69,29 @@ class UpdateLoweringStatsForm extends Component {
   handleFormSubmit(formProps) {
 
     let milestones = {
-
       lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : formProps.start,
-      lowering_hatch_secured: (formProps.hatch_secured && formProps.hatch_secured._isAMomentObject) ? formProps.hatch_secured.toISOString(): formProps.hatch_secured,
-      lowering_off_deck: (formProps.off_deck && formProps.off_deck._isAMomentObject) ? formProps.off_deck.toISOString(): formProps.off_deck,
-      lowering_in_water: (formProps.in_water && formProps.in_water._isAMomentObject) ? formProps.in_water.toISOString(): formProps.in_water,
-      lowering_vents_open: (formProps.vents_open && formProps.vents_open._isAMomentObject) ? formProps.vents_open.toISOString(): formProps.vents_open,
-      lowering_sub_surface: (formProps.sub_surface && formProps.sub_surface._isAMomentObject) ? formProps.sub_surface.toISOString(): formProps.sub_surface,
-      lowering_vents_secured: (formProps.vents_secured && formProps.vents_secured._isAMomentObject) ? formProps.vents_secured.toISOString(): formProps.vents_secured,
-      lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString(): formProps.on_bottom,
-      lowering_clear_to_ascend: (formProps.clear_to_ascend && formProps.clear_to_ascend._isAMomentObject) ? formProps.clear_to_ascend.toISOString(): formProps.clear_to_ascend,
-      lowering_off_bottom: (formProps.off_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString(): formProps.off_bottom,
-      lowering_holding_50m: (formProps.holding_50m && formProps.holding_50m._isAMomentObject) ? formProps.holding_50m.toISOString(): formProps.holding_50m,
-      lowering_clear_to_surface: (formProps.clear_to_surface && formProps.clear_to_surface._isAMomentObject) ? formProps.clear_to_surface.toISOString(): formProps.clear_to_surface,
-      lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString(): formProps.on_surface,
-      lowering_tanks_blown: (formProps.tanks_blown && formProps.tanks_blown._isAMomentObject) ? formProps.tanks_blown.toISOString(): formProps.tanks_blown,
-      lowering_on_tow: (formProps.on_tow && formProps.on_tow._isAMomentObject) ? formProps.on_tow.toISOString(): formProps.on_tow,
-      lowering_lift_attached: (formProps.lift_attached && formProps.lift_attached._isAMomentObject) ? formProps.lift_attached.toISOString(): formProps.lift_attached,
+      lowering_hatch_secured: (formProps.hatch_secured && formProps.hatch_secured._isAMomentObject) ? formProps.hatch_secured.toISOString() : formProps.hatch_secured,
+      lowering_off_deck: (formProps.off_deck && formProps.off_deck._isAMomentObject) ? formProps.off_deck.toISOString() : formProps.off_deck,
+      lowering_in_water: (formProps.in_water && formProps.in_water._isAMomentObject) ? formProps.in_water.toISOString() : formProps.in_water,
+      lowering_vents_open: (formProps.vents_open && formProps.vents_open._isAMomentObject) ? formProps.vents_open.toISOString() : formProps.vents_open,
+      lowering_sub_surface: (formProps.sub_surface && formProps.sub_surface._isAMomentObject) ? formProps.sub_surface.toISOString() : formProps.sub_surface,
+      lowering_vents_secured: (formProps.vents_secured && formProps.vents_secured._isAMomentObject) ? formProps.vents_secured.toISOString() : formProps.vents_secured,
+      lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : formProps.on_bottom,
+      lowering_clear_to_ascend: (formProps.clear_to_ascend && formProps.clear_to_ascend._isAMomentObject) ? formProps.clear_to_ascend.toISOString() : formProps.clear_to_ascend,
+      lowering_off_bottom: (formProps.off_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : formProps.off_bottom,
+      lowering_holding_50m: (formProps.holding_50m && formProps.holding_50m._isAMomentObject) ? formProps.holding_50m.toISOString() : formProps.holding_50m,
+      lowering_clear_to_surface: (formProps.clear_to_surface && formProps.clear_to_surface._isAMomentObject) ? formProps.clear_to_surface.toISOString() : formProps.clear_to_surface,
+      lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString() : formProps.on_surface,
+      lowering_tanks_blown: (formProps.tanks_blown && formProps.tanks_blown._isAMomentObject) ? formProps.tanks_blown.toISOString() : formProps.tanks_blown,
+      lowering_on_tow: (formProps.on_tow && formProps.on_tow._isAMomentObject) ? formProps.on_tow.toISOString() : formProps.on_tow,
+      lowering_lift_attached: (formProps.lift_attached && formProps.lift_attached._isAMomentObject) ? formProps.lift_attached.toISOString() : formProps.lift_attached,
       lowering_stop: (formProps.stop._isAMomentObject) ? formProps.stop.toISOString() : formProps.stop,
-      lowering_aborted: (formProps.aborted && formProps.aborted._isAMomentObject) ? formProps.aborted.toISOString(): formProps.aborted,
-
-      // lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : formProps.start,
-      // lowering_off_deck: (formProps.off_deck && formProps.off_deck._isAMomentObject) ? formProps.off_deck.toISOString() : formProps.off_deck,
-      // lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : formProps.descending,
-      // lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : formProps.on_bottom,
-      // lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : formProps.off_bottom,
-      // lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString() : formProps.on_surface,
-      // lowering_stop: (formProps.stop._isAMomentObject) ? formProps.stop.toISOString() : formProps.stop,
+      lowering_aborted: (formProps.aborted && formProps.aborted._isAMomentObject) ? formProps.aborted.toISOString() : formProps.aborted,
     }
 
     let stats= {
       surface_conditions: formProps.surface_conditions,
       subsea_conditions: formProps.subsea_conditions,
-      // recovery_surface_conditions: formProps.recovery_surface_conditions,
-      // recovery_subsea_currents: formProps.recovery_subsea_currents,
       max_depth: formProps.max_depth,
     }
 
@@ -470,7 +453,7 @@ function validate(formProps) {
   }
 
   if(formProps.on_surface && formProps.on_surface !== '' && moment.utc(formProps.on_surface, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat))) {
-    errors.on_surface = 'Floats on surface date must be after off bottom date';
+    errors.on_surface = 'On surface date must be after off bottom date';
   }
 
   if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {

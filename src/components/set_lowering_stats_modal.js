@@ -16,14 +16,12 @@ import Cookies from 'universal-cookie';
 import { Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { renderAlert, renderMessage } from './form_elements';
 import UpdateLoweringStatsForm from './update_lowering_stats_form';
+import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers';
+import * as mapDispatchToProps from '../actions';
 
 HighchartsExporting(Highcharts);
 HighchartsNoDataToDisplay(Highcharts);
-
-import * as mapDispatchToProps from '../actions';
-
-import { API_ROOT_URL } from '../client_config';
 
 const { BaseLayer } = LayersControl
 
@@ -36,6 +34,7 @@ class SetLoweringStatsModal extends Component {
 
     this.state = {
       lowering: {},
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
 
       event: null,
 
@@ -50,8 +49,6 @@ class SetLoweringStatsModal extends Component {
       position:DEFAULT_LOCATION,
       showMarker: false,
       height: "400px",
-
-
 
       milestone_to_edit: null,
       milestones: {
@@ -71,8 +68,8 @@ class SetLoweringStatsModal extends Component {
         lowering_tanks_blown: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_tanks_blown) ? this.props.lowering.lowering_additional_meta.milestones.lowering_tanks_blown : null,
         lowering_on_tow: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_tow) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_tow : null,
         lowering_lift_attached: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_lift_attached) ? this.props.lowering.lowering_additional_meta.milestones.lowering_lift_attached : null,
+        lowering_stop: this.props.lowering.stop_ts,
         lowering_aborted: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? this.props.lowering.lowering_additional_meta.milestones.lowering_aborted : null,
-        lowering_stop: this.props.lowering.stop_ts
       },
       stats: {
         surface_conditions: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.surface_conditions) ? this.props.lowering.lowering_additional_meta.stats.surface_conditions : null,
@@ -133,7 +130,6 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    // this.auxDatasourceFilters = ['vehicleRealtimeHipapData', 'vehicleReNavData'];
     this.auxDatasourceFilters = ['vehicleRealtimeHipapData'];
 
     this.handleMoveEnd = this.handleMoveEnd.bind(this);
@@ -306,13 +302,11 @@ class SetLoweringStatsModal extends Component {
       }, 0)
 
       this.setState((prevState) => { return { touched: true, stats: { ...prevState.stats, max_depth: maxDepth } } });
-      // this.setPlotLines()
     }
   }
 
   handleClick() {
     if(this.state.milestone_to_edit) {
-      // this.setState((prevState) => { return { touched: true, milestones: Object.assign(prevState.milestones, { [prevState.milestone_to_edit]: prevState.event.ts }) } });
       this.setState((prevState) => { return { touched: true, milestones: { ...prevState.milestones, [prevState.milestone_to_edit]: prevState.event.ts } } });
       this.setMilestoneToEdit()
     }
@@ -327,8 +321,6 @@ class SetLoweringStatsModal extends Component {
 
     const newLoweringRecord = { ...this.props.lowering, start_ts: this.state.milestones.lowering_start, stop_ts: this.state.milestones.lowering_stop, lowering_additional_meta: newLoweringAdditionalMeta }
 
-    // console.log(newLoweringRecord)
-
     this.props.handleUpdateLowering(newLoweringRecord)
     this.setState({touched: false})
   }
@@ -336,7 +328,6 @@ class SetLoweringStatsModal extends Component {
   setMilestoneToEdit(milestone = null) {
     if(milestone !== null && milestone !== this.state.milestone_to_edit) {
       this.setState({milestone_to_edit: milestone})
-      // this.setPlotLines()
     }
     else {
       this.setState({milestone_to_edit: null}) 
@@ -367,17 +358,6 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    // if(this.state.stats.max_depth) {
-    //   let maxDepthPair = this.state.tracklines.vehicleRealtimeHipapData.depth.find((depth) => depth[1] === this.state.stats.max_depth)
-    //   if(maxDepthPair) {
-    //     xAxis.plotLines.push({
-    //         color: '#F0F0F',
-    //         width: 2,
-    //         value: maxDepthPair[0]
-    //     })
-    //   }
-    // }
-
     this.setState((prevState) => { return { depthChartOptions: { ...prevState.depthChartOptions, xAxis: xAxis } } });
   }
 
@@ -391,7 +371,6 @@ class SetLoweringStatsModal extends Component {
   }
 
   tooltipFormatter() {
-    // console.log(this)
     let event_txt = `<b>EVENT: ${this.state.event.event_value}</b>`
     if(this.state.event.event_value === 'FREE_FORM') {
       event_txt = `<span>${event_txt}<br/><b>Text:</b> ${this.state.event.event_free_text}</span>`
@@ -409,14 +388,12 @@ class SetLoweringStatsModal extends Component {
 
   handleZoomEnd() {
     if(this.map) {
-      // console.log("zoom end:", this.map.leafletElement.getZoom())
       this.setState({zoom: this.map.leafletElement.getZoom()});
     }
   }
 
   handleMoveEnd() {
     if(this.map) {
-      // console.log("move end:", this.map.leafletElement.getCenter())
       this.setState({center: this.map.leafletElement.getCenter()});
     }
   }
@@ -468,10 +445,6 @@ class SetLoweringStatsModal extends Component {
       }
     })
 
-    // if (this.state.tracklines.vehicleRealtimeHipapData && this.state.tracklines.vehicleRealtimeHipapData.depth) {
-    //   console.log("depth:", this.state.tracklines.vehicleRealtimeHipapData.depth)
-    // }
-
     const milestones_and_stats = (this.state.show_edit_form) ?
       <Col md={12}>
         <UpdateLoweringStatsForm milestones={this.state.milestones} stats={this.state.stats} handleHide={this.handleShowEditForm} handleFormSubmit={this.handleTweak}/>
@@ -495,7 +468,7 @@ class SetLoweringStatsModal extends Component {
           <span className={(this.state.milestone_to_edit == 'lowering_on_tow')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_tow')}> On tow: {this.state.milestones.lowering_on_tow}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_lift_attached')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_lift_attached')}> Lift attached: {this.state.milestones.lowering_lift_attached}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}> On deck: {this.state.milestones.lowering_stop}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}> Dive Aborted: {this.state.milestones.lowering_aborted}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}> Dive Aborted: {this.state.milestones.lowering_aborted}</span>
         </div>
       </Col>,
       <Col key="stats" md={6}>
@@ -503,7 +476,7 @@ class SetLoweringStatsModal extends Component {
           <span>Surface Conditions:<br/>{(this.state.stats.surface_conditions) ? this.state.stats.surface_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)}) : '' }</span>
           <span>Subsea Conditions:<br/>{(this.state.stats.subsea_conditions) ? this.state.stats.subsea_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)}) : '' }</span>
           <span>Max Depth: {this.state.stats.max_depth} <OverlayTrigger placement="top" overlay={<Tooltip id="maxDepthTooltip">Click to calculate max depth from depth data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateMaxDepth() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
-          <span>BBox: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
+          <span>Bounding Box: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
         </div>
       </Col>]     
 
@@ -527,7 +500,7 @@ class SetLoweringStatsModal extends Component {
         return (
           <Modal size="lg" show={show} onHide={handleHide}>
             <Modal.Header closeButton>
-              <Modal.Title as="h5">Lowering Details: {this.props.lowering.lowering_id}</Modal.Title>
+              <Modal.Title as="h5">{this.props.lowering.lowering_id} - Milestones / Stats</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>

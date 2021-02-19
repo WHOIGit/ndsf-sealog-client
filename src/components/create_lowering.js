@@ -5,11 +5,18 @@ import { reduxForm, Field, reset } from 'redux-form';
 import { Button, Form, Card } from 'react-bootstrap';
 import { renderAlert, renderDateTimePicker, renderMessage, renderSwitch, renderTextField, renderTextArea, dateFormat, timeFormat } from './form_elements';
 import moment from 'moment';
+import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
-import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER } from '../client_config';
 
 class CreateLowering extends Component {
 
+  constructor (props) {
+    super(props);
+
+    this.state = {
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
+    }
+  }
 
   componentDidMount() {
     this.populateDefaultValues();
@@ -56,7 +63,7 @@ class CreateLowering extends Component {
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const createLoweringFormHeader = (<div>Create New Lowering</div>);
+    const createLoweringFormHeader = (<div>Create New {this.state.lowering_name}</div>);
 
     if (this.props.roles) {
 
@@ -71,14 +78,14 @@ class CreateLowering extends Component {
                   <Field
                     name="lowering_id"
                     component={renderTextField}
-                    label="Lowering ID"
-                    placeholder={LOWERING_ID_PLACEHOLDER}
+                    label={`${this.state.lowering_name} ID`}
+                    placeholder={(LOWERING_ID_PLACEHOLDER) ? LOWERING_ID_PLACEHOLDER : "i.e. ROV-0042"}
                     required={true}
                   />
                   <Field
                     name="lowering_location"
                     component={renderTextField}
-                    label="Lowering Location"
+                    label={`${this.state.lowering_name} Location`}
                     placeholder="i.e. Kelvin Seamount"
                   />
                 </Form.Row>
@@ -86,8 +93,8 @@ class CreateLowering extends Component {
                   <Field
                     name="lowering_description"
                     component={renderTextArea}
-                    label="Lowering Description"
-                    placeholder="i.e. A brief description of the lowering"
+                    label={`${this.state.lowering_name} Description`}
+                    placeholder={`i.e. A brief description of the ${this.state.lowering_name.toLowerCase()}`}
                     rows={8}
                   />
                 </Form.Row>
@@ -134,7 +141,7 @@ class CreateLowering extends Component {
                   <Field
                     name="lowering_tags"
                     component={renderTextArea}
-                    label="Lowering Tags, comma delimited"
+                    label={`${this.state.lowering_name} Tags, comma delimited`}
                     placeholder="i.e. coral,chemistry,engineering"
                     rows={2}
                   />
@@ -213,7 +220,6 @@ function validate(formProps) {
     }
   }
 
-
   // console.log('errors:', errors);
   return errors;
 
@@ -229,7 +235,6 @@ function warn(formProps) {
 
   return warnings;
 }
-
 
 const afterSubmit = (result, dispatch) =>
   dispatch(reset('createLowering'));

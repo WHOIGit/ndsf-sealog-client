@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip, OverlayTrigger} from 'react-bootstrap';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import * as mapDispatchToProps from '../actions';
+import { CUSTOM_LOWERING_NAME } from '../client_config';
 
 class CopyLoweringToClipboard extends Component {
 
@@ -14,7 +15,8 @@ class CopyLoweringToClipboard extends Component {
     super(props);
 
     this.state = {
-      text: ''
+      text: '',
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
     }
   }
 
@@ -47,7 +49,7 @@ class CopyLoweringToClipboard extends Component {
       let loweringHolding50mTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_holding_50m) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_holding_50m) : null;
       let loweringOnSurfaceTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface) : null;
       let loweringStopTime = moment.utc(this.props.lowering.stop_ts);
-      let loweringAborted = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) : null;
+      let loweringAbortTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) : null;
 
       let deck2DeckDurationValue = (loweringOffDeckTime) ? loweringStopTime.diff(loweringOffDeckTime) : null;
       let deploymentDurationValue = (loweringOffDeckTime && loweringVentsSecuredTime) ? loweringVentsSecuredTime.diff(loweringOffDeckTime) : null;
@@ -57,29 +59,31 @@ class CopyLoweringToClipboard extends Component {
       let recoveryDurationValue = (loweringStopTime && loweringHolding50mTime) ? loweringStopTime.diff(loweringHolding50mTime) : null;
 
       let text = "";
-      text += `Lowering:        ${this.props.lowering.lowering_id}\n`;
-      text += (this.props.lowering.lowering_additional_meta.lowering_description) ? `Description:     ${this.props.lowering.lowering_additional_meta.lowering_description}\n` : "";
-      text += `Location:        ${this.props.lowering.lowering_location}\n\n`;
+
+      text += `${this.state.lowering_name} ID:${' '.repeat(9-this.state.lowering_name.length)}${this.props.lowering.lowering_id}\n`;
+      text += (this.props.lowering.lowering_additional_meta.lowering_description) ? `Description: ${this.props.lowering.lowering_additional_meta.lowering_description}\n` : "";
+      text += `Location: ${this.props.lowering.lowering_location}\n`;
+      text += '\n';
       text += `Pilot:           ${this.props.lowering.lowering_additional_meta.pilot}\n`;
       text += `Surface Officer: ${this.props.lowering.lowering_additional_meta.surface_officer}\n`;
       text += (this.props.lowering.lowering_additional_meta.lowering_passengers) ? `Passengers:      ${this.props.lowering.lowering_additional_meta.lowering_passengers.join(', ')}\n` : "";
       text += '\n';
-      text += `Start of Dive: ${this.props.lowering.start_ts}\n`;
-      text += (loweringOffDeckTime) ?    `Off Deck:      ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck}\n` : "";
-      text += (loweringVentingNowTime) ? `Descending:    ${this.props.lowering.lowering_additional_meta.milestones.lowering_venting_now}\n` : "";
-      text += (loweringOnBottomTime) ?   `On Bottom:     ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
-      text += (loweringOffBottomTime) ?  `Off Bottom:    ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";
-      text += (loweringOnSurfaceTime) ?  `On Surface:    ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface}\n` : "";
-      text += `On Deck:       ${this.props.lowering.stop_ts}\n`;
-      text += (loweringAborted) ?  `\nAborted:    ${loweringAborted.format("YYYY-MM-DD HH:mm")}\n` : "";
+      text += `Start of ${this.state.lowering_name}:${' '.repeat(9-this.state.lowering_name.length)}${this.props.lowering.start_ts}\n`;
+      text += (loweringOffDeckTime) ? `Off Deck:          ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck}\n` : "";
+      text += (loweringVentingNowTime) ? `Descending:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_venting_now}\n` : "";
+      text += (loweringOnBottomTime) ? `On Bottom:         ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
+      text += (loweringOffBottomTime) ? `Off Bottom:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";
+      text += (loweringOnSurfaceTime) ? `On Surface:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface}\n` : "";
+      text += `On Deck:           ${this.props.lowering.stop_ts}\n`;
       text += '\n';
-      text += (deck2DeckDurationValue) ?  `Deck-to-Deck:  ${moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (deploymentDurationValue) ? `Deployment:    ${moment.duration(deploymentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (decentDurationValue) ?     `Decent:        ${moment.duration(decentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (onBottomDurationValue) ?   `On bottom:     ${moment.duration(onBottomDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (ascentDurationValue) ?     `Ascent:        ${moment.duration(ascentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
-      text += (recoveryDurationValue) ?   `Recovery:      ${moment.duration(recoveryDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (deck2DeckDurationValue) ? `Deck-to-Deck: ${moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (deploymentDurationValue) ? `Deployment:   ${moment.duration(deploymentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (decentDurationValue) ? `Decent:       ${moment.duration(decentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (onBottomDurationValue) ? `On bottom:    ${moment.duration(onBottomDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (ascentDurationValue) ? `Ascent:       ${moment.duration(ascentDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
+      text += (recoveryDurationValue) ? `Recovery:     ${moment.duration(recoveryDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";
       text += '\n';
+      text += (loweringAbortTime) ? `Aborted: ${loweringAbortTime.format("YYYY-MM-DD HH:mm")}\n\n` : "";
 
       if(this.props.lowering.lowering_additional_meta.stats && (this.props.lowering.lowering_additional_meta.stats.surface_conditions || this.props.lowering.lowering_additional_meta.stats.subsea_conditions)) {
         text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.surface_conditions) ? `Surface Conditions:\n${this.props.lowering.lowering_additional_meta.stats.surface_conditions}\n` : "";
@@ -87,8 +91,8 @@ class CopyLoweringToClipboard extends Component {
         text += '\n';
       }
 
-      text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? `Max Depth:     ${this.props.lowering.lowering_additional_meta.stats.max_depth}m\n` : "";
-      text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? `Bounding Box:  ${this.props.lowering.lowering_additional_meta.stats.bounding_box.join(', ')}\n` : "";
+      text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? `Max Depth:    ${this.props.lowering.lowering_additional_meta.stats.max_depth}m\n` : "";
+      text += (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.bounding_box) ? `Bounding Box: ${this.props.lowering.lowering_additional_meta.stats.bounding_box.join(', ')}\n` : "";
 
       this.setState({text});
     }

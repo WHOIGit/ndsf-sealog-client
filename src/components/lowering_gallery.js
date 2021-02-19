@@ -129,7 +129,7 @@ class LoweringGallery extends Component {
 
     let galleries = [];
     for (const [key, value] of Object.entries(this.state.aux_data)) {
-      galleries.unshift((
+      galleries.push((
         <Tab key={`tab_${key}`} eventKey={`tab_${key}`} title={key}>
           <LoweringGalleryTab imagesSource={key} imagesData={value} maxImagesPerPage={this.state.maxImagesPerPage} />
         </Tab>
@@ -138,7 +138,7 @@ class LoweringGallery extends Component {
 
     return (galleries.length > 0 )?
       (
-        <Tabs className="category-tab" variant="pills" id="galleries">
+        <Tabs className="category-tab" variant="pills" id="galleries" mountOnEnter={true} unmountOnExit={true}>
           { galleries }
         </Tabs>
       ) :  (<div><hr className="border-secondary"/><span className="pl-2">No images found</span></div>);

@@ -9,7 +9,7 @@ const WS_ROOT_URL = `ws://localhost:8000/ws`;
 // const WS_ROOT_URL = `wss://localhost:8000/ws`;
 
 // Change this if not hosting the client at the webserver's document root i.e. '/sealog/'
-const ROOT_PATH = "/sealog/";
+const ROOT_PATH = "/";
 
 // Where the images are hosted on the webserver.
 const IMAGE_PATH = "/files/images";
@@ -28,10 +28,10 @@ const LOGIN_IMAGE = "";
 const MAIN_SCREEN_TXT = "Please select a cruise from the list below.  Once a cruise is selected please select a lowering from the list of lowerings associated with that cruise that appear at the bottom of the cruise information panel.  Selecting a lowering will open the lowering information panel.  At the bottom of the cruise information panel there will be links for proceeding to the lowering replay section, the lowering review section and the lowering gallery section of Sealog. If at any time you wish to return to this page please click the \"Review Cruises/Lowerings\" text in upper navigation bar.";
 
 // Title displayed on the left side of the title bar
-const HEADER_TITLE = `Sealog for Nadir/Neptune v${Pkg.version}`;
+const HEADER_TITLE = `Sealog for Nadir/Neptune`;
 
 // Set default vessel
-const DEFAULT_VESSEL = "OceanXplorer1";
+const DEFAULT_VESSEL = "R/V OceanXplorer1";
 
 // Use an internal tile server (true), or pull tiles directly from the Internet (false).
 const USE_MAPTILE_PROXY = false;
@@ -42,11 +42,23 @@ const USE_ACCESS_CONTROL = false;
 // Remove ability to add new events
 const DISABLE_EVENT_LOGGING = false;
 
-// Placeholder text displayed in LoweringID textfield "i.e. NDR0001"
+// Placeholder text displayed in CruiseID textfield "i.e. OXR20210101"
+const CRUISE_ID_PLACEHOLDER = "i.e. OXR20210101";
+
+// RegExp object to use when verifying CruiseID i.e. RegExp(/^OXR20[0-9]{2}[0-1][0-9][0-3][0-9]$/)
+const CRUISE_ID_REGEX = RegExp(/^OXR20[0-9]{2}[0-1][0-9][0-3][0-9]$/);
+
+// Placeholder text displayed in LoweringID textfield "i.e. CHR0001"
 const LOWERING_ID_PLACEHOLDER = "i.e. NDR0001";
 
-// RegExp object to use when verifying LoweringID i.e. RegExp(/NDR[0-9]{4}/)
-const LOWERING_ID_REGEX = RegExp(/NDR[0-9]{4}/);
+// RegExp object to use when verifying LoweringID i.e. RegExp(/^CHR[0-9]{4}$/)
+const LOWERING_ID_REGEX = RegExp(/^NDR[0-9]{4}$/);
+
+// What to call "cruise/cruises", format: null OR ["single version","plural version"] use lowercase
+const CUSTOM_CRUISE_NAME = null;
+
+// What to call "lowering/lowerings", format: null OR ["single version","plural version"] use lowercase
+const CUSTOM_LOWERING_NAME = ["dive", "dives"];
 
 module.exports = {
   API_ROOT_URL,
@@ -62,6 +74,10 @@ module.exports = {
   USE_MAPTILE_PROXY,
   USE_ACCESS_CONTROL,
   DISABLE_EVENT_LOGGING,
+  CRUISE_ID_PLACEHOLDER,
+  CRUISE_ID_REGEX,
   LOWERING_ID_PLACEHOLDER,
-  LOWERING_ID_REGEX
+  LOWERING_ID_REGEX,
+  CUSTOM_CRUISE_NAME,
+  CUSTOM_LOWERING_NAME
 }
