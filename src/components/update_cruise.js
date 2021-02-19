@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 import { FilePond } from 'react-filepond';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
-import { API_ROOT_URL, CUSTOM_CRUISE_NAME } from '../client_config';
+import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX, CUSTOM_CRUISE_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const CRUISE_ROUTE = "/files/cruises";
@@ -163,7 +163,7 @@ class UpdateCruise extends Component {
                   name="cruise_id"
                   component={renderTextField}
                   label={`${this.state.cruise_name} ID`}
-                  placeholder="i.e. AT42-01"
+                  placeholder={CRUISE_ID_PLACEHOLDER}
                   required={true}
                 />
                 <Field
@@ -357,6 +357,17 @@ function validate(formProps) {
 
 }
 
+function warn(formProps) {
+
+  const warnings = {}
+
+  if (formProps.cruise_id && CRUISE_ID_REGEX != null && !formProps.cruise_id.match(CRUISE_ID_REGEX)) {
+    warnings.cruise_id = 'Non-standard ID';
+  }
+
+  return warnings;
+}
+
 function mapStateToProps(state) {
 
   let initialValues = { ...state.cruise.cruise }
@@ -406,6 +417,7 @@ export default compose(
   reduxForm({
     form: 'editCruise',
     enableReinitialize: true,
-    validate: validate
+    validate: validate,
+    warn: warn
   })
 )(UpdateCruise);
