@@ -6,7 +6,7 @@ import axios from 'axios';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { Button, Collapse, Form, ListGroup, Modal } from 'react-bootstrap';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 
 const updateType = {
     ADD: true,
@@ -23,7 +23,8 @@ class LoweringPermissionsModal extends Component {
     this.state = {
       users: null,
       lowering: null,
-      Permissions: {}
+      Permissions: {},
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowering"
     }
 
     this.fetchUsers = this.fetchUsers.bind(this);
@@ -145,7 +146,7 @@ class LoweringPermissionsModal extends Component {
         <Modal show={show} onHide={this.props.handleHide}>
           <form>
             <Modal.Header closeButton>
-              <Modal.Title>Lowering Permissions</Modal.Title>
+              <Modal.Title>{this.state.lowering_name} Permissions</Modal.Title>
             </Modal.Header>
               <ListGroup>
                 { body }

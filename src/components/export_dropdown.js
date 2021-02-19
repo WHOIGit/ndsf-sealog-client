@@ -36,11 +36,12 @@ class ExportDropdown extends Component {
   static propTypes = {
     id: PropTypes.string,
     prefix: PropTypes.string,
-    cruiseID: PropTypes.string,
-    loweringID: PropTypes.string,
     disabled: PropTypes.bool.isRequired,
     hideASNAP: PropTypes.bool.isRequired,
-    eventFilter: PropTypes.object.isRequired
+    eventFilter: PropTypes.object.isRequired,
+    cruiseID: PropTypes.string,
+    loweringID: PropTypes.string,
+    sort: PropTypes.string
   };
 
   componentDidUpdate(prevProps) {
@@ -71,8 +72,9 @@ class ExportDropdown extends Component {
     let author = (eventFilter.author)? `&author=${eventFilter.author.split(',').join("&author=")}` : '';
     let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
     let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
+    let sort = (this.state.sort)? `&sort=${this.state.sort}` : '';
 
-    return await axios.get(`${API_ROOT_URL}/api/v1/events${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/events${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -100,8 +102,9 @@ class ExportDropdown extends Component {
     let author = (eventFilter.author)? `&author=${eventFilter.author.split(',').join("&author=")}` : '';
     let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
     let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
+    let sort = (this.state.sort)? `&sort=${this.state.sort}` : '';
 
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data${this.state.cruiseOrLowering}?${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data${this.state.cruiseOrLowering}?${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -130,8 +133,9 @@ class ExportDropdown extends Component {
     let author = (eventFilter.author)? `&author=${eventFilter.author.split(',').join("&author=")}` : '';
     let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
     let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
+    let sort = (this.state.sort)? `&sort=${this.state.sort}` : '';
 
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -196,9 +200,5 @@ class ExportDropdown extends Component {
     );
   }
 }
-
-// function mapStateToProps(state) {
-//   return {};
-// }
 
 export default connect(null, null)(ExportDropdown);
