@@ -11,6 +11,7 @@ import ImportCruisesModal from './import_cruises_modal';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
+import StatsForROVTeamModal from './stats_for_rov_team_modal';
 import { USE_ACCESS_CONTROL, DEFAULT_VESSEL, CUSTOM_CRUISE_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 

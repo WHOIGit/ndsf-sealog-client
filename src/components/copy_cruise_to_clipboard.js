@@ -44,20 +44,20 @@ class CopyCruiseToClipboard extends Component {
       let cruiseDurationValue = cruiseStopTime.diff(cruiseStartTime);
 
       let text = "";
-      text += `${this.state.cruise_name} ID:       ${this.props.cruise.cruise_id}\n`;
-      text += (this.props.cruise.cruise_additional_meta.cruise_name) ? `${this.state.cruise_name} Name:     ${this.props.cruise.cruise_additional_meta.cruise_name}\n` : "";
+      text += `${this.state.cruise_name} ID:${' '.repeat(13-this.state.cruise_name.length)}${this.props.cruise.cruise_id}\n`;
+      text += (this.props.cruise.cruise_additional_meta.cruise_name) ? `${this.state.cruise_name} Name:${' '.repeat(11-this.state.cruise_name.length)}${this.props.cruise.cruise_additional_meta.cruise_name}\n` : "";
       text += (this.props.cruise.cruise_additional_meta.cruise_pi) ? `Chief Scientist: ${this.props.cruise.cruise_additional_meta.cruise_pi}\n` : "";
       text += (this.props.cruise.cruise_additional_meta.cruise_description) ? `Description:     ${this.props.cruise.cruise_additional_meta.cruise_description}\n` : "";
-      text += (this.props.cruise.cruise_additional_meta.cruise_vessel) ? `Vessel:          ${this.props.cruise.cruise_additional_meta.cruise_vessel}\n` : "";
-      text += (this.props.cruise.cruise_location) ? `Location:        ${this.props.cruise.cruise_location}\n` : "";
+      text += (this.props.cruise.cruise_additional_meta.cruise_vessel) ? `Vessel:   ${this.props.cruise.cruise_additional_meta.cruise_vessel}\n` : "";
+      text += (this.props.cruise.cruise_location) ? `Location: ${this.props.cruise.cruise_location}\n` : "";
       text += '\n';
       text += `Start of ${this.state.cruise_name}: ${cruiseStartTime.format("YYYY/MM/DD")}\n`;
-      text += (this.props.cruise.cruise_additional_meta.cruise_departure_location) ? `Departure Port:  ${this.props.cruise.cruise_additional_meta.cruise_departure_location}\n` : "";
+      text += (this.props.cruise.cruise_additional_meta.cruise_departure_location) ? `Departure Port:      ${this.props.cruise.cruise_additional_meta.cruise_departure_location}\n` : "";
       text += `End of ${this.state.cruise_name}:   ${cruiseStopTime.format("YYYY/MM/DD")}\n`;
-      text += (this.props.cruise.cruise_additional_meta.cruise_arrival_location) ? `Arrival Port:    ${this.props.cruise.cruise_additional_meta.cruise_arrival_location}\n` : "";
+      text += (this.props.cruise.cruise_additional_meta.cruise_arrival_location) ? `Arrival Port:        ${this.props.cruise.cruise_additional_meta.cruise_arrival_location}\n` : "";
       text += '\n';
       text += `${this.state.cruise_name} Duration: ${moment.duration(cruiseDurationValue).format("d [days] h [hours] m [minutes]")}\n`;
-      text += (this.props.cruiseLowerings && this.props.cruiseLowerings.length > 0) ? `\nLowerings:  ${this.props.cruiseLowerings.map((lowering) => { return lowering.lowering_id }).join(', ')}\n` : "";
+      text += (this.props.cruiseLowerings && this.props.cruiseLowerings.length > 0) ? `\nLowerings: ${this.props.cruiseLowerings.map((lowering) => { return lowering.lowering_id }).join(', ')}\n` : "";
 
       this.setState({text});
     }

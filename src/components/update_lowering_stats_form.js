@@ -7,6 +7,7 @@ import { renderDateTimePicker, renderTextField, dateFormat } from './form_elemen
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import * as mapDispatchToProps from '../actions';
+import { CUSTOM_LOWERING_NAME } from '../client_config';
 
 const timeFormat = "HH:mm:ss.SSS";
 
@@ -14,6 +15,10 @@ class UpdateLoweringStatsForm extends Component {
 
   constructor (props) {
     super(props);
+
+    this.state = {
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
+    }
   }
 
   static propTypes = {
@@ -27,7 +32,7 @@ class UpdateLoweringStatsForm extends Component {
 
     let initialValues = {
       start: this.props.milestones.lowering_start,
-      // off_deck: (this.props.milestones.lowering_off_deck) ? this.props.milestones.lowering_off_deck : null,
+      off_deck: (this.props.milestones.lowering_off_deck) ? this.props.milestones.lowering_off_deck : null,
       descending: (this.props.milestones.lowering_descending) ? this.props.milestones.lowering_descending : null,
       on_bottom: (this.props.milestones.lowering_on_bottom) ? this.props.milestones.lowering_on_bottom : null,
       off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
@@ -51,7 +56,7 @@ class UpdateLoweringStatsForm extends Component {
 
     let milestones = {
       lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : formProps.start,
-      // lowering_off_deck: (formProps.off_deck && formProps.off_deck._isAMomentObject) ? formProps.off_deck.toISOString() : formProps.off_deck,
+      lowering_off_deck: (formProps.off_deck && formProps.off_deck._isAMomentObject) ? formProps.off_deck.toISOString() : formProps.off_deck,
       lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : formProps.descending,
       lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : formProps.on_bottom,
       lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : formProps.off_bottom,
@@ -89,20 +94,6 @@ class UpdateLoweringStatsForm extends Component {
     )
   }
 
-
-                  // <Form.Row className="justify-content-sm-center">
-                  //   <Field
-                  //     name="start"
-                  //     component={renderDateTimePicker}
-                  //     label="Start Date/Time (UTC)"
-                  //     timeFormat={timeFormat}
-                  //     required={true}
-                  //     sm={11}
-                  //     md={11}
-                  //     lg={7}
-                  //   />
-                  // </Form.Row>
-
   render() {
 
     const { handleSubmit, submitting, valid, pristine } = this.props;
@@ -116,6 +107,17 @@ class UpdateLoweringStatsForm extends Component {
                   <Form.Row className="justify-content-sm-center">  
                     <Field
                       name="start"
+                      component={renderDateTimePicker}
+                      label={`${this.state.lowering_name} Start Date/Time (UTC)`}
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="off_deck"
                       component={renderDateTimePicker}
                       label="Off Deck Date/Time (UTC)"
                       timeFormat={timeFormat}
