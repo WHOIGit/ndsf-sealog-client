@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip, OverlayTrigger} from 'react-bootstrap';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import * as mapDispatchToProps from '../actions';
-import { CUSTOM_CRUISE_NAME } from '../client_config';
+import { CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 
 class CopyCruiseToClipboard extends Component {
 
@@ -16,7 +16,8 @@ class CopyCruiseToClipboard extends Component {
 
     this.state = {
       text: '',
-      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise"
+      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise",
+      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
     }
   }
 
@@ -57,7 +58,7 @@ class CopyCruiseToClipboard extends Component {
       text += (this.props.cruise.cruise_additional_meta.cruise_arrival_location) ? `Arrival Port:        ${this.props.cruise.cruise_additional_meta.cruise_arrival_location}\n` : "";
       text += '\n';
       text += `${this.state.cruise_name} Duration: ${moment.duration(cruiseDurationValue).format("d [days] h [hours] m [minutes]")}\n`;
-      text += (this.props.cruiseLowerings && this.props.cruiseLowerings.length > 0) ? `\nLowerings: ${this.props.cruiseLowerings.map((lowering) => { return lowering.lowering_id }).join(', ')}\n` : "";
+      text += (this.props.cruiseLowerings && this.props.cruiseLowerings.length > 0) ? `\n${this.state.lowerings_name}: ${this.props.cruiseLowerings.map((lowering) => { return lowering.lowering_id }).join(', ')}\n` : "";
 
       this.setState({text});
     }

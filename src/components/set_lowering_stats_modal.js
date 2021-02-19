@@ -16,15 +16,12 @@ import Cookies from 'universal-cookie';
 import { Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { renderAlert, renderMessage } from './form_elements';
 import UpdateLoweringStatsForm from './update_lowering_stats_form';
-import { CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers';
+import * as mapDispatchToProps from '../actions';
 
 HighchartsExporting(Highcharts);
 HighchartsNoDataToDisplay(Highcharts);
-
-import * as mapDispatchToProps from '../actions';
-
-import { API_ROOT_URL } from '../client_config';
 
 const { BaseLayer } = LayersControl
 
@@ -61,7 +58,8 @@ class SetLoweringStatsModal extends Component {
         lowering_on_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom : null,
         lowering_off_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom : null,
         lowering_floats_on_surface: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_floats_on_surface) ? this.props.lowering.lowering_additional_meta.milestones.lowering_floats_on_surface : null,
-        lowering_stop: this.props.lowering.stop_ts
+        lowering_stop: this.props.lowering.stop_ts,
+        lowering_aborted: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? this.props.lowering.lowering_additional_meta.milestones.lowering_aborted : null,
       },
       stats: {
         max_depth: (this.props.lowering.lowering_additional_meta.stats && this.props.lowering.lowering_additional_meta.stats.max_depth) ? this.props.lowering.lowering_additional_meta.stats.max_depth : null,
@@ -97,6 +95,7 @@ class SetLoweringStatsModal extends Component {
           title: {
             text: null,
           },
+          min: 0,
           reversed: true
         },
         plotOptions: {
@@ -119,7 +118,6 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    // this.auxDatasourceFilters = ['vehicleRealtimeNavData', 'vehicleReNavData'];
     this.auxDatasourceFilters = ['vehicleRealtimeNavData'];
 
     this.handleMoveEnd = this.handleMoveEnd.bind(this);
@@ -292,13 +290,11 @@ class SetLoweringStatsModal extends Component {
       }, 0)
 
       this.setState((prevState) => { return { touched: true, stats: { ...prevState.stats, max_depth: maxDepth } } });
-      // this.setPlotLines()
     }
   }
 
   handleClick() {
     if(this.state.milestone_to_edit) {
-      // this.setState((prevState) => { return { touched: true, milestones: Object.assign(prevState.milestones, { [prevState.milestone_to_edit]: prevState.event.ts }) } });
       this.setState((prevState) => { return { touched: true, milestones: { ...prevState.milestones, [prevState.milestone_to_edit]: prevState.event.ts } } });
       this.setMilestoneToEdit()
     }
@@ -313,8 +309,6 @@ class SetLoweringStatsModal extends Component {
 
     const newLoweringRecord = { ...this.props.lowering, start_ts: this.state.milestones.lowering_start, stop_ts: this.state.milestones.lowering_stop, lowering_additional_meta: newLoweringAdditionalMeta }
 
-    // console.log(newLoweringRecord)
-
     this.props.handleUpdateLowering(newLoweringRecord)
     this.setState({touched: false})
   }
@@ -322,7 +316,6 @@ class SetLoweringStatsModal extends Component {
   setMilestoneToEdit(milestone = null) {
     if(milestone !== null && milestone !== this.state.milestone_to_edit) {
       this.setState({milestone_to_edit: milestone})
-      // this.setPlotLines()
     }
     else {
       this.setState({milestone_to_edit: null}) 
@@ -353,17 +346,6 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    // if(this.state.stats.max_depth) {
-    //   let maxDepthPair = this.state.tracklines.vehicleRealtimeNavData.depth.find((depth) => depth[1] === this.state.stats.max_depth)
-    //   if(maxDepthPair) {
-    //     xAxis.plotLines.push({
-    //         color: '#F0F0F',
-    //         width: 2,
-    //         value: maxDepthPair[0]
-    //     })
-    //   }
-    // }
-
     this.setState((prevState) => { return { depthChartOptions: { ...prevState.depthChartOptions, xAxis: xAxis } } });
   }
 
@@ -377,7 +359,6 @@ class SetLoweringStatsModal extends Component {
   }
 
   tooltipFormatter() {
-    // console.log(this)
     let event_txt = `<b>EVENT: ${this.state.event.event_value}</b>`
     if(this.state.event.event_value === 'FREE_FORM') {
       event_txt = `<span>${event_txt}<br/><b>Text:</b> ${this.state.event.event_free_text}</span>`
@@ -395,14 +376,12 @@ class SetLoweringStatsModal extends Component {
 
   handleZoomEnd() {
     if(this.map) {
-      // console.log("zoom end:", this.map.leafletElement.getZoom())
       this.setState({zoom: this.map.leafletElement.getZoom()});
     }
   }
 
   handleMoveEnd() {
     if(this.map) {
-      // console.log("move end:", this.map.leafletElement.getCenter())
       this.setState({center: this.map.leafletElement.getCenter()});
     }
   }
@@ -454,13 +433,6 @@ class SetLoweringStatsModal extends Component {
       }
     })
 
-    // if (this.state.tracklines.vehicleRealtimeNavData && this.state.tracklines.vehicleRealtimeNavData.depth) {
-    //   console.log("depth:", this.state.tracklines.vehicleRealtimeNavData.depth)
-    // }
-
-    // <span className={(this.state.milestone_to_edit == 'lowering_off_deck')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_deck')}>Off Deck: {this.state.milestones.lowering_off_deck}</span><br/>
-          
-
     const milestones_and_stats = (this.state.show_edit_form) ?
       <Col md={12}>
         <UpdateLoweringStatsForm milestones={this.state.milestones} stats={this.state.stats} handleHide={this.handleShowEditForm} handleFormSubmit={this.handleTweak}/>
@@ -473,7 +445,8 @@ class SetLoweringStatsModal extends Component {
           <span className={(this.state.milestone_to_edit == 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}>On Bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}>Off Bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_floats_on_surface')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_floats_on_surface')}>Floats on Surface: {this.state.milestones.lowering_floats_on_surface}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}>On Deck: {this.state.milestones.lowering_stop}</span>
+          <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}>On Deck: {this.state.milestones.lowering_stop}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}>Aborted: {this.state.milestones.lowering_aborted}</span>
         </div>
       </Col>,
       <Col key="stats" md={6}>

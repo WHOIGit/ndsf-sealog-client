@@ -68,7 +68,7 @@ class ResetPassword extends Component {
       const loginCardHeader = (<h5 className="form-signin-heading">Reset Password</h5>);
       const { handleSubmit, submitting, valid } = this.props;
 
-      const loginButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button>;
+      const loginButton = ( RECAPTCHA_SITE_KEY === "")? <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button> : <Button variant="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Login</Button>;
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA

@@ -5,7 +5,7 @@ import Cookies from 'universal-cookie';
 import PropTypes from 'prop-types';
 import { Button, Table, Modal } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 
 let fileDownload = require('js-file-download');
 
@@ -27,7 +27,9 @@ class StatsForROVTeamModal extends Component {
       lowering_stats: null,
       lowering_samples: null,
       lowering_stat_totals: null,
-      status_msg: ''
+      status_msg: '',
+      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
+      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
     }
 
     this.handleClose = this.handleClose.bind(this);
@@ -97,7 +99,7 @@ class StatsForROVTeamModal extends Component {
 
   async fetchLowerings() {
 
-    this.setState({status_msg: "Downloading lowering data..."})
+    this.setState({status_msg: `Downloading ${this.state.lowering_name.toLowerCase()} data...`})
 
     const lowerings = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/bycruise/${this.props.cruise.id}`,
       {
@@ -272,7 +274,7 @@ class StatsForROVTeamModal extends Component {
     var Results = [];
 
     Results.push([
-      'Dive ID',
+      `${this.state.lowering_name} ID`,
       'Location',
       'Deck to Deck',
       'Deployment',
@@ -322,7 +324,7 @@ class StatsForROVTeamModal extends Component {
     });
 
     Results.push([
-      this.state.lowerings.length + " Dives",
+      `${this.state.lowerings.length} ${this.state.lowerings_name}`,
       "Totals:",
       moment.duration(lowering_stat_totals.total_duration).format('HH:mm:ss', { trim: false }),
       moment.duration(lowering_stat_totals.deployment_duration).format('HH:mm:ss', { trim: false }),
@@ -358,7 +360,7 @@ class StatsForROVTeamModal extends Component {
     const statTableHeaders = (
       <thead>
         <tr>
-          <th>Dive ID</th>
+          <th>{this.state.lowering_name} ID</th>
           <th>Location</th>
           <th>Deck to Deck</th>
           <th>Deployment</th>

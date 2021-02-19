@@ -6,8 +6,8 @@ import { Button, Col, Form, Row} from 'react-bootstrap';
 import { renderDateTimePicker, renderTextField, dateFormat } from './form_elements';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import * as mapDispatchToProps from '../actions';
 import { CUSTOM_LOWERING_NAME } from '../client_config';
+import * as mapDispatchToProps from '../actions';
 
 const timeFormat = "HH:mm:ss.SSS";
 
@@ -308,10 +308,6 @@ function validate(formProps) {
   if(formProps.descending && formProps.descending !== '' && moment.utc(formProps.descending, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
     errors.descending = 'Descending date must be after off_deck date';
   }
-
-  // if(formProps.off_deck && formProps.off_deck !== '' && moment.utc(formProps.off_deck, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-  //   errors.off_deck = 'Off deck date must be after start date';
-  // }
 
   if (formProps.on_bottom && formProps.on_bottom !== '' && formProps.off_bottom && formProps.off_bottom !== '') {
     if(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {

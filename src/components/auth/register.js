@@ -18,7 +18,6 @@ class Register extends Component {
 
   }
 
-
   componentWillUnmount() {
     this.props.leaveRegisterForm();
   }

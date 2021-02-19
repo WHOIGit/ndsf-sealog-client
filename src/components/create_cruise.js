@@ -6,7 +6,7 @@ import { Button, Form, Card } from 'react-bootstrap';
 import moment from 'moment';
 import { renderAlert, renderDatePicker, renderMessage, renderTextField, renderTextArea, dateFormat } from './form_elements';
 import * as mapDispatchToProps from '../actions';
-import { DEFAULT_VESSEL, CUSTOM_CRUISE_NAME } from '../client_config';
+import { DEFAULT_VESSEL, CRUISE_ID_REGEX, CRUISE_ID_PLACEHOLDER, CUSTOM_CRUISE_NAME } from '../client_config';
 
 class CreateCruise extends Component {
 
@@ -94,7 +94,7 @@ class CreateCruise extends Component {
                     name="cruise_id"
                     component={renderTextField}
                     label={`${this.state.cruise_name} ID`}
-                    placeholder="i.e. AT42-01"
+                    placeholder={(CRUISE_ID_PLACEHOLDER) ? CRUISE_ID_PLACEHOLDER : "i.e. CS2001"}
                     required={true}
                   />
                   <Field
@@ -109,7 +109,7 @@ class CreateCruise extends Component {
                     name="cruise_vessel"
                     component={renderTextField}
                     label="Vessel Name"
-                    placeholder="i.e. R/V Atlantis"
+                    placeholder="i.e. R/V Discovery"
                     required={true}
                   />
                   <Field
@@ -275,6 +275,17 @@ function validate(formProps) {
 
 }
 
+function warn(formProps) {
+
+  const warnings = {}
+
+  if (formProps.cruise_id && CRUISE_ID_REGEX != null && !formProps.cruise_id.match(CRUISE_ID_REGEX)) {
+    warnings.cruise_id = 'Non-standard ID';
+  }
+
+  return warnings;
+}
+
 const afterSubmit = (result, dispatch) =>
   dispatch(reset('createCruise'));
 
@@ -293,6 +304,7 @@ export default compose(
     form: 'createCruise',
     enableReinitialize: true,
     validate: validate,
+    warn: warn,
     keepDirtyOnReinitialize : true,
     onSubmitSuccess: afterSubmit
   })
