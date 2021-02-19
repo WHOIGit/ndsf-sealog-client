@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 import { FilePond } from 'react-filepond';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
-import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const dateFormat = "YYYY-MM-DD"
@@ -160,7 +160,7 @@ Bounding Box:  ${(this.props.lowering.lowering_additional_meta.stats && this.pro
                   name="lowering_id"
                   component={renderTextField}
                   label={`${this.state.lowering_name} ID`}
-                  placeholder="i.e. J2-1000"
+                  placeholder={LOWERING_ID_PLACEHOLDER}
                   required={true}
                 />
                 <Field
@@ -290,6 +290,18 @@ function validate(formProps) {
 
 }
 
+function warn(formProps) {
+
+  const warnings = {}
+
+  if (formProps.lowering_id && LOWERING_ID_REGEX != null && !formProps.lowering_id.match(LOWERING_ID_REGEX)) {
+    warnings.lowering_id = 'Non-standard ID';
+  }
+
+  return warnings;
+}
+
+
 function mapStateToProps(state) {
 
   let initialValues = { ...state.lowering.lowering }
@@ -317,6 +329,7 @@ export default compose(
   reduxForm({
     form: 'editLowering',
     enableReinitialize: true,
-    validate: validate
+    validate: validate,
+    warn: warn
   })
 )(UpdateLowering);

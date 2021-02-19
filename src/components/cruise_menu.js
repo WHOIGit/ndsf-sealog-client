@@ -215,23 +215,6 @@ class CruiseMenu extends Component {
     this.props.showModal('statsForROVTeam', { cruise: cruise });
   }
 
-
-  // renderFiles() {
-  //   if(this.props.cruise.cruise_additional_meta && this.props.cruise.cruise_additional_meta.cruise_files && this.props.cruise.cruise_additional_meta.cruise_files.length > 0) {
-  //     let files = this.props.cruise.cruise_additional_meta.cruise_files.map((file, index) => {
-  //       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleFileDownload(file)}>{file}</a> <FontAwesomeIcon onClick={() => this.handleFileDeleteModal(file)} className='text-danger' icon='trash' fixedWidth /></div>
-  //     })
-
-  //     return (
-  //       <div className="mb-2">
-  //         {files}
-  //       </div>
-  //     )
-  //   }
-      
-  //   return null
-  // }
-
   renderCruiseFiles(files) {
     let output = files.map((file, index) => {
       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleCruiseFileDownload(file)}>{file}</a></div>
@@ -247,11 +230,9 @@ class CruiseMenu extends Component {
   }
 
   renderLoweringCard() {
-    // console.log(this.state.activeLowering)
 
     if(this.state.activeLowering){
       let loweringStartTime = moment.utc(this.state.activeLowering.start_ts);
-      // let loweringOffDeckTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_deck) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_deck) : null;
       let loweringDescendingTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) : null;
       let loweringOnBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
