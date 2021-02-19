@@ -163,7 +163,7 @@ class UpdateCruise extends Component {
                   name="cruise_id"
                   component={renderTextField}
                   label={`${this.state.cruise_name} ID`}
-                  placeholder={CRUISE_ID_PLACEHOLDER}
+                  placeholder={(CRUISE_ID_PLACEHOLDER) ? CRUISE_ID_PLACEHOLDER : "i.e. CS2001"}
                   required={true}
                 />
                 <Field
@@ -176,7 +176,7 @@ class UpdateCruise extends Component {
                   name="cruise_vessel"
                   component={renderTextField}
                   label="Vessel Name"
-                  placeholder="i.e. R/V Atlantis"
+                  placeholder="i.e. R/V Discovery"
                   required={true}
                 />
                 <Field
@@ -252,7 +252,7 @@ class UpdateCruise extends Component {
               </Form.Row>
                 <Form.Label>{this.state.cruise_name} Files</Form.Label>
                 {this.renderFiles()}
-                <FilePond 
+                <FilePond
                   ref={ref => this.pond = ref}
                   allowMultiple={true} 
                   maxFiles={5}

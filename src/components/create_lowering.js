@@ -64,7 +64,7 @@ class CreateLowering extends Component {
                     name="lowering_id"
                     component={renderTextField}
                     label={`${this.state.lowering_name} ID`}
-                    placeholder={LOWERING_ID_PLACEHOLDER}
+                    placeholder={(LOWERING_ID_PLACEHOLDER) ? LOWERING_ID_PLACEHOLDER : "i.e. ROV-0042"}
                     required={true}
                   />
                   <Field
@@ -179,7 +179,6 @@ function warn(formProps) {
 
   return warnings;
 }
-
 
 const afterSubmit = (result, dispatch) =>
   dispatch(reset('createLowering'));
