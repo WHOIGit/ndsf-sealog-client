@@ -341,10 +341,6 @@ function mapStateToProps(state) {
 
   let initialValues = { ...state.lowering.lowering }
 
-  // if (initialValues.lowering_tags) {
-  //   initialValues.lowering_tags = initialValues.lowering_tags.join(', ')
-  // }
-
   if (initialValues.lowering_additional_meta) {
 
     if (initialValues.lowering_additional_meta.lowering_description) {
@@ -362,6 +358,7 @@ function mapStateToProps(state) {
     if (initialValues.lowering_additional_meta.lowering_passengers) {
       initialValues.lowering_passengers = initialValues.lowering_additional_meta.lowering_passengers
     }
+
     // delete initialValues.lowering_additional_meta
   }
 

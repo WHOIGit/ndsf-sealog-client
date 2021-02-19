@@ -216,7 +216,7 @@ class CruiseMenu extends Component {
       let loweringOffBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
       let loweringOnSurfaceTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_holding_50m) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_holding_50m) : null;
       let loweringStopTime = moment.utc(this.state.activeLowering.stop_ts);
-      let loweringAbortedTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) : null;
+      let loweringAbortTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) : null;
 
       let deck2DeckDurationValue = (loweringOffDeckTime) ? loweringStopTime.diff(loweringOffDeckTime) : null;
       let deploymentDuration = (loweringOffDeckTime && loweringDescendingTime) ? loweringDescendingTime.diff(loweringOffDeckTime) : null;
@@ -239,7 +239,7 @@ class CruiseMenu extends Component {
       let loweringAborted = (loweringAbortTime) ? <span><strong>Aborted:</strong> {loweringAbortTime.format("YYYY-MM-DD HH:mm")}<br/></span> : null;
 
       let loweringMaxDepth = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.max_depth)? <span><strong>Max Depth:</strong> {this.state.activeLowering.lowering_additional_meta.stats.max_depth}<br/></span>: null;
-      let loweringBoundingBox = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.bounding_box)? <span><strong>BBox:</strong> {this.state.activeLowering.lowering_additional_meta.stats.bounding_box.join(', ')}<br/></span>: null;
+      let loweringBoundingBox = (this.state.activeLowering.lowering_additional_meta.stats && this.state.activeLowering.lowering_additional_meta.stats.bounding_box)? <span><strong>Bounding Box:</strong> {this.state.activeLowering.lowering_additional_meta.stats.bounding_box.join(', ')}<br/></span>: null;
 
       let loweringFiles = (this.state.activeLowering.lowering_additional_meta.lowering_files && this.state.activeLowering.lowering_additional_meta.lowering_files.length > 0)? <div><strong>Files:</strong>{this.renderLoweringFiles(this.state.activeLowering.lowering_additional_meta.lowering_files)}</div>: null;
 

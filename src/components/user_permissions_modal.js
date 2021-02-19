@@ -7,7 +7,7 @@ import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Collapse, Form, ListGroup, Modal } from 'react-bootstrap';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 
 const updateType = {
     ADD: true,
@@ -22,7 +22,8 @@ class RenderTableRow extends Component {
     super(props);
 
     this.state = {
-      open: false
+      open: false,
+      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
     }
 
     this.toggleRowCollapse = this.toggleRowCollapse.bind(this);

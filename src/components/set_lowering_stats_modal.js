@@ -52,8 +52,6 @@ class SetLoweringStatsModal extends Component {
       showMarker: false,
       height: "400px",
 
-
-
       milestone_to_edit: null,
       milestones: {
         lowering_start: this.props.lowering.start_ts,
@@ -134,7 +132,6 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    // this.auxDatasourceFilters = ['vehicleRealtimeHipapData', 'vehicleReNavData'];
     this.auxDatasourceFilters = ['vehicleRealtimeHipapData'];
 
     this.handleMoveEnd = this.handleMoveEnd.bind(this);
@@ -476,7 +473,7 @@ class SetLoweringStatsModal extends Component {
           <span className={(this.state.milestone_to_edit == 'lowering_on_tow')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_tow')}> On tow: {this.state.milestones.lowering_on_tow}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_lift_attached')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_lift_attached')}> Lift attached: {this.state.milestones.lowering_lift_attached}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}> On deck: {this.state.milestones.lowering_stop}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}> Dive Aborted: {this.state.milestones.lowering_aborted}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}> Dive Aborted: {this.state.milestones.lowering_aborted}</span>
         </div>
       </Col>,
       <Col key="stats" md={6}>
@@ -484,7 +481,7 @@ class SetLoweringStatsModal extends Component {
           <span>Surface Conditions:<br/>{(this.state.stats.surface_conditions) ? this.state.stats.surface_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)}) : '' }</span>
           <span>Subsea Conditions:<br/>{(this.state.stats.subsea_conditions) ? this.state.stats.subsea_conditions.split('\n').map((line) => { return (<span>&nbsp;&nbsp;{line}<br/></span>)}) : '' }</span>
           <span>Max Depth: {this.state.stats.max_depth} <OverlayTrigger placement="top" overlay={<Tooltip id="maxDepthTooltip">Click to calculate max depth from depth data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateMaxDepth() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
-          <span>BBox: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
+          <span>Bounding Box: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
         </div>
       </Col>]     
 
