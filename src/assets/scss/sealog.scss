@@ -2,11 +2,15 @@
 @import "variables.scss";
 
 // Import Bootstrap
-@import "../../../node_modules/bootstrap/scss/bootstrap.scss";
+@import "~bootstrap/scss/bootstrap.scss";
+
+// Import fonts
+@import "~@fontsource/roboto/index.css"; // Weight 400.
+@import "~@fontsource/roboto/700.css"; // Weight 700.
 
 // Import FontAwesome
-@import "../../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";
-@import "../../../node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
+//@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+//@import "~@fortawesome/fontawesome-free/scss/solid.scss";
 
 .nav-tabs,
 .nav-pills,
@@ -32,8 +36,6 @@
     }
   }
 }
-
-@import "../../../node_modules/react-datetime/css/react-datetime.css";
 
 .btn-template {
   font-size: .85rem;
@@ -78,14 +80,15 @@
   text-transform: capitalize;
 }
 
-
 // Utility class to hide arrow from dropdown
-
 .dropdown.no-arrow {
   .dropdown-toggle::after {
     display: none;
   }
 }
+
+// react-datetime styles
+@import "~react-datetime/css/react-datetime.css";
 
 // react-datetime customizations
 
