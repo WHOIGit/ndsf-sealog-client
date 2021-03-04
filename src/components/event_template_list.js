@@ -64,9 +64,9 @@ class EventTemplateList extends Component {
     }
   }
 
-  async handleEventSubmit(event_template) {
+  async handleEventSubmit(event_template, e = null) {
 
-    const needs_modal = event_template.event_options.reduce((needs, option) => {
+    const needs_modal = (e && e.shiftKey) || event_template.event_options.reduce((needs, option) => {
       return (option.event_option_type !== 'static text') ? true : needs;
     }, false);
 
@@ -105,7 +105,7 @@ class EventTemplateList extends Component {
                 this.props.event_templates.filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled).map((event_template) => {
 
                   return (
-                    <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ () => this.handleEventSubmit(event_template) }>{ event_template.event_name }</Button>
+                    <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ (e) => this.handleEventSubmit(event_template, e) }>{ event_template.event_name }</Button>
                   );
                 })
               }
@@ -118,7 +118,7 @@ class EventTemplateList extends Component {
                       this.props.event_templates.filter((event_template) => (typeof event_template.disabled === 'undefined' || !event_template.disabled) && event_template.template_categories.includes(template_category)).map((event_template) => {
 
                         return (
-                          <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ () => this.handleEventSubmit(event_template) }>{ event_template.event_name }</Button>
+                          <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ (e) => this.handleEventSubmit(event_template, e) }>{ event_template.event_name }</Button>
                         );
                       })
                     }
@@ -132,7 +132,7 @@ class EventTemplateList extends Component {
       else {
         return this.props.event_templates.filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled).map((event_template) => {
           return (
-            <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ () => this.handleEventSubmit(event_template) }>{ event_template.event_name }</Button>
+            <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ (e) => this.handleEventSubmit(event_template, e) }>{ event_template.event_name }</Button>
           );
         })
       }
