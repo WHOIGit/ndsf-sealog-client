@@ -29,7 +29,7 @@ const maxEventsPerPage = 10;
 
 const initCenterPosition = DEFAULT_LOCATION;
 
-const positionAuxDataSources = ['vehicleRealtimeNavData','vehicleRealtimeUSBLData'];
+const positionAuxDataSources = ['vehicleRealtimeNavData','vehicleRealtimeHipapData'];
 
 class LoweringMap extends Component {
 
@@ -154,10 +154,14 @@ class LoweringMap extends Component {
         }
       }).then((response) => {
         response.data.forEach((r_data) => {
-          const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
-          if(latLng[0] != 0 && latLng[1] != 0) {
-            trackline.polyline.addLatLng(latLng);
-            trackline.eventIDs.push(r_data['event_id']);
+          try {
+            const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
+            if(latLng[0] != 0 && latLng[1] != 0) {
+              trackline.polyline.addLatLng(latLng);
+              trackline.eventIDs.push(r_data['event_id']);
+            }
+          } catch(err) {
+            console.log("No nav found")
           }
         });
 
