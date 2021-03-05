@@ -178,10 +178,7 @@ class LoweringMap extends Component {
 
     for (let index=0;index<this.auxDatasourceFilters.length;index++) {
       if (tracklines[this.auxDatasourceFilters[index]]) {
-        this.setState((prevState) => {
-          return { tracklines: tracklines, fetching: false, posDataSource: this.auxDatasourceFilters[index] }
-        });
-
+        this.setState({ tracklines: tracklines, fetching: false, posDataSource: this.auxDatasourceFilters[index] });
         break;
       }
     }
@@ -190,7 +187,6 @@ class LoweringMap extends Component {
   }
 
   initMapView() {
-
     if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
       // console.log("using:", this.state.posDataSource)
       this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter());
