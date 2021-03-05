@@ -66,7 +66,7 @@ class EventTemplateList extends Component {
 
   async handleEventSubmit(event_template, e = null) {
 
-    const (e && e.shiftKey) || needs_modal = event_template.event_options.reduce((needs, option) => {
+    const needs_modal = (e && e.shiftKey) || event_template.event_options.reduce((needs, option) => {
       return (option.event_option_type !== 'static text') ? true : needs;
     }, false);
 
