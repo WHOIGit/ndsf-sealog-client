@@ -192,7 +192,7 @@ class LoweringMap extends Component {
   initMapView() {
 
     if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
-      console.log("using:", this.state.posDataSource)
+      // console.log("using:", this.state.posDataSource)
       this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter());
       this.map.leafletElement.fitBounds(this.state.tracklines[this.state.posDataSource].polyline.getBounds());
     }
