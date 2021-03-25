@@ -218,7 +218,7 @@ class EventHistory extends Component {
             { Label }
             <Form inline className="float-right">
               {NewEventToggle}
-              <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onChange={this.handleSearchChange}/>
+              <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onKeyPress={this.handleKeyDown} onChange={this.handleSearchChange}/>
               <OverlayTrigger placement="top" overlay={compressTooltip}><span className="mr-2" variant="secondary" size="sm" onClick={ () => this.handleHideEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
               <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
             </Form>
@@ -231,7 +231,7 @@ class EventHistory extends Component {
           { Label }
           <Form inline className="float-right">
             {NewEventToggle}
-            <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onChange={this.handleSearchChange}/>
+            <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onKeyPress={this.handleKeyDown} onChange={this.handleSearchChange}/>
             <OverlayTrigger placement="top" overlay={expandTooltip}><span className="mr-2" variant="secondary" size="sm" onClick={ () => this.handleShowEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
             <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
           </Form>
@@ -271,6 +271,13 @@ class EventHistory extends Component {
 
     let fieldVal = event.target.value;
     this.setState({ filterTimer: setTimeout(() => this.setState({filter: fieldVal}), 1500) })
+  }
+
+  handleKeyDown(event) {
+
+    if (event.key === 'Enter' && event.shiftKey === false) {
+      event.preventDefault();
+    }
   }
 
   handleShowEventHistoryFullscreen() {
