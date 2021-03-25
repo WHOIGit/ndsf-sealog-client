@@ -154,20 +154,16 @@ class LoweringMap extends Component {
         }
       }).then((response) => {
         response.data.forEach((r_data) => {
-          try {
-            const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
-            if(latLng[0] != 0 && latLng[1] != 0) {
-              trackline.polyline.addLatLng(latLng);
-              trackline.eventIDs.push(r_data['event_id']);
-            }
-          } catch(err) {
-            console.log("No nav found")
+          const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
+          if(latLng[0] != 0 && latLng[1] != 0) {
+            trackline.polyline.addLatLng(latLng);
+            trackline.eventIDs.push(r_data['event_id']);
           }
         });
 
       }).catch((error)=>{
-        if(error.response && error.response.data.statusCode !== 404) {
-          console.log(error);
+        if(error.response && error.response.data.statusCode === 404) {
+          console.warn("No", this.auxDatasourceFilters[index], "data found")
         }
       });
 
@@ -431,6 +427,7 @@ class LoweringMap extends Component {
             <TileLayer
               attribution={layer.attribution}
               url={layer.url}
+              maxNativeZoom={layer.maxNativeZoom}
             />
           </BaseLayer>
         );
