@@ -42,7 +42,7 @@ class Login extends Component {
     if(errorMsg) {
       return (
         <Alert variant="danger">
-          <strong>Opps!</strong> {errorMsg}
+          <strong>Oops!</strong> {errorMsg}
         </Alert>
       );
     } else if (msg) {
