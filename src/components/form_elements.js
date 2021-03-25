@@ -206,7 +206,7 @@ export function renderAlert(message) {
   if (message) {
     return (
       <Alert variant="danger">
-        <strong>Opps!</strong> {message}
+        <strong>Oops!</strong> {message}
       </Alert>
     );
   }
