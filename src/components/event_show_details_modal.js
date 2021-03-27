@@ -238,4 +238,3 @@ export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   connectModal({ name: 'eventShowDetails', destroyOnHide: true }) 
 )(EventShowDetailsModal)
-
