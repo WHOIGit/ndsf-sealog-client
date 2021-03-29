@@ -29,6 +29,7 @@ class ExportDropdown extends Component {
     this.state = {
       id: (this.props.id)? this.props.id : "dropdown-download",
       prefix: (this.props.prefix)? this.props.prefix : null,
+      sort: (this.props.sort)? this.props.sort : null,
       cruiseOrLowering: cruiseOrLowering
     };
   }
@@ -59,6 +60,9 @@ class ExportDropdown extends Component {
       this.setState({prefix: this.props.prefix});
     }
 
+    if (this.props.sort !== prevProps.sort) {
+      this.setState({sort: this.props.sort});
+    }
   }
 
   async fetchEvents(format, eventFilter, hideASNAP) {

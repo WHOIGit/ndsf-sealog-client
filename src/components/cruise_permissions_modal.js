@@ -1,9 +1,8 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connectModal } from 'redux-modal';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { Form, ListGroup, Modal } from 'react-bootstrap';
 import { API_ROOT_URL, CUSTOM_CRUISE_NAME } from '../client_config';
@@ -54,7 +53,7 @@ class CruisePermissionsModal extends Component {
         payload.remove = [user_id];
       }
 
-      const result = await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise_id}/permissions`,
+      await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise_id}/permissions`,
       payload,
       {
         headers: {
@@ -122,7 +121,7 @@ class CruisePermissionsModal extends Component {
 
   render() {
 
-    const { show, submitting, valid, handleHide } = this.props
+    const { show, handleHide } = this.props
 
     const body = ( this.state.cruise && this.state.users) ?
       this.state.users.map((user) => {
@@ -143,7 +142,7 @@ class CruisePermissionsModal extends Component {
       
     if (body) {
       return (
-        <Modal show={show} onHide={this.props.handleHide}>
+        <Modal show={show} onHide={handleHide}>
           <form>
             <Modal.Header closeButton>
               <Modal.Title>{this.state.cruise_name} Permissions</Modal.Title>

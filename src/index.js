@@ -4,6 +4,10 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { Route, Switch } from 'react-router';
 import Cookies from 'universal-cookie';
+
+// eslint-disable-next-line no-unused-vars
+import momentDurationFormatSetup from 'moment-duration-format';
+
 import { AUTH_USER } from './actions/types';
 import Header from './components/header';
 import Footer from './components/footer';

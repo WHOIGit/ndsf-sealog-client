@@ -292,7 +292,7 @@ class LoweringMap extends Component {
       const loweringDuration = loweringEndTime.diff(loweringStartTime);
       
       return (
-        <Card className="border-secondary" className="p-1">
+        <Card className="border-secondary p-1">
           <div className="d-flex align-items-center justify-content-between">
               <span className="text-primary">00:00:00</span>
               <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
