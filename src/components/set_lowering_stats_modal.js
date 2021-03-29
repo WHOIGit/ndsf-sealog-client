@@ -251,7 +251,6 @@ class SetLoweringStatsModal extends Component {
     this.initMapView();
   }
 
-
   initMapView() {
 
     if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
