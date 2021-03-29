@@ -3,13 +3,12 @@ import React, { Component } from 'react';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
-import momentDurationFormatSetup from 'moment-duration-format';
 import { connect } from 'react-redux';
-import { Accordion, Button, Row, Col, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Accordion, Button, Row, Col, Card } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
-import { API_ROOT_URL, MAIN_SCREEN_TXT, DEFAULT_VESSEL, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL, MAIN_SCREEN_TXT, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const CRUISE_ROUTE = "/files/cruises";
@@ -351,7 +350,7 @@ class CruiseMenu extends Component {
 
     const activeYear = (years.size == 1) ? years.values().next().value : null;
 
-    this.setState({years});
+    this.setState({years, activeYear});
   }
 
   buildCruiseList() {

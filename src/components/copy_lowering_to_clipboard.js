@@ -37,12 +37,8 @@ class CopyLoweringToClipboard extends Component {
   copyToClipboard() {
     if(this.props.lowering && this.props.lowering.lowering_id) {
 
-      let loweringStartTime = moment.utc(this.props.lowering.start_ts);
-      let loweringHatchSecuredTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_hatch_secured) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_hatch_secured) : null;
       let loweringOffDeckTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) : null;
-      let loweringInWaterTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_in_water) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_in_water) : null;
       let loweringVentingNowTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_venting_now) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_venting_now) : null;
-      let loweringSubSurfaceTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_sub_surface) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_sub_surface) : null;
       let loweringVentsSecuredTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_vents_secured) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_vents_secured) : null;
       let loweringOnBottomTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
@@ -101,9 +97,6 @@ class CopyLoweringToClipboard extends Component {
   render() {
     return (<OverlayTrigger placement="top" overlay={<Tooltip id="copyToClipboardTooltip">Copy to clipboard</Tooltip>}><CopyToClipboard text={this.state.text} ><FontAwesomeIcon icon='clipboard' fixedWidth /></CopyToClipboard></OverlayTrigger>);
   }
-}
-
-function mapStateToProps(state) {
 }
 
 export default compose(

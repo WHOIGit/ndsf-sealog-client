@@ -192,7 +192,7 @@ class ImportCruisesModal extends Component {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button size="sm" variant="secondary" size="sm" onClick={this.quitImport}>Close</Button>
+            <Button size="sm" variant="secondary" onClick={this.quitImport}>Close</Button>
           </Modal.Footer>
         </Modal>
       );

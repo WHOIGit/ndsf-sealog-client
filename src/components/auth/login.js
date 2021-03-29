@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
 import { reduxForm, Field } from 'redux-form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Alert, Row, Col, Container, Form, Card, Button, Image } from 'react-bootstrap';
-import { renderAlert, renderTextField } from '../form_elements';
+import { Alert, Row, Col, Form, Card, Button, Image } from 'react-bootstrap';
+import { renderTextField } from '../form_elements';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as mapDispatchToProps from '../../actions';
 import { ROOT_PATH, LOGIN_SCREEN_TXT, LOGIN_IMAGE, RECAPTCHA_SITE_KEY } from '../../client_config';
@@ -42,7 +41,7 @@ class Login extends Component {
     if(errorMsg) {
       return (
         <Alert variant="danger">
-          <strong>Opps!</strong> {errorMsg}
+          <strong>Oops!</strong> {errorMsg}
         </Alert>
       );
     } else if (msg) {
