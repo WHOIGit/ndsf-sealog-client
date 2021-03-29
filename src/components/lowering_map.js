@@ -187,10 +187,6 @@ class LoweringMap extends Component {
       this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter());
       this.map.leafletElement.fitBounds(this.state.tracklines[this.state.posDataSource].polyline.getBounds());
     }
-    else if(this.state.tracklines.vehicleRealtimeHipapData && !this.state.tracklines.vehicleRealtimeHipapData.polyline.isEmpty()) {
-      this.map.leafletElement.panTo(this.state.tracklines.vehicleRealtimeHipapData.polyline.getBounds().getCenter());
-      this.map.leafletElement.fitBounds(this.state.tracklines.vehicleRealtimeHipapData.polyline.getBounds());
-    }
   }
 
   updateEventFilter(filter = {}) {
@@ -262,27 +258,6 @@ class LoweringMap extends Component {
   handleMoveEnd() {
     if(this.map) {
       this.setState({center: this.map.leafletElement.getCenter()});
-    }
-  }
-
-  calcVehiclePosition(selected_event) {
-    if(selected_event && selected_event.aux_data) {
-      let vehicleRealtimeNavData = selected_event.aux_data.find(aux_data => aux_data.data_source == "vehicleRealtimeHipapData");
-      if(vehicleRealtimeNavData) {
-        try {
-          let latObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "latitude");
-          let lonObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "longitude");
-
-          if(latObj && lonObj && latObj.data_value != this.state.position.lat && lonObj.data_value != this.state.position.lng) {
-            this.setState({ showMarker: true, position:{ lat:latObj.data_value, lng: lonObj.data_value}});
-          } else if(!latObj || !lonObj) {
-            this.setState({showMarker: false});
-          }
-        }
-        catch(err) {
-          console.log("unable to process nav");
-        }
-      }
     }
   }
 
@@ -411,9 +386,9 @@ class LoweringMap extends Component {
 
   renderMarker() {
 
-    if(this.props.event.selected_event.aux_data && typeof this.props.event.selected_event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeHipapData') !== 'undefined') {
+    if(this.props.event.selected_event.aux_data && typeof this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource) !== 'undefined') {
 
-      const realtimeNavData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeHipapData');
+      const posData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
       try {
         const latLng = [ parseFloat(posData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(posData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]
         return (
