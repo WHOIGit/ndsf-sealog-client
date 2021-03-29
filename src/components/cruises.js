@@ -129,7 +129,6 @@ class Cruises extends Component {
 
     const editTooltip = (<Tooltip id="editTooltip">Edit this {this.state.cruise_name.toLowerCase()}.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {this.state.cruise_name.toLowerCase()}.</Tooltip>);
-    const showStatsForROVTeamTooltip = (<Tooltip id="showTooltip">Show {this.state.cruise_name.toLowerCase()} stats.</Tooltip>);    
     const showTooltip = (<Tooltip id="showTooltip">{this.state.cruise_name} is hidden, click to show.</Tooltip>);
     const hideTooltip = (<Tooltip id="hideTooltip">{this.state.cruise_name} is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
