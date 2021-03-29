@@ -3,7 +3,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { reduxForm, Field, reset } from 'redux-form';
 import { Button, Form, Card } from 'react-bootstrap';
-import { renderAlert, renderDateTimePicker, renderMessage, renderSwitch, renderTextField, renderTextArea, dateFormat, timeFormat } from './form_elements';
+import { renderAlert, renderDateTimePicker, renderMessage, renderTextField, renderTextArea, dateFormat, timeFormat } from './form_elements';
 import moment from 'moment';
 import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';

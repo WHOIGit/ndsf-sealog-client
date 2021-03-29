@@ -1,11 +1,10 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connectModal } from 'redux-modal';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import moment from 'moment';
 import Cookies from 'universal-cookie';
-import { Button, Collapse, Form, ListGroup, Modal } from 'react-bootstrap';
+import { Form, ListGroup, Modal } from 'react-bootstrap';
 import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
 
 const updateType = {
@@ -54,7 +53,7 @@ class LoweringPermissionsModal extends Component {
         payload.remove = [user_id];
       }
 
-      const result = await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}/permissions`,
+      await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}/permissions`,
       payload,
       {
         headers: {
@@ -122,7 +121,7 @@ class LoweringPermissionsModal extends Component {
 
   render() {
 
-    const { show, submitting, valid, handleHide } = this.props
+    const { show, handleHide } = this.props
 
     const body = ( this.state.lowering && this.state.users) ?
       this.state.users.map((user) => {
@@ -143,7 +142,7 @@ class LoweringPermissionsModal extends Component {
       
     if (body) {
       return (
-        <Modal show={show} onHide={this.props.handleHide}>
+        <Modal show={show} onHide={handleHide}>
           <form>
             <Modal.Header closeButton>
               <Modal.Title>{this.state.lowering_name} Permissions</Modal.Title>

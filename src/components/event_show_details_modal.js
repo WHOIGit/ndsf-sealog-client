@@ -144,7 +144,7 @@ class EventShowDetailsModal extends Component {
         return (sortAuxDataSourceReference.indexOf(a.data_source) < sortAuxDataSourceReference.indexOf(b.data_source)) ? -1 : 1;
       });
 
-      let return_aux_data = aux_data.map((aux_data, index) => {
+      let return_aux_data = aux_data.map((aux_data) => {
         const aux_data_points = aux_data.data_array.map((data, index) => {
           return(<div key={`${aux_data.data_source}_data_point_${index}`}><span className="data-name">{data.data_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
         });
