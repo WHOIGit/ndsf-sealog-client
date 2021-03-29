@@ -16,7 +16,7 @@ class EventInput extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, valid } = this.props;
+    const { handleSubmit, submitting, pristine } = this.props;
 
     return (
       <Form className={this.props.className} onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
@@ -29,7 +29,7 @@ class EventInput extends Component {
             className="form-control"
           />
           <InputGroup.Append>
-            <Button block type="submit" disabled={submitting || !valid}>Submit</Button>
+            <Button block type="submit" disabled={submitting || pristine}>Submit</Button>
           </InputGroup.Append>
         </InputGroup>
       </Form>

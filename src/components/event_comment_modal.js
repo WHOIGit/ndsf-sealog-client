@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 import { reduxForm, Field } from 'redux-form';
 import { renderTextArea } from './form_elements';
-import * as mapDispatchToProps from '../actions';
 
 class EventCommentModal extends Component {
 

@@ -153,7 +153,7 @@ class CreateEventTemplate extends Component {
     return (
       <div className="w-100">
         {fields.map((options, index) =>
-          <React.Fragment>
+          <React.Fragment key={`option_field_${index}`}>
             <hr className="border-secondary" />
             <span>
               <Form.Label>Option #{index + 1}</Form.Label>
@@ -318,7 +318,7 @@ function validate(formProps) {
 
   if (typeof formProps.template_categories === 'string' && formProps.template_categories !== '' ) {
     try {
-      const valueArray = formProps.template_categories.split(',');
+      formProps.template_categories.split(',');
     }
     catch(err) {
       errors.template_categories = 'Invalid csv list';

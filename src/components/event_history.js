@@ -102,10 +102,8 @@ class EventHistory extends Component {
         }, false)
       }
 
-      const updateHandler = (update, flags) => {
-        // console.log("update:", update)
+      const updateHandler = (update) => {
         if(!(!this.state.showASNAP && update.event_value === "ASNAP") && filteredEvent(update.event_value)) {
-          // console.log("updating")
           if(this.state.page == 0) {
             this.props.updateEventHistory(update);            
           }
@@ -113,17 +111,13 @@ class EventHistory extends Component {
         }
       };
 
-      const updateAuxDataHandler = (update, flags) => {
-        // console.log("updated aux data");
+      const updateAuxDataHandler = (update) => {
         if(this.state.showNewEventDetails && update.event_id === this.state.event.id) {
-          // console.log("fetching aux data")
           this.fetchEventExport(this.state.event.id);
         }
       };
 
-      const deleteHandler = (update, flags) => {
-        // console.log("delete:", update)
-        // console.log("deleting")
+      const deleteHandler = (update) => {
         if(update.id === this.state.event.id) {
           if(this.props.history[0] && this.state.page == 0) {
             this.fetchEventExport(this.props.history[0].id);
@@ -203,7 +197,6 @@ class EventHistory extends Component {
 
     const Label = "Event History";
     const expandTooltip = (<Tooltip id="expandHistoryTooltip">Expand event history</Tooltip>);
-    const expandNewestEventTooltip = (<Tooltip id="expandNewestEventTooltip">Expand last Event</Tooltip>);
     const compressTooltip = (<Tooltip id="compressTooltip">Compress event history</Tooltip>);
     const showTooltip = (<Tooltip id="showHistoryTooltip">Show event history</Tooltip>);
     const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
@@ -218,7 +211,7 @@ class EventHistory extends Component {
             { Label }
             <Form inline className="float-right">
               {NewEventToggle}
-              <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onChange={this.handleSearchChange}/>
+              <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onKeyPress={this.handleKeyDown} onChange={this.handleSearchChange}/>
               <OverlayTrigger placement="top" overlay={compressTooltip}><span className="mr-2" variant="secondary" size="sm" onClick={ () => this.handleHideEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
               <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
             </Form>
@@ -231,7 +224,7 @@ class EventHistory extends Component {
           { Label }
           <Form inline className="float-right">
             {NewEventToggle}
-            <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onChange={this.handleSearchChange}/>
+            <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onKeyPress={this.handleKeyDown} onChange={this.handleSearchChange}/>
             <OverlayTrigger placement="top" overlay={expandTooltip}><span className="mr-2" variant="secondary" size="sm" onClick={ () => this.handleShowEventHistoryFullscreen() }><FontAwesomeIcon icon='compress' fixedWidth/></span></OverlayTrigger>{' '}
             <OverlayTrigger placement="top" overlay={hideTooltip}><span variant="secondary" size="sm" onClick={ () => this.handleHideEventHistory() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger>
           </Form>
@@ -271,6 +264,13 @@ class EventHistory extends Component {
 
     let fieldVal = event.target.value;
     this.setState({ filterTimer: setTimeout(() => this.setState({filter: fieldVal}), 1500) })
+  }
+
+  handleKeyDown(event) {
+
+    if (event.key === 'Enter' && event.shiftKey === false) {
+      event.preventDefault();
+    }
   }
 
   handleShowEventHistoryFullscreen() {
@@ -370,7 +370,7 @@ class EventHistory extends Component {
         return (sortAuxDataSourceReference.indexOf(a.data_source) < sortAuxDataSourceReference.indexOf(b.data_source)) ? -1 : 1;
       });
 
-      let return_aux_data = aux_data.map((aux_data, index) => {
+      let return_aux_data = aux_data.map((aux_data) => {
         const aux_data_points = aux_data.data_array.map((data, index) => {
           return(<div key={`${aux_data.data_source}_data_point_${index}`}><span className="data-name">{data.data_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
         });

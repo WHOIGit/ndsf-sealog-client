@@ -64,7 +64,7 @@ class UserProfile extends Component {
     if (this.props.errorMessage) {
       return (
         <Alert variant="danger">
-          <strong>Opps!</strong> {this.props.errorMessage}
+          <strong>Oops!</strong> {this.props.errorMessage}
         </Alert>
       );
     }

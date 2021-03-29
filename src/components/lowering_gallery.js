@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonToolbar, Row, Col, Tabs, Tab, Form, FormGroup } from 'react-bootstrap';
+import { ButtonToolbar, Row, Col, Tabs, Tab, Form } from 'react-bootstrap';
 import EventShowDetailsModal from './event_show_details_modal';
 import LoweringGalleryTab from './lowering_gallery_tab';
 import LoweringDropdown from './lowering_dropdown';
@@ -43,7 +43,7 @@ class LoweringGallery extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
 
     if(prevProps.event.hideASNAP !== this.props.event.hideASNAP) {
       this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);

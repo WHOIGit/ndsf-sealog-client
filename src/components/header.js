@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING, ROOT_PATH, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
+import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 class Header extends Component {

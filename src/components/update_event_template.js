@@ -18,7 +18,6 @@ class UpdateEventTemplate extends Component {
   }
 
   componentDidMount() {
-    //console.log(this.props.match);
     if(this.props.eventTemplateID) {
       this.props.initEventTemplate(this.props.eventTemplateID);
     }
@@ -44,7 +43,6 @@ class UpdateEventTemplate extends Component {
       });
     }    
 
-    // console.log("formProps:", formProps);
     this.props.updateEventTemplate(formProps);
     this.props.fetchEventTemplates();
   }
@@ -320,7 +318,7 @@ function validate(formProps) {
 
   if (typeof formProps.template_categories === 'string' && formProps.template_categories !== '' ) {
     try {
-      const valueArray = formProps.template_categories.split(',');
+      formProps.template_categories.split(',');
     }
     catch(err) {
       errors.template_categories = 'Invalid csv list';

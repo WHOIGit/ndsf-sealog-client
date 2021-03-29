@@ -154,20 +154,16 @@ class LoweringMap extends Component {
         }
       }).then((response) => {
         response.data.forEach((r_data) => {
-          try {
-            const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
-            if(latLng[0] != 0 && latLng[1] != 0) {
-              trackline.polyline.addLatLng(latLng);
-              trackline.eventIDs.push(r_data['event_id']);
-            }
-          } catch(err) {
-            console.log("No nav found")
+          const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
+          if(latLng[0] != 0 && latLng[1] != 0) {
+            trackline.polyline.addLatLng(latLng);
+            trackline.eventIDs.push(r_data['event_id']);
           }
         });
 
       }).catch((error)=>{
-        if(error.response && error.response.data.statusCode !== 404) {
-          console.log(error);
+        if(error.response && error.response.data.statusCode === 404) {
+          console.warn("No", this.auxDatasourceFilters[index], "data found")
         }
       });
 
@@ -188,7 +184,6 @@ class LoweringMap extends Component {
 
   initMapView() {
     if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
-      // console.log("using:", this.state.posDataSource)
       this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter());
       this.map.leafletElement.fitBounds(this.state.tracklines[this.state.posDataSource].polyline.getBounds());
     }
@@ -297,7 +292,7 @@ class LoweringMap extends Component {
       const loweringDuration = loweringEndTime.diff(loweringStartTime);
       
       return (
-        <Card className="border-secondary" className="p-1">
+        <Card className="border-secondary p-1">
           <div className="d-flex align-items-center justify-content-between">
               <span className="text-primary">00:00:00</span>
               <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
@@ -393,9 +388,9 @@ class LoweringMap extends Component {
 
     if(this.props.event.selected_event.aux_data && typeof this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource) !== 'undefined') {
 
-      const realtimeNavData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
+      const posData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
       try {
-        const latLng = [ parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]
+        const latLng = [ parseFloat(posData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(posData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]
         return (
           <Marker position={latLng}>
             <Popup>
@@ -431,6 +426,7 @@ class LoweringMap extends Component {
             <TileLayer
               attribution={layer.attribution}
               url={layer.url}
+              maxNativeZoom={layer.maxNativeZoom}
             />
           </BaseLayer>
         );

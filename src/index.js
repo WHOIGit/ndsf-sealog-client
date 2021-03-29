@@ -5,6 +5,10 @@ import { ConnectedRouter } from 'connected-react-router';
 import { Route, Switch } from 'react-router';
 import Cookies from 'universal-cookie';
 import { AUTH_USER } from './actions/types';
+
+// eslint-disable-next-line no-unused-vars
+import momentDurationFormatSetup from 'moment-duration-format';
+
 import Header from './components/header';
 import Footer from './components/footer';
 import Login from './components/auth/login';
