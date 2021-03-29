@@ -1,12 +1,13 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connectModal } from 'redux-modal';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Collapse, Form, ListGroup, Modal } from 'react-bootstrap';
-import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL } from '../client_config';
 
 const updateType = {
     ADD: true,
@@ -21,8 +22,7 @@ class RenderTableRow extends Component {
     super(props);
 
     this.state = {
-      open: false,
-      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
+      open: false
     }
 
     this.toggleRowCollapse = this.toggleRowCollapse.bind(this);
@@ -38,8 +38,11 @@ class RenderTableRow extends Component {
     const { cruise, lowerings } = this.props
 
     return (
-      <ListGroup.Item onClick={this.toggleRowCollapse}>
-        {cruise}
+      <ListGroup.Item>
+        <div className="clearfix">
+          {cruise}
+          <FontAwesomeIcon className="text-primary float-right" icon={(this.state.open) ? 'chevron-up' : 'chevron-down'} fixedWidth onClick={this.toggleRowCollapse}/>
+        </div>
         <Collapse in={this.state.open}>
           {lowerings}
         </Collapse>
@@ -94,7 +97,6 @@ class UserPermissionsModal extends Component {
         return lowering_permissions;
 
       }, permissions);
-
     }
   }
 
@@ -112,7 +114,7 @@ class UserPermissionsModal extends Component {
         payload.remove = [user_id];
       }
 
-      const result = await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${cruise_id}/permissions`,
+      await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${cruise_id}/permissions`,
       payload,
       {
         headers: {
@@ -144,7 +146,7 @@ class UserPermissionsModal extends Component {
         payload.remove = [user_id];
       }
 
-      const result = await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${lowering_id}/permissions`,
+      await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${lowering_id}/permissions`,
       payload,
       {
         headers: {
@@ -212,7 +214,7 @@ class UserPermissionsModal extends Component {
 
   render() {
 
-    const { show, user_id, submitting, valid, handleHide } = this.props
+    const { show, user_id, handleHide } = this.props
 
     const body = ( this.props.user_id && this.state.cruises && this.state.lowerings) ?
       this.state.cruises.map((cruise) => {
@@ -229,13 +231,13 @@ class UserPermissionsModal extends Component {
         let endOfCruise = new Date(cruise.stop_ts);
 
         const cruiseLoweringsTemp = this.state.lowerings.filter(lowering => moment.utc(lowering.start_ts).isBetween(moment.utc(startOfCruise), moment.utc(endOfCruise)));
-        const loweringCheckboxes = <ul>{this.state.lowerings_name}:<br/>{
+        const loweringCheckboxes = <ul> {
           cruiseLoweringsTemp.map((lowering) => { 
             return (<Form.Check
               type="switch"
               key={`lowering_${lowering.id}`}
               id={`lowering_${lowering.id}`}
-              label={`${lowering.lowering_id}${(lowering.lowering_location) ? ': ' + lowering.lowering_location : ''}`}
+              label={`${lowering.lowering_id}: ${(lowering.lowering_location) ? lowering.lowering_location + ' ' : ''}`}
               checked={(lowering.lowering_access_list && lowering.lowering_access_list.includes(user_id))}
               disabled={!(cruise.cruise_access_list && cruise.cruise_access_list.includes(user_id))}
               onChange={ (e) => { this.updateLoweringPermissions(lowering.id, user_id, e.target.checked) }}
@@ -249,7 +251,7 @@ class UserPermissionsModal extends Component {
       
     if (body) {
       return (
-        <Modal show={show} onHide={this.props.handleHide}>
+        <Modal show={show} onHide={handleHide}>
           <form>
             <Modal.Header closeButton>
               <Modal.Title>User Permissions</Modal.Title>

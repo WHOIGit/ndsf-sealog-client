@@ -88,9 +88,6 @@ class CopyLoweringToClipboard extends Component {
   }
 }
 
-function mapStateToProps(state) {
-}
-
 export default compose(
   connect(null, mapDispatchToProps)
 )(CopyLoweringToClipboard);

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Alert, Button, Tab, Tabs } from 'react-bootstrap';
 import EventTemplateOptionsModal from './event_template_options_modal';
 import { Client } from '@hapi/nes/lib/client';
-import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from '../client_config';
+import { WS_ROOT_URL } from '../client_config';
 
 import * as mapDispatchToProps from '../actions';
 
@@ -44,13 +44,11 @@ class EventTemplateList extends Component {
       //   }
       // })
 
-      const deleteHandler = (update, flags) => {
-        // console.log("delete:", update);
+      const deleteHandler = () => {
         this.props.fetchEventTemplatesForMain();
       };
 
-      const updateHandler = (update, flags) => {
-        // console.log("update:", update);
+      const updateHandler = () => {
         this.props.fetchEventTemplatesForMain();
       };
 
@@ -85,7 +83,7 @@ class EventTemplateList extends Component {
       
       }, []);
 
-      const event = await this.props.createEvent(event_template.event_value, '', event_options);
+      await this.props.createEvent(event_template.event_value, '', event_options);
     }
   }
 

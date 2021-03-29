@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Col, Form, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { Alert, Col, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Datetime from 'react-datetime';
 import moment from 'moment';
 
@@ -56,7 +56,7 @@ export function renderSelectField({ input, label, placeholder, required, options
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Form.Control as="select" {...input} placeholder={placeholder} isInvalid={touched && error}>
+      <Form.Control as="select" {...input} placeholder={placeholder} isInvalid={touched && error} disabled={disabled} >
         { defaultOption }
         { optionList }
       </Form.Control>
@@ -68,12 +68,14 @@ export function renderSelectField({ input, label, placeholder, required, options
 export function renderDatePicker({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', disabled=false, xs=12, sm=6, md=12, lg=6 }) {
   let requiredField = (required)? <span className='text-danger'> *</span> : '';
   
-  // inputProps={{className: "form-control form-control-sm"}} 
+  const inputProps = {
+    disabled: disabled
+  } 
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat) : null} dateFormat={dateFormat} timeFormat={false} selected={input.value ? moment.utc(input.value, dateFormat) : null }/>
+      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat) : null} dateFormat={dateFormat} timeFormat={false} selected={input.value ? moment.utc(input.value, dateFormat) : null } inputProps={inputProps} />
       {touched && (error && <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div>)}
     </Form.Group>
   );
@@ -82,12 +84,14 @@ export function renderDatePicker({ input, label, required, meta: { touched, erro
 export function renderDateTimePicker({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', timeFormat='HH:mm:ss', disabled=false, xs=12, sm=6, md=12, lg=6 }) {
   let requiredField = (required)? <span className='text-danger'> *</span> : ''
 
-  // inputProps={{className: "form-control form-control-sm"}} 
+  const inputProps = {
+    disabled: disabled
+  } 
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null } />
+      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null } inputProps={inputProps} />
       {touched && (error && <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div>)}
     </Form.Group>
   )
@@ -96,7 +100,6 @@ export function renderDateTimePicker({ input, label, required, meta: { touched, 
 export function renderCheckboxGroup({ label, options, input, required, meta: { dirty, error }, disabled=false, inline=false, indication=false }) {
 
   const requiredField = (required)? (<span className='text-danger'> *</span>) : '';
-  // console.log(options);
   const checkboxList = options.map((option, index) => {
 
     const tooltip = (option.description)? (<Tooltip id={`${option.value}_Tooltip`}>{option.description}</Tooltip>) : null
@@ -166,7 +169,7 @@ export function renderRadioGroup({ label, options, input, required, meta: { dirt
       disabled={disabled}
       type="radio"
       inline={inline}
-      onChange={event => {
+      onChange={() => {
         return input.onChange(option.value);
       }}
     />
@@ -206,7 +209,7 @@ export function renderAlert(message) {
   if (message) {
     return (
       <Alert variant="danger">
-        <strong>Opps!</strong> {message}
+        <strong>Oops!</strong> {message}
       </Alert>
     );
   }

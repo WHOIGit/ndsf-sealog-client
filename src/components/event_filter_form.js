@@ -153,12 +153,12 @@ class EventFilterForm extends Component {
   }
 }
 
-function validate(formProps) {
+function validate() {
   const errors = {};
   return errors;
 }
 
-function mapStateToProps(state) {
+function mapStateToProps() {
   return {};
 }
 

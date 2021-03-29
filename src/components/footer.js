@@ -47,8 +47,7 @@ class Footer extends Component {
       //   }
       // })
 
-      const updateHandler = (update, flags) => {
-        // console.log("update:", update);
+      const updateHandler = () => {
         this.handleASNAPNotification();
       };
 

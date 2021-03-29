@@ -48,7 +48,6 @@ class UpdateCruise extends Component {
   }
 
   handleFileDeleteModal(file) {
-    // console.log("delete", file)
     this.props.showModal('deleteFile', { file: file, handleDelete: this.handleFileDelete });
   }
 

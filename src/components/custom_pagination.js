@@ -18,11 +18,10 @@ class CustomPagination extends Component {
     pageSelectFunc: PropTypes.func.isRequired,
     page: PropTypes.number.isRequired,
     count: PropTypes.number.isRequired,
-    style: PropTypes.object,
     className: PropTypes.string
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
 
     if(prevProps.maxPerPage !== this.props.maxPerPage) {
       this.setState({maxPerPage: this.props.maxPerPage})

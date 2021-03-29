@@ -3,7 +3,7 @@ import axios from 'axios';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import PropTypes from 'prop-types';
-import { Button, Table, Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import Highcharts from 'highcharts';
 import HighchartsNoDataToDisplay from "highcharts/modules/no-data-to-display";
 import HighchartsReact from 'highcharts-react-official';
@@ -15,12 +15,6 @@ HighchartsNoDataToDisplay(Highcharts);
 let fileDownload = require('js-file-download');
 
 const cookies = new Cookies();
-
-const headers = {
-  headers: {
-    authorization: cookies.get('token')
-  }
-}
 
 class SVProfileModal extends Component {
 
@@ -45,10 +39,9 @@ class SVProfileModal extends Component {
     this.fetchCTDData();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
 
     if(this.props.lowering && this.props.lowering !== prevProps.lowering) {
-      // console.log("lowering changed");
       this.fetchCTDData();
     }
   }
@@ -131,10 +124,9 @@ class SVProfileModal extends Component {
 
     const Results = header.concat(profile_data);
 
-
     let CsvString = "";
     
-    Results.forEach(function(RowItem, RowIndex) {
+    Results.forEach(function(RowItem) {
       CsvString += RowItem.join('\t\t') + "\r\n"
     });
     
@@ -144,7 +136,6 @@ class SVProfileModal extends Component {
   handleClose() {
     this.props.handleHide();
   }
-
 
   renderSVProfile(ctd_data) {
 

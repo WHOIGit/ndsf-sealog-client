@@ -73,7 +73,7 @@ import {
 
 const cookies = new Cookies();
 
-const authorizationHeader = { 
+export const authorizationHeader = { 
   headers: {
     authorization: cookies.get('token')
   }
@@ -94,7 +94,7 @@ export function validateJWT() {
     return await axios.get(`${API_ROOT_URL}/api/v1/auth/validate`, { headers: { authorization: cookies.get('token') } }
       ).then(() => {
         return dispatch({type: AUTH_USER});
-      }).catch((error)=>{
+      }).catch(()=>{
         console.error("JWT is invalid, logging out");
         return dispatch(logout());
       });
@@ -303,7 +303,7 @@ export async function createEventRequest(eventValue, eventFreeText, eventOptions
 
 export function createEvent(eventValue, eventFreeText = '', eventOptions = [], eventTS = '') {
 
-  return async dispatch => {
+  return async () => {
     try {
       const event = await createEventRequest(eventValue, eventFreeText, eventOptions, eventTS);
       return event;
@@ -339,7 +339,7 @@ export async function updateEventRequest(event_id, eventValue, eventFreeText = '
 
 export function updateEvent(event_id, eventValue, eventFreeText = '', eventOptions = [], eventTS = '') {
 
-  return async function(dispatch) {
+  return async () => {
     try {
       const event = await updateEventRequest(event_id, eventValue, eventFreeText, eventOptions, eventTS);
       return event;
@@ -380,7 +380,7 @@ export async function deleteEventRequest(event_id) {
 
 export function deleteEvent(event_id) {
 
-  return async function(dispatch) {
+  return async () => {
     try {
       const response = await deleteEventRequest(event_id);
       return response;
@@ -911,7 +911,7 @@ export function deleteLowering(id) {
   };
 }
 
-export function deleteUser(id, update = true) {
+export function deleteUser(id) {
 
   return async function (dispatch, getState) {
     return await axios.delete(`${API_ROOT_URL}/api/v1/users/${id}`, { headers: { authorization: cookies.get('token') } }
@@ -928,7 +928,7 @@ export function deleteUser(id, update = true) {
   };
 }
 
-export function deleteEventTemplate(id, update = true) {
+export function deleteEventTemplate(id) {
 
   return async function (dispatch, getState) {
     return await axios.delete(`${API_ROOT_URL}/api/v1/event_templates/${id}`, { headers: { authorization: cookies.get('token') } }

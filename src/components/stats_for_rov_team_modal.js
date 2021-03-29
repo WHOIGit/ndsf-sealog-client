@@ -11,12 +11,6 @@ let fileDownload = require('js-file-download');
 
 const cookies = new Cookies();
 
-const headers = {
-  headers: {
-    authorization: cookies.get('token')
-  }
-}
-
 class StatsForROVTeamModal extends Component {
 
   constructor (props) {
@@ -338,7 +332,7 @@ class StatsForROVTeamModal extends Component {
 
     let CsvString = "";
     
-    Results.forEach(function(RowItem, RowIndex) {
+    Results.forEach(function(RowItem) {
         
       CsvString += RowItem.join(',') + "\r\n";
     

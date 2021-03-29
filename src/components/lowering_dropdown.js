@@ -7,6 +7,7 @@ import { API_ROOT_URL } from '../client_config';
 
 const cookies = new Cookies();
 
+// eslint-disable-next-line react/display-name
 const LoweringDropdownToggle = React.forwardRef(
   ({ children, onClick }, ref) => {
 
@@ -25,8 +26,11 @@ const LoweringDropdownToggle = React.forwardRef(
   }
 );
 
+// eslint-disable-next-line react/display-name
 const LoweringDropdownMenu = React.forwardRef(
   ({ children, style, className, 'aria-labelledby': labeledBy }, ref) => {
+
+    // eslint-disable-next-line no-unused-vars
     const [value, setValue] = useState('');
 
     return (
