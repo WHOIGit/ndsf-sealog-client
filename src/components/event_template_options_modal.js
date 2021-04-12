@@ -5,8 +5,7 @@ import { reduxForm, Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { renderCheckboxGroup, renderDateTimePicker, renderRadioGroup, renderSelectField, renderStaticTextField, renderTextArea, renderTextField } from './form_elements';
-import { Button, Form, Modal } from 'react-bootstrap';
-import { API_ROOT_URL } from '../client_config';
+import { Button, Modal } from 'react-bootstrap';
 
 const required =  value => !value ? 'Required' : undefined
 const requiredArray =  value => !value || value.length === 0 ? 'Must select at least one option' : undefined

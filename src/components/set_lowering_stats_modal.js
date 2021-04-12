@@ -36,6 +36,8 @@ class SetLoweringStatsModal extends Component {
       lowering: {},
       lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
 
+      posDataSource: null,
+
       event: null,
 
       fetching: false,
@@ -117,7 +119,7 @@ class SetLoweringStatsModal extends Component {
       }
     }
 
-    this.auxDatasourceFilters = ['vehicleRealtimeNavData'];
+    this.auxDatasourceFilters = ['vehicleRealtimeNavData','vehicleRealtimeUSBLData'];
 
     this.handleMoveEnd = this.handleMoveEnd.bind(this);
     this.handleZoomEnd = this.handleZoomEnd.bind(this);
@@ -230,23 +232,28 @@ class SetLoweringStatsModal extends Component {
       }
     })
 
-    if(tracklines.vehicleRealtimeNavData) {
-      this.setState((prevState) => { return { events: events, tracklines: tracklines, fetching: false, depthChartOptions: { ...prevState.depthChartOptions, series: [ { data: tracklines.vehicleRealtimeNavData.depth } ] } } });
+    for (let index=0;index<this.auxDatasourceFilters.length;index++) {
+      if (tracklines[this.auxDatasourceFilters[index]]) {
+        this.setState((prevState) => {
+          return { events: events, tracklines: tracklines, fetching: false, depthChartOptions: { ...prevState.depthChartOptions, series: [ { data: tracklines[this.auxDatasourceFilters[index]].depth } ] }, posDataSource: this.auxDatasourceFilters[index] }
+        });
+
+        break;
+      }
     }
-    else {
+
+    if(this.state.fetching) {
       this.setState({ events: events, tracklines: tracklines, fetching: false }); 
     }
+
     this.initMapView();
   }
 
   initMapView() {
-    if(this.state.tracklines.vehicleReNavData && !this.state.tracklines.vehicleReNavData.polyline.isEmpty()) {
-      this.map.leafletElement.panTo(this.state.tracklines.vehicleReNavData.polyline.getBounds());
-      this.map.leafletElement.fitBounds(this.state.tracklines.vehicleReNavData.polyline.getBounds());
-    }
-    else if(this.state.tracklines.vehicleRealtimeNavData && !this.state.tracklines.vehicleRealtimeNavData.polyline.isEmpty()) {
-      this.map.leafletElement.panTo(this.state.tracklines.vehicleRealtimeNavData.polyline.getBounds().getCenter());
-      this.map.leafletElement.fitBounds(this.state.tracklines.vehicleRealtimeNavData.polyline.getBounds());
+
+    if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
+      this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter());
+      this.map.leafletElement.fitBounds(this.state.tracklines[this.state.posDataSource].polyline.getBounds());
     }
   }
 
@@ -274,15 +281,15 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleCalculateBoundingBox() {
-    if(this.state.tracklines.vehicleRealtimeNavData && !this.state.tracklines.vehicleRealtimeNavData.polyline.isEmpty()) {
-      let lowering_bounds = this.state.tracklines.vehicleRealtimeNavData.polyline.getBounds()
+    if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
+      let lowering_bounds = this.state.tracklines[this.state.posDataSource].polyline.getBounds()
       this.setState((prevState) => { return { touched: true, stats: { ...prevState.stats, bounding_box: [lowering_bounds.getNorth(),lowering_bounds.getEast(),lowering_bounds.getSouth(),lowering_bounds.getWest()] } } });
     }
   }
 
   handleCalculateMaxDepth() {
-    if(this.state.tracklines.vehicleRealtimeNavData && this.state.tracklines.vehicleRealtimeNavData.depth.length > 0) {
-      let maxDepth = this.state.tracklines.vehicleRealtimeNavData.depth.reduce((current_max_depth, depth) => {
+    if(this.state.tracklines[this.state.posDataSource] && this.state.tracklines[this.state.posDataSource].depth.length > 0) {
+      let maxDepth = this.state.tracklines[this.state.posDataSource].depth.reduce((current_max_depth, depth) => {
         current_max_depth = (depth[1] > current_max_depth) ? depth[1] : current_max_depth
         return current_max_depth
       }, 0)
@@ -388,9 +395,9 @@ class SetLoweringStatsModal extends Component {
 
     if(this.state.event) {
 
-      const realtimeNavData = this.state.event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData');
-      const rawLat = realtimeNavData['data_array'].find(data => data['data_name'] == 'latitude')
-      const rawLng = realtimeNavData['data_array'].find(data => data['data_name'] == 'longitude')
+      const posData = this.state.event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
+      const rawLat = posData['data_array'].find(data => data['data_name'] == 'latitude')
+      const rawLng = posData['data_array'].find(data => data['data_name'] == 'longitude')
       if( rawLat && rawLng ) {
         return (
           <Marker position={[ parseFloat(rawLat['data_value']), parseFloat(rawLng['data_value'])]}>
@@ -460,13 +467,9 @@ class SetLoweringStatsModal extends Component {
         oneToOne={true}
       />
 
-    const realtimeTrack = (this.state.tracklines.vehicleRealtimeNavData && !this.state.tracklines.vehicleRealtimeNavData.polyline.isEmpty()) ? 
-      <Polyline color="lime" positions={this.state.tracklines.vehicleRealtimeNavData.polyline.getLatLngs()} />
-      : null;
-
-    const reNavTrack = (this.state.tracklines.vehicleReNavData && !this.state.tracklines.vehicleReNavData.polyline.isEmpty()) ? 
-      <Polyline color="red" positions={this.state.tracklines.vehicleReNavData.polyline.getLatLngs()} />
-      : null;
+    const trackLine = (this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) ?
+      <Polyline color="lime" positions={this.state.tracklines[this.state.posDataSource].polyline.getLatLngs()} />
+    : null;
     
     if(this.props.lowering) {
       if(!this.state.fetching) {
@@ -491,8 +494,7 @@ class SetLoweringStatsModal extends Component {
                     {baseLayers}
                   </LayersControl>
                   <ScaleControl position="bottomleft" />
-                    {realtimeTrack}
-                    {reNavTrack}
+                    {trackLine}
                     {this.renderMarker()}
                   </Map>
                 </Col>

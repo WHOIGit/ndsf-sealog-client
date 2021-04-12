@@ -36,11 +36,9 @@ class LoweringGalleryTab extends Component {
 
   handleKeyPress(event) {
     if(event.key === "ArrowRight" && this.state.activePage < Math.ceil(this.props.imagesData.images.length / this.props.maxImagesPerPage)) {
-      console.log("right");
       this.handlePageSelect(this.state.activePage + 1)
     }
     else if(event.key === "ArrowLeft" && this.state.activePage > 1) {
-      console.log("left");
       this.handlePageSelect(this.state.activePage - 1)
     }
   }
