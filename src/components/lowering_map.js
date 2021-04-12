@@ -29,7 +29,7 @@ const maxEventsPerPage = 10;
 
 const initCenterPosition = DEFAULT_LOCATION;
 
-const positionAuxDataSources = ['vehicleRealtimeNavData'];
+const positionAuxDataSources = ['vehicleRealtimeNavData','vehicleRealtimeUSBLData'];
 
 class LoweringMap extends Component {
 
@@ -41,6 +41,8 @@ class LoweringMap extends Component {
     this.state = {
       fetching: false,
       tracklines: {},
+
+      posDataSource: null,
 
       replayEventIndex: 0,
       activePage: 1,
@@ -61,7 +63,6 @@ class LoweringMap extends Component {
     this.handlePageSelect = this.handlePageSelect.bind(this);
     this.updateEventFilter = this.updateEventFilter.bind(this);
 
-    this.calcVehiclePosition = this.calcVehiclePosition.bind(this);
     this.handleLoweringSelect = this.handleLoweringSelect.bind(this);
     this.handleLoweringModeSelect = this.handleLoweringModeSelect.bind(this);
     this.handleMoveEnd = this.handleMoveEnd.bind(this);
@@ -141,7 +142,7 @@ class LoweringMap extends Component {
 
     for (let index=0;index<this.auxDatasourceFilters.length;index++) {
 
-      tracklines[this.auxDatasourceFilters[index]] = {
+      let trackline = {
         eventIDs: [],
         polyline: L.polyline([]),
       };
@@ -153,36 +154,38 @@ class LoweringMap extends Component {
         }
       }).then((response) => {
         response.data.forEach((r_data) => {
-          try {
-            const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
-            if(latLng[0] != 0 && latLng[1] != 0) {
-              tracklines[this.auxDatasourceFilters[index]].polyline.addLatLng(latLng);
-              tracklines[this.auxDatasourceFilters[index]].eventIDs.push(r_data['event_id']);
-            }
-          } catch(err) {
-            console.log("No nav found")
+          const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
+          if(latLng[0] != 0 && latLng[1] != 0) {
+            trackline.polyline.addLatLng(latLng);
+            trackline.eventIDs.push(r_data['event_id']);
           }
         });
 
       }).catch((error)=>{
-        if(error.response && error.response.data.statusCode !== 404) {
-          console.log(error);
+        if(error.response && error.response.data.statusCode === 404) {
+          console.warn("No", this.auxDatasourceFilters[index], "data found")
         }
       });
+
+      if(trackline.eventIDs.length > 0) {
+        tracklines[this.auxDatasourceFilters[index]] = trackline
+      }
     }
 
-    this.setState({ tracklines: tracklines, fetching: false });
+    for (let index=0;index<this.auxDatasourceFilters.length;index++) {
+      if (tracklines[this.auxDatasourceFilters[index]]) {
+        this.setState({ tracklines: tracklines, fetching: false, posDataSource: this.auxDatasourceFilters[index] });
+        break;
+      }
+    }
+
     this.initMapView();
   }
 
   initMapView() {
-    if(this.state.tracklines.vehicleReNavData && !this.state.tracklines.vehicleReNavData.polyline.isEmpty()) {
-      this.map.leafletElement.panTo(this.state.tracklines.vehicleReNavData.polyline.getBounds());
-      this.map.leafletElement.fitBounds(this.state.tracklines.vehicleReNavData.polyline.getBounds());
-    }
-    else if(this.state.tracklines.vehicleRealtimeNavData && !this.state.tracklines.vehicleRealtimeNavData.polyline.isEmpty()) {
-      this.map.leafletElement.panTo(this.state.tracklines.vehicleRealtimeNavData.polyline.getBounds().getCenter());
-      this.map.leafletElement.fitBounds(this.state.tracklines.vehicleRealtimeNavData.polyline.getBounds());
+    if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
+      this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter());
+      this.map.leafletElement.fitBounds(this.state.tracklines[this.state.posDataSource].polyline.getBounds());
     }
   }
 
@@ -258,27 +261,6 @@ class LoweringMap extends Component {
     }
   }
 
-  calcVehiclePosition(selected_event) {
-    if(selected_event && selected_event.aux_data) {
-      let vehicleRealtimeNavData = selected_event.aux_data.find(aux_data => aux_data.data_source == "vehicleRealtimeNavData");
-      if(vehicleRealtimeNavData) {
-        try {
-          let latObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "latitude");
-          let lonObj = vehicleRealtimeNavData.data_array.find(data => data.data_name == "longitude");
-
-          if(latObj && lonObj && latObj.data_value != this.state.position.lat && lonObj.data_value != this.state.position.lng) {
-            this.setState({ showMarker: true, position:{ lat:latObj.data_value, lng: lonObj.data_value}});
-          } else if(!latObj || !lonObj) {
-            this.setState({showMarker: false});
-          }
-        }
-        catch(err) {
-          console.log("unable to process nav");
-        }
-      }
-    }
-  }
-
   handleEventShowDetailsModal(index) {
     this.props.showModal('eventShowDetails', { event: this.props.event.events[index], handleUpdateEvent: this.props.updateEvent });
   }
@@ -310,7 +292,7 @@ class LoweringMap extends Component {
       const loweringDuration = loweringEndTime.diff(loweringStartTime);
       
       return (
-        <Card className="border-secondary" className="p-1">
+        <Card className="border-secondary p-1">
           <div className="d-flex align-items-center justify-content-between">
               <span className="text-primary">00:00:00</span>
               <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
@@ -404,11 +386,11 @@ class LoweringMap extends Component {
 
   renderMarker() {
 
-    if(this.props.event.selected_event.aux_data && typeof this.props.event.selected_event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData') !== 'undefined') {
+    if(this.props.event.selected_event.aux_data && typeof this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource) !== 'undefined') {
 
-      const realtimeNavData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData');
+      const posData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
       try {
-        const latLng = [ parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(realtimeNavData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]
+        const latLng = [ parseFloat(posData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(posData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]
         return (
           <Marker position={latLng}>
             <Popup>
@@ -444,19 +426,21 @@ class LoweringMap extends Component {
             <TileLayer
               attribution={layer.attribution}
               url={layer.url}
+              maxNativeZoom={layer.maxNativeZoom}
             />
           </BaseLayer>
         );
       }
     });
 
-    const realtimeTrack = (this.state.tracklines.vehicleRealtimeNavData && !this.state.tracklines.vehicleRealtimeNavData.polyline.isEmpty()) ? 
-      <Polyline color="lime" positions={this.state.tracklines.vehicleRealtimeNavData.polyline.getLatLngs()} />
-      : null;
+    let trackLine = null;
 
-    const reNavTrack = (this.state.tracklines.vehicleReNavData && !this.state.tracklines.vehicleReNavData.polyline.isEmpty()) ? 
-      <Polyline color="red" positions={this.state.tracklines.vehicleReNavData.polyline.getLatLngs()} />
-      : null;
+    for (let index=0;index<this.auxDatasourceFilters.length;index++) {
+      if (this.state.tracklines[this.auxDatasourceFilters[index]] && !this.state.tracklines[this.auxDatasourceFilters[index]].polyline.isEmpty()) {
+        trackLine = <Polyline color="lime" positions={this.state.tracklines[this.auxDatasourceFilters[index]].polyline.getLatLngs()} />
+        break;
+      }
+    }
 
     const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "Loading...";
     
@@ -488,8 +472,7 @@ class LoweringMap extends Component {
                 <LayersControl position="topright">
                   {baseLayers}
                 </LayersControl>
-                {realtimeTrack}
-                {reNavTrack}
+                {trackLine}
                 {this.renderMarker()}
               </Map>
             </Card>
