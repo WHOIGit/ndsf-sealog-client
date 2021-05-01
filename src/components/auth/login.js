@@ -20,10 +20,35 @@ class Login extends Component {
 
     this.recaptchaRef = React.createRef();
 
+    this.handleIFrameAuth = this.handleIFrameAuth.bind(this);
+
+  }
+
+  componentDidMount() {
+    window.addEventListener('message', this.handleIFrameAuth);
   }
 
   componentWillUnmount() {
     this.props.leaveLoginForm();
+  }
+
+  handleIFrameAuth(event) {
+    if (event.origin == "null") {
+      try {
+        const login_data = JSON.parse(event.data) 
+        if ('loginToken' in login_data) {
+          this.handleAutologin(login_data);
+        }
+      }
+      catch(err) {
+        console.error(err);
+      }
+    }
+  }
+
+  async handleAutologin({ loginToken }) {
+    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
+    this.props.autoLogin({loginToken, reCaptcha});
   }
 
   async handleFormSubmit({ username, password }) {
