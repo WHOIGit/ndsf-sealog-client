@@ -33,11 +33,10 @@ class Login extends Component {
   }
 
   handleIFrameAuth(event) {
-    if (event.origin == "null") {
+    if (event.data.event == "login-with-token") {
       try {
-        const login_data = JSON.parse(event.data) 
-        if ('loginToken' in login_data) {
-          this.handleAutologin(login_data);
+        if ('loginToken' in event.data) {
+          this.handleAutologin(event.data);
         }
       }
       catch(err) {
