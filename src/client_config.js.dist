@@ -5,7 +5,7 @@ const API_ROOT_URL = (typeof window !== 'undefined') &&
   `http://${window.location.hostname}:8000/sealog-server`;
 const WS_ROOT_URL = (typeof window !== 'undefined') &&
   `ws://${window.location.hostname}:8000/ws`;
-  
+
 // Change this if not hosting the client at the webserver's document root i.e. '/sealog/'
 const ROOT_PATH = "/sealog/";
 
