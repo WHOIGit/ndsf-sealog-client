@@ -20,6 +20,8 @@ For installation instruction please look at [INSTALL.md](./INSTALL.md)
 - University of Rhode Island's Inner Space Center in support of ROV operations aboard the NOAA Ship Okeanos Explorer and E/V Nautilus
 - ROV Subastian operated by the Schmidt Ocean Institute
 - ROV Chimaera, HOV Nadir and HOV Neptune operated by OceanX
+- ROV Hercules, operated by Ocean Exploration Trust
+- ROV Lu'ukai, operated by the University of Hawaii
 
 # Thanks and acknowledgments
 Sealog exists thanks to financial support from all of it's users and continues to evolve thanks to the UNOLS community who have helped me since the beginning by sharing their wealth of experience and technical ability.
