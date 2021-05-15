@@ -58,6 +58,8 @@ const CUSTOM_CRUISE_NAME = null;
 // What to call "lowering/lowerings", format: null OR ["single version","plural version"] use lowercase
 const CUSTOM_LOWERING_NAME = null;
 
+const LOCATION = "SHIP" // Options are "SHIP" and "SCIP"
+
 module.exports = {
   API_ROOT_URL,
   WS_ROOT_URL,
@@ -77,5 +79,6 @@ module.exports = {
   LOWERING_ID_PLACEHOLDER,
   LOWERING_ID_REGEX,
   CUSTOM_CRUISE_NAME,
-  CUSTOM_LOWERING_NAME
+  CUSTOM_LOWERING_NAME,
+  LOCATION
 }

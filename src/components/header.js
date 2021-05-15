@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
+import { HEADER_TITLE, RECAPTCHA_SITE_KEY, DISABLE_EVENT_LOGGING, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME, LOCATION } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 class Header extends Component {
@@ -89,7 +89,7 @@ class Header extends Component {
   }
 
   renderToggleASNAP() {
-    if ( !DISABLE_EVENT_LOGGING && ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) ) {
+    if ( LOCATION === 'SHIP' && !DISABLE_EVENT_LOGGING && ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) ) {
       return (
         <NavDropdown.Item onClick={ () => this.handleASNAPToggle() }>Toggle ASNAP</NavDropdown.Item>
       );
@@ -113,7 +113,7 @@ class Header extends Component {
   }
 
   renderUserDropdown() {
-    if(this.props.authenticated) {
+    if( this.props.authenticated && ( LOCATION === 'SHIP' || ( this.props.roles && this.props.roles.includes('admin') ) ) ) {
       return (
         <NavDropdown title={<span>{this.props.fullname} <FontAwesomeIcon icon="user" /></span>} id="basic-nav-dropdown-user">
           {(this.props.fullname !== "Guest") ? <NavDropdown.Item onClick={this.props.gotoProfile} key="profile" >User Profile</NavDropdown.Item> : null }
@@ -134,7 +134,7 @@ class Header extends Component {
 
   render () {
     return (
-      <Navbar className="px-0" collapseOnSelect expand="md" variant="dark">
+      <Navbar className="px-0" collapseOnSelect expand="md" variant={ (LOCATION === 'SHIP') ? "dark" : ""}>
         <Navbar.Brand onClick={this.props.gotoHome}>{HEADER_TITLE}</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
         <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">

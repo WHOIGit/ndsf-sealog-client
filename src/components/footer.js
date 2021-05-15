@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Client } from '@hapi/nes/lib/client';
 import { Link } from 'react-router-dom';
 import prettyBytes from 'pretty-bytes';
-import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from '../client_config';
+import { WS_ROOT_URL, DISABLE_EVENT_LOGGING, LOCATION } from '../client_config';
 
 import * as mapDispatchToProps from '../actions';
 
@@ -72,7 +72,7 @@ class Footer extends Component {
     let freeSpaceStatus = null;
     let asnapStatus = null;
 
-    if ( DISABLE_EVENT_LOGGING ) {
+    if ( DISABLE_EVENT_LOGGING || LOCATION === "SCIP" ) {
       freeSpaceStatus = null;
     }
     else if(this.props.authenticated && this.props.freeSpaceInBytes) {
@@ -99,7 +99,7 @@ class Footer extends Component {
       }
     }
 
-    if ( DISABLE_EVENT_LOGGING ) {
+    if ( DISABLE_EVENT_LOGGING || LOCATION === "SCIP" ) {
       asnapStatus = null;
     }
     else if(this.props.authenticated && this.props.asnapStatus === "Off") {

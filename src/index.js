@@ -64,15 +64,16 @@ import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaxi
 
 library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
 
+import { DISABLE_EVENT_LOGGING, LOCATION, ROOT_PATH } from './client_config';
+const theme = (LOCATION === 'SCIP') ? '_scip' : ''
+
 import "filepond/dist/filepond.min.css";
 import 'rc-slider/assets/index.css';
 import 'leaflet/dist/leaflet.css';
-import "./assets/scss/sealog.scss?v=1.1.0";
+import (`./assets/scss/sealog${theme}.scss?v=1.1.0`);
 
 import configureStore from './store';
 import history from './history';
-
-import { DISABLE_EVENT_LOGGING } from './client_config';
 
 const store = configureStore();
 
@@ -90,10 +91,10 @@ ReactDOM.render(
         <Route path={ `/` } exact={true} component={RequireAuth((DISABLE_EVENT_LOGGING) ? CruiseMenu : EventLogging )}/>
         <Route path={ `/github`} exact={true} component={() => window.location = 'https://github.com/oceandatatools/sealog-client-vehicle'}/>
         <Route path={ `/license`} exact={true} component={() => window.location = 'https://github.com/oceandatatools/sealog-client-vehicle/blob/master/LICENSE'}/>
-        <Route path={ `/profile` } exact={true} component={RequireAuth(Profile)} />
-        <Route path={ `/register` } exact={true} component={Register} />
-        <Route path={ `/forgotPassword` } exact={true} component={ForgotPassword} />
-        <Route path={ `/resetPassword/:token` } exact={true} component={ResetPassword} />
+        <Route path={ `/profile` } exact={true} component={(LOCATION === 'SCIP') ? () => window.location = '/' : RequireAuth(Profile)} />
+        <Route path={ `/register` } exact={true} component={(LOCATION === 'SCIP') ? () => window.location = '/' : Register} />
+        <Route path={ `/forgotPassword` } exact={true} component={(LOCATION === 'SCIP') ? () => window.location = '/' : ForgotPassword} />
+        <Route path={ `/resetPassword/:token` } exact={true} component={(LOCATION === 'SCIP') ? () => window.location = '/' : ResetPassword} />
         <Route path={ `/login` } exact={true} component={RequireUnauth(Login)} />
         <Route path={ `/logout` } exact={true} component={Logout} />
         <Route path={ `/users` } exact={true} component={RequireAuth(Users)} />
