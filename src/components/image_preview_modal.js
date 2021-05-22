@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Path from 'path';
 import { Modal, Image } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
+import { handleMissingImage } from '../utils';
 
 class ImagePreviewModal extends Component {
 
@@ -10,10 +11,6 @@ class ImagePreviewModal extends Component {
     super(props);
 
     this.handleClose = this.handleClose.bind(this);
-  }
-
-  handleMissingImage(ev) {
-    ev.target.src = `/images/noimage.jpeg`
   }
 
   static propTypes = {
@@ -39,7 +36,7 @@ class ImagePreviewModal extends Component {
 
           <Modal.Body>
             <div className="text-center">
-              <Image fluid src={this.props.filepath} onError={this.handleMissingImage} />
+              <Image fluid src={this.props.filepath} onError={handleMissingImage} />
             </div>
           </Modal.Body>
         </Modal>
