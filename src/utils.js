@@ -10,9 +10,9 @@ import { API_ROOT_URL, ROOT_PATH, IMAGE_PATH } from './client_config';
 //
 // Credit rgov (WHOIGit/ndsf-sealog-client)
 export function getImageUrl(image_path) {
-  return API_ROOT_URL + IMAGE_PATH + path.basename(image_path);
+  return API_ROOT_URL + IMAGE_PATH + '/' + path.basename(image_path);
 }
 
 export function handleMissingImage(ev) {
-	ev.target.src = API_ROOT_URL + ROOT_PATH + 'images/noimage.jpeg';
+  ev.target.src = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${ROOT_PATH}images/noimage.jpeg`;
 }
