@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
-import path from 'path';
 import { connect } from 'react-redux';
 import { connectModal } from 'redux-modal';
 import PropTypes from 'prop-types';
@@ -11,7 +10,8 @@ import ImagePreviewModal from './image_preview_modal';
 
 import * as mapDispatchToProps from '../actions';
 
-import { API_ROOT_URL, IMAGE_PATH, ROOT_PATH } from '../client_config';
+import { API_ROOT_URL } from '../client_config';
+import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
@@ -60,10 +60,6 @@ class EventShowDetailsModal extends Component {
     }    
   }
 
-  handleMissingImage(ev) {
-    ev.target.src = `${ROOT_PATH}images/noimage.jpeg`
-  }
-
   handleImagePreviewModal(source, filepath) {
     this.props.showModal('imagePreview', { name: source, filepath: filepath })
   }
@@ -71,7 +67,7 @@ class EventShowDetailsModal extends Component {
   renderImage(source, filepath) {
     return (
       <Card  className="event-image-data-card" id={`image_${source}`}>
-        <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
+        <Image fluid onError={handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
         <span>{source}</span>
       </Card>
     );
@@ -81,7 +77,7 @@ class EventShowDetailsModal extends Component {
   //   return (
   //     <Card id={`image_${source}`}>
   //       <Card.Body className="data-card-body">
-  //         <Image  fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
+  //         <Image  fluid onError={handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
   //         <div>{source}</div>
   //       </Card.Body>
   //     </Card>
@@ -96,7 +92,10 @@ class EventShowDetailsModal extends Component {
       if(frameGrabberData.length > 0) {
         for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
     
-          tmpData.push({source: frameGrabberData[0].data_array[i].data_value, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(frameGrabberData[0].data_array[i+1].data_value)} )
+          tmpData.push({
+            source: frameGrabberData[0].data_array[i].data_value,
+            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value)
+          })
         }
 
         return (
