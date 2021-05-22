@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Button, ListGroup, Image, Card, Tooltip, OverlayTrigger, Row, Col, Form, FormControl } from 'react-bootstrap';
 import ImagePreviewModal from './image_preview_modal';
-import path from 'path';
 import * as mapDispatchToProps from '../actions';
 import { Client } from '@hapi/nes/lib/client';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
-import { WS_ROOT_URL, API_ROOT_URL, IMAGE_PATH, ROOT_PATH } from '../client_config';
+import { WS_ROOT_URL, API_ROOT_URL } from '../client_config';
+import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
@@ -297,10 +297,6 @@ class EventHistory extends Component {
     this.setState({page: 0});
   }
 
-  handleMissingImage(ev) {
-    ev.target.src = `${ROOT_PATH}images/noimage.jpeg`
-  }
-
   handleImagePreviewModal(source, filepath) {
     this.props.showModal('imagePreview', { name: source, filepath: filepath })
   }
@@ -308,7 +304,7 @@ class EventHistory extends Component {
   renderImage(source, filepath) {
     return (
       <Card className="event-image-data-card" id={`image_${source}`}>
-          <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
+          <Image fluid onError={handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
           <span>{source}</span>
       </Card>
     )
@@ -322,7 +318,10 @@ class EventHistory extends Component {
       if(frameGrabberData.length > 0) {
         for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
     
-          tmpData.push({source: frameGrabberData[0].data_array[i].data_value, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(frameGrabberData[0].data_array[i+1].data_value)} )
+          tmpData.push({
+            source: frameGrabberData[0].data_array[i].data_value,
+            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value)
+          })
         }
 
         return (
