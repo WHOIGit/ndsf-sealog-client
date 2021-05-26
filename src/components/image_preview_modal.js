@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Path from 'path';
 import { Modal, Image } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 import { handleMissingImage } from '../utils';

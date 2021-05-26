@@ -13,9 +13,10 @@ import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
-const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeVideoFileData','vehicleRealtime4KVideoFileData']
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData']
+const videoAuxDataSources = ['vehicleRealtimeVideoFileData','vehicleRealtime4KVideoFileData']
 
 const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
@@ -310,27 +311,50 @@ class EventHistory extends Component {
     )
   }
 
+  renderImage(source, filepath, videoData = null) {
+
+    const videoFilename = (videoData) ? <OverlayTrigger placement="top" overlay={<Tooltip id="videoFilename">{videoData['videoFilename']}</Tooltip>}><FontAwesomeIcon className="mr-1" icon="file"/></OverlayTrigger> : "";
+    const videoElapse = (videoData) ? <OverlayTrigger placement="top" overlay={<Tooltip id="videoFilename">{videoData['videoElapse']}</Tooltip>}><FontAwesomeIcon className="mr-1" icon={["far", "clock"]}/></OverlayTrigger> : "";
+
+    return (
+      <Card  className="event-image-data-card" id={`image_${source}`}>
+        <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImageClick(source, filepath)} />
+        <span>{source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}<span className="float-right">{videoFilename}{videoElapse}</span></span>
+      </Card>
+    );
+  }
+
   renderImageryCard() {
     if(this.state.event && this.state.event.aux_data) { 
-      let frameGrabberData = this.state.event.aux_data.filter(aux_data => imageAuxDataSources.includes(aux_data.data_source))
-      let tmpData = []
+      let frameGrabberData = this.state.event.aux_data.filter(aux_data => imageAuxDataSources.includes(aux_data.data_source));
+      let videoLoggerData = this.state.event.aux_data.filter(aux_data => videoAuxDataSources.includes(aux_data.data_source));
+      let tmpData = [];
 
       if(frameGrabberData.length > 0) {
         for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
-    
+
+          const videoDataIndex = videoLoggerData[0].data_array.findIndex((data) => data.data_value === frameGrabberData[0].data_array[i].data_value)
+
+          const videoData = (videoDataIndex != null) ? { 
+              videoFilename: videoLoggerData[0].data_array[videoDataIndex + 1]['data_value'],
+              videoElapse: videoLoggerData[0].data_array[videoDataIndex + 2]['data_value']
+            }
+          : null
+
           tmpData.push({
             source: frameGrabberData[0].data_array[i].data_value,
-            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value)
-          })
+            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value),
+            videoData: videoData
+          });
         }
 
         return (
           tmpData.map((camera) => {
             return (
               <Col className="px-1 mb-2" key={camera.source} xs={12} sm={6} md={4} lg={3}>
-                {this.renderImage(camera.source, camera.filepath)}
+                {this.renderImage(camera.source, camera.filepath, camera.videoData)}
               </Col>
-            )
+            );
           })
         )
       }
