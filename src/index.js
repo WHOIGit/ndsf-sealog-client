@@ -41,12 +41,14 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons/faChevronUp';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons/faClipboard';
+import { faClock } from '@fortawesome/free-regular-svg-icons/faClock';
 import { faComment } from '@fortawesome/free-solid-svg-icons/faComment';
 import { faCompress } from '@fortawesome/free-solid-svg-icons/faCompress';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExpand } from '@fortawesome/free-solid-svg-icons/faExpand';
 import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash';
+import { faFile } from '@fortawesome/free-solid-svg-icons/faFile';
 import { faForward } from '@fortawesome/free-solid-svg-icons/faForward';
 import { faLink } from '@fortawesome/free-solid-svg-icons/faLink';
 import { faPause } from '@fortawesome/free-solid-svg-icons/faPause';
@@ -62,7 +64,9 @@ import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
 import { faUserLock } from '@fortawesome/free-solid-svg-icons/faUserLock';
 import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaximize';
 
-library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
+import { faYoutube } from '@fortawesome/free-brands-svg-icons/faYoutube';
+
+library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faClock,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faFile,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize,faYoutube);
 
 import "filepond/dist/filepond.min.css";
 import 'rc-slider/assets/index.css';

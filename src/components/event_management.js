@@ -180,36 +180,57 @@ class EventManagement extends Component {
 
     if(this.state.events && this.state.events.length > 0){
 
-      let eventList = this.state.events.map((event) => {
-        let comment_exists = false;
+      let eventList = this.state.events.map((event, index) => {
+        if(index >= (this.state.activePage-1) * maxEventsPerPage && index < (this.state.activePage * maxEventsPerPage)) {
+          
+          let comment_exists = (event.event_options.find((option) => option.event_option_name === 'event_comment' && option.event_option_value != "" )) ? true : false;
 
-        let eventOptionsArray = event.event_options.reduce((filtered, option) => {
-          if(option.event_option_name === 'event_comment') {
-            comment_exists = (option.event_option_value !== '')? true : false;
-          } else {
-            filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
-          }
-          return filtered;
-        },[]);
-        
-        if (event.event_free_text) {
-          eventOptionsArray.push(`free_text: "${event.event_free_text}"`);
-        } 
+          let seatube_permalink_idx = event.event_options.findIndex((option) => option.event_option_name === 'seatube_permalink' && option.event_option_value != "" );
 
-        let eventOptions = (eventOptionsArray.length > 0)? '--> ' + eventOptionsArray.join(', '): '';
-        let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(event)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(event)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon className={ "text-secondary" } icon='plus' fixedWidth inverse transform="shrink-4"/></span>;
-        let commentTooltip = (comment_exists)? (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
+          let youtube_material = (event.event_options.find((option) => option.event_option_name === 'youtube_material' && option.event_option_value === "Yes" ))
+            ?
+              <OverlayTrigger placement="top" overlay={<Tooltip id={`youtubeTooltip_${event.id}`}>This is YouTube material</Tooltip>}><FontAwesomeIcon className="mr-1"  icon={['fab', 'youtube']} fixedWidth/></OverlayTrigger>
+            :
+              null;
 
-        let deleteIcon = <FontAwesomeIcon className={"text-danger"} onClick={() => this.handleEventDeleteModal(event)} icon='trash' fixedWidth/>;
-        let deleteTooltip = (this.props.roles && this.props.roles.includes("admin"))? (<OverlayTrigger placement="top" overlay={<Tooltip id={`deleteTooltip_${event.id}`}>Delete this event</Tooltip>}>{deleteIcon}</OverlayTrigger>): null;
+          let eventOptionsArray = []
+          
+          if (event.event_free_text) {
+            eventOptionsArray.push(`free_text: "${event.event_free_text}"`);
+          } 
 
-        return (<ListGroup.Item className="event-list-item py-1" key={event.id}><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{deleteTooltip} {commentTooltip}</span></ListGroup.Item>);
+          let active = (this.props.event.selected_event.id === event.id)? true : false;
+
+          let eventOptions = (eventOptionsArray.length > 0)? '--> ' + eventOptionsArray.join(', '): '';
+          
+          let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(index)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(index)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon className={(active)? "text-primary" : "text-secondary" } icon='plus' fixedWidth transform="shrink-4"/></span>;
+          let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
+          let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null;
+
+          let eventDelete = (this.props.roles && this.props.roles.includes("admin"))
+            ?
+              <OverlayTrigger placement="top" overlay={<Tooltip id={`deleteTooltip_${event.id}`}>Delete this event</Tooltip>}><FontAwesomeIcon className={"text-danger mr-1"} onClick={() => this.handleEventDeleteModal(event)} icon='trash' fixedWidth/></OverlayTrigger>
+            :
+              null;
+
+          let eventDetails = <OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>View Details</Tooltip>}><FontAwesomeIcon className="mr-1" onClick={() => this.handleEventShowDetailsModal(event)} icon='window-maximize' fixedWidth/></OverlayTrigger>;
+
+          let seatube_permalink = (seatube_permalink_idx >= 0)
+            ?
+              <OverlayTrigger placement="top" overlay={<Tooltip id={`permalinkTooltip_${event.id}`}>Open Seatube Permalink</Tooltip>}><a className="mr-1" href={event.event_options[seatube_permalink_idx].event_option_value} target="_blank"><FontAwesomeIcon icon='link' className={(!active)? "text-primary" : "text-secondary" } fixedWidth/></a></OverlayTrigger>
+            :
+              null;
+
+
+          return (<ListGroup.Item className="event-list-item py-1" key={event.id} active={active} ><span>{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{youtube_material}{seatube_permalink}{eventDelete}{eventDetails}{eventComment}</span></ListGroup.Item>);
+
+        }
       });
 
       return eventList;
     }
 
-    return (<ListGroup.Item className="event-list-item py-1" key="emptyHistory" >No events found</ListGroup.Item>);
+    return (this.props.event.fetching)? (<ListGroup.Item className="event-list-item py-1">Loading...</ListGroup.Item>) : (<ListGroup.Item className="event-list-item py-1">No events found</ListGroup.Item>);
   }
 
   renderEventCard() {

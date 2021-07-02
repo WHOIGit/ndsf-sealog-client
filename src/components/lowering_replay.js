@@ -7,6 +7,7 @@ import Slider, { createSliderWithTooltip } from 'rc-slider';
 import EventFilterForm from './event_filter_form';
 import ImagePreviewModal from './image_preview_modal';
 import EventCommentModal from './event_comment_modal';
+import EventSeatubePermalinkModal from './event_seatube_permalink_modal';
 import LoweringDropdown from './lowering_dropdown';
 import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
@@ -24,9 +25,11 @@ const FREV = 3;
 
 const maxEventsPerPage = 10;
 
-const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+// const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+const excludeAuxDataSources = ['framegrabber'];
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+// const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+const imageAuxDataSources = ['framegrabber'];
 
 const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
@@ -147,6 +150,11 @@ class LoweringReplay extends Component {
     this.setState({replayEventIndex: index});
     this.props.advanceLoweringReplayTo(this.props.event.events[index].id);
     this.props.showModal('eventComment', { event: this.props.event.events[index], handleUpdateEvent: this.props.updateEvent });
+  }
+
+  handleEventSeatubePermalinkModal(event) {
+    this.handleLoweringReplayPause();
+    this.props.showModal('eventSeatubePermalink', { event: event, handleUpdateEvent: this.props.updateEvent, handleHide: this.props.updateLoweringReplayEvent});
   }
 
   handlePageSelect(eventKey, updateReplay=true) {
@@ -316,13 +324,33 @@ class LoweringReplay extends Component {
 
     if(this.props.event.selected_event && this.props.event.selected_event.event_options && this.props.event.selected_event.event_options.length > 0) {
 
-      let return_event_options = this.props.event.selected_event.event_options.reduce((filtered, event_option, index) => {
-        if(event_option.event_option_name !== 'event_comment') {
-          filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
-        }
+      let return_event_options = [];
 
-        return filtered;
-      },[]);
+      if(this.props.event.selected_event.event_value === "EDU") {
+        return_event_options = this.props.event.selected_event.event_options.reduce((filtered, event_option, index) => {
+          if(event_option.event_option_name === 'event_comment') {
+            return filtered;
+          }
+
+          if(event_option.event_option_name === "seatube_permalink") {
+            filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/_/g, ' ')} (<a href="#" onClick={() => this.handleEventSeatubePermalinkModal(this.props.event.selected_event)} >Edit</a>):</span> <a className="float-right" style={{wordWrap:'break-word'}} href={event_option.event_option_value} target="_blank" >{event_option.event_option_value}</a><br/></div>);
+            return filtered;
+          }
+
+          filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
+          return filtered;
+        },[]);
+      }
+      else {
+       return_event_options = this.props.event.selected_event.event_options.reduce((filtered, event_option, index) => {
+          if(event_option.event_option_name === 'event_comment') {
+            return filtered;
+          }
+
+          filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
+          return filtered;
+        },[]); 
+      }
 
       return (return_event_options.length > 0)? (
         <Col className="px-1 mb-2" xs={12} sm={6} md={4} lg={3}>
@@ -444,16 +472,17 @@ class LoweringReplay extends Component {
       let eventList = this.props.event.events.map((event, index) => {
         if(index >= (this.state.activePage-1) * maxEventsPerPage && index < (this.state.activePage * maxEventsPerPage)) {
           
-          let comment_exists = false;
+          let comment_exists = (event.event_options.find((option) => option.event_option_name === 'event_comment' && option.event_option_value != "" )) ? true : false;
 
-          let eventOptionsArray = event.event_options.reduce((filtered, option) => {
-            if(option.event_option_name === 'event_comment') {
-              comment_exists = (option.event_option_value !== '')? true : false;
-            } else {
-              filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
-            }
-            return filtered;
-          },[]);
+          let seatube_permalink_idx = event.event_options.findIndex((option) => option.event_option_name === 'seatube_permalink' && option.event_option_value != "" );
+
+          let youtube_material = (event.event_options.find((option) => option.event_option_name === 'youtube_material' && option.event_option_value === "Yes" ))
+            ?
+              <OverlayTrigger placement="top" overlay={<Tooltip id={`youtubeTooltip_${event.id}`}>This is YouTube material</Tooltip>}><FontAwesomeIcon className="mr-1"  icon={['fab', 'youtube']} fixedWidth/></OverlayTrigger>
+            :
+              null;
+
+          let eventOptionsArray = []
           
           if (event.event_free_text) {
             eventOptionsArray.push(`free_text: "${event.event_free_text}"`);
@@ -467,7 +496,14 @@ class LoweringReplay extends Component {
           let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
           let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null;
 
-          return (<ListGroup.Item className="event-list-item py-1" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventComment}</span></ListGroup.Item>);
+          let seatube_permalink = (seatube_permalink_idx >= 0)
+            ?
+              <OverlayTrigger placement="top" overlay={<Tooltip id={`permalinkTooltip_${event.id}`}>Open Seatube Permalink</Tooltip>}><a className="mr-1" href={event.event_options[seatube_permalink_idx].event_option_value} target="_blank"><FontAwesomeIcon icon='link' className={(!active)? "text-primary" : "text-secondary" } fixedWidth/></a></OverlayTrigger>
+            :
+              null;
+
+
+          return (<ListGroup.Item className="event-list-item py-1" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{youtube_material}{seatube_permalink}{eventComment}</span></ListGroup.Item>);
 
         }
       });
@@ -497,6 +533,7 @@ class LoweringReplay extends Component {
       <React.Fragment>
         <ImagePreviewModal />
         <EventCommentModal />
+        <EventSeatubePermalinkModal />
         <Row>
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>

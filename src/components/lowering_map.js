@@ -348,16 +348,17 @@ class LoweringMap extends Component {
       let eventList = this.props.event.events.map((event, index) => {
         if(index >= (this.state.activePage-1) * maxEventsPerPage && index < (this.state.activePage * maxEventsPerPage)) {
           
-          let comment_exists = false;
+          let comment_exists = (event.event_options.find((option) => option.event_option_name === 'event_comment' && option.event_option_value != "" )) ? true : false;
 
-          let eventOptionsArray = event.event_options.reduce((filtered, option) => {
-            if(option.event_option_name === 'event_comment') {
-              comment_exists = (option.event_option_value !== '')? true : false;
-            } else {
-              filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
-            }
-            return filtered;
-          },[]);
+          let seatube_permalink_idx = event.event_options.findIndex((option) => option.event_option_name === 'seatube_permalink' && option.event_option_value != "" );
+
+          let youtube_material = (event.event_options.find((option) => option.event_option_name === 'youtube_material' && option.event_option_value === "Yes" ))
+            ?
+              <OverlayTrigger placement="top" overlay={<Tooltip id={`youtubeTooltip_${event.id}`}>This is YouTube material</Tooltip>}><FontAwesomeIcon className="mr-1"  icon={['fab', 'youtube']} fixedWidth/></OverlayTrigger>
+            :
+              null;
+
+          let eventOptionsArray = []
           
           if (event.event_free_text) {
             eventOptionsArray.push(`free_text: "${event.event_free_text}"`);
@@ -371,9 +372,16 @@ class LoweringMap extends Component {
           let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
           let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null;
 
-          let eventDetails = <OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>View Details</Tooltip>}><FontAwesomeIcon onClick={() => this.handleEventShowDetailsModal(index)} icon='window-maximize' fixedWidth/></OverlayTrigger>;
+          let eventDetails = <OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>View Details</Tooltip>}><FontAwesomeIcon className="mr-1" onClick={() => this.handleEventShowDetailsModal(index)} icon='window-maximize' fixedWidth/></OverlayTrigger>;
 
-          return (<ListGroup.Item className="py-1 event-list-item" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventDetails} {eventComment}</span></ListGroup.Item>);
+          let seatube_permalink = (seatube_permalink_idx >= 0)
+            ?
+              <OverlayTrigger placement="top" overlay={<Tooltip id={`permalinkTooltip_${event.id}`}>Open Seatube Permalink</Tooltip>}><a className="mr-1" href={event.event_options[seatube_permalink_idx].event_option_value} target="_blank"><FontAwesomeIcon icon='link' className={(!active)? "text-primary" : "text-secondary" } fixedWidth/></a></OverlayTrigger>
+            :
+              null;
+
+
+          return (<ListGroup.Item className="event-list-item py-1" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{youtube_material}{seatube_permalink}{eventDetails}{eventComment}</span></ListGroup.Item>);
 
         }
       });
@@ -381,7 +389,7 @@ class LoweringMap extends Component {
       return eventList;
     }
 
-    return (this.props.event.fetching)? (<ListGroup.Item className="event-list-item">Loading...</ListGroup.Item>) : (<ListGroup.Item>No events found</ListGroup.Item>);
+    return (this.props.event.fetching)? (<ListGroup.Item className="event-list-item py-1">Loading...</ListGroup.Item>) : (<ListGroup.Item className="event-list-item py-1">No events found</ListGroup.Item>);
   }
 
   renderMarker() {

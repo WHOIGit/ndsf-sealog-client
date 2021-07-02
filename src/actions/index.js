@@ -368,10 +368,13 @@ export async function updateEventRequest(event_id, eventValue, eventFreeText = '
 
 export function updateEvent(event_id, eventValue, eventFreeText = '', eventOptions = [], eventTS = '') {
 
-  return async () => {
+  return async (dispatch) => {
     try {
-      const event = await updateEventRequest(event_id, eventValue, eventFreeText, eventOptions, eventTS);
-      return event;
+      const response = await updateEventRequest(event_id, eventValue, eventFreeText, eventOptions, eventTS);
+      if(response.response.status == 204){
+        const event = await axios.get(API_ROOT_URL + '/api/v1/events/' + event_id, { headers: { authorization: cookies.get('token') } })
+        return dispatch({type: UPDATE_EVENT, payload: event.data});
+      }
     } catch (error) {
       console.error(error);
     }
@@ -380,7 +383,7 @@ export function updateEvent(event_id, eventValue, eventFreeText = '', eventOptio
 
 export function updateLoweringReplayEvent(event_id) {
 
-  return async function (dispatch) {
+  return async (dispatch) => {
     
     return await axios.get(API_ROOT_URL + '/api/v1/events/' + event_id, { headers: { authorization: cookies.get('token') } }
     ).then(({data}) => {

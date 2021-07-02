@@ -13,9 +13,12 @@ import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
-const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData']
+// const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+const excludeAuxDataSources = ['framegrabber','wowzaRecording'];
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData']
+// const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+const imageAuxDataSources = ['framegrabber'];
+const videoAuxDataSources = ['wowzaRecording']
 
 const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
@@ -301,36 +304,50 @@ class EventHistory extends Component {
     this.props.showModal('imagePreview', { name: source, filepath: filepath })
   }
 
-  renderImage(source, filepath) {
+  renderImage(source, filepath, videoData = null) {
+
+    const videoFilename = (videoData) ? <OverlayTrigger placement="top" overlay={<Tooltip id="videoFilename">{videoData['videoFilename']}</Tooltip>}><FontAwesomeIcon className="mr-1" icon="file"/></OverlayTrigger> : "";
+    const videoElapse = (videoData) ? <OverlayTrigger placement="top" overlay={<Tooltip id="videoFilename">{videoData['videoElapse']}</Tooltip>}><FontAwesomeIcon className="mr-1" icon={["far", "clock"]}/></OverlayTrigger> : "";
+
     return (
-      <Card className="event-image-data-card" id={`image_${source}`}>
-          <Image fluid onError={handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
-          <span>{source}</span>
+      <Card  className="event-image-data-card" id={`image_${source}`}>
+        <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
+        <span>{source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}<span className="float-right">{videoFilename}{videoElapse}</span></span>
       </Card>
-    )
+    );
   }
 
   renderImageryCard() {
     if(this.state.event && this.state.event.aux_data) { 
-      let frameGrabberData = this.state.event.aux_data.filter(aux_data => imageAuxDataSources.includes(aux_data.data_source))
-      let tmpData = []
+      let frameGrabberData = this.state.event.aux_data.filter(aux_data => imageAuxDataSources.includes(aux_data.data_source));
+      let videoLoggerData = this.state.event.aux_data.filter(aux_data => videoAuxDataSources.includes(aux_data.data_source));
+      let tmpData = [];
 
       if(frameGrabberData.length > 0) {
         for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
-    
+
+          const videoDataIndex = (videoLoggerData.length > 0) ? videoLoggerData[0].data_array.findIndex((data) => data.data_value === frameGrabberData[0].data_array[i].data_value) : null
+
+          const videoData = (videoDataIndex != null) ? { 
+              videoFilename: videoLoggerData[0].data_array[videoDataIndex + 1]['data_value'],
+              videoElapse: videoLoggerData[0].data_array[videoDataIndex + 2]['data_value']
+            }
+          : null
+
           tmpData.push({
             source: frameGrabberData[0].data_array[i].data_value,
-            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value)
-          })
+            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value),
+            videoData: videoData
+          });
         }
 
         return (
           tmpData.map((camera) => {
             return (
               <Col className="px-1 mb-2" key={camera.source} xs={12} sm={6} md={4} lg={3}>
-                {this.renderImage(camera.source, camera.filepath)}
+                {this.renderImage(camera.source, camera.filepath, camera.videoData)}
               </Col>
-            )
+            );
           })
         )
       }
@@ -339,13 +356,33 @@ class EventHistory extends Component {
 
   renderEventOptionsCard() {
 
-    // return null;
-    let return_event_options = this.state.event.event_options.reduce((filtered, event_option, index) => {
-      if(event_option.event_option_name !== 'event_comment') {
-        filtered.push(<div className="pl-1" key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
-      }
-      return filtered
-    },[])
+    let return_event_options = [];
+
+    if(this.state.event.event_value === "EDU") {
+      return_event_options = this.state.event.event_options.reduce((filtered, event_option, index) => {
+        if(event_option.event_option_name === 'event_comment') {
+          return filtered;
+        }
+
+        if(event_option.event_option_name === "seatube_permalink") {
+          filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/_/g, ' ')} (<a href="#" onClick={() => this.handleEventSeatubePermalinkModal(this.state.event)} >Edit</a>):</span> <a className="float-right" style={{wordWrap:'break-word'}} href={event_option.event_option_value} target="_blank" >{event_option.event_option_value}</a><br/></div>);
+          return filtered;
+        }
+
+        filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
+        return filtered;
+      },[]);
+    }
+    else {
+     return_event_options = this.state.event.event_options.reduce((filtered, event_option, index) => {
+        if(event_option.event_option_name === 'event_comment') {
+          return filtered;
+        }
+
+        filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
+        return filtered;
+      },[]); 
+    }
 
     return (return_event_options.length > 0)? (
       <Col className="px-1 mb-2" xs={12} sm={6} md={4} lg={3}>
@@ -402,16 +439,23 @@ class EventHistory extends Component {
 
         let event = this.props.history[i];
         
-        let comment_exists = false;
+        // let comment_exists = false;
+        let comment_exists = (event.event_options.find((option) => option.event_option_name === 'event_comment' && option.event_option_value != "" )) ? true : false;
+
+        let seatube_permalink_idx = event.event_options.findIndex((option) => option.event_option_name === 'seatube_permalink' && option.event_option_value != "" );
+
+        let youtube_material = (event.event_options.find((option) => option.event_option_name === 'youtube_material' && option.event_option_value === "Yes" ))
+          ?
+            <OverlayTrigger placement="top" overlay={<Tooltip id={`youtubeTooltip_${event.id}`}>This is YouTube material</Tooltip>}><FontAwesomeIcon className="mr-1"  icon={['fab', 'youtube']} fixedWidth/></OverlayTrigger>
+          :
+            null;
 
         let eventOptionsArray = event.event_options.reduce((filtered, option) => {
-          if (option.event_option_name === 'event_comment') {
-            if( option.event_option_value.length > 0) {
-              comment_exists = true;
-            }
-          } else {
-            filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
+          if (option.event_option_name === 'event_comment' ||  option.event_option_name === 'seatube_permalink' || option.event_option_name === 'youtube_material') {
+            return filtered;
           }
+
+          filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
           return filtered;
         },[]);
         
@@ -420,10 +464,18 @@ class EventHistory extends Component {
         } 
 
         let eventOptions = (eventOptionsArray.length > 0)? '--> ' + eventOptionsArray.join(', '): '';
+        
         let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(event)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(event)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon inverse icon='plus' fixedWidth transform="shrink-4"/></span>;
         let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
+        let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null;
 
-        eventArray.push(<ListGroup.Item className="event-list-item py-1" key={event.id} ><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{commentTooltip}</span></ListGroup.Item>);
+        let seatube_permalink = (seatube_permalink_idx >= 0)
+          ?
+            <OverlayTrigger placement="top" overlay={<Tooltip id={`permalinkTooltip_${event.id}`}>Open Seatube Permalink</Tooltip>}><a className="mr-1" href={event.event_options[seatube_permalink_idx].event_option_value} target="_blank"><FontAwesomeIcon icon='link' className="text-primary" fixedWidth/></a></OverlayTrigger>
+          :
+            null;
+
+        eventArray.push(<ListGroup.Item className="event-list-item py-1" key={event.id} ><span onClick={() => this.handleEventShowDetailsModal(event)}>{event.ts} {`<${event.event_author}>`}: {event.event_value} {eventOptions}</span><span className="float-right">{youtube_material}{seatube_permalink}{eventComment}</span></ListGroup.Item>);
       }
       return eventArray;
     }
@@ -515,7 +567,8 @@ function mapStateToProps(state) {
 
   return {
     authenticated: state.auth.authenticated,
-    history: state.event_history.history
+    history: state.event_history.history,
+    roles: state.user.profile.roles
   };
 }
 

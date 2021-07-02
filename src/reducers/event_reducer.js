@@ -25,7 +25,10 @@ export default function( state={ selected_event: {}, events: [], eventFilter: {}
           return event;
         }
       });
-      return { ...state, selected_event: {}, events: newEvents };
+
+      let newSelectedEvent = (action.payload.id === state.selected_event.id) ? action.payload : state.selected_event;
+
+      return { ...state, selected_event: newSelectedEvent, events: newEvents };
 
     case UPDATE_EVENTS:
       return { ...state, selected_event: {}, events: action.payload };
