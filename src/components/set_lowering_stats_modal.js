@@ -56,8 +56,10 @@ class SetLoweringStatsModal extends Component {
       milestones: {
         lowering_start: this.props.lowering.start_ts,
         lowering_descending: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_descending) ? this.props.lowering.lowering_additional_meta.milestones.lowering_descending : null,
+        lowering_undock: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_undock) ? this.props.lowering.lowering_additional_meta.milestones.lowering_undock : null,
         lowering_on_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom : null,
         lowering_off_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom : null,
+        lowering_dock: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_dock) ? this.props.lowering.lowering_additional_meta.milestones.lowering_dock : null,
         lowering_on_surface: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface : null,
         lowering_stop: this.props.lowering.stop_ts,
         lowering_aborted: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? this.props.lowering.lowering_additional_meta.milestones.lowering_aborted : null,
@@ -446,8 +448,10 @@ class SetLoweringStatsModal extends Component {
         <div>
           <span className={(this.state.milestone_to_edit == 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}>Off Deck: {this.state.milestones.lowering_start}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_descending')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_descending')}>Descending: {this.state.milestones.lowering_descending}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_undock')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_undock')}>Undock: {this.state.milestones.lowering_undock}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}>On Bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}>Off Bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
+          <span className={(this.state.milestone_to_edit == 'lowering_dock')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_dock')}>Dock: {this.state.milestones.lowering_dock}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_on_surface')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_surface')}>On Surface: {this.state.milestones.lowering_on_surface}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}>On Deck: {this.state.milestones.lowering_stop}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}>Aborted: {this.state.milestones.lowering_aborted}</span>
