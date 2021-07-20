@@ -17,11 +17,9 @@ import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
-// const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
-const excludeAuxDataSources = ['framegrabber','wowzaRecording'];
+const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData','wowzaRecording'];
 
-// const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
-const imageAuxDataSources = ['framegrabber'];
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 const videoAuxDataSources = ['wowzaRecording']
 
 const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
