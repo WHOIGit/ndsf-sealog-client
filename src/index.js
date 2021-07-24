@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { Route, Switch } from 'react-router';
 import Cookies from 'universal-cookie';
+import L from 'leaflet';
 
 // eslint-disable-next-line no-unused-vars
 import momentDurationFormatSetup from 'moment-duration-format';
@@ -72,6 +73,18 @@ import "filepond/dist/filepond.min.css";
 import 'rc-slider/assets/index.css';
 import 'leaflet/dist/leaflet.css';
 import "./assets/scss/sealog.scss?v=1.1.0";
+
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+    conSize: [25, 41],
+    iconAnchor: [13, 41]
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 import configureStore from './store';
 import history from './history';
