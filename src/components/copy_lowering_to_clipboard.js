@@ -39,8 +39,10 @@ class CopyLoweringToClipboard extends Component {
 
       let loweringStartTime = moment.utc(this.props.lowering.start_ts);
       let loweringDescendingTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_descending) : null;
+      let loweringUndockTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_undock) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_undock) : null;
       let loweringOnBottomTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
+      let loweringDockTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_dock) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_dock) : null;
       let loweringOnSurfaceTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface) : null;
       let loweringStopTime = moment.utc(this.props.lowering.stop_ts);
       let loweringAbortTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) : null;
@@ -60,8 +62,10 @@ class CopyLoweringToClipboard extends Component {
       text += '\n';
       text += `Start of ${this.state.lowering_name}:${' '.repeat(9-this.state.lowering_name.length)}${this.props.lowering.start_ts}\n`;
       text += (loweringDescendingTime) ? `Descending:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_descending}\n` : "";
+      text += (loweringOnBottomTime) ? `First Undock:      ${this.props.lowering.lowering_additional_meta.milestones.lowering_undock}\n` : "";
       text += (loweringOnBottomTime) ? `On Bottom:         ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
       text += (loweringOffBottomTime) ? `Off Bottom:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";
+      text += (loweringOnBottomTime) ? `Last Dock:         ${this.props.lowering.lowering_additional_meta.milestones.lowering_dock}\n` : "";
       text += (loweringOnSurfaceTime) ? `On Surface:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface}\n` : "";
       text += `On Deck:           ${this.props.lowering.stop_ts}\n`;
       text += '\n';
