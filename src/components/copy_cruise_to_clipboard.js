@@ -64,15 +64,21 @@ class CopyCruiseToClipboard extends Component {
         const event_data = await response.data;
 
         const position_aux_data = event_data.length > 0 ? event_data[0].aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData') : null
+
         let descent_position = null;
         if(position_aux_data != null) {
-          const latitude_obj = position_aux_data.data_array.find((data) => data['data_name'] === 'latitude')
-          const longitude_obj = position_aux_data.data_array.find((data) => data['data_name'] === 'longitude')
-          descent_position = latitude_obj && longitude_obj ? [parseFloat(latitude_obj['data_value']), parseFloat(longitude_obj['data_value'])] : null; 
+          const latitude_data = position_aux_data.data_array.find((data) => data['data_name'] === 'latitude')
+          const longitude_data = position_aux_data.data_array.find((data) => data['data_name'] === 'longitude')
+          descent_position = latitude_data && longitude_data ? [parseFloat(latitude_data['data_value']), parseFloat(longitude_data['data_value'])] : null; 
+
         }
 
-        const latitude_obj = ConvertDDToDDM(descent_position[0], false)
-        const longitude_obj = ConvertDDToDDM(descent_position[1], true)
+        let latitude_obj = null;
+        let longitude_obj = null;
+        if( descent_position != null) {
+          latitude_obj = ConvertDDToDDM(descent_position[0], false)
+          longitude_obj = ConvertDDToDDM(descent_position[1], true)
+        }
 
         return [
           lowering.lowering_id,
@@ -80,8 +86,8 @@ class CopyCruiseToClipboard extends Component {
           this.props.cruise.cruise_additional_meta.cruise_name,
           this.props.cruise.cruise_location,
           lowering.lowering_location,
-          descent_position ? `${latitude_obj.dir}${latitude_obj.deg}:${latitude_obj.min}` : '',
-          descent_position ? `${longitude_obj.dir}${longitude_obj.deg}:${longitude_obj.min}` : '',
+          (descent_position != null) ? `${latitude_obj.dir}${latitude_obj.deg}:${latitude_obj.min}` : '',
+          (descent_position != null) ? `${longitude_obj.dir}${longitude_obj.deg}:${longitude_obj.min}` : '',
           '',
           this.props.cruise.cruise_additional_meta.cruise_pi,
           lowering.lowering_additional_meta.milestones.lowering_descending ? moment.utc(lowering.lowering_additional_meta.milestones.lowering_descending).format("MM/DD/YYYY HH:mm:ss") : '',
