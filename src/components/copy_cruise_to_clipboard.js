@@ -96,7 +96,7 @@ class CopyCruiseToClipboard extends Component {
           lowering.lowering_additional_meta.milestones.lowering_on_surface ? moment.utc(lowering.lowering_additional_meta.milestones.lowering_on_surface).format("MM/DD/YYYY HH:mm:ss") : '',
           '',
           '',
-          lowering.lowering_additional_meta.stats.max_depth ? ~~lowering.lowering_additional_meta.stats.max_depth : '',
+          (lowering.lowering_additional_meta.stats && lowering.lowering_additional_meta.stats.max_depth) ? ~~lowering.lowering_additional_meta.stats.max_depth : '',
           '',
           '',
           lowering.lowering_id
