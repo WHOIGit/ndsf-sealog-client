@@ -59,13 +59,20 @@ class CopyCruiseToClipboard extends Component {
 
       let lowering_data = (this.props.cruiseLowerings && this.props.cruiseLowerings.length > 0) ? this.props.cruiseLowerings.map(async (lowering) => {
 
-        const response = await axios.get(`${API_ROOT_URL}/api/v1/event_exports?startTS=${lowering.lowering_additional_meta.milestones.lowering_descending}&stopTS=${lowering.lowering_additional_meta.milestones.lowering_descending}`, authorizationHeader)
+      let position_aux_data = null;
 
-        const event_data = await response.data;
+        try {
+          const response = await axios.get(`${API_ROOT_URL}/api/v1/event_exports?startTS=${lowering.lowering_additional_meta.milestones.lowering_descending}&stopTS=${lowering.lowering_additional_meta.milestones.lowering_descending}`, authorizationHeader)
 
-        const position_aux_data = event_data.length > 0 ? event_data[0].aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData') : null
+          const event_data = await response.data;
+            
+	  position_aux_data = event_data.length > 0 ? event_data[0].aux_data.find((data) => data['data_source'] === 'vehicleRealtimeNavData') : null
+        }
+	catch {
+          console.warn("No event data found");
+	}
 
-        let descent_position = null;
+	let descent_position = null;
         if(position_aux_data != null) {
           const latitude_data = position_aux_data.data_array.find((data) => data['data_name'] === 'latitude')
           const longitude_data = position_aux_data.data_array.find((data) => data['data_name'] === 'longitude')
