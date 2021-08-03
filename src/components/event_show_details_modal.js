@@ -73,17 +73,6 @@ class EventShowDetailsModal extends Component {
     );
   }
 
-  // renderImage(source, filepath) {
-  //   return (
-  //     <Card id={`image_${source}`}>
-  //       <Card.Body className="data-card-body">
-  //         <Image  fluid onError={handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
-  //         <div>{source}</div>
-  //       </Card.Body>
-  //     </Card>
-  //   )
-  // }
-
   renderImageryCard() {
     if(this.props.event && this.state.event.aux_data) { 
       let frameGrabberData = this.state.event.aux_data.filter(aux_data => imageAuxDataSources.includes(aux_data.data_source))
