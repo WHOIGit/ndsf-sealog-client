@@ -28,7 +28,7 @@ const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
 const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
-const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
+const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData','vehicleRealtimeCTDData','vehicleRealtimeO2Data','vehicleRealtimeParoData','vehicleRealtimePHData'];
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
 

@@ -32,10 +32,11 @@ class UpdateLoweringStatsForm extends Component {
 
     let initialValues = {
       start: this.props.milestones.lowering_start,
+      off_deck: (this.props.milestones.lowering_off_deck) ? this.props.milestones.lowering_off_deck : null,
       descending: (this.props.milestones.lowering_descending) ? this.props.milestones.lowering_descending : null,
       on_bottom: (this.props.milestones.lowering_on_bottom) ? this.props.milestones.lowering_on_bottom : null,
       off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
-      on_surface: (this.props.milestones.lowering_on_surface) ? this.props.milestones.lowering_on_surface : null,
+      floats_on_surface: (this.props.milestones.lowering_floats_on_surface) ? this.props.milestones.lowering_floats_on_surface : null,
       stop: this.props.milestones.lowering_stop,
       aborted: (this.props.milestones.lowering_aborted) ? this.props.milestones.lowering_aborted : null,
       max_depth: (this.props.stats.max_depth) ? this.props.stats.max_depth : null,
@@ -55,10 +56,11 @@ class UpdateLoweringStatsForm extends Component {
 
     let milestones = {
       lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : formProps.start,
+      lowering_off_deck: (formProps.off_deck && formProps.off_deck._isAMomentObject) ? formProps.off_deck.toISOString() : formProps.off_deck,
       lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : formProps.descending,
       lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : formProps.on_bottom,
       lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : formProps.off_bottom,
-      lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString() : formProps.on_surface,
+      lowering_floats_on_surface: (formProps.floats_on_surface && formProps.floats_on_surface._isAMomentObject) ? formProps.floats_on_surface.toISOString() : formProps.floats_on_surface,
       lowering_stop: (formProps.stop._isAMomentObject) ? formProps.stop.toISOString() : formProps.stop,
       lowering_aborted: (formProps.aborted && formProps.aborted._isAMomentObject) ? formProps.aborted.toISOString() : formProps.aborted,
     }
@@ -106,6 +108,17 @@ class UpdateLoweringStatsForm extends Component {
                     <Field
                       name="start"
                       component={renderDateTimePicker}
+                      label={`${this.state.lowering_name} Start Date/Time (UTC)`}
+                      timeFormat={timeFormat}
+                      sm={11}
+                      md={11}
+                      lg={7}
+                    />
+                  </Form.Row>
+                  <Form.Row className="justify-content-sm-center">  
+                    <Field
+                      name="off_deck"
+                      component={renderDateTimePicker}
                       label="Off Deck Date/Time (UTC)"
                       timeFormat={timeFormat}
                       sm={11}
@@ -148,9 +161,9 @@ class UpdateLoweringStatsForm extends Component {
                   </Form.Row>
                   <Form.Row className="justify-content-sm-center">  
                     <Field
-                      name="on_surface"
+                      name="floats_on_surface"
                       component={renderDateTimePicker}
-                      label="On Surface Date/Time (UTC)"
+                      label="Floats on Surface Date/Time (UTC)"
                       timeFormat={timeFormat}
                       sm={11}
                       md={11}
@@ -280,8 +293,8 @@ function validate(formProps) {
     errors.off_bottom = 'Off bottom date must be before stop date';
   }
 
-  if(formProps.on_surface && formProps.on_surface !== '' && moment.utc(formProps.on_surface, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat))) {
-    errors.on_surface = 'On surface date must be after off bottom date';
+  if(formProps.floats_on_surface && formProps.floats_on_surface !== '' && moment.utc(formProps.floats_on_surface, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat))) {
+    errors.floats_on_surface = 'Floats on surface date must be after off bottom date';
   }
 
   if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {

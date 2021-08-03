@@ -160,7 +160,7 @@ class LoweringGallery extends Component {
 
     let galleries = [];
     for (const [key, value] of Object.entries(this.state.aux_data)) {
-      galleries.push((
+      galleries.unshift((
         <Tab key={`tab_${key}`} eventKey={`tab_${key}`} title={key}>
           <LoweringGalleryTab imagesSource={key} imagesData={value} maxImagesPerPage={this.state.maxImagesPerPage} />
         </Tab>
