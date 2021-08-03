@@ -17,7 +17,7 @@ const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
 const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
-const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
+const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData','vehicleRealtimeCTDData','vehicleRealtimeO2Data','vehicleRealtimeParoData','vehicleRealtimePHData'];
 
 const eventHistoryRef = "eventHistory";
 
@@ -30,6 +30,7 @@ class EventHistory extends Component {
       page: 0,
       event: null,
       showASNAP: false,
+      showFRAMEGRAB: true,
       showNewEventDetails: true,
       showEventHistory: true,
       showEventHistoryFullscreen: false,
@@ -53,16 +54,21 @@ class EventHistory extends Component {
   componentDidUpdate(prevProps, prevState) {
 
     if(prevState.page !== this.state.page) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, this.state.page);      
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.filter, this.state.page);      
     }
 
     if(prevState.filter !== this.state.filter) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0);
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.filter, 0);
       this.setState({page: 0});
     }
 
     if(prevState.showASNAP !== this.state.showASNAP) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0);
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.filter, 0);
+      this.setState({page: 0});
+    }
+
+    if(prevState.showFRAMEGRAB !== this.state.showFRAMEGRAB) {
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.filter, 0);
       this.setState({page: 0});
     }
 
@@ -103,7 +109,7 @@ class EventHistory extends Component {
       }
 
       const updateHandler = (update) => {
-        if(!(!this.state.showASNAP && update.event_value === "ASNAP") && filteredEvent(update.event_value)) {
+        if(!(!this.state.showASNAP && update.event_value === "ASNAP") && !(!this.state.showFRAMEGRAB && update.event_value === "FRAMEGRAB") && filteredEvent(update.event_value)) {
           if(this.state.page == 0) {
             this.props.updateEventHistory(update);            
           }
@@ -127,7 +133,7 @@ class EventHistory extends Component {
           }
         }
 
-        this.props.fetchEventHistory(this.state.showASNAP, this.state.page);
+        this.props.fetchEventHistory(this.state.showASNAP, this.state.showFRAMEGRAB, this.state.page);
       };
 
       this.client.subscribe('/ws/status/newEvents', updateHandler);
@@ -279,6 +285,10 @@ class EventHistory extends Component {
 
   toggleASNAP() {
     this.setState( prevState => ({showASNAP: !prevState.showASNAP}));
+  }
+
+  toggleFRAMEGRAB() {
+    this.setState( prevState => ({showFRAMEGRAB: !prevState.showFRAMEGRAB}));
   }
 
   toggleNewEventDetails() {
@@ -468,7 +478,8 @@ class EventHistory extends Component {
     let newEventDetailsCard = (this.state.showNewEventDetails && this.state.event) ? this.renderNewestEvent() : null
 
     const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' checked={this.state.showASNAP} disabled={this.state.filter} onChange={() => this.toggleASNAP()} label="ASNAP"/>);
-    
+    const FRAMEGRABToggle = (<Form.Check id="FRAMEGRAB" type='switch' inline checked={this.state.showFRAMEGRAB} disabled={this.state.filter} onChange={() => this.toggleFRAMEGRAB()} label='FRAMEGRAB'/>);
+
     if (!this.props.history) {
       eventHistoryCard = (
         <Card className={this.props.className}>
@@ -490,6 +501,7 @@ class EventHistory extends Component {
             <Button className="mr-1" size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
             <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
             <Form className="float-right" inline>
+              {FRAMEGRABToggle}
               {ASNAPToggle}
             </Form>
           </Card.Footer>

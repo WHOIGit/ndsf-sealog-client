@@ -1295,13 +1295,17 @@ export function clearEvents() {
   };
 }
 
-export function fetchEventHistory(asnap=false, filter='', page=0) {
+export function fetchEventHistory(asnap=false, framegrab=true, filter='', page=0) {
 
   const eventsPerPage = 20;
 
   let url = `${API_ROOT_URL}/api/v1/events?sort=newest&limit=${eventsPerPage}&offset=${eventsPerPage*page}`;
   if(!asnap) {
     url += '&value=!ASNAP';
+  }
+
+  if(!framegrab) {
+    url += '&value=!FRAMEGRAB';
   }
 
   if(filter != '') {

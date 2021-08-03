@@ -11,6 +11,7 @@ import ImportCruisesModal from './import_cruises_modal';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
+import StatsForROVTeamModal from './stats_for_rov_team_modal';
 import { USE_ACCESS_CONTROL, DEFAULT_VESSEL, CUSTOM_CRUISE_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
@@ -51,6 +52,10 @@ class Cruises extends Component {
 
   handleCruisePermissionsModal(cruise) {
     this.props.showModal('cruisePermissions', { cruise_id: cruise.id });
+  }
+
+  handleStatsForROVTeamModal(cruise) {
+    this.props.showModal('statsForROVTeam', { cruise: cruise });
   }
 
   handleCruiseUpdate(id) {
@@ -129,6 +134,7 @@ class Cruises extends Component {
 
     const editTooltip = (<Tooltip id="editTooltip">Edit this {this.state.cruise_name.toLowerCase()}.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {this.state.cruise_name.toLowerCase()}.</Tooltip>);
+    const showStatsForROVTeamTooltip = (<Tooltip id="showTooltip">Show {this.state.cruise_name.toLowerCase()} stats.</Tooltip>);    
     const showTooltip = (<Tooltip id="showTooltip">{this.state.cruise_name} is hidden, click to show.</Tooltip>);
     const hideTooltip = (<Tooltip id="hideTooltip">{this.state.cruise_name} is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
@@ -137,6 +143,7 @@ class Cruises extends Component {
 
     return cruises.map((cruise, index) => {
       if(index >= (this.state.activePage-1) * maxCruisesPerPage && index < (this.state.activePage * maxCruisesPerPage)) {
+        let statsForROVTeamLink = <OverlayTrigger placement="top" overlay={showStatsForROVTeamTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleStatsForROVTeamModal(cruise) } icon='table' fixedWidth/></OverlayTrigger>;
         let deleteLink = (this.props.roles.includes('admin'))? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleCruiseDeleteModal(cruise.id) } icon='trash' fixedWidth/></OverlayTrigger>: null;
         let hiddenLink = null;
 
@@ -159,6 +166,7 @@ class Cruises extends Component {
               <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCruiseUpdate(cruise.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
               {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissionsModal(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
               {hiddenLink}{' '}
+              {statsForROVTeamLink}{' '}
               {deleteLink}
               <CopyCruiseToClipboard cruise={cruise} />
             </td>
@@ -230,6 +238,7 @@ class Cruises extends Component {
           <DeleteCruiseModal />
           <DeleteFileModal />
           <CruisePermissionsModal />
+          <StatsForROVTeamModal />
           <ImportCruisesModal handleExit={this.handleCruiseImportClose} />
           <Row>
             <Col className="px-1" sm={12} md={7} lg={6} xl={{span:5, offset:1}}>

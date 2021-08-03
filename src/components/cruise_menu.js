@@ -4,10 +4,12 @@ import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Accordion, Button, Row, Col, Card } from 'react-bootstrap';
+import { Accordion, Button, Row, Col, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
+import StatsForROVTeamModal from './stats_for_rov_team_modal';
+import SVProfileModal from './sv_profile_modal';
 import { API_ROOT_URL, MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
@@ -213,7 +215,7 @@ class CruiseMenu extends Component {
       let loweringDescendingTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) : null;
       let loweringOnBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
-      let loweringOnSurfaceTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_surface) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_surface) : null;
+      let loweringFloatsOnSurfaceTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_floats_on_surface) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_floats_on_surface) : null;
       let loweringStopTime = moment.utc(this.state.activeLowering.stop_ts);
       let loweringAbortTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) : null;
       
@@ -221,8 +223,8 @@ class CruiseMenu extends Component {
       let deploymentDuration = (loweringStartTime && loweringDescendingTime) ? loweringDescendingTime.diff(loweringStartTime) : null;
       let decentDurationValue = (loweringOnBottomTime && loweringDescendingTime) ? loweringOnBottomTime.diff(loweringDescendingTime) : null;
       let onBottomDurationValue = (loweringOnBottomTime && loweringOffBottomTime) ? loweringOffBottomTime.diff(loweringOnBottomTime) : null;
-      let ascentDurationValue = (loweringOffBottomTime && loweringOnSurfaceTime) ? loweringOnSurfaceTime.diff(loweringOffBottomTime) : null;
-      let recoveryDurationValue = (loweringStopTime && loweringOnSurfaceTime) ? loweringStopTime.diff(loweringOnSurfaceTime) : null;
+      let ascentDurationValue = (loweringOffBottomTime && loweringFloatsOnSurfaceTime) ? loweringFloatsOnSurfaceTime.diff(loweringOffBottomTime) : null;
+      let recoveryDurationValue = (loweringStopTime && loweringFloatsOnSurfaceTime) ? loweringStopTime.diff(loweringFloatsOnSurfaceTime) : null;
 
       let loweringDescription = (this.state.activeLowering.lowering_additional_meta.lowering_description)? <p className="text-justify"><strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}</p> : null;
       let loweringLocation = (this.state.activeLowering.lowering_location) ? <span><strong>Location:</strong> {this.state.activeLowering.lowering_location}<br/></span> : null;
@@ -242,7 +244,8 @@ class CruiseMenu extends Component {
 
       return (          
         <Card className="border-secondary" key={`lowering_card`}>
-          <Card.Header>{this.state.lowering_name}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
+          <Card.Header>{this.state.lowering_name}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><span onClick={() => this.handleEventShowSVProfileModal(this.state.activeLowering)}><OverlayTrigger placement="top" overlay={<Tooltip id="svProfileTooltip">SV Profile</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
+          
           <Card.Body>
             {loweringDescription}
             {loweringLocation}
@@ -303,7 +306,7 @@ class CruiseMenu extends Component {
 
       return (          
         <Card className="border-secondary" key={`cruise_${this.state.activeCruise.cruise_id}`}>
-          <Card.Header>{this.state.cruise_name}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
+          <Card.Header>{this.state.cruise_name}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><span onClick={() => this.handleEventShowStatForROVTeamModal(this.state.activeCruise)}><OverlayTrigger placement="top" overlay={<Tooltip id="statsForROVTeamTooltip">Stats for ROV Team</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
           <Card.Body>
             {cruiseName}
             {cruisePi}
@@ -513,6 +516,8 @@ class CruiseMenu extends Component {
   render(){
     return (
       <div>
+        <StatsForROVTeamModal/>
+        <SVProfileModal/>
         <Row>
             <h4>{MAIN_SCREEN_HEADER}</h4>
             <p className="text-justify">{MAIN_SCREEN_TXT}</p>
