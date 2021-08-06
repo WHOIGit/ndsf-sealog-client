@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: oceandatatools/sealog-client-vehicle
+    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
