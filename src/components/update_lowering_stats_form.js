@@ -333,16 +333,16 @@ function validate(formProps) {
     errors.max_depth = 'Must be a positive floating point number'
   }
 
-  if (!(formProps.bbox_north >= -60 && formProps.bbox_north <= 60)) {
-    errors.bbox_north = 'Must be a number between +/- 60'
+  if (!(formProps.bbox_north >= -90 && formProps.bbox_north <= 90)) {
+    errors.bbox_north = 'Must be a number between +/- 90'
   }
 
   if (!(formProps.bbox_east >= -180 && formProps.bbox_east <= 180)) {
     errors.bbox_east = 'Must be a number between +/- 180'
   }
 
-  if (!(formProps.bbox_south >= -60 && formProps.bbox_south <= 60)) {
-    errors.bbox_south = 'Must be a number between +/- 60'
+  if (!(formProps.bbox_south >= -90 && formProps.bbox_south <= 90)) {
+    errors.bbox_south = 'Must be a number between +/- 90'
   }
 
   if (!(formProps.bbox_west >= -180 && formProps.bbox_west <= 180)) {
