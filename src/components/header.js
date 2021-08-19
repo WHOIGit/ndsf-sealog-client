@@ -89,7 +89,7 @@ class Header extends Component {
   }
 
   renderToggleASNAP() {
-    if ( !DISABLE_EVENT_LOGGING && ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) ) {
+    if ( !DISABLE_EVENT_LOGGING && this.props.roles.includes('admin') ) {
       return (
         <NavDropdown.Item onClick={ () => this.handleASNAPToggle() }>Toggle ASNAP</NavDropdown.Item>
       );
