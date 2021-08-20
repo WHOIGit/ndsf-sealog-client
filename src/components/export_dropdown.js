@@ -68,7 +68,7 @@ class ExportDropdown extends Component {
   async fetchEvents(exportFormat, eventFilter, hideASNAP) {
 
     const cookies = new Cookies();
-    format += `format=${exportFormat}&add_record_ids=true` ? exportFormat==='csv' : `format=${exportFormat}`
+    let format += `format=${exportFormat}&add_record_ids=true` ? exportFormat==='csv' : `format=${exportFormat}`
     let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
     let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
     let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
@@ -129,7 +129,7 @@ class ExportDropdown extends Component {
   async fetchEventsWithAuxData(exportFormat, eventFilter, hideASNAP) {
 
     const cookies = new Cookies();
-    format += `format=${exportFormat}&add_record_ids=true` ? exportFormat==='csv' : `format=${exportFormat}`
+    let format += `format=${exportFormat}&add_record_ids=true` ? exportFormat==='csv' : `format=${exportFormat}`
     let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
     let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
     let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
