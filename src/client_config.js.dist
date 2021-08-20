@@ -58,7 +58,7 @@ const LOWERING_ID_REGEX = RegExp(/^S[0-9]{4}$/);
 const CUSTOM_CRUISE_NAME = null;
 
 // What to call "lowering/lowerings", format: null OR ["single version","plural version"] use lowercase
-const CUSTOM_LOWERING_NAME = "dive/dives";
+const CUSTOM_LOWERING_NAME = ["dive","dives"];
 
 module.exports = {
   API_ROOT_URL,
