@@ -83,8 +83,6 @@ class CreateCruise extends Component {
       delete formProps.cruise_description;
     }
 
-
-
     this.props.createCruise(formProps);
   }
 
