@@ -46,8 +46,7 @@ class CreateCruise extends Component {
       });
 
       formProps.stop_ts = end_of_stop_ts.toISOString();
-    };
-
+    }
 
     if(formProps.cruise_participants) {
       formProps.cruise_additional_meta.cruise_participants = formProps.cruise_participants.map(participant => participant.trim());
@@ -83,8 +82,6 @@ class CreateCruise extends Component {
       formProps.cruise_additional_meta.cruise_description = formProps.cruise_description;
       delete formProps.cruise_description;
     }
-
-
 
     this.props.createCruise(formProps);
   }

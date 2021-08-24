@@ -15,9 +15,9 @@ import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
-const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData']
+const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData']
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
 const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
