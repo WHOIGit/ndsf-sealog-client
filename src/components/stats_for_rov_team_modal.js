@@ -410,7 +410,7 @@ class StatsForROVTeamModal extends Component {
 
     const statTableDataTotals = (
       <tr key='stat_totals'>
-        <th>{`${this.state.lowerings.length} Dives`}</th>
+        <th>{`${this.state.lowerings.length} ${this.state.lowerings_name}`}</th>
         <th>Totals:</th>
         <th>{`${moment.duration(lowering_stat_totals.total_duration).format('HH:mm:ss', { trim: false })}`}</th>
         <th>{`${moment.duration(lowering_stat_totals.deployment_duration).format('HH:mm:ss', { trim: false })}`}</th>
