@@ -46,7 +46,7 @@ class LoweringGallery extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
 
     if(prevProps.event.hideASNAP !== this.props.event.hideASNAP) {
       this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);

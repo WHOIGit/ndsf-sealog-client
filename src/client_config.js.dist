@@ -20,7 +20,7 @@ const RECAPTCHA_SITE_KEY = "";
 const LOGIN_SCREEN_TXT = "Sealog provides the Oceanographic Research community with an open-source tool for recording, reviewing, and exporting insitu scientific and operational observations.";
 
 // Image file shown on the login page.  This image needs to be saved in the ./dist/images folder
-const LOGIN_IMAGE = "";
+const LOGIN_IMAGE = "ArgusROV.png";
 
 // Text show on the main page above the cruise list.
 const MAIN_SCREEN_TXT = "Please select a cruise from the list below.  Once a cruise is selected please select a lowering from the list of lowerings associated with that cruise that appear at the bottom of the cruise information panel.  Selecting a lowering will open the lowering information panel.  At the bottom of the cruise information panel there will be links for proceeding to the lowering replay section, the lowering review section and the lowering gallery section of Sealog. If at any time you wish to return to this page please click the \"Review Cruises/Lowerings\" text in upper navigation bar.";
