@@ -252,7 +252,7 @@ class CruiseMenu extends Component {
 
       return (          
         <Card className="border-secondary" key={`lowering_card`}>
-          <Card.Header>{this.state.lowering_name}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><span onClick={() => this.handleEventShowSVProfileModal(this.state.activeLowering)}><OverlayTrigger placement="top" overlay={<Tooltip id="svProfileTooltip">SV Profile</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
+          <Card.Header>{this.state.lowering_name}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><span onClick={() => this.handleSVProfileModal(this.state.activeLowering)}><OverlayTrigger placement="top" overlay={<Tooltip id="svProfileTooltip">SV Profile</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
           
           <Card.Body>
             {loweringDescription}
@@ -314,7 +314,7 @@ class CruiseMenu extends Component {
 
       return (          
         <Card className="border-secondary" key={`cruise_${this.state.activeCruise.cruise_id}`}>
-          <Card.Header>{this.state.cruise_name}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><span onClick={() => this.handleEventShowStatForROVTeamModal(this.state.activeCruise)}><OverlayTrigger placement="top" overlay={<Tooltip id="statsForROVTeamTooltip">Stats for ROV Team</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
+          <Card.Header>{this.state.cruise_name}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><span onClick={() => this.handleStatsForROVTeamModal(this.state.activeCruise)}><OverlayTrigger placement="top" overlay={<Tooltip id="statsForROVTeamTooltip">Stats for ROV Team</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
           <Card.Body>
             {cruiseName}
             {cruisePi}
