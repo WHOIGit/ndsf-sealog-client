@@ -208,6 +208,14 @@ class CruiseMenu extends Component {
     return <div>{output}<br/></div>;
   }
 
+  handleStatsForROVTeamModal(cruise) {
+    this.props.showModal('statsForROVTeam', { cruise: cruise });
+  }
+
+  handleSVProfileModal(lowering) {
+    this.props.showModal('svProfile', { lowering: lowering });
+  }
+
   renderLoweringCard() {
 
     if(this.state.activeLowering){
