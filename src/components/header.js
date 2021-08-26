@@ -80,6 +80,14 @@ class Header extends Component {
     }
   }
 
+  renderStatOptions() {
+    if ( this.props.roles.includes('admin') ) {
+      return (
+        <NavDropdown.Item onClick={this.props.gotoStats}>Stats</NavDropdown.Item>
+      );
+    }
+  }
+
   renderTaskOptions() {
     if ( this.props.roles.includes('admin') ) {
       return (
@@ -105,6 +113,7 @@ class Header extends Component {
           {this.renderEventTemplateOptions()}
           {this.renderLoweringOptions()}
           {this.renderTaskOptions()}
+          {this.renderStatOptions()}
           {this.renderUserOptions()}
           {this.renderToggleASNAP()}
         </NavDropdown>

@@ -20,6 +20,7 @@ import RequireAuth from './components/auth/require_auth';
 import RequireUnauth from './components/auth/require_unauth';
 import CruiseMenu from './components/cruise_menu';
 import Users from './components/users';
+import Stats from './components/stats';
 import Tasks from './components/tasks';
 import EventLogging from './components/event_logging';
 import EventManagement from './components/event_management';
@@ -113,6 +114,7 @@ ReactDOM.render(
         <Route path={ `/login` } exact={true} component={RequireUnauth(Login)} />
         <Route path={ `/logout` } exact={true} component={Logout} />
         <Route path={ `/users` } exact={true} component={RequireAuth(Users)} />
+        <Route path={ `/stats` } exact={true} component={RequireAuth(Stats)} />
         <Route path={ `/tasks` } exact={true} component={RequireAuth(Tasks)} />
         <Route path={ `/cruises` } exact={true} component={RequireAuth(Cruises)} />
         <Route path={ `/cruise_menu` } exact={true} component={RequireAuth(CruiseMenu)} />

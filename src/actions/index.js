@@ -260,6 +260,13 @@ export function gotoProfile() {
   };
 }
 
+export function gotoStats() {
+
+  return function (dispatch) {
+    return dispatch(push(`/stats`));
+  };
+}
+
 export function gotoTasks() {
 
   return function (dispatch) {
