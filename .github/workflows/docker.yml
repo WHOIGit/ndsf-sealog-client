@@ -37,11 +37,20 @@ jobs:
                 sed -e 's,/,-,g')" ;;
           esac
 
+          # Record git source and revision
+          GIT_SOURCE=$(git config --get remote.origin.url)
+          GIT_REVISION=$(git rev-parse HEAD)$(git diff --quiet || echo "-dirty")
+
           echo ::set-output name=docker_push::$DOCKER_PUSH
           echo ::set-output name=docker_tag::$DOCKER_TAG
+          echo ::set-output name=git_source::$GIT_SOURCE
+          echo ::set-output name=git_revision::$GIT_REVISION
 
       - name: Build the Docker image
-        run: docker-compose build
+        run: |
+          docker-compose build \
+            --build-arg GIT_SOURCE=${{ steps.init.outputs.git_source }} \
+            --build-arg GIT_REVISION=${{ steps.init.outputs.git_revision }}
 
       # There aren't any tests yet...
       # - name: Run test suite

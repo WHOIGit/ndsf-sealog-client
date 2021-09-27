@@ -34,3 +34,12 @@ RUN (echo '#!/bin/sh -e'; \
           '> /etc/nginx/conf.d/default.conf'; \
     ) > /docker-entrypoint.d/99-build-sealog.sh \
  && chmod +x /docker-entrypoint.d/99-build-sealog.sh
+
+# Attach git metadata to this container image
+ARG GIT_SOURCE
+LABEL org.opencontainers.image.source=${GIT_SOURCE}
+ENV GIT_SOURCE=${GIT_SOURCE}
+
+ARG GIT_REVISION
+LABEL org.opencontainers.image.revision=${GIT_REVISION}
+ENV GIT_REVISION=${GIT_REVISION}
