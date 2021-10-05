@@ -8,7 +8,7 @@ import { Accordion, Button, Row, Col, Card } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
-import { API_ROOT_URL, MAIN_SCREEN_TXT, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL, MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const CRUISE_ROUTE = "/files/cruises";
@@ -514,7 +514,7 @@ class CruiseMenu extends Component {
     return (
       <div>
         <Row>
-            <h4>Welcome to Sealog</h4>
+            <h4>{MAIN_SCREEN_HEADER}</h4>
             <p className="text-justify">{MAIN_SCREEN_TXT}</p>
         </Row>
         <Row className="mt-2">
