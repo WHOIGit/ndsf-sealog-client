@@ -112,12 +112,35 @@ class Header extends Component {
     }
   }
 
+  renderUserSwitchButtons() {
+    return this.props.guest_users.map((guest) => {
+      if (RECAPTCHA_SITE_KEY !== "")
+        return null;
+
+      if (guest.username === this.props.user.profile.username)
+        return null;
+
+      return (
+        <NavDropdown.Item key={`switch2${guest.username}`}
+            onClick={ () => this.handleSwitchToUser(guest.username) }>
+
+            Switch to {guest.fullname}
+        </NavDropdown.Item>
+      );
+    });
+  }
+
+  userIsGuest() {
+    return this.props.guest_users.some(
+      (guest) => guest.username === this.props.user.username);
+  }
+
   renderUserDropdown() {
     if(this.props.authenticated) {
       return (
-        <NavDropdown title={<span>{this.props.fullname} <FontAwesomeIcon icon="user" /></span>} id="basic-nav-dropdown-user">
-          {(this.props.fullname !== "Guest") ? <NavDropdown.Item onClick={this.props.gotoProfile} key="profile" >User Profile</NavDropdown.Item> : null }
-          {(this.props.fullname !== 'Guest' && RECAPTCHA_SITE_KEY === "")? (<NavDropdown.Item key="switch2Guest" onClick={ () => this.handleSwitchToGuest() } >Switch to Guest</NavDropdown.Item>) : null }
+        <NavDropdown title={<span>{this.props.user.profile.fullname} <FontAwesomeIcon icon="user" /></span>} id="basic-nav-dropdown-user">
+          {this.userIsGuest() ? <NavDropdown.Item onClick={this.props.gotoProfile} key="profile" >User Profile</NavDropdown.Item> : null }
+          {this.renderUserSwitchButtons()}
           <NavDropdown.Item key="logout" onClick={ () => this.handleLogout() } >Log Out</NavDropdown.Item>
         </NavDropdown>
       );
@@ -128,8 +151,8 @@ class Header extends Component {
     this.props.logout();
   }
 
-  handleSwitchToGuest() {
-    this.props.switch2Guest();
+  handleSwitchToUser(user) {
+    this.props.switch2Guest(user);
   }
 
   render () {
@@ -152,7 +175,8 @@ class Header extends Component {
 function mapStateToProps(state){
   return {
     authenticated: state.auth.authenticated,
-    fullname: state.user.profile.fullname,
+    user: state.user,
+    guest_users: state.user.guest_users,
     roles: state.user.profile.roles,
     asnapStatus: (state.custom_var)? state.custom_var.custom_vars.find(custom_var => custom_var.custom_var_name === "asnapStatus") : null
   };

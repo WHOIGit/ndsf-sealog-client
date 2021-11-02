@@ -28,6 +28,7 @@ export const UPDATE_USER_ERROR = 'update_user_error';
 export const LEAVE_UPDATE_USER_FORM = 'leave_update_user_form';
 
 export const FETCH_USERS = 'fetch_users';
+export const FETCH_GUEST_USERS = 'fetch_guest_users';
 export const DELETE_USER = 'destory_user';
 
 export const FETCH_EVENT_TEMPLATES_FOR_MAIN = 'fetch_event_templates_for_main';

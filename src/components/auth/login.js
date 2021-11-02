@@ -26,6 +26,7 @@ class Login extends Component {
 
   componentDidMount() {
     window.addEventListener('message', this.handleIFrameAuth);
+    this.props.fetchGuestUsers();
   }
 
   componentWillUnmount() {
@@ -56,9 +57,9 @@ class Login extends Component {
     this.props.login({username, password, reCaptcha});
   }
 
-  async switch2Guest() {
+  async switch2Guest(user) {
     let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
-    this.props.switch2Guest(reCaptcha);
+    this.props.switch2Guest(user, reCaptcha);
   }
 
   renderMessage(errorMsg, msg){
@@ -94,7 +95,10 @@ class Login extends Component {
     ): null;
 
     const loginButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button>;
-    const loginAsGuestButton = <Button variant="success" onClick={() => this.switch2Guest()} block>Login as Guest</Button>;
+    const loginAsGuestButtons = this.props.guest_users.map((user) =>
+      <Button key={user.username} variant="success" onClick={() => this.switch2Guest(user.username)} block>
+        Login as {user.fullname}
+      </Button>);
 
     const loginImage = ( LOGIN_IMAGE !== "" )? 
     <div className="d-flex justify-content-center">
@@ -130,7 +134,7 @@ class Login extends Component {
                   {recaptcha}
                   {this.renderMessage(this.props.errorMessage, this.props.message)}
                   {loginButton}
-                  {loginAsGuestButton}
+                  {loginAsGuestButtons}
                 </Form>
                 <div className="text-center">
                   <hr className="border-secondary"/>
@@ -167,7 +171,8 @@ const validate = values => {
 function mapStateToProps(state) {
   return {
     errorMessage: state.auth.error,
-    successMessage: state.auth.message
+    successMessage: state.auth.message,
+    guest_users: state.user.guest_users,
   };
 }
 

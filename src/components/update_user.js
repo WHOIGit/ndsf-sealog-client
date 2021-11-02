@@ -184,7 +184,6 @@ function validate(formProps) {
 }
 
 function mapStateToProps(state) {
-
   return {
     errorMessage: state.user.user_error,
     message: state.user.user_message,
