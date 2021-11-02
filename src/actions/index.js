@@ -22,6 +22,7 @@ import {
   UPDATE_USER_ERROR,
   LEAVE_UPDATE_USER_FORM,
   FETCH_USERS,
+  FETCH_GUEST_USERS,
   FETCH_EVENT_TEMPLATES_FOR_MAIN,
   FETCH_EVENTS,
   SET_SELECTED_EVENT,
@@ -480,6 +481,7 @@ export function createUser({username, fullname, password = '', email, roles, sys
     return await axios.post(`${API_ROOT_URL}/api/v1/users`, {username, fullname, password, email, roles, system_user, disabled}, { headers: { authorization: cookies.get('token') } }
       ).then(() => {
         dispatch(createUserSuccess('Account created'));
+        dispatch(fetchGuestUsers());
         return dispatch(fetchUsers());
       }).catch((error) => {
       // If request is unauthenticated
@@ -822,6 +824,7 @@ export function updateUser(formProps) {
     return await axios.patch(`${API_ROOT_URL}/api/v1/users/${formProps.id}`, fields, { headers: { authorization: cookies.get('token') } }
     ).then(() => {
       dispatch(fetchUsers());
+      dispatch(fetchGuestUsers());
       return dispatch(updateUserSuccess('Account updated'));
     }).catch((error) => {
       console.error(error);
@@ -949,8 +952,8 @@ export function deleteUser(id) {
         dispatch(leaveUpdateUserForm());
       }
 
+      dispatch(fetchGuestUsers());
       return dispatch(fetchUsers());
-
     }).catch((error) => {
       console.error(error);
     });
@@ -983,9 +986,9 @@ export function logout() {
   };
 }
 
-export function switch2Guest(reCaptcha = null) {
+export function switch2Guest(username, reCaptcha = null) {
   return function(dispatch) {
-    return dispatch(login( { username:"guest", password: "", reCaptcha } ) );
+    return dispatch(login( { username: username, password: "", reCaptcha } ) );
   };
 }
 
@@ -1138,6 +1141,22 @@ export function fetchUsers() {
     }).catch((error) => {
       if(error.response.status === 404) {
         return dispatch({type: FETCH_USERS, payload: []});
+      } else {
+        console.error(error);
+      }
+    });
+  };
+}
+
+export function fetchGuestUsers() {
+
+  return async function (dispatch) {
+    return await axios.get(API_ROOT_URL + '/api/v1/users/guests'
+    ).then(({data}) => {
+      return dispatch({type: FETCH_GUEST_USERS, payload: data});
+    }).catch((error) => {
+      if(error.response.status === 404) {
+        return dispatch({type: FETCH_GUEST_USERS, payload: []});
       } else {
         console.error(error);
       }
@@ -1636,6 +1655,7 @@ export function deleteAllNonSystemUsers() {
       return await dispatch(deleteUser(user.id, false));
       });
 
+    dispatch(fetchGuestUsers());
     return dispatch(fetchUsers());
   };
 }

@@ -13,7 +13,9 @@ import CustomPagination from './custom_pagination';
 import { USE_ACCESS_CONTROL, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
-const disabledAccounts = ['admin', 'guest', 'pi'];
+// These aren't "disabled", the UI just doesn't allow them to be deleted.
+// The server does not enforce this restriction anyway.
+const disabledAccounts = ['admin'];
 
 let fileDownload = require('js-file-download');
 
