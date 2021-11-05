@@ -10,6 +10,7 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
+import { getCruiseByLowering } from '../api';
 
 const maxEventsPerPage = 15;
 
@@ -21,7 +22,8 @@ class LoweringReview extends Component {
     this.divFocus = null;
 
     this.state = {
-      activePage: 1
+      activePage: 1,
+      cruise: null,
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -42,7 +44,8 @@ class LoweringReview extends Component {
       this.handlePageSelect(Math.ceil((eventIndex + 1)/maxEventsPerPage), false);
     }
 
-    this.props.initCruiseFromLowering(this.props.match.params.id);
+    getCruiseByLowering(this.props.match.params.id)
+      .then((cruise) => this.setState({ cruise }));
 
     this.divFocus.focus();
   }
@@ -237,7 +240,7 @@ class LoweringReview extends Component {
 
   render(){
 
-    const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "Loading...";
+    const cruise_id = (this.state.cruise)? this.state.cruise.cruise_id : "Loading...";
 
     return (
       <div>
@@ -247,7 +250,7 @@ class LoweringReview extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.props.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Review"} modes={["Replay", "Map", "Gallery"]}/>
           </ButtonToolbar>
@@ -270,7 +273,6 @@ function mapStateToProps(state) {
   return {
     roles: state.user.profile.roles,
     event: state.event,
-    cruise: state.cruise.cruise,
     lowering: state.lowering.lowering
   };
 }

@@ -22,15 +22,13 @@ class CruisePermissionsModal extends Component {
 
     this.state = {
       users: null,
-      cruise: null,
-      Permissions: {},
-    }
+    };
 
     this.fetchUsers = this.fetchUsers.bind(this);
   }
 
   static propTypes = {
-    cruise_id: PropTypes.string,
+    cruise: PropTypes.object,
     handleHide: PropTypes.func.isRequired
   };
 
@@ -53,7 +51,7 @@ class CruisePermissionsModal extends Component {
         payload.remove = [user_id];
       }
 
-      await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise_id}/permissions`,
+      await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise.id}/permissions`,
       payload,
       {
         headers: {
@@ -76,7 +74,7 @@ class CruisePermissionsModal extends Component {
   async fetchCruise() {
     try {
 
-      const cruise = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise_id}`,
+      const cruise = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise.id}`,
       {
         headers: {
           authorization: cookies.get('token'),
@@ -123,40 +121,35 @@ class CruisePermissionsModal extends Component {
 
     const { show, handleHide } = this.props
 
-    const body = ( this.state.cruise && this.state.users) ?
+    const body = ( this.props.cruise && this.state.users) ?
       this.state.users.map((user) => {
 
         return (
           <ListGroup.Item key={`user_${user.id}`} >
-            <Form.Check 
+            <Form.Check
               type="switch"
               id={`user_${user.id}`}
               label={`${user.fullname}`}
-              checked={(this.state.cruise.cruise_access_list && this.state.cruise.cruise_access_list.includes(user.id))}
+              checked={(this.props.cruise.cruise_access_list && this.props.cruise.cruise_access_list.includes(user.id))}
               onChange={ (e) => { this.updateCruisePermissions(user.id, e.target.checked) }}
             />
           </ListGroup.Item>
         )
       }) :
       null;
-      
-    if (body) {
-      return (
-        <Modal show={show} onHide={handleHide}>
-          <form>
-            <Modal.Header closeButton>
-              <Modal.Title>{_Cruise_} Permissions</Modal.Title>
-            </Modal.Header>
-              <ListGroup>
-                { body }
-              </ListGroup>
-          </form>
-        </Modal>
-      );
-    }
-    else {
-      return null;
-    }
+
+    return (
+      <Modal show={show} onHide={handleHide}>
+        <form>
+          <Modal.Header closeButton>
+            <Modal.Title>{_Cruise_} Permissions</Modal.Title>
+          </Modal.Header>
+            <ListGroup>
+              { body }
+            </ListGroup>
+        </form>
+      </Modal>
+    );
   }
 }
 

@@ -3,8 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Row, Button, Col, Card, Form, FormControl, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import moment from 'moment';
-import CreateCruise from './create_cruise';
-import UpdateCruise from './update_cruise';
+import CruiseEditor from './cruise_editor';
 import DeleteCruiseModal from './delete_cruise_modal';
 import DeleteFileModal from './delete_file_modal';
 import ImportCruisesModal from './import_cruises_modal';
@@ -29,8 +28,10 @@ class Cruises extends Component {
     this.state = {
       activePage: 1,
       filteredCruises: null,
+      activeCruise: null,
     };
 
+    this.formDidSubmit = this.formDidSubmit.bind(this);
     this.handlePageSelect = this.handlePageSelect.bind(this);
     this.handleCruiseImportClose = this.handleCruiseImportClose.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -40,33 +41,72 @@ class Cruises extends Component {
     this.props.fetchCruises();
   }
 
+
+  // Helpers for determining user capabilities
+
+  hasRole(role) {
+    return (this.props.roles && this.props.roles.includes(role));
+  }
+
+  get canDelete() {
+    return this.hasRole("admin");
+  }
+
+  get canHide() {
+    return this.hasRole("admin");
+  }
+
+  get canEditPermissions() {
+    return this.hasRole("admin");
+  }
+
+  get canManageCruises() {
+    return this.hasRole("admin") || this.hasRole("cruise_manager");
+  }
+
+  get canImportCruises() {
+    return this.hasRole("admin");
+  }
+
+  get canCreateCruises() {
+    return this.hasRole("admin");
+  }
+
+
+  // Event handlers
+
   handlePageSelect(eventKey) {
     this.setState({activePage: eventKey});
   }
 
-  handleCruiseDeleteModal(id) {
-    this.props.showModal('deleteCruise', { id: id, handleDelete: this.props.deleteCruise });
+  handleCruiseDeleteModal(cruise) {
+    this.props.showModal('deleteCruise', { cruise: cruise, handleDelete: this.props.deleteCruise });
   }
 
   handleCruisePermissionsModal(cruise) {
-    this.props.showModal('cruisePermissions', { cruise_id: cruise.id });
+    this.props.showModal('cruisePermissions', { cruise: cruise });
+    // TODO:
+    // After closing the permissions modal, we should refresh the cruise list
+    // so that if the modal is opened again, it will display the right content.
   }
 
-  handleCruiseUpdate(id) {
-    this.props.initCruise(id);
+  activateCruise(cruise) {
+    this.setState({ activeCruise: cruise });
+    this.props.initCruise();  // clears messages
     window.scrollTo(0, 0);
   }
 
-  handleCruiseShow(id) {
-    this.props.showCruise(id);
+  handleCruiseShow(cruise) {
+    this.props.showCruise(cruise.id);
   }
 
-  handleCruiseHide(id) {
-    this.props.hideCruise(id);
+  handleCruiseHide(cruise) {
+    this.props.hideCruise(cruise.id);
   }
 
   handleCruiseCreate() {
-    this.props.leaveUpdateCruiseForm();
+    this.setState({ activeCruise: null });
+    window.scrollTo(0, 0);
   }
 
   handleCruiseImportModal() {
@@ -103,25 +143,34 @@ class Cruises extends Component {
     this.handlePageSelect(1);
   }
 
-
   exportCruisesToJSON() {
     fileDownload(JSON.stringify(this.props.cruises, null, "\t"), 'sealog_cruisesExport.json');
   }
 
-  renderAddCruiseButton() {
-    if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
-      return (
-        <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.props.cruiseid}>Add {_Cruise_}</Button>
-      );
-    }
+  formDidSubmit() {
+    this.setState({ activeCruise: null });
+    this.props.fetchCruises();
+  }
+
+
+  // Rendering
+
+  renderNewCruiseButton() {
+    if(!this.canCreateCruises)
+      return null;
+
+    return (
+      <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate() } disabled={this.state.activeCruise === null}>New {_Cruise_}</Button>
+    );
   }
 
   renderImportCruisesButton() {
-    if(this.props.roles.includes("admin")) {
-      return (
-        <Button className="mr-1" variant="primary" size="sm" onClick={ () => this.handleCruiseImportModal()}>Import From File</Button>
-      );
-    }
+    if(!this.canImportCruises)
+      return null;
+
+    return (
+      <Button className="mr-1" variant="primary" size="sm" onClick={ () => this.handleCruiseImportModal()}>Import From File</Button>
+    );
   }
 
   renderCruises() {
@@ -136,13 +185,13 @@ class Cruises extends Component {
 
     return cruises.map((cruise, index) => {
       if(index >= (this.state.activePage-1) * maxCruisesPerPage && index < (this.state.activePage * maxCruisesPerPage)) {
-        let deleteLink = (this.props.roles.includes('admin'))? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleCruiseDeleteModal(cruise.id) } icon='trash' fixedWidth/></OverlayTrigger>: null;
+        let deleteLink = this.canDelete ? <OverlayTrigger placement="top" overlay={deleteTooltip}><FontAwesomeIcon className="text-danger" onClick={ () => this.handleCruiseDeleteModal(cruise) } icon='trash' fixedWidth/></OverlayTrigger> : null;
         let hiddenLink = null;
 
-        if(this.props.roles.includes('admin') && cruise.cruise_hidden) {
-          hiddenLink = <OverlayTrigger placement="top" overlay={showTooltip}><FontAwesomeIcon onClick={ () => this.handleCruiseShow(cruise.id) } icon='eye-slash' fixedWidth/></OverlayTrigger>;
-        } else if(this.props.roles.includes('admin') && !cruise.cruise_hidden) {
-          hiddenLink = <OverlayTrigger placement="top" overlay={hideTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleCruiseHide(cruise.id) } icon='eye' fixedWidth/></OverlayTrigger>;
+        if(this.canHide && cruise.cruise_hidden) {
+          hiddenLink = <OverlayTrigger placement="top" overlay={showTooltip}><FontAwesomeIcon onClick={ () => this.handleCruiseShow(cruise) } icon='eye-slash' fixedWidth/></OverlayTrigger>;
+        } else if(this.canHide && !cruise.cruise_hidden) {
+          hiddenLink = <OverlayTrigger placement="top" overlay={hideTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleCruiseHide(cruise) } icon='eye' fixedWidth/></OverlayTrigger>;
         }
 
         let cruiseName = (cruise.cruise_additional_meta.cruise_name)? <span>Name: {cruise.cruise_additional_meta.cruise_name}<br/></span> : null;
@@ -150,13 +199,16 @@ class Cruises extends Component {
         let cruiseVessel = (DEFAULT_VESSEL !== cruise.cruise_additional_meta.cruise_vessel)? <span>Vessel: {cruise.cruise_additional_meta.cruise_vessel}<br/></span> : null;
         let cruisePi = (cruise.cruise_additional_meta.cruise_pi)? <span>PI: {cruise.cruise_additional_meta.cruise_pi}<br/></span> : null;
 
+        const isActive = (this.state.activeCruise
+            && this.state.activeCruise.id === cruise.id);
+
         return (
           <tr key={cruise.id}>
-            <td className={(this.props.cruiseid === cruise.id)? "text-warning" : ""}>{cruise.cruise_id}</td>
-            <td className={`cruise-details ${(this.props.cruiseid === cruise.id)? "text-warning" : ""}`}>{cruiseName}{cruiseLocation}{cruisePi}{cruiseVessel}Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
+            <td className={ isActive ? "text-warning" : ""}>{cruise.cruise_id}</td>
+            <td className={`cruise-details ${isActive ? "text-warning" : ""}`}>{cruiseName}{cruiseLocation}{cruisePi}{cruiseVessel}Dates: {moment.utc(cruise.start_ts).format('L')}<FontAwesomeIcon icon='arrow-right' fixedWidth/>{moment.utc(cruise.stop_ts).format('L')}</td>
             <td>
-              <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCruiseUpdate(cruise.id) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
-              {(USE_ACCESS_CONTROL && this.props.roles.includes('admin')) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissionsModal(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
+              <OverlayTrigger placement="top" overlay={editTooltip}><FontAwesomeIcon className="text-primary" onClick={ () => this.activateCruise(cruise) } icon='pencil-alt' fixedWidth/></OverlayTrigger>
+              {(USE_ACCESS_CONTROL && this.canEditPermissions) ? <OverlayTrigger placement="top" overlay={permissionTooltip}><FontAwesomeIcon  className="text-primary" onClick={ () => this.handleCruisePermissionsModal(cruise) } icon='user-lock' fixedWidth/></OverlayTrigger> : ''}{' '}
               {hiddenLink}{' '}
               {deleteLink}
               <CopyCruiseToClipboard cruise={cruise} />
@@ -191,7 +243,6 @@ class Cruises extends Component {
   }
 
   renderCruiseHeader() {
-
     const exportTooltip = (<Tooltip id="exportTooltip">Export {_Cruises_}</Tooltip>);
 
     return (
@@ -208,60 +259,42 @@ class Cruises extends Component {
   }
 
   render() {
-    if (!this.props.roles) {
-      return (
-        <div>Loading...</div>
-      );
-    }
+    if (!this.canManageCruises)
+      return null;
 
-    if(this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager')) {
-
-      let cruiseForm = null;
-  
-      if(this.props.cruiseid) {
-        cruiseForm = <UpdateCruise handleFormSubmit={ this.props.fetchCruises } />;
-      } else {
-        cruiseForm = <CreateCruise handleFormSubmit={ this.props.fetchCruises } />;
-      }
-
-      return (
-        <div>
-          <DeleteCruiseModal />
-          <DeleteFileModal />
-          <CruisePermissionsModal />
-          <ImportCruisesModal handleExit={this.handleCruiseImportClose} />
-          <Row>
-            <Col className="px-1" sm={12} md={7} lg={6} xl={{span:5, offset:1}}>
-              <Card className="border-secondary">
-                <Card.Header>{this.renderCruiseHeader()}</Card.Header>
-                {this.renderCruiseTable()}
-              </Card>
-              <CustomPagination className="mt-2" page={this.state.activePage} count={(this.state.filteredCruises)? this.state.filteredCruises.length : this.props.cruises.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxCruisesPerPage}/>
-              <div className="my-2 float-right">
-                {this.renderImportCruisesButton()}
-                {this.renderAddCruiseButton()}
-              </div>
-            </Col>
-            <Col className="px-1" sm={12} md={5} lg={6} xl={5}>
-              { cruiseForm }
-            </Col>
-          </Row>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          What are YOU doing here?
-        </div>
-      );
-    }
+    return (
+      <div>
+        <DeleteCruiseModal />
+        <CruisePermissionsModal />
+        <DeleteFileModal />
+        <ImportCruisesModal handleExit={this.handleCruiseImportClose} />
+        <Row>
+          <Col className="px-1" sm={12} md={7} lg={6} xl={{span:5, offset:1}}>
+            <Card className="border-secondary">
+              <Card.Header>{this.renderCruiseHeader()}</Card.Header>
+              {this.renderCruiseTable()}
+            </Card>
+            <CustomPagination className="mt-2" page={this.state.activePage} count={(this.state.filteredCruises)? this.state.filteredCruises.length : this.props.cruises.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxCruisesPerPage}/>
+            <div className="my-2 float-right">
+              {this.renderImportCruisesButton()}
+              {this.renderNewCruiseButton()}
+            </div>
+          </Col>
+          <Col className="px-1" sm={12} md={5} lg={6} xl={5}>
+          <CruiseEditor
+            afterFormSubmit={ this.formDidSubmit }
+            cruise={ this.state.activeCruise }
+          />
+          </Col>
+        </Row>
+      </div>
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     cruises: state.cruise.cruises,
-    cruiseid: state.cruise.cruise.id,
     roles: state.user.profile.roles
   };
 }

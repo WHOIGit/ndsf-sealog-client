@@ -12,6 +12,7 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import * as mapDispatchToProps from '../actions';
 import { API_ROOT_URL } from '../client_config';
 import { getImageUrl } from '../utils';
+import { getCruiseByLowering } from '../api';
 
 const cookies = new Cookies();
 
@@ -25,7 +26,8 @@ class LoweringGallery extends Component {
       aux_data: [],
       maxImagesPerPage: 16,
       filterTimer: null,
-      filter: ''
+      filter: '',
+      cruise: null,
     };
 
     this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -42,9 +44,8 @@ class LoweringGallery extends Component {
       this.props.initLowering(this.props.match.params.id);
     }
 
-    if(!this.props.cruise.id || this.props.lowering.id !== this.props.match.params.id){
-      this.props.initCruiseFromLowering(this.props.match.params.id);
-    }
+    getCruiseByLowering(this.props.match.params.id)
+      .then((cruise) => this.setState({ cruise }));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -178,7 +179,7 @@ class LoweringGallery extends Component {
 
   render(){
 
-    const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "loading...";
+    const cruise_id = (this.state.cruise)? this.state.cruise.cruise_id : "loading...";
     const galleries = (this.state.fetching)? <div><hr className="border-secondary"/><span className="pl-2">Loading...</span></div> : this.renderGalleries();
 
     const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.props.event.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='ASNAP'/>);
@@ -190,7 +191,7 @@ class LoweringGallery extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.props.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Replay", "Review", "Map"]}/>
           </ButtonToolbar>
@@ -225,7 +226,6 @@ function mapStateToProps(state) {
   return {
     roles: state.user.profile.roles,
     event: state.event,
-    cruise: state.cruise.cruise,
     lowering: state.lowering.lowering
   };
 }

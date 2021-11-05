@@ -914,12 +914,7 @@ export function deleteCruise(id) {
   return async function (dispatch, getState) {
     return await axios.delete(`${API_ROOT_URL}/api/v1/cruises/${id}`, { headers: { authorization: cookies.get('token') } }
     ).then(() => {
-      if(getState().cruise.cruise.id === id) {
-        dispatch(leaveUpdateCruiseForm());
-      }
-      
       return dispatch(fetchCruises());
-
     }).catch((error) => {
       console.error(error);
     });

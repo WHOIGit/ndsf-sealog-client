@@ -18,6 +18,7 @@ import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
 import { API_ROOT_URL } from '../client_config';
 import { TILE_LAYERS, DEFAULT_LOCATION } from '../map_tilelayers';
+import { getCruiseByLowering } from '../api';
 
 const { BaseLayer } = LayersControl;
 
@@ -41,6 +42,7 @@ class LoweringMap extends Component {
     this.state = {
       fetching: false,
       tracklines: {},
+      cruise: null,
 
       posDataSource: null,
 
@@ -85,7 +87,8 @@ class LoweringMap extends Component {
       );
     }
 
-    this.props.initCruiseFromLowering(this.props.match.params.id);
+    getCruiseByLowering(this.props.match.params.id)
+      .then((cruise) => this.setState({ cruise }));
 
     this.initLoweringTrackline(this.props.match.params.id);
 
@@ -442,7 +445,7 @@ class LoweringMap extends Component {
       }
     }
 
-    const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "Loading...";
+    const cruise_id = (this.state.cruise)? this.state.cruise.cruise_id : "Loading...";
     
     return (
       <div>
@@ -452,7 +455,7 @@ class LoweringMap extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.props.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Map"} modes={["Replay", "Review", "Gallery"]}/>
           </ButtonToolbar>
@@ -496,7 +499,6 @@ class LoweringMap extends Component {
 function mapStateToProps(state) {
 
   return {
-    cruise: state.cruise.cruise,
     lowering: state.lowering.lowering,  
     roles: state.user.profile.roles,
     event: state.event

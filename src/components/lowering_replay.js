@@ -13,6 +13,7 @@ import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
 import { getImageUrl, handleMissingImage } from '../utils';
+import { getCruiseByLowering } from '../api';
 
 const playTimer = 3000;
 const ffwdTimer = 1000;
@@ -44,6 +45,7 @@ class LoweringReplay extends Component {
       replayState: PAUSE,
       replayEventIndex: 0,
       activePage: 1,
+      state: null,
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -75,7 +77,9 @@ class LoweringReplay extends Component {
       );
     }
 
-    this.props.initCruiseFromLowering(this.props.match.params.id);
+    getCruiseByLowering(this.props.match.params.id)
+      .then((cruise) => this.setState({ cruise }));
+
     this.divFocus.focus();
   }
 
@@ -491,7 +495,7 @@ class LoweringReplay extends Component {
 
   render(){
 
-    const cruise_id = (this.props.cruise.cruise_id)? this.props.cruise.cruise_id : "Loading...";
+    const cruise_id = (this.state.cruise)? this.state.cruise.cruise_id : "Loading...";
 
     return (
       <React.Fragment>
@@ -501,7 +505,7 @@ class LoweringReplay extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering}/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.props.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Replay"} modes={["Review", "Map", "Gallery"]}/>
           </ButtonToolbar>
@@ -529,7 +533,6 @@ class LoweringReplay extends Component {
 function mapStateToProps(state) {
 
   return {
-    cruise: state.cruise.cruise,
     lowering: state.lowering.lowering,  
     roles: state.user.profile.roles,
     event: state.event

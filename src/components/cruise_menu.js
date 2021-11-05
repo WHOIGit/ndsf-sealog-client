@@ -24,9 +24,9 @@ class CruiseMenu extends Component {
 
     this.state = {
       years: null,
-      activeYear: (this.props.cruise.start_ts) ? moment.utc(this.props.cruise.start_ts).format("YYYY") : null,
+      activeYear: null,
       yearCruises: null,
-      activeCruise: (this.props.cruise.id) ? this.props.cruise : null,
+      activeCruise: null,
       cruiseLowerings: null,
       activeLowering: (this.props.lowering.id) ? this.props.lowering : null,
     };
@@ -84,10 +84,6 @@ class CruiseMenu extends Component {
 
     if(this.state.activeYear !== prevState.activeYear && prevState.activeYear !== null ) {
       this.setState({ activeCruise: null, activeLowering: null })
-    }
-
-    if(this.props.cruise !== prevProps.cruise && this.props.cruise.id){
-      this.setState({activeYear: moment.utc(this.props.cruise.start_ts).format("YYYY"), activeCruise: this.props.cruise})
     }
 
     if(this.props.lowering !== prevProps.lowering && this.props.lowering.id){
@@ -532,7 +528,6 @@ class CruiseMenu extends Component {
 
 function mapStateToProps(state) {
   return {
-    cruise: state.cruise.cruise,
     cruises: state.cruise.cruises,
     lowering: state.lowering.lowering,  
     lowerings: state.lowering.lowerings,  
