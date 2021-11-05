@@ -2,16 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
-import { CUSTOM_LOWERING_NAME } from '../client_config';
+import { _lowering_ } from '../vocab';
 
 class DeleteLoweringModal extends Component {
 
   constructor (props) {
     super(props);
 
-    this.state = {
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0] : "lowering"
-    }
+    this.state = { };
 
     this.handleConfirm = this.handleConfirm.bind(this);
   }
@@ -39,7 +37,7 @@ class DeleteLoweringModal extends Component {
           </Modal.Header>
 
           <Modal.Body>
-            { `Are you sure you want to delete this ${this.state.lowering_name}?` }
+            Are you sure you want to delete this {_lowering_}?
           </Modal.Body>
 
           <Modal.Footer>

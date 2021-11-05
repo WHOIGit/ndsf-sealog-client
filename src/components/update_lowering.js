@@ -12,8 +12,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 import { FilePond } from 'react-filepond';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
-import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX } from '../client_config';
 import * as mapDispatchToProps from '../actions';
+import { _Lowering_, _lowering_ } from '../vocab';
 
 const dateFormat = "YYYY-MM-DD"
 const timeFormat = "HH:mm"
@@ -28,8 +29,7 @@ class UpdateLowering extends Component {
     super(props);
 
     this.state = {
-      filepondPristine: true,
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
+      filepondPristine: true
     }
 
     this.handleFileDownload = this.handleFileDownload.bind(this);
@@ -127,7 +127,7 @@ class UpdateLowering extends Component {
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const updateLoweringFormHeader = (<div>Update {this.state.lowering_name}<span className="float-right"><CopyLoweringToClipboard lowering={this.props.lowering}/></span></div>);
+    const updateLoweringFormHeader = (<div>Update {_Lowering_}<span className="float-right"><CopyLoweringToClipboard lowering={this.props.lowering}/></span></div>);
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
@@ -140,14 +140,14 @@ class UpdateLowering extends Component {
                 <Field
                   name="lowering_id"
                   component={renderTextField}
-                  label={`${this.state.lowering_name} ID`}
+                  label={`${_Lowering_} ID`}
                   placeholder={(LOWERING_ID_PLACEHOLDER) ? LOWERING_ID_PLACEHOLDER : "i.e. ROV-0042"}
                   required={true}
                 />
                 <Field
                   name="lowering_location"
                   component={renderTextField}
-                  label={`${this.state.lowering_name} Location`}
+                  label={`${_Lowering_} Location`}
                   placeholder="i.e. Kelvin Seamount"
                 />
               </Form.Row>
@@ -155,8 +155,8 @@ class UpdateLowering extends Component {
                 <Field
                   name="lowering_description"
                   component={renderTextArea}
-                  label={`${this.state.lowering_name} Description`}
-                  placeholder={`i.e. A brief description of the ${this.state.lowering_name.toLowerCase()}`}
+                  label={`${_Lowering_} Description`}
+                  placeholder={`i.e. A brief description of the ${_lowering_}`}
                   rows={8}
                 />
               </Form.Row>
@@ -178,12 +178,12 @@ class UpdateLowering extends Component {
                 <Field
                   name="lowering_tags"
                   component={renderTextArea}
-                  label={`${this.state.lowering_name} Tags, comma delimited`}
+                  label={`${_Lowering_} Tags, comma delimited`}
                   placeholder="i.e. coral,chemistry,engineering"
                   rows={2}
                 />
               </Form.Row>
-              <Form.Label>{this.state.lowering_name} Files</Form.Label>
+              <Form.Label>{_Lowering_} Files</Form.Label>
               {this.renderFiles()}
               <FilePond
                 ref={ref => this.pond = ref}

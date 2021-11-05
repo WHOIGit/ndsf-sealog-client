@@ -12,8 +12,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 import { FilePond } from 'react-filepond';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
-import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX, CUSTOM_CRUISE_NAME } from '../client_config';
+import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX } from '../client_config';
 import * as mapDispatchToProps from '../actions';
+import { _Cruise_ } from '../vocab';
 
 const CRUISE_ROUTE = "/files/cruises";
 
@@ -26,7 +27,6 @@ class UpdateCruise extends Component {
 
     this.state = {
       filepondPristine: true,
-      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise"
     }
 
     this.handleFileDownload = this.handleFileDownload.bind(this);
@@ -159,7 +159,7 @@ class UpdateCruise extends Component {
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const updateCruiseFormHeader = (<div>Update {this.state.cruise_name}<span className="float-right"><CopyCruiseToClipboard cruise={this.props.cruise}/></span></div>);
+    const updateCruiseFormHeader = (<div>Update {_Cruise_}<span className="float-right"><CopyCruiseToClipboard cruise={this.props.cruise}/></span></div>);
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
@@ -172,14 +172,14 @@ class UpdateCruise extends Component {
                 <Field
                   name="cruise_id"
                   component={renderTextField}
-                  label={`${this.state.cruise_name} ID`}
+                  label={`${_Cruise_} ID`}
                   placeholder={(CRUISE_ID_PLACEHOLDER) ? CRUISE_ID_PLACEHOLDER : "i.e. CS2001"}
                   required={true}
                 />
                 <Field
                   name="cruise_name"
                   component={renderTextField}
-                  label={`${this.state.cruise_name} Name`}
+                  label={`${_Cruise_} Name`}
                   placeholder="i.e. Lost City 2018"
                 />
                 <Field
@@ -199,7 +199,7 @@ class UpdateCruise extends Component {
                 <Field
                   name="cruise_location"
                   component={renderTextField}
-                  label={`${this.state.cruise_name} Location`}
+                  label={`${_Cruise_} Location`}
                   placeholder="i.e. Lost City, Mid Atlantic Ridge"
                   lg={12}
                   sm={12}
@@ -209,8 +209,8 @@ class UpdateCruise extends Component {
                 <Field
                   name="cruise_description"
                   component={renderTextArea}
-                  label={`${this.state.cruise_name} Description`}
-                  placeholder={`i.e. A brief description of the ${this.state.cruise_name.toLowerCase()}`}
+                  label={`${_Cruise_} Description`}
+                  placeholder={`i.e. A brief description of the ${_Cruise_.toLowerCase()}`}
                   rows={8}
                 />
               </Form.Row>
@@ -248,19 +248,19 @@ class UpdateCruise extends Component {
                 <Field
                   name="cruise_participants"
                   component={renderTextArea}
-                  label={`${this.state.cruise_name} Participants, comma delimited`}
+                  label={`${_Cruise_} Participants, comma delimited`}
                   placeholder="i.e. Dave Butterfield,Sharon Walker"
                   rows={2}
                 />
                 <Field
                   name="cruise_tags"
                   component={renderTextArea}
-                  label={`${this.state.cruise_name} Tags, comma delimited`}
+                  label={`${_Cruise_} Tags, comma delimited`}
                   placeholder="i.e. coral,chemistry,engineering"
                   rows={2}
                 />
               </Form.Row>
-                <Form.Label>{this.state.cruise_name} Files</Form.Label>
+                <Form.Label>{_Cruise_} Files</Form.Label>
                 {this.renderFiles()}
                 <FilePond
                   ref={ref => this.pond = ref}

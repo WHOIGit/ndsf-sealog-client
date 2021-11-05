@@ -6,8 +6,8 @@ import { Button, Col, Form, Row} from 'react-bootstrap';
 import { renderDateTimePicker, renderTextField, dateFormat } from './form_elements';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
+import { _Lowering_ } from '../vocab';
 
 const timeFormat = "HH:mm:ss.SSS";
 
@@ -16,9 +16,7 @@ class UpdateLoweringStatsForm extends Component {
   constructor (props) {
     super(props);
 
-    this.state = {
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
-    }
+    this.state = { };
   }
 
   static propTypes = {

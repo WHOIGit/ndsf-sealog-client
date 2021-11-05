@@ -5,7 +5,8 @@ import { Button, Modal, Row, Col } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 import ReactFileReader from 'react-file-reader';
 import Cookies from 'universal-cookie';
-import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL } from '../client_config';
+import { _Lowerings_ } from '../vocab';
 
 const cookies = new Cookies();
 
@@ -20,7 +21,6 @@ class ImportLoweringsModal extends Component {
       errors: 0,
       skipped: 0,
       quit: false,
-      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
     }
 
     this.quitImport = this.quitImport.bind(this);
@@ -171,7 +171,7 @@ class ImportLoweringsModal extends Component {
       return (
         <Modal show={show} onExit={handleExit} onHide={this.quitImport}>
           <Modal.Header closeButton>
-            <Modal.Title>Import {this.state.lowerings_name}</Modal.Title>
+            <Modal.Title>Import {_Lowerings_}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>

@@ -8,8 +8,9 @@ import { Accordion, Button, Row, Col, Card } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
-import { API_ROOT_URL, MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL, MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT } from '../client_config';
 import * as mapDispatchToProps from '../actions';
+import { _Cruise_, _Cruises_, _Lowering_, _Lowerings_, _cruise_, _cruises_ } from '../vocab';
 
 const CRUISE_ROUTE = "/files/cruises";
 const LOWERING_ROUTE = "/files/lowerings";
@@ -28,10 +29,6 @@ class CruiseMenu extends Component {
       activeCruise: (this.props.cruise.id) ? this.props.cruise : null,
       cruiseLowerings: null,
       activeLowering: (this.props.lowering.id) ? this.props.lowering : null,
-      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise",
-      cruises_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[1].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[1].slice(1) : "Cruises",
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
-      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings",
     };
 
     this.handleYearSelect = this.handleYearSelect.bind(this);
@@ -242,7 +239,7 @@ class CruiseMenu extends Component {
 
       return (          
         <Card className="border-secondary" key={`lowering_card`}>
-          <Card.Header>{this.state.lowering_name}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
+          <Card.Header>{_Lowering_}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
           <Card.Body>
             {loweringDescription}
             {loweringLocation}
@@ -280,7 +277,7 @@ class CruiseMenu extends Component {
 
       let cruiseFiles = (this.state.activeCruise.cruise_additional_meta.cruise_files && this.state.activeCruise.cruise_additional_meta.cruise_files.length > 0)? <div><strong>Files:</strong>{this.renderCruiseFiles(this.state.activeCruise.cruise_additional_meta.cruise_files)}</div>: null;
 
-      let cruiseName = (this.state.activeCruise.cruise_additional_meta.cruise_name)? <span><strong>{this.state.cruise_name} Name:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_name}<br/></span> : null;
+      let cruiseName = (this.state.activeCruise.cruise_additional_meta.cruise_name)? <span><strong>{_Cruise_} Name:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_name}<br/></span> : null;
       let cruiseDescription = (this.state.activeCruise.cruise_additional_meta.cruise_description)? <p className="text-justify"><strong>Description:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_description}<br/></p> : null;
       let cruiseVessel = <span><strong>Vessel:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_vessel}<br/></span>;
       let cruiseLocation = (this.state.activeCruise.cruise_location)? <span><strong>Location:</strong> {this.state.activeCruise.cruise_location}<br/></span> : null;
@@ -303,7 +300,7 @@ class CruiseMenu extends Component {
 
       return (          
         <Card className="border-secondary" key={`cruise_${this.state.activeCruise.cruise_id}`}>
-          <Card.Header>{this.state.cruise_name}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
+          <Card.Header>{_Cruise_}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
           <Card.Body>
             {cruiseName}
             {cruisePi}
@@ -317,7 +314,7 @@ class CruiseMenu extends Component {
             {
               (cruiseLowerings && cruiseLowerings.length > 0)? (
                 <div>
-                  <strong>{this.state.lowerings_name}:</strong>
+                  <strong>{_Lowerings_}:</strong>
                   {lowerings}
                 </div>
               ): null
@@ -421,7 +418,7 @@ class CruiseMenu extends Component {
 
     return this.props.cruises.map((cruise) => {
 
-      let cruiseName = (cruise.cruise_additional_meta.cruise_name)? <span><strong>{this.state.cruise_name} Name:</strong> {cruise.cruise_additional_meta.cruise_name}<br/></span> : null;
+      let cruiseName = (cruise.cruise_additional_meta.cruise_name)? <span><strong>{_Cruise_} Name:</strong> {cruise.cruise_additional_meta.cruise_name}<br/></span> : null;
       let cruiseDescription = (cruise.cruise_additional_meta.cruise_description)? <p className="text-justify"><strong>Description:</strong> {cruise.cruise_additional_meta.cruise_description}</p> : null;
       let cruiseLocation = (cruise.cruise_location)? <span><strong>Location:</strong> {cruise.cruise_location}<br/></span> : null;
       let cruiseDates = <span><strong>Dates:</strong> {moment.utc(cruise.start_ts).format("YYYY/MM/DD")} - {moment.utc(cruise.stop_ts).format("YYYY/MM/DD")}<br/></span>;
@@ -445,7 +442,7 @@ class CruiseMenu extends Component {
       return (          
         <Card className="border-secondary" key={cruise.id} >
           <Accordion.Toggle as={Card.Header} eventKey={cruise.id}>
-            <h6>{this.state.cruise_name}: <span className="text-primary">{cruise.cruise_id}</span></h6>
+            <h6>{_Cruise_}: <span className="text-primary">{cruise.cruise_id}</span></h6>
           </Accordion.Toggle>
           <Accordion.Collapse eventKey={cruise.id}>
             <Card.Body>
@@ -459,7 +456,7 @@ class CruiseMenu extends Component {
               {
                 (this.state.cruiseLowerings && this.state.cruiseLowerings.length > 0)? (
                   <div>
-                    <p><strong>{this.state.lowerings_name}:</strong></p>
+                    <p><strong>{_Lowerings_}:</strong></p>
                     {lowerings}
                   </div>
                 ): null
@@ -487,7 +484,7 @@ class CruiseMenu extends Component {
 
     return (
       <Card className="border-secondary" >
-        <Card.Body>No {this.state.cruises_name.toLowerCase()} found!</Card.Body>
+        <Card.Body>No {_cruises_} found!</Card.Body>
       </Card>
     );
   } 
@@ -505,7 +502,7 @@ class CruiseMenu extends Component {
 
     return (
       <Card className="border-secondary" >
-        <Card.Body>No {this.state.cruises_name.toLowerCase()} found!</Card.Body>
+        <Card.Body>No {_cruises_} found!</Card.Body>
       </Card>
     );
   }

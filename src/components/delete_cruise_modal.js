@@ -2,16 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
-import { CUSTOM_CRUISE_NAME } from '../client_config';
+import { _cruise_ } from '../vocab';
 
 class DeleteCruiseModal extends Component {
 
   constructor (props) {
     super(props);
 
-    this.state = {
-      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0] : "cruise"
-    }
+    this.state = { };
 
     this.handleConfirm = this.handleConfirm.bind(this);
   }
@@ -39,7 +37,7 @@ class DeleteCruiseModal extends Component {
           </Modal.Header>
 
           <Modal.Body>
-            {`Are you sure you want to delete this ${this.state.cruise_name}?`}
+            {`Are you sure you want to delete this ${_cruise_}?`}
           </Modal.Body>
 
           <Modal.Footer>

@@ -5,17 +5,16 @@ import { reduxForm, Field, reset } from 'redux-form';
 import { Button, Form, Card } from 'react-bootstrap';
 import { renderAlert, renderDateTimePicker, renderMessage, renderTextField, renderTextArea, dateFormat, timeFormat } from './form_elements';
 import moment from 'moment';
-import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER, CUSTOM_LOWERING_NAME } from '../client_config';
+import { LOWERING_ID_REGEX, LOWERING_ID_PLACEHOLDER } from '../client_config';
 import * as mapDispatchToProps from '../actions';
+import { _Lowering_, _lowering_ } from '../vocab';
 
 class CreateLowering extends Component {
 
   constructor (props) {
     super(props);
 
-    this.state = {
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
-    }
+    this.state = { };
   }
 
   componentDidMount() {
@@ -48,7 +47,7 @@ class CreateLowering extends Component {
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const createLoweringFormHeader = (<div>Create New {this.state.lowering_name}</div>);
+    const createLoweringFormHeader = (<div>Create New {_Lowering_}</div>);
 
     if (this.props.roles) {
 
@@ -63,14 +62,14 @@ class CreateLowering extends Component {
                   <Field
                     name="lowering_id"
                     component={renderTextField}
-                    label={`${this.state.lowering_name} ID`}
+                    label={`${_Lowering_} ID`}
                     placeholder={(LOWERING_ID_PLACEHOLDER) ? LOWERING_ID_PLACEHOLDER : "i.e. ROV-0042"}
                     required={true}
                   />
                   <Field
                     name="lowering_location"
                     component={renderTextField}
-                    label={`${this.state.lowering_name} Location`}
+                    label={`${_Lowering_} Location`}
                     placeholder="i.e. Kelvin Seamount"
                   />
                 </Form.Row>
@@ -78,8 +77,8 @@ class CreateLowering extends Component {
                   <Field
                     name="lowering_description"
                     component={renderTextArea}
-                    label={`${this.state.lowering_name} Description`}
-                    placeholder={`i.e. A brief description of the ${this.state.lowering_name.toLowerCase()}`}
+                    label={`${_Lowering_} Description`}
+                    placeholder={`i.e. A brief description of the ${_lowering_}`}
                     rows={8}
                   />
                 </Form.Row>
@@ -101,7 +100,7 @@ class CreateLowering extends Component {
                   <Field
                     name="lowering_tags"
                     component={renderTextArea}
-                    label={`${this.state.lowering_name} Tags, comma delimited`}
+                    label={`${_Lowering_} Tags, comma delimited`}
                     placeholder="i.e. coral,chemistry,engineering"
                     rows={2}
                   />

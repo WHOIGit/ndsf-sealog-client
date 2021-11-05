@@ -6,16 +6,15 @@ import { Button, Form, Card } from 'react-bootstrap';
 import moment from 'moment';
 import { renderAlert, renderDatePicker, renderMessage, renderTextField, renderTextArea, dateFormat } from './form_elements';
 import * as mapDispatchToProps from '../actions';
-import { DEFAULT_VESSEL, CRUISE_ID_REGEX, CRUISE_ID_PLACEHOLDER, CUSTOM_CRUISE_NAME } from '../client_config';
+import { DEFAULT_VESSEL, CRUISE_ID_REGEX, CRUISE_ID_PLACEHOLDER } from '../client_config';
+import { _Cruise_ } from '../vocab';
 
 class CreateCruise extends Component {
 
   constructor (props) {
     super(props);
 
-    this.state = {
-      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise"
-    }
+    this.state = { };
   }
 
   componentDidMount() {
@@ -89,7 +88,7 @@ class CreateCruise extends Component {
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const createCruiseFormHeader = (<div>Create New {this.state.cruise_name}</div>);
+    const createCruiseFormHeader = (<div>Create New {_Cruise_}</div>);
 
     if (this.props.roles) {
 
@@ -104,14 +103,14 @@ class CreateCruise extends Component {
                   <Field
                     name="cruise_id"
                     component={renderTextField}
-                    label={`${this.state.cruise_name} ID`}
+                    label={`${_Cruise_} ID`}
                     placeholder={(CRUISE_ID_PLACEHOLDER) ? CRUISE_ID_PLACEHOLDER : "i.e. CS2001"}
                     required={true}
                   />
                   <Field
                     name="cruise_name"
                     component={renderTextField}
-                    label={`${this.state.cruise_name} Name`}
+                    label={`${_Cruise_} Name`}
                     placeholder="i.e. Lost City 2018"
                   />
                 </Form.Row>
@@ -135,7 +134,7 @@ class CreateCruise extends Component {
                   <Field
                     name="cruise_location"
                     component={renderTextField}
-                    label={`${this.state.cruise_name} Location`}
+                    label={`${_Cruise_} Location`}
                     placeholder="i.e. Lost City, Mid Atlantic Ridge"
                     lg={12}
                     sm={12}
@@ -145,8 +144,8 @@ class CreateCruise extends Component {
                   <Field
                     name="cruise_description"
                     component={renderTextArea}
-                    label={`${this.state.cruise_name} Description`}
-                    placeholder={`i.e. A brief description of the ${this.state.cruise_name.toLowerCase()}`}
+                    label={`${_Cruise_} Description`}
+                    placeholder={`i.e. A brief description of the ${_Cruise_.toLowerCase()}`}
                     rows={8}
                   />
                 </Form.Row>
@@ -185,7 +184,7 @@ class CreateCruise extends Component {
                     name="cruise_participants"
                     component={renderTextArea}
                     type="textarea"
-                    label={`${this.state.cruise_name} Participants, comma delimited`}
+                    label={`${_Cruise_} Participants, comma delimited`}
                     placeholder="i.e. Dave Butterfield,Sharon Walker"
                     rows={2}
                   />
@@ -195,7 +194,7 @@ class CreateCruise extends Component {
                     name="cruise_tags"
                     component={renderTextArea}
                     type="textarea"
-                    label={`${this.state.cruise_name} Tags, comma delimited`}
+                    label={`${_Cruise_} Tags, comma delimited`}
                     placeholder="i.e. coral,chemistry,engineering"
                     rows={2}
                   />

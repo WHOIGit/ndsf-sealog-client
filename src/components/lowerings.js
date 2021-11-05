@@ -12,8 +12,9 @@ import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import SetLoweringStatsModal from './set_lowering_stats_modal';
 import LoweringPermissionsModal from './lowering_permissions_modal';
 import CustomPagination from './custom_pagination';
-import { USE_ACCESS_CONTROL, CUSTOM_LOWERING_NAME } from '../client_config';
+import { USE_ACCESS_CONTROL } from '../client_config';
 import * as mapDispatchToProps from '../actions';
+import { _Lowering_, _Lowerings_, _lowering_, _lowerings_ } from '../vocab';
 
 let fileDownload = require('js-file-download');
 
@@ -29,8 +30,6 @@ class Lowerings extends Component {
     this.state = {
       activePage: 1,
       filteredLowerings: null,
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
-      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
     };
 
     this.handlePageSelect = this.handlePageSelect.bind(this);
@@ -107,7 +106,7 @@ class Lowerings extends Component {
   renderAddLoweringButton() {
     if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
       return (
-        <Button variant="primary" size="sm" onClick={ () => this.handleLoweringCreate()} disabled={!this.props.loweringid}>Add {this.state.lowering_name}</Button>
+        <Button variant="primary" size="sm" onClick={ () => this.handleLoweringCreate()} disabled={!this.props.loweringid}>Add {_Lowering_}</Button>
       );
     }
   }
@@ -122,10 +121,10 @@ class Lowerings extends Component {
 
   renderLowerings() {
 
-    const editTooltip = (<Tooltip id="editTooltip">Edit this {this.state.lowering_name.toLowerCase()}.</Tooltip>);
-    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {this.state.lowering_name.toLowerCase()}.</Tooltip>);
-    const showTooltip = (<Tooltip id="showTooltip">{this.state.lowering_name} is hidden, click to show.</Tooltip>);
-    const hideTooltip = (<Tooltip id="hideTooltip">{this.state.lowering_name} is visible, click to hide.</Tooltip>);
+    const editTooltip = (<Tooltip id="editTooltip">Edit this {_lowering_}.</Tooltip>);
+    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {_lowering_}.</Tooltip>);
+    const showTooltip = (<Tooltip id="showTooltip">{_Lowering_} is hidden, click to show.</Tooltip>);
+    const hideTooltip = (<Tooltip id="hideTooltip">{_Lowering_} is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
 
     const lowerings = (Array.isArray(this.state.filteredLowerings)) ? this.state.filteredLowerings : this.props.lowerings;
@@ -172,7 +171,7 @@ class Lowerings extends Component {
         <Table responsive bordered striped size="sm">
           <thead>
             <tr>
-              <th>{this.state.lowering_name}</th>
+              <th>{_Lowering_}</th>
               <th>Details</th>
               <th style={tableHeaderStyle}>Actions</th>
             </tr>
@@ -184,18 +183,18 @@ class Lowerings extends Component {
       );
     } else {
       return (
-        <Card.Body>No {this.state.lowerings_name} Found!</Card.Body>
+        <Card.Body>No {_lowerings_} Found!</Card.Body>
       );
     }
   }
 
   renderLoweringHeader() {
 
-    const exportTooltip = (<Tooltip id="exportTooltip">Export {this.state.lowerings_name}</Tooltip>);
+    const exportTooltip = (<Tooltip id="exportTooltip">Export {_Lowerings_}</Tooltip>);
 
     return (
       <div>
-        {this.state.lowerings_name}
+        {_Lowerings_}
         <span className="float-right">
           <Form inline>
             <FormControl size="sm" type="text" placeholder="Search" className="mr-sm-2" onChange={this.handleSearchChange}/>
