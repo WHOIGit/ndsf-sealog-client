@@ -16,9 +16,10 @@ import Cookies from 'universal-cookie';
 import { Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { renderAlert, renderMessage } from './form_elements';
 import UpdateLoweringStatsForm from './update_lowering_stats_form';
-import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL } from '../client_config';
 import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers';
 import * as mapDispatchToProps from '../actions';
+import { _Lowering_ } from '../vocab';
 
 HighchartsExporting(Highcharts);
 HighchartsNoDataToDisplay(Highcharts);
@@ -34,7 +35,6 @@ class SetLoweringStatsModal extends Component {
 
     this.state = {
       lowering: {},
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
 
       posDataSource: null,
 

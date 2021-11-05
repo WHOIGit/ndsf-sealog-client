@@ -5,7 +5,8 @@ import { Button, Modal, Row, Col } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 import ReactFileReader from 'react-file-reader';
 import Cookies from 'universal-cookie';
-import { API_ROOT_URL, CUSTOM_CRUISE_NAME } from '../client_config';
+import { API_ROOT_URL } from '../client_config';
+import { _Cruises_ } from '../vocab';
 
 const cookies = new Cookies();
 
@@ -20,7 +21,6 @@ class ImportCruisesModal extends Component {
       errors: 0,
       skipped: 0,
       quit: false,
-      cruises_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[1].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[1].slice(1) : "Cruises"
     }
 
     this.quitImport = this.quitImport.bind(this);
@@ -171,7 +171,7 @@ class ImportCruisesModal extends Component {
       return (
         <Modal show={show} onExit={handleExit} onHide={this.quitImport}>
           <Modal.Header closeButton>
-            <Modal.Title>Import {this.state.cruises_name}</Modal.Title>
+            <Modal.Title>Import {_Cruises_}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>

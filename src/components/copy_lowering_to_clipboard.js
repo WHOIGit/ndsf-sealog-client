@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip, OverlayTrigger} from 'react-bootstrap';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import * as mapDispatchToProps from '../actions';
-import { CUSTOM_LOWERING_NAME } from '../client_config';
+import { _Lowering_ } from '../vocab';
 
 class CopyLoweringToClipboard extends Component {
 
@@ -16,7 +16,6 @@ class CopyLoweringToClipboard extends Component {
 
     this.state = {
       text: '',
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
     }
   }
 
@@ -54,11 +53,11 @@ class CopyLoweringToClipboard extends Component {
 
       let text = "";
 
-      text += `${this.state.lowering_name} ID:${' '.repeat(9-this.state.lowering_name.length)}${this.props.lowering.lowering_id}\n`;
+      text += `${_Lowering_} ID:${' '.repeat(9-_Lowering_.length)}${this.props.lowering.lowering_id}\n`;
       text += (this.props.lowering.lowering_additional_meta.lowering_description) ? `Description: ${this.props.lowering.lowering_additional_meta.lowering_description}\n` : "";
       text += `Location: ${this.props.lowering.lowering_location}\n`;
       text += '\n';
-      text += `Start of ${this.state.lowering_name}:${' '.repeat(9-this.state.lowering_name.length)}${this.props.lowering.start_ts}\n`;
+      text += `Start of ${_Lowering_}:${' '.repeat(9-_Lowering_.length)}${this.props.lowering.start_ts}\n`;
       text += (loweringDescendingTime) ? `Descending:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_descending}\n` : "";
       text += (loweringOnBottomTime) ? `On Bottom:         ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
       text += (loweringOffBottomTime) ? `Off Bottom:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";
