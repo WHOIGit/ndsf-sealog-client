@@ -11,9 +11,10 @@ import LoweringDropdown from './lowering_dropdown';
 import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
+import { DataCardGrid } from './data_cards';
 import * as mapDispatchToProps from '../actions';
-import { getImageUrl, handleMissingImage } from '../utils';
 import { getCruiseByLowering, getLowering } from '../api';
+
 
 const playTimer = 3000;
 const ffwdTimer = 1000;
@@ -223,15 +224,6 @@ class LoweringReplay extends Component {
     }
   }
 
-  renderImage(source, filepath) {
-    return (
-      <Card  className="event-image-data-card" id={`image_${source}`}>
-        <Image fluid onError={handleMissingImage} src={filepath} onClick={ () => this.handleImageClick(source, filepath)} />
-        <span>{source}</span>
-      </Card>
-    );
-  }
-
   handleLoweringReplayStart() {
     this.handleLoweringReplayPause();
     this.setState({replayEventIndex: 0});
@@ -297,91 +289,6 @@ class LoweringReplay extends Component {
     } else {
       this.setState({replayState: PAUSE});
     }
-  }
-
-  renderImageryCard() {
-    if(this.props.event && this.props.event.selected_event.aux_data) { 
-      let frameGrabberData = this.props.event.selected_event.aux_data.filter(aux_data => imageAuxDataSources.includes(aux_data.data_source));
-      let tmpData = [];
-
-      if(frameGrabberData.length > 0) {
-        for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
-    
-          tmpData.push({
-            source: frameGrabberData[0].data_array[i].data_value,
-            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value)
-          });
-        }
-
-        return (
-          tmpData.map((camera) => {
-            return (
-              <Col className="px-1 mb-2" key={camera.source} xs={12} sm={6} md={4} lg={3}>
-                {this.renderImage(camera.source, camera.filepath)}
-              </Col>
-            );
-          })
-        )
-      }
-    }
-  }
-
-  renderEventOptionsCard() {
-
-    if(this.props.event.selected_event && this.props.event.selected_event.event_options && this.props.event.selected_event.event_options.length > 0) {
-
-      let return_event_options = this.props.event.selected_event.event_options.reduce((filtered, event_option, index) => {
-        if(event_option.event_option_name !== 'event_comment') {
-          filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
-        }
-
-        return filtered;
-      },[]);
-
-      return (return_event_options.length > 0)? (
-        <Col className="px-1 mb-2" xs={12} sm={6} md={4} lg={3}>
-          <Card className="event-data-card">
-            <Card.Header>Event Options</Card.Header>
-            <Card.Body>
-              {return_event_options}
-            </Card.Body>
-          </Card>
-        </Col>
-      ) : null;
-    }
-  }
-
-  renderAuxDataCard() {
-
-    if(this.props.event.selected_event && this.props.event.selected_event.aux_data) {
-
-      const aux_data = this.props.event.selected_event.aux_data.filter((data) => !excludeAuxDataSources.includes(data.data_source))
-
-      aux_data.sort((a, b) => {
-        return (sortAuxDataSourceReference.indexOf(a.data_source) < sortAuxDataSourceReference.indexOf(b.data_source)) ? -1 : 1;
-      });
-
-      let return_aux_data = aux_data.map((aux_data) => {
-        const aux_data_points = aux_data.data_array.map((data, index) => {
-          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span className="data-name">{data.data_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
-        });
-
-        return (
-          <Col className="px-1 pb-2" key={`${aux_data.data_source}_col`} sm={6} md={4} lg={3}>
-            <Card className="event-data-card" key={`${aux_data.data_source}`}>
-              <Card.Header>{aux_data.data_source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</Card.Header>
-              <Card.Body>
-                {aux_data_points}
-              </Card.Body>
-            </Card>
-          </Col>
-        );
-      });
-
-      return return_aux_data;
-    }
-
-    return null;
   }
 
   renderControlsCard() {
@@ -524,9 +431,10 @@ class LoweringReplay extends Component {
           </ButtonToolbar>
         </Row>
         <Row>
-          {this.renderImageryCard()}
-          {this.renderAuxDataCard()}
-          {this.renderEventOptionsCard()}
+          <DataCardGrid
+            event={this.props.event.selected_event}
+            onImageClick={this.handleImageClick}
+          />
         </Row>
         <Row>
           <Col className="px-1 mb-1" md={9} lg={9}>

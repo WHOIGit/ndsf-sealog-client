@@ -7,19 +7,14 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Row, Col, Image, Card, Modal } from 'react-bootstrap';
 import ImagePreviewModal from './image_preview_modal';
+import { DataCardGrid } from './data_cards';
 
 import * as mapDispatchToProps from '../actions';
 
 import { API_ROOT_URL } from '../client_config';
-import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
-const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
-
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
-
-const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
 class EventShowDetailsModal extends Component {
 
@@ -64,97 +59,6 @@ class EventShowDetailsModal extends Component {
     this.props.showModal('imagePreview', { name: source, filepath: filepath })
   }
 
-  renderImage(source, filepath) {
-    return (
-      <Card  className="event-image-data-card" id={`image_${source}`}>
-        <Image fluid onError={handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
-        <span>{source}</span>
-      </Card>
-    );
-  }
-
-  renderImageryCard() {
-    if(this.props.event && this.state.event.aux_data) { 
-      let frameGrabberData = this.state.event.aux_data.filter(aux_data => imageAuxDataSources.includes(aux_data.data_source))
-      let tmpData = []
-
-      if(frameGrabberData.length > 0) {
-        for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
-    
-          tmpData.push({
-            source: frameGrabberData[0].data_array[i].data_value,
-            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value)
-          })
-        }
-
-        return (
-          tmpData.map((camera) => {
-            return (
-              <Col className="px-1 pb-2" key={camera.source} xs={12} sm={6} md={6} lg={4}>
-                {this.renderImage(camera.source, camera.filepath)}
-              </Col>
-            );
-          })
-        )
-      }
-    }
-  }
-
-  renderEventOptionsCard() {
-
-    // return null;
-    let return_event_options = this.state.event.event_options.reduce((filtered, event_option, index) => {
-      if(event_option.event_option_name !== 'event_comment') {
-        filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
-      }
-      return filtered
-    },[])
-
-    return (return_event_options.length > 0)? (
-      <Col className="px-1 pb-2" xs={12} sm={6} md={6} lg={4}>
-        <Card className="event-data-card">
-          <Card.Header>Event Options</Card.Header>
-          <Card.Body>
-            {return_event_options}
-          </Card.Body>
-        </Card>
-      </Col>
-    ) : null
-  }
-
-  renderAuxDataCard() {
-
-    if(this.state.event && this.state.event.aux_data) {
-
-      const aux_data = this.state.event.aux_data.filter((data) => !excludeAuxDataSources.includes(data.data_source))
-
-      aux_data.sort((a, b) => {
-        return (sortAuxDataSourceReference.indexOf(a.data_source) < sortAuxDataSourceReference.indexOf(b.data_source)) ? -1 : 1;
-      });
-
-      let return_aux_data = aux_data.map((aux_data) => {
-        const aux_data_points = aux_data.data_array.map((data, index) => {
-          return(<div key={`${aux_data.data_source}_data_point_${index}`}><span className="data-name">{data.data_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{data.data_value} {data.data_uom}</span><br/></div>);
-        });
-
-        return (
-          <Col className="px-1 pb-2" key={`${aux_data.data_source}_col`} sm={6} md={6} lg={4}>
-            <Card className="event-data-card" key={`${aux_data.data_source}`}>
-              <Card.Header>{aux_data.data_source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</Card.Header>
-              <Card.Body>
-                {aux_data_points}
-              </Card.Body>
-            </Card>
-          </Col>
-        );
-      });
-
-      return return_aux_data;
-    }
-
-    return null;
-  }
-
   render() {
     const { show, event } = this.props
 
@@ -184,9 +88,10 @@ class EventShowDetailsModal extends Component {
                   </Col>
                 </Row>
                 <Row>
-                  {this.renderImageryCard()}
-                  {this.renderAuxDataCard()}
-                  {this.renderEventOptionsCard()}
+                  <DataCardGrid
+                    event={this.state.event}
+                    onImageClick={this.handleImagePreviewModal}
+                  />
                 </Row>
                 <Row>
                   {event_free_text_card}
