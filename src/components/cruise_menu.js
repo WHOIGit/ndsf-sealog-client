@@ -28,7 +28,7 @@ class CruiseMenu extends Component {
       yearCruises: null,
       activeCruise: null,
       cruiseLowerings: null,
-      activeLowering: (this.props.lowering.id) ? this.props.lowering : null,
+      activeLowering: this.props.lowering,
     };
 
     this.handleYearSelect = this.handleYearSelect.bind(this);
@@ -36,7 +36,6 @@ class CruiseMenu extends Component {
     this.handleLoweringSelect = this.handleLoweringSelect.bind(this);
     this.handleCruiseFileDownload = this.handleCruiseFileDownload.bind(this);
     this.handleLoweringFileDownload = this.handleLoweringFileDownload.bind(this);
-
   }
 
   componentDidMount() {
@@ -529,8 +528,7 @@ class CruiseMenu extends Component {
 function mapStateToProps(state) {
   return {
     cruises: state.cruise.cruises,
-    lowering: state.lowering.lowering,  
-    lowerings: state.lowering.lowerings,  
+    lowerings: state.lowering.lowerings,
     roles: state.user.profile.roles
   };
 }

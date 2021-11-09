@@ -219,7 +219,7 @@ class CruiseEditorForm extends Component {
 
   render() {
     if (!this.canEditCruise)
-      return;
+      return null;
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
 
@@ -230,7 +230,7 @@ class CruiseEditorForm extends Component {
             name="cruise_id"
             component={renderTextField}
             label={`${_Cruise_} ID`}
-            placeholder={(CRUISE_ID_PLACEHOLDER) ? CRUISE_ID_PLACEHOLDER : "e.g., CS2001"}
+            placeholder={CRUISE_ID_PLACEHOLDER || "e.g., CS2001"}
             required={true}
           />
           <Field

@@ -22,15 +22,13 @@ class LoweringPermissionsModal extends Component {
 
     this.state = {
       users: null,
-      lowering: null,
-      Permissions: {},
     }
 
     this.fetchUsers = this.fetchUsers.bind(this);
   }
 
   static propTypes = {
-    lowering_id: PropTypes.string,
+    lowering: PropTypes.object,
     handleHide: PropTypes.func.isRequired
   };
 
@@ -53,7 +51,7 @@ class LoweringPermissionsModal extends Component {
         payload.remove = [user_id];
       }
 
-      await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}/permissions`,
+      await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering.id}/permissions`,
       payload,
       {
         headers: {
@@ -76,7 +74,7 @@ class LoweringPermissionsModal extends Component {
   async fetchLowering() {
     try {
 
-      const lowering = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}`,
+      const lowering = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering.id}`,
       {
         headers: {
           authorization: cookies.get('token'),
@@ -123,7 +121,7 @@ class LoweringPermissionsModal extends Component {
 
     const { show, handleHide } = this.props
 
-    const body = ( this.state.lowering && this.state.users) ?
+    const body = ( this.props.lowering && this.state.users) ?
       this.state.users.map((user) => {
 
         return (
@@ -132,7 +130,7 @@ class LoweringPermissionsModal extends Component {
               type="switch"
               id={`user_${user.id}`}
               label={`${user.fullname}`}
-              checked={(this.state.lowering.lowering_access_list && this.state.lowering.lowering_access_list.includes(user.id))}
+              checked={(this.props.lowering.lowering_access_list && this.props.lowering.lowering_access_list.includes(user.id))}
               onChange={ (e) => { this.updateLoweringPermissions(user.id, e.target.checked) }}
             />
           </ListGroup.Item>

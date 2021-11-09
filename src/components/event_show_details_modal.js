@@ -217,12 +217,11 @@ class EventShowDetailsModal extends Component {
 function mapStateToProps(state) {
 
   return {
-    lowering: state.lowering.lowering,
     roles: state.user.profile.roles,
   }
 }
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  connectModal({ name: 'eventShowDetails', destroyOnHide: true }) 
+  connectModal({ name: 'eventShowDetails', destroyOnHide: true })
 )(EventShowDetailsModal)

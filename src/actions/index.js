@@ -926,12 +926,7 @@ export function deleteLowering(id) {
   return async function (dispatch, getState) {
     return await axios.delete(`${API_ROOT_URL}/api/v1/lowerings/${id}`, { headers: { authorization: cookies.get('token') } }
     ).then(() => {
-      if(getState().lowering.lowering.id === id) {
-        dispatch(leaveUpdateLoweringForm());
-      }
-
       return dispatch(fetchLowerings());
-
     }).catch((error) => {
       console.error(error);
     });
@@ -1365,6 +1360,13 @@ export function initCruise(id) {
       console.error(error);
     });
   };
+}
+
+export function queryCruiseByLowering(id) {
+  return axios.get(
+    `${API_ROOT_URL}/api/v1/cruises/bylowering/${id}`,
+    { headers: { authorization: cookies.get('token') } }
+  ).catch((e) => console.error(e));
 }
 
 export function initCruiseFromLowering(id) {

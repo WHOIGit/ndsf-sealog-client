@@ -25,3 +25,10 @@ export function getCruiseByLowering(id) {
     .catch((e) => console.error(e))
     .then((r) => r.data);
 }
+
+export function getLowering(id) {
+  const url = `${API_ROOT_URL}/api/v1/lowerings/${id}`;
+  return axios.get(url, { headers: { 'authorization': cookies.get('token') } })
+    .catch((e) => console.error(e))
+    .then((r) => r.data);
+}

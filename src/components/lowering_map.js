@@ -18,7 +18,7 @@ import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
 import { API_ROOT_URL } from '../client_config';
 import { TILE_LAYERS, DEFAULT_LOCATION } from '../map_tilelayers';
-import { getCruiseByLowering } from '../api';
+import { getCruiseByLowering, getLowering } from '../api';
 
 const { BaseLayer } = LayersControl;
 
@@ -42,7 +42,8 @@ class LoweringMap extends Component {
     this.state = {
       fetching: false,
       tracklines: {},
-      cruise: null,
+      cruise: props.cruise,
+      lowering: props.lowering,
 
       posDataSource: null,
 
@@ -74,8 +75,7 @@ class LoweringMap extends Component {
   }
 
   componentDidMount() {
-
-    if(!this.props.lowering.id || this.props.lowering.id !== this.props.match.params.id || this.props.event.events.length === 0) {
+    if(this.props.event.events.length === 0) {
       this.props.initLoweringReplay(this.props.match.params.id, this.props.event.hideASNAP);
     } else {
       const eventIndex = this.props.event.events.findIndex((event) => event.id === this.props.event.selected_event.id);
@@ -87,19 +87,29 @@ class LoweringMap extends Component {
       );
     }
 
-    getCruiseByLowering(this.props.match.params.id)
-      .then((cruise) => this.setState({ cruise }));
+    if(!this.state.lowering) {
+      getLowering(this.props.match.params.id)
+        .then((lowering) => this.setState({ lowering }));
+    }
+
+    if(!this.state.cruise) {
+      getCruiseByLowering(this.props.match.params.id)
+        .then((cruise) => this.setState({ cruise }));
+    }
 
     this.initLoweringTrackline(this.props.match.params.id);
-
-    this.divFocus.focus();
   }
 
-  componentDidUpdate() {
-    this.map.leafletElement.invalidateSize();
-  }
+  componentDidUpdate(prevProps, prevState) {
+    if(this.map) {
+      this.map.leafletElement.invalidateSize();
+    }
 
-  componentWillUnmount(){}
+    // Once the lowering data is fetched, focus on the event list
+    if(this.state.lowering !== prevState.lowering) {
+      this.divFocus.focus();
+    }
+  }
 
   handleKeyPress(event) {
     if(event.key === "ArrowRight" && this.state.activePage < Math.ceil(this.props.event.events.length / maxEventsPerPage)) {
@@ -213,7 +223,7 @@ class LoweringMap extends Component {
 
   sliderTooltipFormatter(v) {
     if(this.props.event.events && this.props.event.events[v]) {
-      let loweringStartTime = moment(this.props.lowering.start_ts);
+      let loweringStartTime = moment(this.state.lowering.start_ts);
       let loweringNow = moment(this.props.event.events[v].ts);
       let loweringElapse = loweringNow.diff(loweringStartTime);
       return moment.duration(loweringElapse).format("d [days] hh:mm:ss");
@@ -289,9 +299,9 @@ class LoweringMap extends Component {
 
   renderControlsCard() {
 
-    if(this.props.lowering) {
-      const loweringStartTime = moment(this.props.lowering.start_ts);
-      const loweringEndTime = moment(this.props.lowering.stop_ts);
+    if(this.state.lowering) {
+      const loweringStartTime = moment(this.state.lowering.start_ts);
+      const loweringEndTime = moment(this.state.lowering.stop_ts);
       const loweringDuration = loweringEndTime.diff(loweringStartTime);
       
       return (
@@ -326,7 +336,7 @@ class LoweringMap extends Component {
         { Label }
         <span className="float-right">
           {ASNAPToggle}
-          <ExportDropdown id="dropdown-download" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} eventFilter={this.props.event.eventFilter} loweringID={this.props.lowering.id} prefix={this.props.lowering.lowering_id}/>
+          <ExportDropdown id="dropdown-download" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} eventFilter={this.props.event.eventFilter} loweringID={this.state.lowering.id} prefix={this.state.lowering.lowering_id}/>
         </span>
       </div>
     );
@@ -409,6 +419,9 @@ class LoweringMap extends Component {
   }
 
   render() {
+    // Wait for lowering object before rendering
+    if (!this.state.lowering)
+      return null;
 
     const baseLayers = TILE_LAYERS.map((layer, index) => {
       if(layer.wms) {
@@ -455,7 +468,7 @@ class LoweringMap extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.props.lowering}/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Map"} modes={["Replay", "Review", "Gallery"]}/>
           </ButtonToolbar>
@@ -488,7 +501,7 @@ class LoweringMap extends Component {
             <CustomPagination className="mt-2" page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
           </Col>          
           <Col className="px-1 mb-1" md={3} lg={3}>
-            <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
+            <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.state.lowering.start_ts} maxDate={this.state.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
           </Col>          
         </Row>
       </div>
@@ -499,7 +512,6 @@ class LoweringMap extends Component {
 function mapStateToProps(state) {
 
   return {
-    lowering: state.lowering.lowering,  
     roles: state.user.profile.roles,
     event: state.event
   };
