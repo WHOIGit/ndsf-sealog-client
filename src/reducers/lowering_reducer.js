@@ -11,14 +11,14 @@ import {
 
 } from '../actions/types';
 
-export default function(state={ lowering: {}, lowerings: [], lowering_message: '', lowering_error: '' }, action) {
+export default function(state={ lowerings: [], lowering_message: '', lowering_error: '' }, action) {
   switch(action.type){
 
     case INIT_LOWERING:
-      return { ...state, lowering: action.payload, lowering_message: '', lowering_error: '' };
+      return { ...state, lowering_message: '', lowering_error: '' };
 
     case UPDATE_LOWERING:
-      return { ...state, lowering: action.payload };
+      return { ...state };
 
     case UPDATE_LOWERING_SUCCESS:
       return { ...state, lowering_error: '', lowering_message: action.payload };
@@ -27,7 +27,7 @@ export default function(state={ lowering: {}, lowerings: [], lowering_message: '
       return { ...state, lowering_error: action.payload, lowering_message: '' };
 
     case LEAVE_UPDATE_LOWERING_FORM:
-      return { ...state, lowering: {}, lowering_error: '', lowering_message: '' };
+      return { ...state, lowering_error: '', lowering_message: '' };
 
     case CREATE_LOWERING_SUCCESS:
       return { ...state, lowering_error: '', lowering_message: action.payload };
@@ -39,9 +39,7 @@ export default function(state={ lowering: {}, lowerings: [], lowering_message: '
       return { ...state, lowering_error: '', lowering_message: '' };
 
     case FETCH_LOWERINGS:
-      const selected_lowering_id = (state.lowering.id) ? state.lowering.id : null;
-      const lowering = (selected_lowering_id) ? action.payload.find((lowering) => lowering.id === selected_lowering_id) : {};
-      return { ...state, lowering: lowering, lowerings: action.payload };
+      return { ...state, lowerings: action.payload };
   }    
   return state;
 }

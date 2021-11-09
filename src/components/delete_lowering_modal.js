@@ -15,41 +15,35 @@ class DeleteLoweringModal extends Component {
   }
 
   static propTypes = {
-    id: PropTypes.string,
+    lowering: PropTypes.object,
     handleDelete: PropTypes.func,
     handleHide: PropTypes.func.isRequired
   };
 
   handleConfirm() {
-    this.props.handleDelete(this.props.id);
+    this.props.handleDelete(this.props.lowering.id);
     this.props.handleHide();
   }
 
   render() {
+    const { show, handleHide } = this.props
 
-    const { show, handleHide, id } = this.props
+    return (
+      <Modal show={show} onHide={handleHide}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
 
-    if(id) {
-      return (
-        <Modal show={show} onHide={handleHide}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Deletion</Modal.Title>
-          </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this {_lowering_}?
+        </Modal.Body>
 
-          <Modal.Body>
-            Are you sure you want to delete this {_lowering_}?
-          </Modal.Body>
-
-          <Modal.Footer>
-            <Button size="sm" variant="secondary" onClick={handleHide}>Cancel</Button>
-            <Button size="sm" variant="danger" onClick={this.handleConfirm}>Yup!</Button>
-          </Modal.Footer>
-        </Modal>
-      );
-    }
-    else {
-      return null;
-    }
+        <Modal.Footer>
+          <Button size="sm" variant="secondary" onClick={handleHide}>Cancel</Button>
+          <Button size="sm" variant="danger" onClick={this.handleConfirm}>Yup!</Button>
+        </Modal.Footer>
+      </Modal>
+    );
   }
 }
 

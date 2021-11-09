@@ -10,7 +10,7 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
-import { getCruiseByLowering } from '../api';
+import { getCruiseByLowering, getLowering } from '../api';
 
 const maxEventsPerPage = 15;
 
@@ -24,6 +24,7 @@ class LoweringReview extends Component {
     this.state = {
       activePage: 1,
       cruise: null,
+      lowering: props.lowering,
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -36,7 +37,12 @@ class LoweringReview extends Component {
   }
 
   componentDidMount(){
-    if(!this.props.lowering.id || this.props.lowering.id !== this.props.match.params.id || this.props.event.events.length === 0) {
+    if(!this.state.lowering) {
+      getLowering(this.props.match.params.id)
+        .then((lowering) => this.setState({ lowering }));
+    }
+
+    if(this.props.event.events.length === 0) {
       this.props.initLoweringReplay(this.props.match.params.id, this.props.event.hideASNAP);
     }
     else {
@@ -46,11 +52,13 @@ class LoweringReview extends Component {
 
     getCruiseByLowering(this.props.match.params.id)
       .then((cruise) => this.setState({ cruise }));
-
-    this.divFocus.focus();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
+    // Once the lowering data is fetched, focus on the event list
+    if(this.state.lowering !== prevState.lowering) {
+      this.divFocus.focus();
+    }
   }
 
   componentWillUnmount(){
@@ -168,7 +176,7 @@ class LoweringReview extends Component {
         { Label }
         <span className="float-right">
           {ASNAPToggle}
-          <ExportDropdown id="dropdown-download" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} eventFilter={this.props.event.eventFilter} loweringID={this.props.lowering.id} prefix={this.props.lowering.lowering_id}/>
+          <ExportDropdown id="dropdown-download" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} eventFilter={this.props.event.eventFilter} loweringID={this.state.lowering.id} prefix={this.state.lowering.lowering_id}/>
         </span>
       </div>
     );
@@ -239,6 +247,9 @@ class LoweringReview extends Component {
   }
 
   render(){
+    // Wait for lowering object before rendering
+    if (!this.state.lowering)
+      return null;
 
     const cruise_id = (this.state.cruise)? this.state.cruise.cruise_id : "Loading...";
 
@@ -250,7 +261,7 @@ class LoweringReview extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.props.lowering}/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Review"} modes={["Replay", "Map", "Gallery"]}/>
           </ButtonToolbar>
@@ -261,7 +272,7 @@ class LoweringReview extends Component {
             <CustomPagination className="mt-2" page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
           </Col>
           <Col className="px-1 mb-1" sm={6} md={4} lg={3}>
-            <EventFilterForm className="mt-2" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
+            <EventFilterForm className="mt-2" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.state.lowering.start_ts} maxDate={this.state.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
           </Col>          
         </Row>
       </div>
@@ -273,7 +284,6 @@ function mapStateToProps(state) {
   return {
     roles: state.user.profile.roles,
     event: state.event,
-    lowering: state.lowering.lowering
   };
 }
 
