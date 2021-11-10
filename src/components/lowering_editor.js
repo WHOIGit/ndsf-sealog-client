@@ -16,7 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 import { FilePond } from 'react-filepond';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
-import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX } from 'client_config';
+import { API_ROOT_URL, CUSTOM_LOWERING_METADATA_FIELDS, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX } from 'client_config';
 import * as mapDispatchToProps from '../actions';
 import { _Lowering_, _lowering_ } from '../vocab';
 
@@ -78,6 +78,7 @@ class LoweringEditorForm extends Component {
     // Put fields that belong under lowering_additional_meta back there
     const additional_meta_fields = [
       "lowering_description",
+      ...CUSTOM_LOWERING_METADATA_FIELDS.map((field) => field.name),
     ];
 
     for (const field of additional_meta_fields) {
@@ -196,6 +197,22 @@ class LoweringEditorForm extends Component {
     );
   }
 
+  renderCustomFields() {
+    return CUSTOM_LOWERING_METADATA_FIELDS.map((field) => {
+      return (
+        <Form.Row key={field.name}>
+          <Field
+            name={field.name}
+            component={renderTextField}
+            label={field.label}
+            placeholder={field.placeholder || ""}
+            required={field.required || false}
+          />
+        </Form.Row>
+      );
+    });
+  }
+
   get canEditLowering() {
     return (this.props.roles &&
       (this.props.roles.includes("admin") ||
@@ -248,6 +265,7 @@ class LoweringEditorForm extends Component {
             required={true}
           />
         </Form.Row>
+        {this.renderCustomFields()}
         <Form.Row>
           <Field
             name="lowering_tags"
