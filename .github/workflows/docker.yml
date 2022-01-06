@@ -20,20 +20,20 @@ jobs:
           # Determine whether to push to Docker Hub based on the event type
           case "${{ github.event_name }}" in
             push)
-              DOCKER_PUSH=yes ;;
+              DOCKER_PUSH=true ;;
             *)
-              DOCKER_PUSH=no ;;
+              DOCKER_PUSH=false ;;
           esac
 
           # Map git ref branch or tag name to Docker tag version
           case "${{ github.ref }}" in
             # Do not push upstream branches and tags to Docker Hub
             refs/heads/upstream/*|refs/tags/upstream/*)
-              DOCKER_PUSH=no ;;
+              DOCKER_PUSH=false ;;
 
             # Do not push pull request branches
             refs/pulls/*)
-              DOCKER_PUSH=no ;;
+              DOCKER_PUSH=false ;;
 
             refs/heads/master)
               DOCKER_TAG=latest ;;
@@ -53,18 +53,6 @@ jobs:
           echo ::set-output name=git_source::$GIT_SOURCE
           echo ::set-output name=git_revision::$GIT_REVISION
 
-      - name: Build the Docker image
-        run: |
-          docker buildx build . \
-            --build-arg GIT_SOURCE=${{ steps.init.outputs.git_source }} \
-            --build-arg GIT_REVISION=${{ steps.init.outputs.git_revision }} \
-            --tag ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }} \
-            --platform ${{ steps.init.outputs.docker_platforms }}
-
-      # There aren't any tests yet...
-      # - name: Run test suite
-      #   run: docker-compose run sealog-client npm test
-
       - name: Log into registry
         if: steps.init.outputs.docker_push == 'yes'
         uses: azure/docker-login@v1
@@ -72,7 +60,15 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Push to registry
-        if: steps.init.outputs.docker_push == 'yes'
+      - name: Build the Docker image
         run: |
-          docker push ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }}
+          docker buildx build . \
+            --build-arg GIT_SOURCE=${{ steps.init.outputs.git_source }} \
+            --build-arg GIT_REVISION=${{ steps.init.outputs.git_revision }} \
+            --tag ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }} \
+            --platform ${{ steps.init.outputs.docker_platforms }} \
+            --type=image,push=${{ steps.init.outputs.docker_push }}
+
+      # There aren't any tests yet...
+      # - name: Run test suite
+      #   run: docker-compose run sealog-client npm test
