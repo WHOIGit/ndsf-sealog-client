@@ -47,7 +47,7 @@ jobs:
           GIT_REVISION=$(git rev-parse HEAD)$(git diff --quiet || echo "-dirty")
 
           echo ::set-output name=docker_push::$DOCKER_PUSH
-          echo ::set-output name=docker_repo::$(basename "${{ github.repository }}")
+          echo ::set-output name=docker_repo::whoi/$(basename "${{ github.repository }}")
           echo ::set-output name=docker_tag::$DOCKER_TAG
           echo ::set-output name=docker_platforms::linux/amd64,linux/arm64
           echo ::set-output name=git_source::$GIT_SOURCE
