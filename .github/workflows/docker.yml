@@ -50,7 +50,7 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          docker buildx build \
+          docker buildx build . \
             --build-arg GIT_SOURCE=${{ steps.init.outputs.git_source }} \
             --build-arg GIT_REVISION=${{ steps.init.outputs.git_revision }} \
             --tag ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }} \
