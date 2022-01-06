@@ -54,7 +54,7 @@ jobs:
           echo ::set-output name=git_revision::$GIT_REVISION
 
       - name: Log into registry
-        if: steps.init.outputs.docker_push == 'yes'
+        if: steps.init.outputs.docker_push == 'true'
         uses: azure/docker-login@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USER }}
@@ -67,7 +67,7 @@ jobs:
             --build-arg GIT_REVISION=${{ steps.init.outputs.git_revision }} \
             --tag ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }} \
             --platform ${{ steps.init.outputs.docker_platforms }} \
-            --type=image,push=${{ steps.init.outputs.docker_push }}
+            --output type=image,push=${{ steps.init.outputs.docker_push }}
 
       # There aren't any tests yet...
       # - name: Run test suite
