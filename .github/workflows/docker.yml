@@ -55,19 +55,21 @@ jobs:
 
       - name: Log into registry
         if: steps.init.outputs.docker_push == 'true'
-        uses: azure/docker-login@v1
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build the Docker image
-        run: |
-          docker buildx build . \
-            --build-arg GIT_SOURCE=${{ steps.init.outputs.git_source }} \
-            --build-arg GIT_REVISION=${{ steps.init.outputs.git_revision }} \
-            --tag ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }} \
-            --platform ${{ steps.init.outputs.docker_platforms }} \
-            --output type=image,push=${{ steps.init.outputs.docker_push }}
+      - name: Build (and maybe push) the Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: ${{ steps.init.outputs.docker_platforms }}
+          push: ${{ steps.init.outputs.docker_push }}
+          tags: ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }}
+          build-args: |
+            GIT_SOURCE=${{ steps.init.outputs.git_source }}
+            GIT_REVISION=${{ steps.init.outputs.git_revision }}
 
       # There aren't any tests yet...
       # - name: Run test suite
