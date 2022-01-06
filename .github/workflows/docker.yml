@@ -42,15 +42,19 @@ jobs:
           GIT_REVISION=$(git rev-parse HEAD)$(git diff --quiet || echo "-dirty")
 
           echo ::set-output name=docker_push::$DOCKER_PUSH
+          echo ::set-output name=docker_repo::$(basename "${{ github.repository }}")
           echo ::set-output name=docker_tag::$DOCKER_TAG
+          echo ::set-output name=docker_platforms::linux/amd64,linux/arm64
           echo ::set-output name=git_source::$GIT_SOURCE
           echo ::set-output name=git_revision::$GIT_REVISION
 
       - name: Build the Docker image
         run: |
-          docker-compose build \
+          docker buildx build \
             --build-arg GIT_SOURCE=${{ steps.init.outputs.git_source }} \
-            --build-arg GIT_REVISION=${{ steps.init.outputs.git_revision }}
+            --build-arg GIT_REVISION=${{ steps.init.outputs.git_revision }} \
+            --tag ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }} \
+            --platform ${{ steps.init.outputs.docker_platforms }}
 
       # There aren't any tests yet...
       # - name: Run test suite
@@ -66,6 +70,4 @@ jobs:
       - name: Push to registry
         if: steps.init.outputs.docker_push == 'yes'
         run: |
-          IMAGE="whoi/ndsf-sealog-client:${{ steps.init.outputs.docker_tag }}"
-          docker tag oceandatatools/sealog-client-vehicle:latest "$IMAGE"
-          docker push "$IMAGE"
+          docker push ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }}
