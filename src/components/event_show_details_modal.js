@@ -30,7 +30,7 @@ class EventShowDetailsModal extends Component {
 
     this.state = { event: {} }
 
-    this.handleImageClick = this.handleImageClick.bind(this);
+    this.handleImagePreviewModal = this.handleImagePreviewModal.bind(this);
 
   }
 
