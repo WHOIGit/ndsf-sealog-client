@@ -309,7 +309,7 @@ class EventHistory extends Component {
 
     return (
       <Card  className="event-image-data-card" id={`image_${source}`}>
-        <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImageClick(source, filepath)} />
+        <Image fluid onError={this.handleMissingImage} src={filepath} onClick={ () => this.handleImagePreviewModal(source, filepath)} />
         <span>{source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}<span className="float-right">{videoFilename}{videoElapse}</span></span>
       </Card>
     );
