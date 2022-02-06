@@ -102,7 +102,7 @@ ReactDOM.render(
       <Switch>
         <Route path={ `/` } exact={true} component={RequireAuth((DISABLE_EVENT_LOGGING) ? CruiseMenu : EventLogging )}/>
         <Route path={ `/github`} exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/'}/>
-        <Route path={ `/license`} exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/blob/master/LICENSE'}/>
+        <Route path={ `/license`} exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/blob/main/LICENSE'}/>
         <Route path={ `/profile` } exact={true} component={RequireAuth(Profile)} />
         <Route path={ `/register` } exact={true} component={Register} />
         <Route path={ `/forgotPassword` } exact={true} component={ForgotPassword} />
