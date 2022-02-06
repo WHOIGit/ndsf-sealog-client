@@ -11,7 +11,7 @@ import { DataCardGrid } from './data_cards';
 
 import * as mapDispatchToProps from '../actions';
 
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL } from 'client_config';
 
 const cookies = new Cookies();
 

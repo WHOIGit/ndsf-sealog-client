@@ -9,7 +9,7 @@ import { Client } from '@hapi/nes/lib/client';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
-import { WS_ROOT_URL, API_ROOT_URL } from '../client_config';
+import { WS_ROOT_URL, API_ROOT_URL } from 'client_config';
 
 
 const cookies = new Cookies();

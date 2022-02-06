@@ -8,7 +8,7 @@ import { Accordion, Button, Row, Col, Card } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
-import { API_ROOT_URL, MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT } from '../client_config';
+import { API_ROOT_URL, MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT } from 'client_config';
 import * as mapDispatchToProps from '../actions';
 import { _Cruise_, _Lowering_, _Lowerings_, _cruises_ } from '../vocab';
 

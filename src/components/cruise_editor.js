@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 import { FilePond } from 'react-filepond';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
-import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX } from '../client_config';
+import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX } from 'client_config';
 import * as mapDispatchToProps from '../actions';
 import { _Cruise_ } from '../vocab';
 

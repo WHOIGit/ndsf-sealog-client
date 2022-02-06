@@ -16,8 +16,8 @@ import Cookies from 'universal-cookie';
 import { Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { renderAlert, renderMessage } from './form_elements';
 import UpdateLoweringStatsForm from './update_lowering_stats_form';
-import { API_ROOT_URL } from '../client_config';
-import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers';
+import { API_ROOT_URL } from 'client_config';
+import { DEFAULT_LOCATION, TILE_LAYERS } from 'map_tilelayers';
 import * as mapDispatchToProps from '../actions';
 
 HighchartsExporting(Highcharts);

@@ -7,7 +7,7 @@
 
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import { API_ROOT_URL } from './client_config';
+import { API_ROOT_URL } from 'client_config';
 
 
 const cookies = new Cookies();

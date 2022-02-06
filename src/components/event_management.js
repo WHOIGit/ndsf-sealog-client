@@ -11,7 +11,7 @@ import EventShowDetailsModal from './event_show_details_modal';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL } from 'client_config';
 
 const maxEventsPerPage = 15;
 

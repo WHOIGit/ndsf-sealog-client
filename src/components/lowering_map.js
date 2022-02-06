@@ -16,8 +16,8 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
-import { API_ROOT_URL } from '../client_config';
-import { TILE_LAYERS, DEFAULT_LOCATION } from '../map_tilelayers';
+import { API_ROOT_URL } from 'client_config';
+import { TILE_LAYERS, DEFAULT_LOCATION } from 'map_tilelayers';
 import { getCruiseByLowering, getLowering } from '../api';
 
 const { BaseLayer } = LayersControl;

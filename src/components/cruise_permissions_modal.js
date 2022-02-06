@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Form, ListGroup, Modal } from 'react-bootstrap';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL } from 'client_config';
 import { _Cruise_ } from '../vocab';
 
 const updateType = {

@@ -5,7 +5,7 @@ import { Button, Modal, Row, Col } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 import ReactFileReader from 'react-file-reader';
 import Cookies from 'universal-cookie';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL } from 'client_config';
 
 const cookies = new Cookies();
 
