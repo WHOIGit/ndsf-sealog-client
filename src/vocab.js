@@ -1,4 +1,4 @@
-import { CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from './client_config';
+import { CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from 'client_config';
 
 
 function toTitlecase(str) {

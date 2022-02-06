@@ -9,7 +9,7 @@ import LoweringGalleryTab from './lowering_gallery_tab';
 import LoweringDropdown from './lowering_dropdown';
 import LoweringModeDropdown from './lowering_mode_dropdown';
 import * as mapDispatchToProps from '../actions';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL } from 'client_config';
 import { getImageUrl } from '../utils';
 import { getCruiseByLowering, getLowering } from '../api';
 

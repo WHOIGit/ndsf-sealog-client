@@ -5,7 +5,7 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import ReactFileReader from 'react-file-reader';
 import { Button, Modal, Row, Col } from 'react-bootstrap';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL } from 'client_config';
 
 const cookies = new Cookies();
 

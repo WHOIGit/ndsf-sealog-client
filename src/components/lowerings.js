@@ -11,7 +11,7 @@ import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import SetLoweringStatsModal from './set_lowering_stats_modal';
 import LoweringPermissionsModal from './lowering_permissions_modal';
 import CustomPagination from './custom_pagination';
-import { USE_ACCESS_CONTROL } from '../client_config';
+import { USE_ACCESS_CONTROL } from 'client_config';
 import * as mapDispatchToProps from '../actions';
 import { _Lowering_, _Lowerings_, _lowering_, _lowerings_ } from '../vocab';
 

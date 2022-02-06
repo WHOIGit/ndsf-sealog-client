@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Form, Card, Button, Alert } from 'react-bootstrap';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as mapDispatchToProps from '../../actions';
-import { RECAPTCHA_SITE_KEY } from '../../client_config';
+import { RECAPTCHA_SITE_KEY } from 'client_config';
 
 class ResetPassword extends Component {
  

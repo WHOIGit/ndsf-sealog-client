@@ -6,7 +6,7 @@ import { reduxForm, Field } from 'redux-form';
 import { Link } from 'react-router-dom';
 import { Row, Col, Card, Form, Button } from 'react-bootstrap';
 import ReCAPTCHA from "react-google-recaptcha";
-import { RECAPTCHA_SITE_KEY } from '../../client_config';
+import { RECAPTCHA_SITE_KEY } from 'client_config';
 import * as mapDispatchToProps from '../../actions';
 
 class Register extends Component {

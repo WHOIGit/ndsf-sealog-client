@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Alert, Button, Tab, Tabs } from 'react-bootstrap';
 import EventTemplateOptionsModal from './event_template_options_modal';
 import { Client } from '@hapi/nes/lib/client';
-import { WS_ROOT_URL } from '../client_config';
+import { WS_ROOT_URL } from 'client_config';
 
 import * as mapDispatchToProps from '../actions';
 

@@ -24,8 +24,5 @@ package-lock.json
 # Output directory
 /build
 
-# Client config
-/src/client_config.js
-
-# Map tile config
-/src/map_tilelayers.js
+# Customized config files
+/config/*.js

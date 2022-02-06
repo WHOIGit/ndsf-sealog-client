@@ -7,7 +7,7 @@ import { Alert, Row, Col, Form, Card, Button, Image } from 'react-bootstrap';
 import { renderTextField } from '../form_elements';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as mapDispatchToProps from '../../actions';
-import { ROOT_PATH, LOGIN_SCREEN_TXT, LOGIN_IMAGE, RECAPTCHA_SITE_KEY } from '../../client_config';
+import { ROOT_PATH, LOGIN_SCREEN_TXT, LOGIN_IMAGE, RECAPTCHA_SITE_KEY } from 'client_config';
 
 class Login extends Component {
  

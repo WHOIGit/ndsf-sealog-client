@@ -41,12 +41,9 @@ RUN npm install
 COPY public ./public
 COPY src ./src
 
-# Rename configuration files
-COPY src/client_config.js.dist src/client_config.js
-COPY src/map_tilelayers.js.dist src/map_tilelayers.js
-
 # Build the application
-RUN npm run build
+RUN mkdir ./config  `# Must be present for copy stage` \
+ && npm run build
 
 
 FROM nginx:1
@@ -55,6 +52,10 @@ WORKDIR /usr/src/app
 
 # Copy our nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy the default Sealog config files
+COPY config/client_config.js.dist ./config/client_config.js
+COPY config/map_tilelayers.js.dist ./config/map_tilelayers.js
 
 # Copy the built code
 COPY --from=builder work/build/ .

@@ -7,7 +7,7 @@ import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Collapse, Form, ListGroup, Modal } from 'react-bootstrap';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL } from 'client_config';
 
 const updateType = {
     ADD: true,

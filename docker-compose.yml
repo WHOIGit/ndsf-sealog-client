@@ -11,7 +11,7 @@ services:
       - "80:80"
     volumes:
       # Example of how to map a new client_config.js into the container
-      - ./src/client_config.js:/usr/src/app/src/client_config.js:ro
+      - ./config:/usr/src/app/config:ro
 
       # Example of how to map a LOGIN_IMAGE into the container
       - ./login.png:/usr/src/app/dist/images/login.png:ro

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Button, Modal } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 import Cookies from 'universal-cookie';
-import { API_ROOT_URL } from '../client_config';
+import { API_ROOT_URL } from 'client_config';
 
 const cookies = new Cookies();
 

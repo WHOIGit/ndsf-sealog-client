@@ -74,7 +74,7 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import configureStore from './store';
 import history from './history';
 
-import { DISABLE_EVENT_LOGGING } from './client_config';
+import { DISABLE_EVENT_LOGGING } from 'client_config';
 
 library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
 

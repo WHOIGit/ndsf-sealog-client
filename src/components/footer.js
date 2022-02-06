@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Client } from '@hapi/nes/lib/client';
 import { Link } from 'react-router-dom';
 import prettyBytes from 'pretty-bytes';
-import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from '../client_config';
+import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from 'client_config';
 
 import * as mapDispatchToProps from '../actions';
 
