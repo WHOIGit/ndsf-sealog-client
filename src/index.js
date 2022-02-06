@@ -63,8 +63,6 @@ import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
 import { faUserLock } from '@fortawesome/free-solid-svg-icons/faUserLock';
 import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaximize';
 
-library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
-
 import "filepond/dist/filepond.min.css";
 import 'rc-slider/assets/index.css';
 import 'leaflet/dist/leaflet.css';
@@ -72,6 +70,13 @@ import "./assets/scss/sealog.scss?v=1.1.0";
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+import configureStore from './store';
+import history from './history';
+
+import { DISABLE_EVENT_LOGGING } from './client_config';
+
+library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
 
 let DefaultIcon = L.icon({
     iconUrl: icon,
@@ -81,11 +86,6 @@ let DefaultIcon = L.icon({
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
-
-import configureStore from './store';
-import history from './history';
-
-import { DISABLE_EVENT_LOGGING } from './client_config';
 
 const store = configureStore();
 
@@ -124,4 +124,4 @@ ReactDOM.render(
       <Footer />
     </ConnectedRouter>
   </Provider>
-  , document.querySelector('.container'));
+  , document.getElementById('root'));

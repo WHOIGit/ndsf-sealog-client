@@ -36,7 +36,7 @@ WORKDIR /usr/src/app
 # Install Node.js from NodeSource's binary distribution
 # https://github.com/nodesource/distributions/blob/master/README.md
 RUN apt update && apt install -y curl \
- && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+ && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
  && apt install -y nodejs \
  && rm -rf /var/lib/apt/lists/*
 
@@ -49,7 +49,6 @@ RUN npm install
 COPY . .
 
 # Rename configuration files
-COPY webpack.config.js.dist webpack.config.js
 COPY src/client_config.js.dist src/client_config.js
 COPY src/map_tilelayers.js.dist src/map_tilelayers.js
 
