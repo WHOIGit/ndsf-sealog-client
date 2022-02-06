@@ -35,7 +35,7 @@ jobs:
             refs/pulls/*)
               DOCKER_PUSH=false ;;
 
-            refs/heads/master)
+            refs/heads/master|refs/heads/main)
               DOCKER_TAG=latest ;;
             refs/heads/*|refs/tags/*)
               DOCKER_TAG="$(echo "$GITHUB_REF" | cut -d / -f 3- | \
