@@ -6,8 +6,12 @@ const API_ROOT_URL = (typeof window !== 'undefined') &&
 const WS_ROOT_URL = (typeof window !== 'undefined') &&
   `ws://${window.location.hostname}:8000/ws`;
 
-// Change this if not hosting the client at the webserver's document root
-const ROOT_PATH = "/";
+// Derive the path at which Sealog is being hosted. This assumes that the
+// current executing script is ROOT_PATH/static/js/main.chunk.js
+const ROOT_PATH = (() => {
+  const script_path = (new URL(document.currentScript.src)).pathname;
+  return script_path.replace(/\/static\/js\/[^\/]*\.js/, '/');
+})();
 
 // Where the images are hosted on the webserver.
 const IMAGE_PATH = "/files/images";

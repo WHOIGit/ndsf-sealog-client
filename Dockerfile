@@ -1,6 +1,6 @@
 ARG NETWORK_ACCESS=online
 
-FROM nginx:1 AS base-online
+FROM node:16 AS builder-online
 
 
 # /!\ NOTE FOR AT-SEA DEVELOPMENT
@@ -15,7 +15,7 @@ FROM nginx:1 AS base-online
 # You also need to configure the Docker client appropriately.
 # https://docs.docker.com/network/proxy/#configure-the-docker-client
 
-FROM base-online AS base-offline
+FROM builder-online AS builder-offline
 
 ARG NETWORK_ACCESS
 
@@ -29,41 +29,35 @@ ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
 ### End of at-sea development modifications  ###
 
 
-FROM base-${NETWORK_ACCESS}
+FROM builder-${NETWORK_ACCESS} AS builder
 
-WORKDIR /usr/src/app
-
-# Install Node.js from NodeSource's binary distribution
-# https://github.com/nodesource/distributions/blob/master/README.md
-RUN apt update && apt install -y curl \
- && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
- && apt install -y nodejs \
- && rm -rf /var/lib/apt/lists/*
-
+WORKDIR /work
 
 # Install packages
 COPY package*.json ./
 RUN npm install
 
 # Copy sources
-COPY . .
+COPY public ./public
+COPY src ./src
 
 # Rename configuration files
 COPY src/client_config.js.dist src/client_config.js
 COPY src/map_tilelayers.js.dist src/map_tilelayers.js
 
+# Build the application
+RUN npm run build
 
-# Create the start script
-RUN (echo '#!/bin/sh -e'; \
-     echo 'cd /usr/src/app'; \
-     echo 'npm run-script build'; \
-     echo 'ROOT_PATH=$(NODE_PATH=src node -e "console.log(require' \
-          '(\"client_config\").ROOT_PATH.replace(/\/*$/, \"/\"));")'; \
-     echo 'sed -e "s,%ROOT_PATH%/*,$ROOT_PATH,g" ' \
-          '/usr/src/app/nginx.conf ' \
-          '> /etc/nginx/conf.d/default.conf'; \
-    ) > /docker-entrypoint.d/99-build-sealog.sh \
- && chmod +x /docker-entrypoint.d/99-build-sealog.sh
+
+FROM nginx:1
+
+WORKDIR /usr/src/app
+
+# Copy our nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy the built code
+COPY --from=builder work/build/ .
 
 # Attach git metadata to this container image
 ARG GIT_SOURCE
