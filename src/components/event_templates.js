@@ -93,8 +93,9 @@ class EventTemplates extends Component {
       const regex = RegExp(fieldVal, 'i');
       this.setState({filteredTemplates: this.props.event_templates.filter((event_template) => {
         if(event_template.system_template === false && (event_template.event_name.match(regex) || event_template.event_value.match(regex) || event_template.template_categories.join(", ").match(regex) )) {
-          return event_template;
+          return true;
         }
+        return false;
       }),
       activePage: 1
       });
@@ -111,8 +112,9 @@ class EventTemplates extends Component {
       const regex = RegExp(fieldVal, 'i');
       this.setState({filteredSystemTemplates: this.props.event_templates.filter((event_template) => {
         if(event_template.system_template === true && (event_template.event_name.match(regex) || event_template.event_value.match(regex) || event_template.template_categories.join(", ").match(regex) )) {
-          return event_template;
+          return true;
         }
+        return false;
       }),
       activeSystemPage: 1
       });

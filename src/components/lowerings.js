@@ -121,11 +121,12 @@ class Lowerings extends Component {
       this.setState({filteredLowerings: this.props.lowerings.filter((lowering) => {
         const regex = RegExp(fieldVal, 'i');
         if(lowering.lowering_id.match(regex) || lowering.lowering_location.match(regex)) {
-          return lowering;
+          return true;
         }
         else if (lowering.lowering_tags.includes(fieldVal)){
-          return lowering; 
+          return true; 
         }
+        return false;
       })
       });
     }
@@ -211,6 +212,7 @@ class Lowerings extends Component {
           </tr>
         );
       }
+      return null;
     });      
   }
 

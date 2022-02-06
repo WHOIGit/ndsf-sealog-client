@@ -67,8 +67,9 @@ class LoweringGalleryTab extends Component {
           <Col className="m-0 p-1" key={`${imagesSource}_${image.event_id}`} xs={12} sm={6} md={4} lg={3}>
             {this.renderImage(imagesSource, image.filepath, image.event_id)}
           </Col>
-        )
+        );
       }
+      return null;
     })
   }
 

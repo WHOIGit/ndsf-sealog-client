@@ -238,6 +238,7 @@ class LoweringReview extends Component {
           return (<ListGroup.Item className="py-1 event-list-item" key={event.id} active={active} ><span onClick={() => this.handleEventClick(event)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventDetails} {eventComment}</span></ListGroup.Item>);
 
         }
+        return null;
       });
 
       return eventList;

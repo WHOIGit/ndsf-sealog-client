@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { Button, ListGroup, Image, Card, Tooltip, OverlayTrigger, Row, Col, Form, FormControl } from 'react-bootstrap';
+import { Button, ListGroup, Card, Tooltip, OverlayTrigger, Row, Col, Form, FormControl } from 'react-bootstrap';
 import ImagePreviewModal from './image_preview_modal';
 import { DataCardGrid } from './data_cards';
 import * as mapDispatchToProps from '../actions';
@@ -89,17 +89,14 @@ class EventHistory extends Component {
       // })
 
       const filteredEvent = (event_value) => {
-        return (this.state.filter == '') ? true : this.state.filter.split(',').reduce((answer, filter_item) => {
-          const regex = RegExp(filter_item, 'i');
-          if(event_value.match(regex)) {
-            return true;
-          }
+        return (this.state.filter === '') ? true : this.state.filter.split(',').reduce((answer, filter_item) => {
+          return RegExp(filter_item, 'i').test(event_value);
         }, false)
       }
 
       const updateHandler = (update) => {
         if(!(!this.state.showASNAP && update.event_value === "ASNAP") && filteredEvent(update.event_value)) {
-          if(this.state.page == 0) {
+          if(this.state.page === 0) {
             this.props.updateEventHistory(update);            
           }
           this.fetchEventExport(update.id);
@@ -114,7 +111,7 @@ class EventHistory extends Component {
 
       const deleteHandler = (update) => {
         if(update.id === this.state.event.id) {
-          if(this.props.history[0] && this.state.page == 0) {
+          if(this.props.history[0] && this.state.page === 0) {
             this.fetchEventExport(this.props.history[0].id);
           }
           else {

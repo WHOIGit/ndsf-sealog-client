@@ -11,11 +11,6 @@ import * as mapDispatchToProps from '../actions';
 
 class EventLogging extends Component {
 
-  constructor (props) {
-    super(props);
-
-  }
-
   componentDidMount() {
     if(this.props.authenticated) {
       this.props.fetchCustomVars();

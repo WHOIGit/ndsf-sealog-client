@@ -160,7 +160,7 @@ class ExportDropdown extends Component {
   exportEventsWithAuxData(format='json') {
     this.fetchEventsWithAuxData(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
       let prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload((format == 'json')? JSON.stringify(results) : results, `${prefix}_sealog_export.${format}`);
+      fileDownload((format === 'json')? JSON.stringify(results) : results, `${prefix}_sealog_export.${format}`);
     }).catch((error) => {
       console.log(error);
     });
@@ -169,7 +169,7 @@ class ExportDropdown extends Component {
   exportEvents(format='json') {
     this.fetchEvents(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
       let prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload((format == 'json')? JSON.stringify(results) : results, `${prefix}_sealog_eventExport.${format}`);
+      fileDownload((format === 'json')? JSON.stringify(results) : results, `${prefix}_sealog_eventExport.${format}`);
     }).catch((error) => {
       console.log(error);
     });

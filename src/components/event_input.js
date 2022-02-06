@@ -7,10 +7,6 @@ import * as mapDispatchToProps from '../actions';
 
 class EventInput extends Component {
 
-  constructor (props) {
-    super(props);
-  }
-
   handleFormSubmit({eventFreeText}) {
     this.props.createEvent('FREE_FORM', eventFreeText);
   }

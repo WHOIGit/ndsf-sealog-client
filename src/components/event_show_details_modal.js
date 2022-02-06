@@ -5,7 +5,7 @@ import { connectModal } from 'redux-modal';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import { Row, Col, Image, Card, Modal } from 'react-bootstrap';
+import { Row, Col, Card, Modal } from 'react-bootstrap';
 import ImagePreviewModal from './image_preview_modal';
 import { DataCardGrid } from './data_cards';
 

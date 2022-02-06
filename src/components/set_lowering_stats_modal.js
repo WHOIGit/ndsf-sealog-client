@@ -19,7 +19,6 @@ import UpdateLoweringStatsForm from './update_lowering_stats_form';
 import { API_ROOT_URL } from '../client_config';
 import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers';
 import * as mapDispatchToProps from '../actions';
-import { _Lowering_ } from '../vocab';
 
 HighchartsExporting(Highcharts);
 HighchartsNoDataToDisplay(Highcharts);
@@ -194,7 +193,7 @@ class SetLoweringStatsModal extends Component {
 
     let tracklines = {}
 
-    this.auxDatasourceFilters.map((auxDatasource) => {
+    for (const auxDatasource of this.auxDatasourceFilters) {
 
       let trackline = {
         ts: [],
@@ -202,35 +201,35 @@ class SetLoweringStatsModal extends Component {
         depth: [],
       };
     
-      events.map((event) => {
+      for (const event of events) {
 
-        let aux_data = event['aux_data'].find((aux_data => aux_data['data_source'] == auxDatasource))
+        let aux_data = event['aux_data'].find((aux_data => aux_data['data_source'] === auxDatasource))
         if(aux_data) {
           try {
-            const rawLat = aux_data['data_array'].find(data => data['data_name'] == 'latitude');
-            const rawLng = aux_data['data_array'].find(data => data['data_name'] == 'longitude');
+            const rawLat = aux_data['data_array'].find(data => data['data_name'] === 'latitude');
+            const rawLng = aux_data['data_array'].find(data => data['data_name'] === 'longitude');
 
             if(rawLat && rawLng) {
               const latLng = [ parseFloat(rawLat['data_value']), parseFloat(rawLng['data_value'])]
-              if(latLng[0] != 0 && latLng[0] != 0) {
+              if(latLng[0] !== 0 && latLng[0] !== 0) {
                 trackline.polyline.addLatLng(latLng);
               }
             }
 
             trackline.ts.push(moment.utc(event['ts']).valueOf());
-            trackline.depth.push([trackline.ts[trackline.ts.length-1], parseFloat(aux_data['data_array'].find(data => data['data_name'] == 'depth')['data_value'])]);
+            trackline.depth.push([trackline.ts[trackline.ts.length-1], parseFloat(aux_data['data_array'].find(data => data['data_name'] === 'depth')['data_value'])]);
           }
           catch(err) {
             console.log("No latLng found, skipping...");
             console.error(err);
           }
         }
-      })
+      }
 
       if(trackline.ts.length > 0) {
         tracklines[auxDatasource] = trackline
       }
-    })
+    }
 
     for (let index=0;index<this.auxDatasourceFilters.length;index++) {
       if (tracklines[this.auxDatasourceFilters[index]]) {
@@ -396,8 +395,8 @@ class SetLoweringStatsModal extends Component {
     if(this.state.event) {
 
       const posData = this.state.event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
-      const rawLat = posData['data_array'].find(data => data['data_name'] == 'latitude')
-      const rawLng = posData['data_array'].find(data => data['data_name'] == 'longitude')
+      const rawLat = posData['data_array'].find(data => data['data_name'] === 'latitude')
+      const rawLng = posData['data_array'].find(data => data['data_name'] === 'longitude')
       if( rawLat && rawLng ) {
         return (
           <Marker position={[ parseFloat(rawLat['data_value']), parseFloat(rawLng['data_value'])]}>
@@ -444,13 +443,13 @@ class SetLoweringStatsModal extends Component {
       </Col>
     : [<Col key="milestones" md={6}>
         <div>
-          <span className={(this.state.milestone_to_edit == 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}>Off Deck: {this.state.milestones.lowering_start}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_descending')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_descending')}>Descending: {this.state.milestones.lowering_descending}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}>On Bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}>Off Bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_on_surface')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_surface')}>On Surface: {this.state.milestones.lowering_on_surface}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}>On Deck: {this.state.milestones.lowering_stop}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}>Aborted: {this.state.milestones.lowering_aborted}</span>
+          <span className={(this.state.milestone_to_edit === 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}>Off Deck: {this.state.milestones.lowering_start}</span><br/>
+          <span className={(this.state.milestone_to_edit === 'lowering_descending')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_descending')}>Descending: {this.state.milestones.lowering_descending}</span><br/>
+          <span className={(this.state.milestone_to_edit === 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}>On Bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
+          <span className={(this.state.milestone_to_edit === 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}>Off Bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
+          <span className={(this.state.milestone_to_edit === 'lowering_on_surface')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_surface')}>On Surface: {this.state.milestones.lowering_on_surface}</span><br/>
+          <span className={(this.state.milestone_to_edit === 'lowering_stop')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_stop')}>On Deck: {this.state.milestones.lowering_stop}</span><br/>
+          <span className={(this.state.milestone_to_edit === 'lowering_aborted')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_aborted')}>Aborted: {this.state.milestones.lowering_aborted}</span>
         </div>
       </Col>,
       <Col key="stats" md={6}>

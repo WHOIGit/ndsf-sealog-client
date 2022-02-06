@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import path from 'path';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
@@ -86,7 +85,7 @@ class LoweringGallery extends Component {
       url += '&value=!ASNAP'
     }
 
-    if(event_filter != '') {
+    if(event_filter !== '') {
       event_filter.split(',').forEach((filter_item) => {
         filter_item.trim();
         url += '&value='+filter_item;

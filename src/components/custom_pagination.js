@@ -42,7 +42,7 @@ class CustomPagination extends Component {
       let l = null;
 
       for (let i = 1; i <= last; i++) {
-        if (i === 1 || i === last || i >= left && i < right) {
+        if (i === 1 || i === last || (i >= left && i < right)) {
           range.push(i);
         }
       }
@@ -50,7 +50,7 @@ class CustomPagination extends Component {
       for (let i of range) {
         if (l) {
           if (i - l === 2) {
-            rangeWithDots.push(<Pagination.Item key={l + 1} active={(this.props.page === l+1)} onClick={() => this.props.pageSelectFunc(l + 1)}>{l + 1}</Pagination.Item>);
+            rangeWithDots.push(<Pagination.Item key={l + 1} active={(this.props.page === l+1)} onClick={((x) => { return () => this.props.pageSelectFunc(x + 1) })(l) }>{l + 1}</Pagination.Item>);
           } else if (i - l !== 1) {
             rangeWithDots.push(<Pagination.Ellipsis key={`ellipsis_${i}`} />);
           }

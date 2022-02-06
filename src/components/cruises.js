@@ -123,17 +123,18 @@ class Cruises extends Component {
       this.setState({filteredCruises: this.props.cruises.filter((cruise) => {
         const regex = RegExp(fieldVal, 'i');
         if(cruise.cruise_id.match(regex) || cruise.cruise_location.match(regex) || cruise.cruise_tags.includes(fieldVal) || cruise.cruise_additional_meta.cruise_vessel.match(regex)  || cruise.cruise_additional_meta.cruise_pi.match(regex)) {
-          return cruise;
+          return true;
         }
         else if (cruise.cruise_additional_meta.cruise_departure_location && cruise.cruise_additional_meta.cruise_departure_location.match(regex)) {
-          return cruise;
+          return true;
         }
         else if (cruise.cruise_additional_meta.cruise_arrival_location && cruise.cruise_additional_meta.cruise_arrival_location.match(regex)) {
-          return cruise;
+          return true;
         }
         else if (cruise.cruise_additional_meta.cruise_partipants && cruise.cruise_additional_meta.cruise_partipants.includes(fieldVal)) {
-          return cruise;
+          return true;
         }
+        return false;
       })
       });
     }
@@ -216,6 +217,7 @@ class Cruises extends Component {
           </tr>
         );
       }
+      return null;
     });
   }
 

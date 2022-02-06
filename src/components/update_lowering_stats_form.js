@@ -7,7 +7,6 @@ import { renderDateTimePicker, renderTextField, dateFormat } from './form_elemen
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import * as mapDispatchToProps from '../actions';
-import { _Lowering_ } from '../vocab';
 
 const timeFormat = "HH:mm:ss.SSS";
 
@@ -37,10 +36,10 @@ class UpdateLoweringStatsForm extends Component {
       stop: this.props.milestones.lowering_stop,
       aborted: (this.props.milestones.lowering_aborted) ? this.props.milestones.lowering_aborted : null,
       max_depth: (this.props.stats.max_depth) ? this.props.stats.max_depth : null,
-      bbox_north: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[0] : null,
-      bbox_east: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[1] : null,
-      bbox_south: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[2] : null,
-      bbox_west: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[3] : null
+      bbox_north: (this.props.stats.bounding_box.length === 4) ? this.props.stats.bounding_box[0] : null,
+      bbox_east: (this.props.stats.bounding_box.length === 4) ? this.props.stats.bounding_box[1] : null,
+      bbox_south: (this.props.stats.bounding_box.length === 4) ? this.props.stats.bounding_box[2] : null,
+      bbox_west: (this.props.stats.bounding_box.length === 4) ? this.props.stats.bounding_box[3] : null
     }
 
     this.props.initialize(initialValues);
@@ -65,7 +64,7 @@ class UpdateLoweringStatsForm extends Component {
       max_depth: formProps.max_depth,
     }
 
-    if((formProps.bbox_north == null || formProps.bbox_north == "") && (formProps.bbox_east == null || formProps.bbox_east == "") && (formProps.bbox_south == null || formProps.bbox_south == "") && (formProps.bbox_west == null || formProps.bbox_west == "")) {
+    if((formProps.bbox_north === null || formProps.bbox_north === "") && (formProps.bbox_east === null || formProps.bbox_east === "") && (formProps.bbox_south === null || formProps.bbox_south === "") && (formProps.bbox_west === null || formProps.bbox_west === "")) {
       stats.bounding_box=[]
     }
     else {
