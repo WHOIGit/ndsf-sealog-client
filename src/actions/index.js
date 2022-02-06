@@ -173,7 +173,7 @@ export function login({username, password, reCaptcha = null}) {
           // If request is unauthenticated
           return dispatch(authError(error.response.data.message));
         }
-        else if(error.message == "Network Error") {
+        else if(error.message === "Network Error") {
           return dispatch(authError("Unable to connect to server"));
         }
 
@@ -202,7 +202,7 @@ export function autoLogin({loginToken, reCaptcha = null}) {
           // If request is unauthenticated
           return dispatch(authError(error.response.data.message));
         }
-        else if(error.message == "Network Error") {
+        else if(error.message === "Network Error") {
           return dispatch(authError("Unable to connect to server"));
         }
 
@@ -1251,7 +1251,7 @@ export function fetchFilteredEvents(filterParams={}) {
   let params = queryString.stringify(filterParams);
 
   return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/events' + '?' + params, { headers: { authorization: cookies.get('token') } }
+    return await axios.get(`${API_ROOT_URL}/api/v1/events?${params}`, { headers: { authorization: cookies.get('token') } }
     ).then(({data}) => {
       return dispatch({type: FETCH_FILTERED_EVENTS, payload: data});
     }).catch((error) => {
@@ -1314,7 +1314,7 @@ export function fetchEventHistory(asnap=false, filter='', page=0) {
     url += '&value=!ASNAP';
   }
 
-  if(filter != '') {
+  if(filter !== '') {
     filter.split(',').forEach((filter_item) => {
       filter_item.trim();
       url += '&value='+filter_item;

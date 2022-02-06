@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { ButtonToolbar, Row, Col, Card, ListGroup, Image, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
+import { ButtonToolbar, Row, Col, Card, ListGroup, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import EventFilterForm from './event_filter_form';
 import ImagePreviewModal from './image_preview_modal';
@@ -25,12 +25,6 @@ const FFWD = 2;
 const FREV = 3;
 
 const maxEventsPerPage = 10;
-
-const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData'];
-
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
-
-const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
 
@@ -391,6 +385,7 @@ class LoweringReplay extends Component {
           return (<ListGroup.Item className="event-list-item py-1" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventComment}</span></ListGroup.Item>);
 
         }
+        return null;
       });
 
       return eventList;

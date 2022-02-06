@@ -9,10 +9,6 @@ export default function(ComposedComponent) {
       router: PropTypes.object
     }
 
-    constructor (props, context) {
-      super(props, context);
-    }
-
     componentDidMount() {
       this.props.validateJWT();
       if (!this.props.authenticated) {

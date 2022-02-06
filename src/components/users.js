@@ -95,8 +95,9 @@ class Users extends Component {
       this.setState({filteredUsers: this.props.users.filter((user) => {
         const regex = RegExp(fieldVal, 'i');
         if(user.system_user === false && (user.username.match(regex) || user.email.match(regex) || user.fullname.match(regex))) {
-          return user;
+          return true;
         }
+        return false;
       }),
       activePage: 1
       });
@@ -113,8 +114,9 @@ class Users extends Component {
       this.setState({filteredSystemUsers: this.props.users.filter((user) => {
         const regex = RegExp(fieldVal, 'i');
         if(user.system_user === true && (user.username.match(regex) || user.email.match(regex) || user.fullname.match(regex))) {
-          return user;
+          return true;
         }
+        return false;
       }),
       activeSystemPage: 1
       });
@@ -205,6 +207,7 @@ class Users extends Component {
           </tr>
         );
       }
+      return null;
     });
   }
 

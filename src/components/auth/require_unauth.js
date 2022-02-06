@@ -9,10 +9,6 @@ export default function(ComposedComponent) {
       router: PropTypes.object
     }
 
-    constructor (props, context) {
-      super(props, context);
-    }
-
     componentDidMount() {
       if (this.props.authenticated) {
         this.props.gotoHome();

@@ -10,7 +10,7 @@ import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import { API_ROOT_URL, MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT } from '../client_config';
 import * as mapDispatchToProps from '../actions';
-import { _Cruise_, _Cruises_, _Lowering_, _Lowerings_, _cruise_, _cruises_ } from '../vocab';
+import { _Cruise_, _Lowering_, _Lowerings_, _cruises_ } from '../vocab';
 
 const CRUISE_ROUTE = "/files/cruises";
 const LOWERING_ROUTE = "/files/lowerings";
@@ -55,7 +55,8 @@ class CruiseMenu extends Component {
         const now = moment.utc();
         return (now.isBetween(moment.utc(cruise.start_ts), moment.utc(cruise.stop_ts)));
       }) : null;
-      (currentCruise) ? this.buildLoweringList() : null;
+      if(currentCruise)
+        this.buildLoweringList();
 
       this.setState({ activeYear: (currentCruise) ? moment.utc(currentCruise.start_ts).format("YYYY") : null, activeCruise: (currentCruise) ? currentCruise : null, activeLowering: null });
 
@@ -72,7 +73,7 @@ class CruiseMenu extends Component {
           return moment.utc(lowering.start_ts).isBetween(moment.utc(currentCruise.start_ts), moment.utc(currentCruise.stop_ts));
         }) : [];
 
-        this.setState({ activeLowering: (cruiseLowerings.length > 0) ? this.props.lowerings.find((lowering) => lowering.lowering_id == cruiseLowerings[0].lowering_id) : null });
+        this.setState({ activeLowering: (cruiseLowerings.length > 0) ? this.props.lowerings.find((lowering) => lowering.lowering_id === cruiseLowerings[0].lowering_id) : null });
       }
     }
 
@@ -97,7 +98,7 @@ class CruiseMenu extends Component {
         return (now.isBetween(moment.utc(cruise.start_ts), moment.utc(cruise.stop_ts)));
       }) : null;
 
-      this.setState({ activeLowering: (this.state.activeCruise == currentCruise && this.state.cruiseLowerings.length > 0) ? this.props.lowerings.find((lowering) => lowering.lowering_id == this.state.cruiseLowerings[0].lowering_id) : null });
+      this.setState({ activeLowering: (this.state.activeCruise === currentCruise && this.state.cruiseLowerings.length > 0) ? this.props.lowerings.find((lowering) => lowering.lowering_id === this.state.cruiseLowerings[0].lowering_id) : null });
     }
   }
 
@@ -109,7 +110,7 @@ class CruiseMenu extends Component {
   }
 
   handleCruiseSelect(id) {
-    if(this.state.activeCruise === null || this.state.activeCruise && this.state.activeCruise.id !== id) {
+    if(this.state.activeCruise === null || (this.state.activeCruise && this.state.activeCruise.id !== id)) {
       window.scrollTo(0, 0);
       const activeCruise = this.props.cruises.find(cruise => cruise.id === id);
       this.setState({ activeCruise });
@@ -117,7 +118,7 @@ class CruiseMenu extends Component {
   }
 
   handleLoweringSelect(id) {
-    if(this.state.activeLowering === null || this.state.activeLowering && this.state.activeLowering.id !== id) {
+    if(this.state.activeLowering === null || (this.state.activeLowering && this.state.activeLowering.id !== id)) {
       window.scrollTo(0, 0);
       const activeLowering = this.props.lowerings.find(lowering => lowering.id === id);
       this.setState({activeLowering: activeLowering});
@@ -327,7 +328,7 @@ class CruiseMenu extends Component {
       return moment.utc(cruise.start_ts).format("YYYY");
     }));
 
-    const activeYear = (years.size == 1) ? years.values().next().value : null;
+    const activeYear = (years.size === 1) ? years.values().next().value : null;
 
     this.setState({years, activeYear});
   }
@@ -370,7 +371,7 @@ class CruiseMenu extends Component {
     if (this.state.yearCruises) {
       Object.entries(this.state.yearCruises).forEach(([year,cruises])=>{
 
-        let yearTxt = <span className={(year == this.state.activeYear || this.state.years.size == 1) ? "text-warning" : "text-primary"}>{year}</span> 
+        let yearTxt = <span className={(year === this.state.activeYear || this.state.years.size === 1) ? "text-warning" : "text-primary"}>{year}</span> 
 
         let yearCruises = (
             cruises.map((cruise) => {

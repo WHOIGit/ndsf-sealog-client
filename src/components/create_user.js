@@ -10,10 +10,6 @@ import { systemUserRoleOptions } from '../system_user_role_options';
 
 class CreateUser extends Component {
 
-  constructor (props) {
-    super(props);
-  }
-
   componentWillUnmount() {
     this.props.leaveCreateUserForm();
   }

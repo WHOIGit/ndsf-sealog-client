@@ -198,6 +198,7 @@ class EventTemplateOptionsModal extends Component {
           </div>
         )
       }
+      return null;
     }));
   }
 

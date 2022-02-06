@@ -167,8 +167,8 @@ class LoweringMap extends Component {
         }
       }).then((response) => {
         response.data.forEach((r_data) => {
-          const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])];
-          if(latLng[0] != 0 && latLng[1] != 0) {
+          const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] === 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] === 'longitude')['data_value'])];
+          if(latLng[0] !== 0 && latLng[1] !== 0) {
             trackline.polyline.addLatLng(latLng);
             trackline.eventIDs.push(r_data['event_id']);
           }
@@ -389,6 +389,7 @@ class LoweringMap extends Component {
           return (<ListGroup.Item className="py-1 event-list-item" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${event.event_value} ${eventOptions}`}</span><span className="float-right">{eventDetails} {eventComment}</span></ListGroup.Item>);
 
         }
+        return null;
       });
 
       return eventList;
@@ -403,7 +404,7 @@ class LoweringMap extends Component {
 
       const posData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
       try {
-        const latLng = [ parseFloat(posData['data_array'].find(data => data['data_name'] == 'latitude')['data_value']), parseFloat(posData['data_array'].find(data => data['data_name'] == 'longitude')['data_value'])]
+        const latLng = [ parseFloat(posData['data_array'].find(data => data['data_name'] === 'latitude')['data_value']), parseFloat(posData['data_array'].find(data => data['data_name'] === 'longitude')['data_value'])]
         return (
           <Marker position={latLng}>
             <Popup>
