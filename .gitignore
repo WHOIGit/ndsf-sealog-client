@@ -21,15 +21,11 @@ package-lock.json
 # Because Mac OS X
 .DS_Store
 
-# Output Directory
-/dist
+# Output directory
+/build
 
-# CLient Config
+# Client config
 /src/client_config.js
 
-# Maptime Config
+# Map tile config
 /src/map_tilelayers.js
-
-
-# Webpack Config
-webpack.config.js

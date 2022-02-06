@@ -6,8 +6,8 @@ const API_ROOT_URL = (typeof window !== 'undefined') &&
 const WS_ROOT_URL = (typeof window !== 'undefined') &&
   `ws://${window.location.hostname}:8000/ws`;
 
-// Change this if not hosting the client at the webserver's document root i.e. '/sealog/'
-const ROOT_PATH = "/sealog/";
+// Change this if not hosting the client at the webserver's document root
+const ROOT_PATH = "/";
 
 // Where the images are hosted on the webserver.
 const IMAGE_PATH = "/files/images";
