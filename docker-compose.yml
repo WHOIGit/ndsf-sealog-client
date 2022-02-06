@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: oceandatatools/sealog-client-vehicle
+    image: whoi/ndsf-sealog-client
     restart: unless-stopped
     ports:
       - "80:80"
