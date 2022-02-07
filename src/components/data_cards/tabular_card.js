@@ -17,17 +17,15 @@ export default class TabularDataCard extends React.Component {
     data: PropTypes.object.isRequired,
   };
 
-  render() {
-    const data_array = this.props.data.data_array.map((data, i) => {
+  render = () => {
+    const data_rows = this.props.data.data_array.map((data, i) => {
       return (
-        <div key={`row${i}`}>
-          <span className="data-name">
-            {prettyPrint(data.data_name)}:
-          </span>
-          <span className="float-right" style={{wordWrap:'break-word'}}>
+        <tr key={i}>
+          <td>{prettyPrint(data.data_name)}:</td>
+          <td style={{textAlign: 'right', wordWrap: 'break-word'}}>
             {data.data_value} {data.data_uom}
-          </span>
-        </div>
+          </td>
+        </tr>
       );
     });
 
@@ -37,9 +35,13 @@ export default class TabularDataCard extends React.Component {
           {prettyPrint(this.props.data.data_source)}
         </Card.Header>
         <Card.Body>
-          {data_array}
+          <table style={{width: '100%'}}>
+            <tbody>
+              { data_rows }
+            </tbody>
+          </table>
         </Card.Body>
       </>
     );
-  }
+  };
 }
