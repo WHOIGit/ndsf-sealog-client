@@ -1,51 +1,41 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Path from 'path';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { Modal, Image } from 'react-bootstrap';
-import { connectModal } from 'redux-modal';
 import { handleMissingImage } from '../utils';
 
-class ImagePreviewModal extends Component {
+
+export default class ImagePreviewModal extends React.Component {
+  static propTypes = {
+    url: PropTypes.string,
+  };
 
   constructor (props) {
     super(props);
 
-    this.handleClose = this.handleClose.bind(this);
+    this.state = {
+      show: false,
+    };
   }
 
-  static propTypes = {
-    name: PropTypes.string,
-    filepath: PropTypes.string,
-    handleHide: PropTypes.func.isRequired,
-  };
-
-  handleClose() {
-    this.props.handleHide();
-  }
+  handleClose = () => this.setState({ show: false });
+  handleShow = () => this.setState({ show: true });
 
   render() {
+    return (
+      <Modal size="lg" show={this.state.show} onHide={this.handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title as="h5">
+            Image Preview - {Path.basename(this.props.url)}
+          </Modal.Title>
+        </Modal.Header>
 
-    const { show, handleHide, name } = this.props
-
-    if (name) {
-      return (
-        <Modal size="lg" show={show} onHide={handleHide}>
-          <Modal.Header closeButton>
-            <Modal.Title as="h5">Image Preview - {Path.basename(this.props.filepath)}</Modal.Title>
-          </Modal.Header>
-
-          <Modal.Body>
-            <div className="text-center">
-              <Image fluid src={this.props.filepath} onError={handleMissingImage} />
-            </div>
-          </Modal.Body>
-        </Modal>
-      );
-    }
-    else {
-      return null;
-    }
+        <Modal.Body>
+          <div className="text-center">
+            <Image fluid src={this.props.url} onError={handleMissingImage} />
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
   }
 }
-
-export default connectModal({ name: 'imagePreview' })(ImagePreviewModal)
