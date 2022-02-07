@@ -11,7 +11,7 @@ import LoweringDropdown from './lowering_dropdown';
 import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
-import { DataCardGrid } from './data_cards';
+import EventPreview from './event_preview';
 import * as mapDispatchToProps from '../actions';
 import { getCruiseByLowering, getLowering } from '../api';
 
@@ -424,10 +424,9 @@ class LoweringReplay extends Component {
           </ButtonToolbar>
         </Row>
         <Row>
-          <DataCardGrid
-            event={this.props.event.selected_event}
-            onImageClick={this.handleImageClick}
-          />
+          <Col className="px-1 mb-2" xs={12}>
+            <EventPreview event={this.props.event.selected_event} />
+          </Col>
         </Row>
         <Row>
           <Col className="px-1 mb-1" md={9} lg={9}>

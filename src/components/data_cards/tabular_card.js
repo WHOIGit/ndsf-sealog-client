@@ -17,6 +17,13 @@ export default class TabularDataCard extends React.Component {
     data: PropTypes.object.isRequired,
   };
 
+  static sizeProps = {
+    xs: 12,
+    sm: 6,
+    md: 4,
+    lg: 3,
+  };
+
   render = () => {
     const data_rows = this.props.data.data_array.map((data, i) => {
       return (
@@ -31,16 +38,18 @@ export default class TabularDataCard extends React.Component {
 
     return (
       <>
-        <Card.Header>
-          {prettyPrint(this.props.data.data_source)}
-        </Card.Header>
-        <Card.Body>
-          <table style={{width: '100%'}}>
-            <tbody>
-              { data_rows }
-            </tbody>
-          </table>
-        </Card.Body>
+        <Card className="event-data-card">
+          <Card.Header>
+            {prettyPrint(this.props.data.data_source)}
+          </Card.Header>
+          <Card.Body>
+            <table style={{width: '100%'}}>
+              <tbody>
+                { data_rows }
+              </tbody>
+            </table>
+          </Card.Body>
+        </Card>
       </>
     );
   };

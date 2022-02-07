@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Button, ListGroup, Card, Tooltip, OverlayTrigger, Row, Col, Form, FormControl } from 'react-bootstrap';
 import ImagePreviewModal from './image_preview_modal';
-import { DataCardGrid } from './data_cards';
+import EventPreview from './event_preview';
 import * as mapDispatchToProps from '../actions';
 import { Client } from '@hapi/nes/lib/client';
 import axios from 'axios';
@@ -347,10 +347,7 @@ class EventHistory extends Component {
 
         <Card.Body className="pt-2 pb-1">
           <Row>
-            <DataCardGrid
-              event={this.state.event}
-              onImageClick={this.handleImagePreviewModal}
-            />
+            <EventPreview event={this.state.event} />
           </Row>
           <Row>
             <Col xs={12}>

@@ -7,7 +7,7 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Row, Col, Card, Modal } from 'react-bootstrap';
 import ImagePreviewModal from './image_preview_modal';
-import { DataCardGrid } from './data_cards';
+import EventPreview from './event_preview';
 
 import * as mapDispatchToProps from '../actions';
 
@@ -72,26 +72,11 @@ class EventShowDetailsModal extends Component {
         return (
           <Modal size="lg" show={show} onHide={this.props.handleHide}>
               <ImagePreviewModal />
-              <Modal.Header closeButton>
-                <Modal.Title as="h5">Event Details: {this.state.event.event_value}</Modal.Title>
-              </Modal.Header>
+              <Modal.Header closeButton />
 
               <Modal.Body className="px-4">
                 <Row>
-                  <Col className="px-1 pb-2" xs={12}>
-                    <Card className="event-data-card">
-                      <Card.Body>
-                        <span>User: {this.state.event.event_author}</span>
-                        <span className="float-right">Date: {this.state.event.ts}</span>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                </Row>
-                <Row>
-                  <DataCardGrid
-                    event={this.state.event}
-                    onImageClick={this.handleImagePreviewModal}
-                  />
+                  <EventPreview event={this.state.event} />
                 </Row>
                 <Row>
                   {event_free_text_card}
@@ -120,7 +105,6 @@ class EventShowDetailsModal extends Component {
 }
 
 function mapStateToProps(state) {
-
   return {
     roles: state.user.profile.roles,
   }
