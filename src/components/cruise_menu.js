@@ -132,13 +132,6 @@ class CruiseMenu extends Component {
     }
   }
 
-  handleLoweringSelectForReview() {
-    if(this.state.activeLowering) {
-      this.props.clearEvents();
-      this.props.gotoLoweringReview(this.state.activeLowering.id);
-    }
-  }
-
   handleLoweringSelectForMap() {
     if(this.state.activeLowering) {
       this.props.clearEvents();
@@ -253,7 +246,6 @@ class CruiseMenu extends Component {
             <br/>
             <Row className="px-1 justify-content-center">
               <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Replay</Button>
-              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReview() }>Review</Button>
               <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForMap() }>Map</Button>
               <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForGallery() }>Gallery</Button>
             </Row>

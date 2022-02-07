@@ -150,9 +150,7 @@ class LoweringGallery extends Component {
   }
 
   handleLoweringModeSelect(mode) {
-    if(mode === "Review") {
-      this.props.gotoLoweringReview(this.props.match.params.id);
-    } else if (mode === "Gallery") {
+    if (mode === "Gallery") {
       this.props.gotoLoweringGallery(this.props.match.params.id);
     } else if (mode === "Map") {
       this.props.gotoLoweringMap(this.props.match.params.id);
@@ -199,7 +197,7 @@ class LoweringGallery extends Component {
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Replay", "Review", "Map"]}/>
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Replay", "Map"]}/>
           </ButtonToolbar>
           <span className="float-right">
             <Form style={{marginTop: '-4px'}} className='float-right' inline>
