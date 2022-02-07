@@ -49,7 +49,7 @@ export default class ImageryDataCard extends React.Component {
 
     const cols = cameras.map((camera) => {
       return (
-        <Col className="px-1 mb-2" key={camera.source} xs={12} sm={6} md={4} lg={3}>
+        <Col className="px-1 mb-1" style={{ textAlign: "center" }} key={camera.source} xs={12} sm={6} md={4} lg={3}>
           {this.renderImage(camera.source, camera.url)}
         </Col>
       );
