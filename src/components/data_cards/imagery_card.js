@@ -57,6 +57,7 @@ export default class ImageryDataCard extends React.Component {
 
     return (
       <>
+        <ImagePreviewModal ref={this.modal} url={this.state.clickedImage} />
         <Card className="event-data-card">
           <Card.Body>
             <Container>

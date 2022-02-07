@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Button, ListGroup, Card, Tooltip, OverlayTrigger, Row, Col, Form, FormControl } from 'react-bootstrap';
-import ImagePreviewModal from './image_preview_modal';
 import EventPreview from './event_preview';
 import * as mapDispatchToProps from '../actions';
 import { Client } from '@hapi/nes/lib/client';
@@ -289,10 +288,6 @@ class EventHistory extends Component {
     this.setState({page: 0});
   }
 
-  handleImagePreviewModal(source, filepath) {
-    this.props.showModal('imagePreview', { name: source, filepath: filepath })
-  }
-
   renderEventHistory() {
 
     if(this.props.history && this.props.history.length > 0){
@@ -342,8 +337,14 @@ class EventHistory extends Component {
 
     return (
       <Card className={this.props.className}>
-        <ImagePreviewModal />
-        <Card.Header>{this.state.event.ts} {`<${this.state.event.event_author}>`}: {this.state.event.event_value} {(this.state.event.event_free_text) ? ` --> "${this.state.event.event_free_text}"` : null}<OverlayTrigger placement="top" overlay={hideTooltip}><span className="float-right" variant="secondary" size="sm" onClick={ () => this.toggleNewEventDetails() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger></Card.Header>
+        <Card.Header>
+          Newest Event Details
+          <OverlayTrigger placement="top" overlay={hideTooltip}>
+            <span className="float-right" variant="secondary" size="sm" onClick={ () => this.toggleNewEventDetails() }>
+              <FontAwesomeIcon icon='eye-slash' fixedWidth/>
+            </span>
+          </OverlayTrigger>
+        </Card.Header>
 
         <Card.Body className="pt-2 pb-1">
           <Row>

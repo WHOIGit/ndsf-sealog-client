@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Row, Col, Card, Modal } from 'react-bootstrap';
-import ImagePreviewModal from './image_preview_modal';
 import EventPreview from './event_preview';
 
 import * as mapDispatchToProps from '../actions';
@@ -22,9 +21,6 @@ class EventShowDetailsModal extends Component {
     super(props);
 
     this.state = { event: {} }
-
-    this.handleImagePreviewModal = this.handleImagePreviewModal.bind(this);
-
   }
 
   static propTypes = {
@@ -55,10 +51,6 @@ class EventShowDetailsModal extends Component {
     }    
   }
 
-  handleImagePreviewModal(source, filepath) {
-    this.props.showModal('imagePreview', { name: source, filepath: filepath })
-  }
-
   render() {
     const { show, event } = this.props
 
@@ -71,7 +63,6 @@ class EventShowDetailsModal extends Component {
       if(this.state.event.event_options) {
         return (
           <Modal size="lg" show={show} onHide={this.props.handleHide}>
-              <ImagePreviewModal />
               <Modal.Header closeButton />
 
               <Modal.Body className="px-4">

@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { ButtonToolbar, Row, Col, Card, ListGroup, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import EventFilterForm from './event_filter_form';
-import ImagePreviewModal from './image_preview_modal';
 import EventCommentModal from './event_comment_modal';
 import LoweringDropdown from './lowering_dropdown';
 import LoweringModeDropdown from './lowering_mode_dropdown';
@@ -146,10 +145,10 @@ class LoweringReplay extends Component {
     }
   }
 
-  handleImageClick(source, filepath) {
-    this.handleLoweringReplayPause();
-    this.props.showModal('imagePreview', { name: source, filepath: filepath });
-  }
+  // FIXME:
+  // When the user clicks on an image to pop up an ImagePreviewModal, we should
+  // pause the replay. This behavior regressed when the ImagePreviewModal was
+  // made the concern of the EventPreview component.
 
   handleEventCommentModal(index) {
     this.handleLoweringReplayPause();
@@ -412,7 +411,6 @@ class LoweringReplay extends Component {
 
     return (
       <React.Fragment>
-        <ImagePreviewModal />
         <EventCommentModal />
         <Row>
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
