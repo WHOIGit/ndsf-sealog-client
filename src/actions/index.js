@@ -299,14 +299,6 @@ export function gotoLoweringReplay(id) {
   };
 }
 
-export function gotoLoweringReview(id) {
-
-  return function (dispatch) {
-    dispatch(initLowering(id));
-    return dispatch(push(`/lowering_review/${id}`));
-  };
-}
-
 export async function createEventRequest(eventValue, eventFreeText, eventOptions, eventTS) {
 
   let payload = {
