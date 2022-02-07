@@ -61,7 +61,7 @@ class LoweringDropdown extends Component {
   }
 
   static propTypes = {
-    active_cruise: PropTypes.object.isRequired,
+    active_cruise: PropTypes.object,
     active_lowering: PropTypes.object.isRequired,
     onClick: PropTypes.func
   };
@@ -78,7 +78,7 @@ class LoweringDropdown extends Component {
 
   async fetchLowerings() {
 
-    if ( this.props.active_cruise.id ) {
+    if ( this.props.active_cruise !== undefined ) {
       try {
         const response = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/bycruise/${this.props.active_cruise.id}`,
         {
