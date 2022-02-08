@@ -112,7 +112,7 @@ class ResetPassword extends Component {
             </Form>
             <br/>
             <div className="text-right">
-              <Link to={ `/login` }>Go to Login {<FontAwesomeIcon icon="arrow-right"/>}</Link>
+              <Link to="/login">Go to Login {<FontAwesomeIcon icon="arrow-right"/>}</Link>
             </div>
           </Card.Body>
         </Card>

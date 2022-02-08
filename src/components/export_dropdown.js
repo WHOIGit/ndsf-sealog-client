@@ -188,8 +188,8 @@ class ExportDropdown extends Component {
     const exportTooltip = (<Tooltip id="exportTooltip">Export these events</Tooltip>);
 
     return (
-      <Dropdown as={'span'} disabled={this.props.disabled} id={this.state.id}>
-        <Dropdown.Toggle as={'span'}><OverlayTrigger placement="top" overlay={exportTooltip}><FontAwesomeIcon icon='download' fixedWidth/></OverlayTrigger></Dropdown.Toggle>
+      <Dropdown as='span' disabled={this.props.disabled} id={this.state.id}>
+        <Dropdown.Toggle as='span'><OverlayTrigger placement="top" overlay={exportTooltip}><FontAwesomeIcon icon='download' fixedWidth/></OverlayTrigger></Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Header className="text-warning" key="toJSONHeader">JSON format</Dropdown.Header>
           <Dropdown.Item key="toJSONAll" onClick={ () => this.exportEventsWithAuxData('json')}>Events w/aux data</Dropdown.Item>

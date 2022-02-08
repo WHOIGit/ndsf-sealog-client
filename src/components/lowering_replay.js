@@ -418,7 +418,7 @@ class LoweringReplay extends Component {
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Replay"} modes={["Map", "Gallery"]}/>
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Replay" modes={["Map", "Gallery"]}/>
           </ButtonToolbar>
         </Row>
         <Row>

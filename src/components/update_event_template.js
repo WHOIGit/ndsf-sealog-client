@@ -265,7 +265,7 @@ class UpdateEventTemplate extends Component {
                   sm={12}
                 />
                 <Field
-                  name={"template_categories"}
+                  name="template_categories"
                   component={renderTextField}
                   label="Template Categories (comma delimited)"
                   placeholder="e.g., biology,geology"
@@ -276,7 +276,7 @@ class UpdateEventTemplate extends Component {
                   name='event_free_text_required'
                   id='event_free_text_required'
                   component={renderSwitch}
-                  label={"Free text Required?"}
+                  label="Free text Required?"
                   lg={12}
                   sm={12}
                 />

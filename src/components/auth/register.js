@@ -54,7 +54,7 @@ class Register extends Component {
               <strong>Success!</strong> {this.props.message}
             </div>
             <div className="float-right">
-              <Link to={ `/login` }>Proceed to Login {<FontAwesomeIcon icon="arrow-right"/>}</Link>
+              <Link to="/login">Proceed to Login {<FontAwesomeIcon icon="arrow-right"/>}</Link>
             </div>
           </Card.Body>
         </Card>
@@ -136,7 +136,7 @@ class Register extends Component {
             </Form>
             <div>
               <hr className="border-secondary"/>
-              <Link className="btn btn-outline-primary btn-block" to={ `/login` }>Back to Login</Link>
+              <Link className="btn btn-outline-primary btn-block" to="/login">Back to Login</Link>
             </div>
           </Card.Body>
         </Card>

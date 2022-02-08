@@ -197,7 +197,7 @@ class LoweringGallery extends Component {
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Gallery"} modes={["Replay", "Map"]}/>
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Gallery" modes={["Replay", "Map"]}/>
           </ButtonToolbar>
           <span className="float-right">
             <Form style={{marginTop: '-4px'}} className='float-right' inline>
