@@ -384,9 +384,9 @@ class EventHistory extends Component {
             {this.renderEventHistory()}
           </ListGroup>
           <Card.Footer>
-            <Button className="mr-1" size={"sm"} variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
-            <Button className="mr-1" size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
-            <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
+            <Button className="mr-1" size="sm" variant="outline-primary" onClick={() => this.firstPage()} disabled={(this.state.page === 0)}>Newest Events</Button>
+            <Button className="mr-1" size="sm" variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
+            <Button size="sm" variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
             <Form className="float-right" inline>
               {ASNAPToggle}
             </Form>

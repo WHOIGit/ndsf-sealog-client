@@ -138,8 +138,8 @@ class Login extends Component {
                 </Form>
                 <div className="text-center">
                   <hr className="border-secondary"/>
-                  <Link className="btn btn-outline-primary btn-block" to={ `/forgotPassword` }>Forgot Password?</Link>
-                  <Link className="btn btn-outline-primary btn-block" to={ `/register` }>Register New User</Link>
+                  <Link className="btn btn-outline-primary btn-block" to="/forgotPassword">Forgot Password?</Link>
+                  <Link className="btn btn-outline-primary btn-block" to="/register">Register New User</Link>
                 </div>
               </Card.Body>
             </Card>

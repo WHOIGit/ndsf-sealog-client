@@ -97,7 +97,7 @@ class Header extends Component {
   renderSystemManagerDropdown() {
     if ( this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('template_manager') || this.props.roles.includes('event_manager')) ) {
       return (
-        <NavDropdown title={'System Management'} id="basic-nav-dropdown-system">
+        <NavDropdown title='System Management' id="basic-nav-dropdown-system">
           {this.renderCruiseOptions()}
           {this.renderEventManagementOptions()}
           {this.renderEventTemplateOptions()}

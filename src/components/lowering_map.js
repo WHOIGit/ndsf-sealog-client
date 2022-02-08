@@ -469,7 +469,7 @@ class LoweringMap extends Component {
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={"Map"} modes={["Replay", "Gallery"]}/>
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Map" modes={["Replay", "Gallery"]}/>
           </ButtonToolbar>
         </Row>
         <Row>

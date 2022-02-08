@@ -227,7 +227,7 @@ class CruiseMenu extends Component {
       let loweringFiles = (this.state.activeLowering.lowering_additional_meta.lowering_files && this.state.activeLowering.lowering_additional_meta.lowering_files.length > 0)? <div><strong>Files:</strong>{this.renderLoweringFiles(this.state.activeLowering.lowering_additional_meta.lowering_files)}</div>: null;
 
       return (          
-        <Card className="border-secondary" key={`lowering_card`}>
+        <Card className="border-secondary" key="lowering_card">
           <Card.Header>{_Lowering_}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
           <Card.Body>
             {loweringDescription}

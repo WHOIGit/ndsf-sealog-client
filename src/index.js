@@ -99,25 +99,25 @@ ReactDOM.render(
     <ConnectedRouter history={history}>
       <Header />
       <Switch>
-        <Route path={ `/` } exact={true} component={RequireAuth((DISABLE_EVENT_LOGGING) ? CruiseMenu : EventLogging )}/>
-        <Route path={ `/github`} exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/'}/>
-        <Route path={ `/license`} exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/blob/main/LICENSE'}/>
-        <Route path={ `/profile` } exact={true} component={RequireAuth(Profile)} />
-        <Route path={ `/register` } exact={true} component={Register} />
-        <Route path={ `/forgotPassword` } exact={true} component={ForgotPassword} />
-        <Route path={ `/resetPassword/:token` } exact={true} component={ResetPassword} />
-        <Route path={ `/login` } exact={true} component={RequireUnauth(Login)} />
-        <Route path={ `/logout` } exact={true} component={Logout} />
-        <Route path={ `/users` } exact={true} component={RequireAuth(Users)} />
-        <Route path={ `/tasks` } exact={true} component={RequireAuth(Tasks)} />
-        <Route path={ `/cruises` } exact={true} component={RequireAuth(Cruises)} />
-        <Route path={ `/cruise_menu` } exact={true} component={RequireAuth(CruiseMenu)} />
-        <Route path={ `/lowerings` } exact={true} component={RequireAuth(Lowerings)} />
-        <Route path={ `/lowering_gallery/:id` } exact={true} component={RequireAuth(LoweringGallery)} />
-        <Route path={ `/lowering_map/:id` } exact={true} component={RequireAuth(LoweringMap)} />
-        <Route path={ `/lowering_replay/:id` } exact={true} component={RequireAuth(LoweringReplay)} />
-        <Route path={ `/event_management` } exact={true} component={RequireAuth(EventManagement)} />
-        <Route path={ `/event_templates` } exact={true} component={RequireAuth(EventTemplates)} />
+        <Route path="/" exact={true} component={RequireAuth((DISABLE_EVENT_LOGGING) ? CruiseMenu : EventLogging )}/>
+        <Route path="/github" exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/'}/>
+        <Route path="/license" exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/blob/main/LICENSE'}/>
+        <Route path="/profile" exact={true} component={RequireAuth(Profile)} />
+        <Route path="/register" exact={true} component={Register} />
+        <Route path="/forgotPassword" exact={true} component={ForgotPassword} />
+        <Route path="/resetPassword/:token" exact={true} component={ResetPassword} />
+        <Route path="/login" exact={true} component={RequireUnauth(Login)} />
+        <Route path="/logout" exact={true} component={Logout} />
+        <Route path="/users" exact={true} component={RequireAuth(Users)} />
+        <Route path="/tasks" exact={true} component={RequireAuth(Tasks)} />
+        <Route path="/cruises" exact={true} component={RequireAuth(Cruises)} />
+        <Route path="/cruise_menu" exact={true} component={RequireAuth(CruiseMenu)} />
+        <Route path="/lowerings" exact={true} component={RequireAuth(Lowerings)} />
+        <Route path="/lowering_gallery/:id" exact={true} component={RequireAuth(LoweringGallery)} />
+        <Route path="/lowering_map/:id" exact={true} component={RequireAuth(LoweringMap)} />
+        <Route path="/lowering_replay/:id" exact={true} component={RequireAuth(LoweringReplay)} />
+        <Route path="/event_management" exact={true} component={RequireAuth(EventManagement)} />
+        <Route path="/event_templates" exact={true} component={RequireAuth(EventTemplates)} />
       </Switch>
       <Footer />
     </ConnectedRouter>

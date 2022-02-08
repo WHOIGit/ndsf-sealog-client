@@ -275,7 +275,7 @@ class CreateEventTemplate extends Component {
                 <Field
                   name='event_free_text_required'
                   component={renderSwitch}
-                  label={"Free text Required?"}
+                  label="Free text Required?"
                   lg={12}
                   sm={12}
                 />

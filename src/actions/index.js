@@ -215,63 +215,63 @@ export function autoLogin({loginToken, reCaptcha = null}) {
 export function gotoHome() {
 
   return function (dispatch) {
-    return dispatch(push(`/`));
+    return dispatch(push("/"));
   };
 }
 
 export function gotoCruiseMenu() {
 
   return function (dispatch) {
-    return dispatch(push(`/cruise_menu`));
+    return dispatch(push("/cruise_menu"));
   };
 }
 
 export function gotoCruises() {
 
   return function (dispatch) {
-    return dispatch(push(`/cruises`));
+    return dispatch(push("/cruises"));
   };
 }
 
 export function gotoEventManagement() {
 
   return function (dispatch) {
-    return dispatch(push(`/event_management`));
+    return dispatch(push("/event_management"));
   };
 }
 
 export function gotoEventTemplates() {
 
   return function (dispatch) {
-    return dispatch(push(`/event_templates`));
+    return dispatch(push("/event_templates"));
   };
 }
 
 export function gotoLowerings() {
 
   return function (dispatch) {
-    return dispatch(push(`/lowerings`));
+    return dispatch(push("/lowerings"));
   };
 }
 
 export function gotoProfile() {
 
   return function (dispatch) {
-    return dispatch(push(`/profile`));
+    return dispatch(push("/profile"));
   };
 }
 
 export function gotoTasks() {
 
   return function (dispatch) {
-    return dispatch(push(`/tasks`));
+    return dispatch(push("/tasks"));
   };
 }
 
 export function gotoUsers() {
 
   return function (dispatch) {
-    return dispatch(push(`/users`));
+    return dispatch(push("/users"));
   };
 }
 
@@ -963,7 +963,7 @@ export function logout() {
   return function(dispatch) {
     cookies.remove('token', { path: '/' });
     cookies.remove('id', { path: '/' });
-    dispatch(push(`/login`));
+    dispatch(push("/login"));
     return dispatch({type: UNAUTH_USER });
   };
 }
