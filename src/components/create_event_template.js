@@ -83,7 +83,7 @@ class CreateEventTemplate extends Component {
             name={`${prefix}.event_option_default_value`}
             component={renderTextField}
             label="Default Selection"
-            placeholder="i.e. a value from the list of options"
+            placeholder="e.g., a value from the list of options"
             lg={12}
             sm={12}
           />
@@ -104,7 +104,7 @@ class CreateEventTemplate extends Component {
             name={`${prefix}.event_option_default_value`}
             component={renderTextField}
             label="Default Selections"
-            placeholder="i.e. a value from the list of options"
+            placeholder="e.g., a value from the list of options"
             lg={12}
             sm={12}
           />
@@ -125,7 +125,7 @@ class CreateEventTemplate extends Component {
             name={`${prefix}.event_option_default_value`}
             component={renderTextField}
             label="Default Selection"
-            placeholder="i.e. a value from the list of options"
+            placeholder="e.g., a value from the list of options"
             lg={12}
             sm={12}
           />
@@ -268,7 +268,7 @@ class CreateEventTemplate extends Component {
                   name="template_categories"
                   component={renderTextField}
                   label="Template Categories (comma delimited)"
-                  placeholder="i.e. biology,geology"
+                  placeholder="e.g., biology,geology"
                   lg={12}
                   sm={12}
                 />

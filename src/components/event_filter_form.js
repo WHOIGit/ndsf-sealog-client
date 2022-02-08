@@ -100,7 +100,7 @@ class EventFilterForm extends Component {
               name="value"
               component={renderTextField}
               label="Event Value"
-              placeholder="i.e. SAMPLE"
+              placeholder="e.g., SAMPLE"
               disabled={this.props.disabled}
               lg={12}
               sm={12}
@@ -109,7 +109,7 @@ class EventFilterForm extends Component {
               name="author"
               component={renderTextField}
               label="Author"
-              placeholder="i.e. jsmith"
+              placeholder="e.g., jsmith"
               disabled={this.props.disabled}
               lg={12}
               sm={12}
