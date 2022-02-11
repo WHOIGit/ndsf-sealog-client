@@ -12,16 +12,19 @@ function prettyPrint(text) {
 }
 
 
-export default class TabularDataCard extends React.Component {
+export default class NavDataCard extends React.Component {
   static propTypes = {
     data: PropTypes.object.isRequired,
   };
 
   static sizeProps = {
     xs: 12,
-    sm: 6,
-    md: 4,
-    lg: 3,
+    md: 6
+  };
+
+  static shouldSkipCard = (event, data) => {
+    // We only want to render for the vehicleRealtimeNavData data source.
+    return (data.data_source !== "vehicleRealtimeNavData");
   };
 
   render = () => {
@@ -40,7 +43,7 @@ export default class TabularDataCard extends React.Component {
       <>
         <Card className="event-data-card">
           <Card.Header>
-            {prettyPrint(this.props.data.data_source)}
+            Nav data card
           </Card.Header>
           <Card.Body>
             <table style={{width: '100%'}}>

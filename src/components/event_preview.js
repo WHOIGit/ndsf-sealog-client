@@ -18,6 +18,80 @@ function makeFakeAuxDataForEventOptions(event) {
 }
 
 
+// Pull nav data from multiple data sources to create a more useful card.
+function reorganizeNavData(event, dataArray) {
+  // Locate the various nav data cards
+  const renavIdx = dataArray.findIndex(
+    (x) => x.data_source === "vehicleReNavData");
+  const localIdx = dataArray.findIndex(
+    (x) => x.data_source === "vehicleRealtimeLocalCoordData");
+  const realtimeIdx = dataArray.findIndex(
+    (x) => x.data_source === "vehicleRealtimeNavData");
+
+  // If we don't have realtime and local nav data, something went wrong.
+  // TODO: Handle this case if it comes up in real life.
+  if (localIdx === -1 || realtimeIdx === -1)
+    return;
+
+  // Copy the object
+  const renav = renavIdx > -1 ? dataArray[renavIdx] : undefined;
+  const local = localIdx > -1 ? dataArray[localIdx] : undefined;
+  const realtime = realtimeIdx > -1 ? dataArray[realtimeIdx] : undefined;
+
+  // Delete the original from the array
+  const toDelete = [];
+  if (renavIdx > -1) toDelete.push(renavIdx);
+  if (localIdx > -1) toDelete.push(localIdx);
+  if (realtimeIdx > -1) toDelete.push(realtimeIdx);
+  toDelete.sort((a, b) => b - a);
+  for (const idx of toDelete) {
+    dataArray.splice(idx, 1);
+  }
+
+  // Start the new nav data out as a copy of the realtime data
+  const navData = [...realtime.data_array];
+
+  // Override realtime data with renav
+  const hasRenav = (renavIdx > -1);
+  const overridden = [];
+
+  if (hasRenav) {
+    for (const entry of renav.data_array) {
+      // Remove an existing entry with the same data_name
+      const idx = navData.findIndex((x) => x.data_name === entry.data_name);
+      if (idx > -1) {
+        overridden.push(navData[idx]);
+        navData.splice(idx, 1);
+      }
+
+      // Append the new value
+      navData.push(entry);
+    }
+  }
+
+  // Attach the nav source
+  navData.push({
+    data_name:  "nav_source",
+    data_value: hasRenav ? "renav" : "realtime",
+    data_uom:   "",
+  });
+
+  // Add the merged data as a new aux_data record
+  dataArray.push({
+    data_source: "navData",
+    data_array: navData,
+  });
+
+  // If renav'd, push the original data
+  if (hasRenav) {
+    dataArray.push({
+      data_source: "originalNavData",
+      data_array: overridden,
+    });
+  }
+}
+
+
 export default class EventPreview extends React.Component {
   static propTypes = {
     event: PropTypes.object.isRequired,
@@ -41,6 +115,9 @@ export default class EventPreview extends React.Component {
     if (this.props.event.event_options.length > 0) {
       dataArray.push(makeFakeAuxDataForEventOptions(this.props.event));
     }
+
+    // Reorganize nav data according to desired display grouping
+    reorganizeNavData(this, dataArray);
 
     const cards = dataArray.map((aux_data) =>
       <DataCard
