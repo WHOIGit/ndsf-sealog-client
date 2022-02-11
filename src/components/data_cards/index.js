@@ -2,16 +2,20 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Col } from 'react-bootstrap';
 import ImageryDataCard from './imagery_card';
+import NavDataCard from './nav_card';
 import TabularDataCard from './tabular_card';
 
 
 // Returns the component class that renders the given aux_data object given the
 // the data_source.
 function componentForDataSource(data_source) {
-  if (data_source === "vehicleRealtimeFramegrabberData")
-    return ImageryDataCard;
-  else
-    return TabularDataCard;
+  const data_source_map = {
+    "vehicleRealtimeFramegrabberData":  ImageryDataCard,
+    "navData":  NavDataCard,
+    "originalNavData":  TabularDataCard,
+  }
+
+  return data_source_map[data_source] || TabularDataCard;
 }
 
 
