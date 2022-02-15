@@ -346,10 +346,8 @@ class EventHistory extends Component {
           </OverlayTrigger>
         </Card.Header>
 
-        <Card.Body className="pt-2 pb-1">
-          <Row>
-            <EventPreview event={this.state.event} />
-          </Row>
+        <Card.Body className="pt-2 pb-2 px-2">
+          <EventPreview event={this.state.event} />
           <Row>
             <Col xs={12}>
               {event_comment_card}

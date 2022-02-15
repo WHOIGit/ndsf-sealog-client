@@ -66,9 +66,7 @@ class EventShowDetailsModal extends Component {
               <Modal.Header closeButton />
 
               <Modal.Body className="px-4">
-                <Row>
-                  <EventPreview event={this.state.event} />
-                </Row>
+                <EventPreview event={this.state.event} />
                 <Row>
                   {event_free_text_card}
                   {event_comment_card}
