@@ -23,7 +23,7 @@ const PAUSE = 1;
 const FFWD = 2;
 const FREV = 3;
 
-const maxEventsPerPage = 10;
+const maxEventsPerPage = 8;
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
 

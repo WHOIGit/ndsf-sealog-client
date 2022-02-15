@@ -65,21 +65,14 @@ class EventFilterForm extends Component {
         formProps.value = formProps.value.split(',').map((value) => value.trim()).join(',')
       }
 
-      if(formProps.author) {
-        formProps.author = formProps.author.split(',').map((author) => author.trim()).join(',')
-      }
-
     this.props.handlePostSubmit(formProps);
   }
 
   clearForm() {
     this.props.resetFields('eventFilterForm', {
       value: '',
-      author: '',
       startTS: '',
       stopTS: '',
-      freetext: '',
-      datasource: ''
     });
     this.props.handlePostSubmit();
   }
@@ -99,17 +92,8 @@ class EventFilterForm extends Component {
             <Field
               name="value"
               component={renderTextField}
-              label="Event Value"
+              label="Text"
               placeholder="e.g., SAMPLE"
-              disabled={this.props.disabled}
-              lg={12}
-              sm={12}
-            />
-            <Field
-              name="author"
-              component={renderTextField}
-              label="Author"
-              placeholder="e.g., jsmith"
               disabled={this.props.disabled}
               lg={12}
               sm={12}
@@ -130,14 +114,6 @@ class EventFilterForm extends Component {
               defaultValue={stopTS}
               timeFormat={timeFormat}
               label="Stop Date/Time (UTC)"
-              disabled={this.props.disabled}
-              lg={12}
-              sm={12}
-            />
-            <Field
-              name="freetext"
-              component={renderTextField}
-              label="Freeform Text"
               disabled={this.props.disabled}
               lg={12}
               sm={12}
