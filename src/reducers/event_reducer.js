@@ -11,7 +11,7 @@ import {
 
 } from '../actions/types';
 
-export default function( state={ selected_event: {}, events: [], eventFilter: {}, hideASNAP: false, fetching: false}, action) {
+export default function( state={ selected_event: {}, events: [], eventFilter: {}, hideASNAP: true, fetching: false}, action) {
   switch(action.type){
 
     case INIT_EVENT:
