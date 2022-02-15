@@ -43,7 +43,10 @@ export default class NavDataCard extends React.Component {
       <>
         <Card className="event-data-card">
           <Card.Header>
-            Nav data card
+            Navigation
+            <span class="float-right badge badge-pill badge-info">
+                { this.props.data.data_array.find((x) => x.data_name === "nav_source").data_value }
+            </span>
           </Card.Header>
           <Card.Body>
             <table style={{width: '100%'}}>

@@ -59,9 +59,7 @@
 
   border-color: $secondary;
   .card-header {
-    padding-left: .5rem !important;
-    padding-bottom: .25rem !important;
-    padding-top: .25rem !important;
+    padding: .25rem .5rem !important;
     text-transform: capitalize;
   }
 
