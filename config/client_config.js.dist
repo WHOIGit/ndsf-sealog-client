@@ -1,7 +1,7 @@
 window.client_config = {
 
     // Use https:// and wss:// for secure servers
-    API_ROOT_URL:  http://${window.location.hostname}:8000/sealog-server`,
+    API_ROOT_URL:  `http://${window.location.hostname}:8000/sealog-server`,
     WS_ROOT_URL:  `ws://${window.location.hostname}:8000/ws`,
 
     // Derive the path at which Sealog is being hosted. This assumes that the
