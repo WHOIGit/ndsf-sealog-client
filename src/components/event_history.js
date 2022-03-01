@@ -13,9 +13,9 @@ import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
-const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData']
+const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeDualHDGrabData']
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData']
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeDualHDGrabData']
 
 const sortAuxDataSourceReference = ['vehicleRealtimeNavData','vesselRealtimeNavData'];
 
@@ -316,12 +316,14 @@ class EventHistory extends Component {
       let tmpData = []
 
       if(frameGrabberData.length > 0) {
-        for (let i = 0; i < frameGrabberData[0].data_array.length; i+=2) {
-    
-          tmpData.push({
-            source: frameGrabberData[0].data_array[i].data_value,
-            filepath: getImageUrl(frameGrabberData[0].data_array[i+1].data_value)
-          })
+        for (let i = 0; i < frameGrabberData.length; i++) {
+          for (let j = 0; j < frameGrabberData[i].data_array.length; j+=2) {
+      
+            tmpData.push({
+              source: frameGrabberData[i].data_array[j].data_value,
+              filepath: getImageUrl(frameGrabberData[i].data_array[j+1].data_value)
+            })
+          }
         }
 
         return (
