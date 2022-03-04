@@ -152,7 +152,7 @@ class EventTemplateList extends Component {
     if (this.props.event_templates.length > 0) {
       return (
         <div style={this.props.style} >
-          <EventTemplateOptionsModal/>
+          <EventTemplateOptionsModal handleUpdateEvent={this.props.updateEvent} handleDeleteEvent={this.props.deleteEvent}/>
           {this.renderEventTemplates()}
         </div>
       );
