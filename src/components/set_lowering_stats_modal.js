@@ -433,7 +433,7 @@ class SetLoweringStatsModal extends Component {
               attribution={layer.attribution}
               url={layer.url}
               tms={layer.tms ?? false}
-              zoomOffset={layer.zoomOfset ?? 0}
+              zoomOffset={layer.zoomOffset ?? 0}
               maxNativeZoom={layer.maxNativeZoom}
             />
           </BaseLayer>
