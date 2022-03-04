@@ -14,6 +14,8 @@ import { API_ROOT_URL, IMAGE_PATH } from '../client_config';
 
 const cookies = new Cookies();
 
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+
 class LoweringGallery extends Component {
 
   constructor (props) {
@@ -71,10 +73,10 @@ class LoweringGallery extends Component {
   componentWillUnmount(){
   }
 
-  async initLoweringImages(id, hideASNAP=false, event_filter='', auxDatasourceFilter='vehicleRealtimeFramegrabberData') {
+  async initLoweringImages(id, hideASNAP=false, event_filter='', auxDatasourceFilter=imageAuxDataSources) {
     this.setState({ fetching: true});
 
-    let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`
+    let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter.join('&datasource=')}`
 
     if(hideASNAP) {
       url += '&value=!ASNAP'

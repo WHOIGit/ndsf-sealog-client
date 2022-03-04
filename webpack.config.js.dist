@@ -7,21 +7,20 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ProvidePlugin = require('process');
 
 module.exports = {
-  output: {
-    path: path.join(__dirname, '/dist'),
-    filename: 'js/index.bundle.js',
-    publicPath: ROOT_PATH
-  },
   devServer: {
     port: 8080,
-    contentBase: './dist',
-    publicPath: ROOT_PATH,
+    static: './dist',
     historyApiFallback: {
       disableDotRule: true,
       index: ROOT_PATH
     }
   },
-  devtool: "source-map",
+  output: {
+    path: path.join(__dirname, '/dist'),
+    filename: 'js/index.bundle.js',
+    publicPath: ROOT_PATH,
+    clean: true
+  },
   module: {
     rules: [
       {
