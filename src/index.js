@@ -85,18 +85,6 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    conSize: [25, 41],
-    iconAnchor: [13, 41]
-});
-
-L.Marker.prototype.options.icon = DefaultIcon;
-
 import configureStore from './store';
 import history from './history';
 
