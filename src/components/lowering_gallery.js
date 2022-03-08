@@ -12,11 +12,9 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import * as mapDispatchToProps from '../actions';
 import { API_ROOT_URL, IMAGE_PATH } from '../client_config';
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeDualHDGrabData'];
-
 const cookies = new Cookies();
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeDualHDGrabData'];
 
 class LoweringGallery extends Component {
 
@@ -77,8 +75,6 @@ class LoweringGallery extends Component {
 
   async initLoweringImages(id, hideASNAP=false, event_filter='', auxDatasourceFilter=imageAuxDataSources) {
     this.setState({ fetching: true});
-
-    let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter.join('&datasource=')}`
 
     let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter.join('&datasource=')}`
 
