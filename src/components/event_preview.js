@@ -171,19 +171,12 @@ export default class EventPreview extends React.Component {
             </div>
           </Col>
           <Col className="px-1">
-            <div style={cardStyle}>X</div>
-            { /*
-            <Row>
-              <Col>
-                <div style={{textOverflow: "ellipsis"}}>
-                  { this.props.event.event_free_text ? ` ${this.props.event.event_free_text}` : null }
-                </div>
-              </Col>
-              <Col xs="auto">
+            <div className="px-1" style={{ ...cardStyle, height: "100%" }}>
+              { this.props.event.event_free_text ? ` ${this.props.event.event_free_text}` : null }
+              <span className="float-right">
                 {this.props.event.event_author} @ {this.props.event.ts}
-              </Col>
-            </Row>
-            */ }
+              </span>
+            </div>
           </Col>
         </Row>
 
