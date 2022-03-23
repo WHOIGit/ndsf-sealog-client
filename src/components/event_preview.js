@@ -69,6 +69,13 @@ function reorganizeNavData(event, dataArray) {
     }
   }
 
+    // Attach the event timestamp
+    navData.push({
+      data_name:  "time",
+      data_value: event.ts,
+      data_uom:   "",
+    });
+
   // Attach the nav source
   navData.push({
     data_name:  "nav_source",
@@ -117,7 +124,7 @@ export default class EventPreview extends React.Component {
     }
 
     // Reorganize nav data according to desired display grouping
-    reorganizeNavData(this, dataArray);
+    reorganizeNavData(this.props.event, dataArray);
 
     const cards = dataArray.map((aux_data) =>
       <DataCard
