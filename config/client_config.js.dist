@@ -21,7 +21,7 @@ window.client_config = {
     // Text show on the login page.  If a login image is defined then this text will appear below the image.
     LOGIN_SCREEN_TXT:  "Sealog provides the Oceanographic Research community with an open-source tool for recording, reviewing, and exporting insitu scientific and operational observations.",
 
-    // Image file shown on the login page.  This image needs to be saved in the ./dist/images folder
+    // Image file shown on the login page.  This image needs to be saved in the ./static/media folder
     LOGIN_IMAGE:  "",
 
     // Text show on the main page above the cruise list.
