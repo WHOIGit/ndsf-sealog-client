@@ -102,7 +102,7 @@ class Login extends Component {
 
     const loginImage = ( LOGIN_IMAGE !== "" )? 
     <div className="d-flex justify-content-center">
-      <Image style={{width:"250px"}} fluid src={`${ROOT_PATH}images/${LOGIN_IMAGE}`} />
+      <Image style={{width:"250px"}} fluid src={`${ROOT_PATH}static/media/${LOGIN_IMAGE}`} />
     </div> : null
 
 

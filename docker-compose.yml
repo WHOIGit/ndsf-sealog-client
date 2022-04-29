@@ -14,4 +14,4 @@ services:
       - ./config:/usr/src/app/config:ro
 
       # Example of how to map a LOGIN_IMAGE into the container
-      - ./login.png:/usr/src/app/dist/images/login.png:ro
+      - ./login.png:/usr/src/app/static/media/login.png:ro
