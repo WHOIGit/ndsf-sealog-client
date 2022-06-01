@@ -13,10 +13,10 @@ import { getImageUrl, handleMissingImage } from '../utils';
 
 const cookies = new Cookies();
 
-const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeFramegrabber2Data','vehicleRealtimeVideoFileData','vehicleRealtimeVideoFile2Data']
+const excludeAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeFramegrabber2Data','vehicleRealtimeFramegrabber3Data','vehicleRealtimeVideoFileData','vehicleRealtimeVideoFile2Data','vehicleRealtimeVideoFile3Data']
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeFramegrabber2Data']
-const videoAuxDataSources = ['vehicleRealtimeVideoFileData','vehicleRealtimeVideoFile2Data']
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData','vehicleRealtimeFramegrabber2Data','vehicleRealtimeFramegrabber3Data']
+const videoAuxDataSources = ['vehicleRealtimeVideoFileData','vehicleRealtimeVideoFile2Data','vehicleRealtimeVideoFile3Data']
 
 const sortAuxDataSourceReference = ['vehicleRealtimeVideoFileData','vehicleRealtimeAttitudeData','vehicleRealtimeHipapData','vehicleRealtimeNavData','vesselRealtimeNavData'];
 
