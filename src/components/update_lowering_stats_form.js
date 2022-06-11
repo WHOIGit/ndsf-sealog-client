@@ -462,13 +462,6 @@ function validate(formProps) {
 
   if(formProps.on_bottom && formProps.on_bottom !== '' && moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.vents_secured, dateFormat + " " + timeFormat))) {
     errors.on_bottom = 'On bottom date must be after vents secured date';
-<<<<<<< HEAD
-  }
-
-  if(formProps.vents_secured && formProps.vents_secured !== '' && moment.utc(formProps.vents_secured, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_deck, dateFormat + " " + timeFormat))) {
-    errors.vents_secured = 'Vents secured date must be after off_deck date';
-=======
->>>>>>> 281527bedb4921eda3b53c158c4de0c3504c5375
   }
 
   if(formProps.vents_secured && formProps.vents_secured !== '' && moment.utc(formProps.vents_secured, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_deck, dateFormat + " " + timeFormat))) {
