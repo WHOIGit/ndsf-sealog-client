@@ -74,6 +74,19 @@
   }
 }
 
+.live-data-card {
+
+  border-color: $secondary;
+  .card-body {
+    font-size: 1.2rem;
+    padding: .5rem;
+
+    .data-name {
+      text-transform: capitalize;
+    }
+  }
+}
+
 .event-image-data-card {
   border: none;
   background-color: transparent;

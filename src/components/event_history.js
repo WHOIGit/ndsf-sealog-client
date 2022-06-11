@@ -6,6 +6,7 @@ import ImagePreviewModal from './image_preview_modal';
 import * as mapDispatchToProps from '../actions';
 import { Client } from '@hapi/nes/lib/client';
 import axios from 'axios';
+import moment from 'moment';
 import Cookies from 'universal-cookie';
 
 import { WS_ROOT_URL, API_ROOT_URL } from '../client_config';
@@ -34,35 +35,57 @@ class EventHistory extends Component {
       showEventHistory: true,
       showEventHistoryFullscreen: false,
       filterTimer: null,
-      filter: ''
+      filter: '',
+      current_time: moment.utc(0),
+      elapse_time: moment.utc(0),
+      threshold_time: moment.utc(0).set('minute', 15),
+      current_lowering: null,
+      showPrevDiveEvents: false
+
     };
 
     this.client = new Client(`${WS_ROOT_URL}`);
     this.connectToWS = this.connectToWS.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.updateLowering = this.updateLowering.bind(this);
+    this.updateTimes = this.updateTimes.bind(this);
 
   }
 
   componentDidMount() {
     this.props.fetchEventHistory();
+    this.updateLowering()
     if(this.props.authenticated) {
       this.connectToWS();
     }
+
+    setInterval(this.updateTimes, 1000);
   }
 
   componentDidUpdate(prevProps, prevState) {
 
     if(prevState.page !== this.state.page) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, this.state.page);      
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, this.state.page, (this.state.current_lowering && !this.state.showPrevDiveEvents) ? this.state.current_lowering.id : null);      
     }
 
     if(prevState.filter !== this.state.filter) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0);
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0, (this.state.current_lowering && !this.state.showPrevDiveEvents) ? this.state.current_lowering.id : null);
+      this.setState({page: 0});
+    }
+
+    if(prevState.current_lowering !== this.state.current_lowering) {
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0, (this.state.current_lowering && !this.state.showPrevDiveEvents) ? this.state.current_lowering.id : null);
       this.setState({page: 0});
     }
 
     if(prevState.showASNAP !== this.state.showASNAP) {
-      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0);
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0, (this.state.current_lowering && !this.state.showPrevDiveEvents) ? this.state.current_lowering.id : null);
+      this.setState({page: 0});
+    }
+
+    if(prevState.showPrevDiveEvents !== this.state.showPrevDiveEvents && this.state.current_lowering) {
+      this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0, (this.state.current_lowering && !this.state.showPrevDiveEvents) ? this.state.current_lowering.id : null);
+      this.fetchEventExport();
       this.setState({page: 0});
     }
 
@@ -71,7 +94,8 @@ class EventHistory extends Component {
     }
 
     if(prevProps.history[0] !== this.props.history[0] && this.props.history[0] && !this.state.event && this.state.showNewEventDetails) {
-      this.fetchEventExport(this.props.history[0].id);
+      // this.fetchEventExport(this.props.history[0].id);
+      this.fetchEventExport();
     }
   }
 
@@ -80,6 +104,18 @@ class EventHistory extends Component {
       this.client.disconnect();
     }
   }
+
+  updateTimes() {
+    const now = moment.utc()
+    let elapse_time = moment.utc(0)
+    if(this.state.event) {
+      const last_event = moment.utc(this.state.event.ts)
+      elapse_time = moment.utc(moment().diff(last_event, now))
+    }
+
+    this.setState({current_time: now, elapse_time: elapse_time})
+  }
+
 
   async connectToWS() {
 
@@ -112,7 +148,7 @@ class EventHistory extends Component {
       };
 
       const updateAuxDataHandler = (update) => {
-        if(this.state.showNewEventDetails && update.event_id === this.state.event.id) {
+        if(this.state.event && this.state.showNewEventDetails && update.event_id === this.state.event.id) {
           this.fetchEventExport(this.state.event.id);
         }
       };
@@ -127,7 +163,16 @@ class EventHistory extends Component {
           }
         }
 
-        this.props.fetchEventHistory(this.state.showASNAP, this.state.page);
+        this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, this.state.page, (this.state.current_lowering && !this.state.showPrevDiveEvents) ? this.state.current_lowering.id : null);
+      };
+
+      const newLoweringHandler = () => {
+        this.updateLowering();
+        this.setState({event: null});
+      };
+
+      const updateLoweringHandler = () => {
+        this.updateLowering();
       };
 
       this.client.subscribe('/ws/status/newEvents', updateHandler);
@@ -136,6 +181,9 @@ class EventHistory extends Component {
       this.client.subscribe('/ws/status/newEventAuxData', updateAuxDataHandler);
       this.client.subscribe('/ws/status/updateEventAuxData', updateAuxDataHandler);
 
+      this.client.subscribe('/ws/status/newLowerings', updateLoweringHandler);
+      this.client.subscribe('/ws/status/updateLowerings', updateLoweringHandler);
+
     } catch(error) {
       console.log(error);
       throw(error);
@@ -143,10 +191,41 @@ class EventHistory extends Component {
   }
 
 
+  async updateLowering() {
+
+    const now_str = moment.utc().toISOString()
+
+    try {
+      const response = await axios.get(`${API_ROOT_URL}/api/v1/lowerings?startTS=${now_str}&stopTS=${now_str}`,
+        {
+          headers: {
+          authorization: cookies.get('token')
+          }
+        }      
+      )
+      if(response.data[0]) {
+        this.setState({current_lowering: response.data[0]});
+      }
+      else {
+        this.setState({current_lowering: null});
+      }
+    }
+    catch(error) {
+      if(error.response && error.response.data.statusCode === 404) {
+        this.setState({current_lowering: null});
+      }
+
+      if(error.response && error.response.data.statusCode !== 404) {
+        console.log(error);
+      }
+    }    
+  }
+
+
   async fetchEventExport(event_id=null) {
 
     if(!event_id) {
-      let url = `${API_ROOT_URL}/api/v1/events?sort=newest&limit=1`
+      let url = (this.state.current_lowering && !this.state.showPrevDiveEvents)? `${API_ROOT_URL}/api/v1/events/bylowering/${this.state.current_lowering.id}?sort=newest&limit=1` : `${API_ROOT_URL}/api/v1/events?sort=newest&limit=1`
       const event = await axios.get(url, {
         headers: {
           authorization: cookies.get('token')
@@ -162,6 +241,7 @@ class EventHistory extends Component {
       });
 
       if(!event) {
+        this.setState({event: null});
         return null;
       }
       event_id = event[0].id;
@@ -285,6 +365,10 @@ class EventHistory extends Component {
     this.setState( prevState => ({showNewEventDetails: !prevState.showNewEventDetails}));
   }
 
+  togglePrevDiveEvents() {
+    this.setState( prevState => ({showPrevDiveEvents: !prevState.showPrevDiveEvents}));
+  }
+
   incrementPage() {
     this.setState( prevState => ({page: prevState.page+1}));
   }
@@ -392,6 +476,21 @@ class EventHistory extends Component {
     return null;
   }
 
+  renderLiveDataCard() {
+
+    return (
+      <Col className="px-1 pb-2 ml-auto" key="static_status_col" sm={6} md={4} lg={3}>
+        <Card className="live-data-card" key="static_status">
+          <Card.Body>
+            <div>Dive: <span className="float-right">{(this.state.current_lowering) ? this.state.current_lowering.lowering_id : ""}</span></div>
+            <div>UTC: <span className="float-right">{this.state.current_time.format("HH:mm:ss")}</span></div>
+            <div>Elapse: <span className={`float-right ${(this.state.elapse_time.diff(this.state.threshold_time) > 0) ? "text-warning" : ""}`}>{(this.state.current_lowering) ? this.state.elapse_time.format("HH:mm:ss") : "00:00:00"}</span></div>
+          </Card.Body>
+        </Card>
+      </Col>
+    )
+  }
+
   renderEventHistory() {
 
     if(this.props.history && this.props.history.length > 0){
@@ -401,7 +500,6 @@ class EventHistory extends Component {
       for (let i = 0; i < this.props.history.length; i++) {
 
         let event = this.props.history[i];
-        
         let comment_exists = false;
 
         let eventOptionsArray = event.event_options.reduce((filtered, option) => {
@@ -433,27 +531,40 @@ class EventHistory extends Component {
 
   renderNewestEvent() {
 
-    const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
+    if(this.state.event) {
 
-    const event_comment = (this.state.event.event_options) ? this.state.event.event_options.find((event_option) => (event_option.event_option_name === 'event_comment' && event_option.event_option_value.length > 0)) : null
+      // const hideTooltip = (<Tooltip id="hideHistoryTooltip">Hide this card</Tooltip>);
+      const event_comment = (this.state.event.event_options) ? this.state.event.event_options.find((event_option) => (event_option.event_option_name === 'event_comment' && event_option.event_option_value.length > 0)) : null
+      const event_comment_card = (event_comment)?(<Card><Card.Body className="data-card-body">Comment: {event_comment.event_option_value}</Card.Body></Card>) : null;
 
-    const event_comment_card = (event_comment)?(<Card><Card.Body className="data-card-body">Comment: {event_comment.event_option_value}</Card.Body></Card>) : null;
+      return (
+        <Card className={this.props.className}>
+          <ImagePreviewModal />
+          <Card.Header>{this.state.event.ts} {`<${this.state.event.event_author}>`}: {this.state.event.event_value} {(this.state.event.event_free_text) ? ` --> "${this.state.event.event_free_text}"` : null}</Card.Header>
+
+          <Card.Body className="pt-2 pb-1">
+            <Row>
+              {this.renderImageryCard()}
+              {this.renderAuxDataCard()}
+              {this.renderEventOptionsCard()}
+              {this.renderLiveDataCard()}
+            </Row>
+            <Row>
+              <Col xs={12}>
+                {event_comment_card}
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+      );
+    }
 
     return (
       <Card className={this.props.className}>
-        <ImagePreviewModal />
-        <Card.Header>{this.state.event.ts} {`<${this.state.event.event_author}>`}: {this.state.event.event_value} {(this.state.event.event_free_text) ? ` --> "${this.state.event.event_free_text}"` : null}<OverlayTrigger placement="top" overlay={hideTooltip}><span className="float-right" variant="secondary" size="sm" onClick={ () => this.toggleNewEventDetails() }><FontAwesomeIcon icon='eye-slash' fixedWidth/></span></OverlayTrigger></Card.Header>
-
+        <Card.Header></Card.Header>
         <Card.Body className="pt-2 pb-1">
           <Row>
-            {this.renderImageryCard()}
-            {this.renderAuxDataCard()}
-            {this.renderEventOptionsCard()}
-          </Row>
-          <Row>
-            <Col xs={12}>
-              {event_comment_card}
-            </Col>
+            {this.renderLiveDataCard()}
           </Row>
         </Card.Body>
       </Card>
@@ -463,9 +574,11 @@ class EventHistory extends Component {
   render() {
 
     let eventHistoryCard = null;
-    let newEventDetailsCard = (this.state.showNewEventDetails && this.state.event) ? this.renderNewestEvent() : null
+    // let newEventDetailsCard = (this.state.showNewEventDetails && this.state.event) ? this.renderNewestEvent() : null
+    let newEventDetailsCard = this.renderNewestEvent()
 
     const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' checked={this.state.showASNAP} disabled={this.state.filter} onChange={() => this.toggleASNAP()} label="ASNAP"/>);
+    const PrevDiveEventsToggle = (<Form.Check className="pr-4" id="PrevDiveEvents" type='switch' checked={this.state.showPrevDiveEvents} disabled={!this.state.current_lowering} onChange={() => this.togglePrevDiveEvents()} label="Previous Dive Events"/>);
     
     if (!this.props.history) {
       eventHistoryCard = (
@@ -488,6 +601,7 @@ class EventHistory extends Component {
             <Button className="mr-1" size={"sm"} variant="outline-primary" onClick={() => this.decrementPage()} disabled={(this.state.page === 0)}>Newer Events</Button>
             <Button size={"sm"} variant="outline-primary" onClick={() => this.incrementPage()} disabled={(this.props.history && this.props.history.length !== 20)}>Older Events</Button>
             <Form className="float-right" inline>
+              {PrevDiveEventsToggle}
               {ASNAPToggle}
             </Form>
           </Card.Footer>

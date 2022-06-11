@@ -1296,11 +1296,11 @@ export function clearEvents() {
   };
 }
 
-export function fetchEventHistory(asnap=false, filter='', page=0) {
+export function fetchEventHistory(asnap=false, filter='', page=0, lowering_uid=null) {
 
   const eventsPerPage = 20;
 
-  let url = `${API_ROOT_URL}/api/v1/events?sort=newest&limit=${eventsPerPage}&offset=${eventsPerPage*page}`;
+  let url = (lowering_uid) ? `${API_ROOT_URL}/api/v1/events/bylowering/${lowering_uid}?sort=newest&limit=${eventsPerPage}&offset=${eventsPerPage*page}` : `${API_ROOT_URL}/api/v1/events?sort=newest&limit=${eventsPerPage}&offset=${eventsPerPage*page}`;
   if(!asnap) {
     url += '&value=!ASNAP';
   }
