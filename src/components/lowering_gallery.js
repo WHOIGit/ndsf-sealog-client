@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonToolbar, Row, Col, Tabs, Tab, Form } from 'react-bootstrap';
+import { ButtonToolbar, Row, Col, Tabs, Tab, Form, FormControl } from 'react-bootstrap';
 import EventShowDetailsModal from './event_show_details_modal';
 import LoweringGalleryTab from './lowering_gallery_tab';
 import LoweringDropdown from './lowering_dropdown';
@@ -22,9 +22,12 @@ class LoweringGallery extends Component {
     this.state = {
       fetching: false,
       aux_data: [],
-      maxImagesPerPage: 16
+      maxImagesPerPage: 16,
+      filterTimer: null,
+      filter: ''
     };
 
+    this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleLoweringSelect = this.handleLoweringSelect.bind(this);
     this.handleImageCountChange = this.handleImageCountChange.bind(this);
     this.handleLoweringModeSelect = this.handleLoweringModeSelect.bind(this);
@@ -47,7 +50,11 @@ class LoweringGallery extends Component {
 
     if(prevProps.event.hideASNAP !== this.props.event.hideASNAP) {
       this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);
-    }  
+    }
+
+    if(prevState.filter !== this.state.filter) {
+      this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP, this.state.filter);
+    }
   }
 
   toggleASNAP() {
@@ -64,13 +71,20 @@ class LoweringGallery extends Component {
   componentWillUnmount(){
   }
 
-  async initLoweringImages(id, hideASNAP=false, auxDatasourceFilter='vehicleRealtimeFramegrabberData') {
+  async initLoweringImages(id, hideASNAP=false, event_filter='', auxDatasourceFilter='vehicleRealtimeFramegrabberData') {
     this.setState({ fetching: true});
 
     let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`
 
     if(hideASNAP) {
       url += '&value=!ASNAP'
+    }
+
+    if(event_filter != '') {
+      event_filter.split(',').forEach((filter_item) => {
+        filter_item.trim();
+        url += '&value='+filter_item;
+      })    
     }
 
     const image_data = await axios.get(url,
@@ -100,6 +114,23 @@ class LoweringGallery extends Component {
     });
 
     this.setState({ aux_data: image_data, fetching: false });
+  }
+
+  handleKeyDown(event) {
+
+    if (event.key === 'Enter' && event.shiftKey === false) {
+      event.preventDefault();
+    }
+  }
+
+  handleSearchChange(event) {
+
+    if(this.state.filterTimer) {
+      clearTimeout(this.state.filterTimer);
+    }
+
+    let fieldVal = event.target.value;
+    this.setState({ filterTimer: setTimeout(() => this.setState({filter: fieldVal}), 1500) })
   }
 
   handleImageCountChange(event) {
@@ -164,6 +195,7 @@ class LoweringGallery extends Component {
           </ButtonToolbar>
           <span className="float-right">
             <Form style={{marginTop: '-4px'}} className='float-right' inline>
+              <FormControl size="sm" type="text" placeholder="Filter" className="mr-sm-2" onKeyPress={this.handleKeyDown} onChange={this.handleSearchChange}/>
               <Form.Group controlId="selectMaxImagesPerPage" >
                 <Form.Control size="sm" as="select" onChange={this.handleImageCountChange}>
                   <option>16</option>

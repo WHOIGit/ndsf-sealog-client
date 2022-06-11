@@ -130,7 +130,7 @@ class UpdateLoweringStatsForm extends Component {
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <Row>
                 <Col className="px-1" sm={6}>
-                  <Form.Row className="justify-content-sm-center">
+                  <Form.Row className="justify-content-sm-center">  
                     <Field
                       name="start"
                       component={renderDateTimePicker}
@@ -462,14 +462,17 @@ function validate(formProps) {
 
   if(formProps.on_bottom && formProps.on_bottom !== '' && moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.vents_secured, dateFormat + " " + timeFormat))) {
     errors.on_bottom = 'On bottom date must be after vents secured date';
+<<<<<<< HEAD
   }
 
   if(formProps.vents_secured && formProps.vents_secured !== '' && moment.utc(formProps.vents_secured, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_deck, dateFormat + " " + timeFormat))) {
     errors.vents_secured = 'Vents secured date must be after off_deck date';
+=======
+>>>>>>> 281527bedb4921eda3b53c158c4de0c3504c5375
   }
 
-  if(formProps.off_deck && formProps.off_deck !== '' && moment.utc(formProps.off_deck, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-    errors.off_deck = 'Off deck date must be after start date';
+  if(formProps.vents_secured && formProps.vents_secured !== '' && moment.utc(formProps.vents_secured, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_deck, dateFormat + " " + timeFormat))) {
+    errors.vents_secured = 'Vents secured date must be after off_deck date';
   }
 
   if (formProps.on_bottom && formProps.on_bottom !== '' && formProps.off_bottom && formProps.off_bottom !== '') {

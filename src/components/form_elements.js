@@ -75,7 +75,7 @@ export function renderDatePicker({ input, label, required, meta: { touched, erro
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat) : null} dateFormat={dateFormat} timeFormat={false} selected={input.value ? moment.utc(input.value, dateFormat) : null } inputProps={inputProps}/>
+      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat) : null} dateFormat={dateFormat} timeFormat={false} selected={input.value ? moment.utc(input.value, dateFormat) : null } inputProps={inputProps} />
       {touched && (error && <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div>)}
     </Form.Group>
   );
@@ -91,7 +91,7 @@ export function renderDateTimePicker({ input, label, required, meta: { touched, 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null } inputProps={inputProps}/>
+      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null } inputProps={inputProps} />
       {touched && (error && <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div>)}
     </Form.Group>
   )

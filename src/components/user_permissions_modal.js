@@ -97,6 +97,8 @@ class UserPermissionsModal extends Component {
         return lowering_permissions;
 
       }, permissions);
+
+      this.setState({ permissions })
     }
   }
 

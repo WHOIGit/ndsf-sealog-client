@@ -37,6 +37,17 @@ class CreateCruise extends Component {
 
     formProps.cruise_additional_meta = {};
 
+    if(formProps.stop_ts) {
+      const end_of_stop_ts = moment(formProps.stop_ts);
+      end_of_stop_ts.set({
+        hour:   23,
+        minute: 59,
+        second: 59
+      });
+
+      formProps.stop_ts = end_of_stop_ts.toISOString();
+    }
+
     if(formProps.cruise_participants) {
       formProps.cruise_additional_meta.cruise_participants = formProps.cruise_participants.map(participant => participant.trim());
       delete formProps.cruise_participants;

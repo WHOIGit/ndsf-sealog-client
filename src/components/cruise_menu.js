@@ -192,14 +192,6 @@ class CruiseMenu extends Component {
       });
   }
 
-  handleEventShowSVProfileModal(lowering) {
-    this.props.showModal('svProfile', { lowering: lowering });
-  }
-
-  handleEventShowStatForROVTeamModal(cruise) {
-    this.props.showModal('statsForROVTeam', { cruise: cruise });
-  }
-
   renderCruiseFiles(files) {
     let output = files.map((file, index) => {
       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleCruiseFileDownload(file)}>{file}</a></div>

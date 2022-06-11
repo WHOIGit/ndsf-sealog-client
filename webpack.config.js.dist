@@ -1,119 +1,100 @@
 const { ROOT_PATH, HEADER_TITLE } = require('./src/client_config');
+const webpack = require('webpack');
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-const isDevelopment = process.env.NODE_ENV === 'development'
+const ProvidePlugin = require('process');
 
 module.exports = {
-  devtool: 'source-map',
-  entry: './src/index.js',
   output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.join(__dirname, '/dist'),
+    filename: 'js/index.bundle.js',
     publicPath: ROOT_PATH
   },
   devServer: {
-    contentBase: path.resolve(__dirname, 'dist'),
+    port: 8080,
+    contentBase: './dist',
     publicPath: ROOT_PATH,
     historyApiFallback: {
       disableDotRule: true,
       index: ROOT_PATH
     }
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: HEADER_TITLE,
-      filename: 'index.html',
-      template: path.resolve(__dirname, 'src/assets/index.html')
-    }),
-    new CopyPlugin({
-      patterns: [
-        { from: path.resolve(__dirname, 'node_modules/leaflet/dist/images/'), to: 'style/images' },
-        { from: path.resolve(__dirname, 'src/assets/images/'), to: 'images' },
-      ]
-    }),
-    new MiniCssExtractPlugin({
-      filename: isDevelopment ? 'style/[name].css' : 'style/[name].css',
-      chunkFilename: isDevelopment ? 'style/[id].css' : 'style/[id].css',
-    })
-  ],
+  devtool: "source-map",
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
+          loader: 'babel-loader'
         }
       },
       {
         test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
+      },
+      {
+        test: /\.s[ac]ss$/i,
         use: [
+          process.env.NODE_ENV !== "production"
+          ? "style-loader"
+          : MiniCssExtractPlugin.loader,
           {
-            loader: 'style-loader',
+            loader: "css-loader",
             options: {
-              injectType: 'linkTag',
+              sourceMap: true,
             }
           },
           {
-            loader: 'file-loader',
+            loader: "sass-loader",
             options: {
-              outputPath: 'style',
-              publicPath: ROOT_PATH + 'style'
+              sourceMap: true
             }
           }
-        ]
+        ],
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'style/fonts',
-            publicPath: ROOT_PATH + 'style/fonts'
-          }
-        }]
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[hash][ext][query]'
+        }
       },
       {
-        test: /\.s(a|c)ss$/,
-        exclude: /\.module.(s(a|c)ss)$/,
-        loader: [
-          isDevelopment ? 'style-loader' : { loader: MiniCssExtractPlugin.loader, options: {publicPath: './style'}},
-          'css-loader',
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: isDevelopment
-            }
-          }
-        ]
+        test: /\.(png|jpg|jpeg)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[hash][ext]'
+        }
       },
       {
-        test: /\.module\.s(a|c)ss$/,
-        loader: [
-          isDevelopment ? 'style-loader' : { loader: MiniCssExtractPlugin.loader, options: {publicPath: './style'}},
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: isDevelopment,
-            }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: isDevelopment
-            }
-          }
-        ]
+        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[hash][ext][query]'
+        }
       }
     ]
   },
-  node: {
-    Buffer: false,
-    process: false,
-  },
-};
+  plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+    new HtmlWebpackPlugin({
+      title: HEADER_TITLE,
+      template: './src/assets/index.html',
+    }),
+    new MiniCssExtractPlugin({
+      filename: "style/[name].css",
+      chunkFilename: "style/[id].css",
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, 'src/assets/images/'), to: 'images' },
+      ]
+    }),
+  ],
+}
+
