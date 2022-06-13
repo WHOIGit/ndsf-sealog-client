@@ -80,6 +80,7 @@ class EventHistory extends Component {
 
     if(prevState.showASNAP !== this.state.showASNAP) {
       this.props.fetchEventHistory(this.state.showASNAP, this.state.filter, 0, (this.state.current_lowering && !this.state.showPrevDiveEvents) ? this.state.current_lowering.id : null);
+      this.fetchEventExport();
       this.setState({page: 0});
     }
 
@@ -226,6 +227,11 @@ class EventHistory extends Component {
 
     if(!event_id) {
       let url = (this.state.current_lowering && !this.state.showPrevDiveEvents)? `${API_ROOT_URL}/api/v1/events/bylowering/${this.state.current_lowering.id}?sort=newest&limit=1` : `${API_ROOT_URL}/api/v1/events?sort=newest&limit=1`
+
+      if(!this.state.showASNAP) {
+        url += '&value=!ASNAP';
+      }
+
       const event = await axios.get(url, {
         headers: {
           authorization: cookies.get('token')
