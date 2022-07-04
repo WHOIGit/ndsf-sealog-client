@@ -59,12 +59,3 @@ COPY config/map_tilelayers.js.dist ./config/map_tilelayers.js
 
 # Copy the built code
 COPY --from=builder work/build/ .
-
-# Attach git metadata to this container image
-ARG GIT_SOURCE
-LABEL org.opencontainers.image.source=${GIT_SOURCE}
-ENV GIT_SOURCE=${GIT_SOURCE}
-
-ARG GIT_REVISION
-LABEL org.opencontainers.image.revision=${GIT_REVISION}
-ENV GIT_REVISION=${GIT_REVISION}

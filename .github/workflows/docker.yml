@@ -30,28 +30,26 @@ jobs:
             # Do not push upstream branches and tags to Docker Hub
             refs/heads/upstream/*|refs/tags/upstream/*)
               DOCKER_PUSH=false ;;
-
             # Do not push pull request branches
             refs/pulls/*)
               DOCKER_PUSH=false ;;
-
-            refs/heads/master|refs/heads/main)
-              DOCKER_TAG=latest ;;
-            refs/heads/*|refs/tags/*)
-              DOCKER_TAG="$(echo "$GITHUB_REF" | cut -d / -f 3- | \
-                sed -e 's,/,-,g')" ;;
           esac
 
-          # Record git source and revision
-          GIT_SOURCE=$(git config --get remote.origin.url)
-          GIT_REVISION=$(git rev-parse HEAD)$(git diff --quiet || echo "-dirty")
-
           echo ::set-output name=docker_push::$DOCKER_PUSH
-          echo ::set-output name=docker_repo::whoi/$(basename "${{ github.repository }}")
-          echo ::set-output name=docker_tag::$DOCKER_TAG
+          echo ::set-output name=docker_repo::whoi/$(basename "${{ github.repository }}" | tr A-Z a-z)
           echo ::set-output name=docker_platforms::linux/amd64,linux/arm64
-          echo ::set-output name=git_source::$GIT_SOURCE
-          echo ::set-output name=git_revision::$GIT_REVISION
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ steps.init.outputs.docker_repo }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=sha
 
       - name: Log into registry
         if: steps.init.outputs.docker_push == 'true'
@@ -60,16 +58,34 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
+      # Enable Docker layer caching in the GitHub Actions cache.
+      #
+      # https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-multi-buildx
+
       - name: Build (and maybe push) the Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           platforms: ${{ steps.init.outputs.docker_platforms }}
           push: ${{ steps.init.outputs.docker_push }}
-          tags: ${{ steps.init.outputs.docker_repo }}:${{ steps.init.outputs.docker_tag }}
-          build-args: |
-            GIT_SOURCE=${{ steps.init.outputs.git_source }}
-            GIT_REVISION=${{ steps.init.outputs.git_revision }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+          cache-from: |
+            type=local,src=/tmp/.buildx-cache-new
+          cache-to: |
+            type=registry,ref=${{ steps.init.outputs.docker_repo }}:buildcache,mode=max
+
+      - name: Update cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       # There aren't any tests yet...
       # - name: Run test suite
