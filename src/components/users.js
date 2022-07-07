@@ -157,7 +157,7 @@ class Users extends Component {
     const editTooltip = (<Tooltip id="editTooltip">Edit this user.</Tooltip>);
     const tokenTooltip = (<Tooltip id="tokenTooltip">Show user&apos;s JWT token.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this user.</Tooltip>);
-    const permissionTooltip = (<Tooltip id="permissionTooltip">${_Cruise_}/{_lowering_} permissions.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">{_Cruise_}/{_lowering_} permissions.</Tooltip>);
 
     let users = (Array.isArray(this.state.filteredUsers)) ? this.state.filteredUsers : this.props.users.filter(user => user.system_user === false);
     users = users.slice((this.state.activePage - 1) * maxUsersPerPage, this.state.activePage * maxUsersPerPage);
