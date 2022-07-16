@@ -20,29 +20,24 @@ function makeFakeAuxDataForEventOptions(event) {
 
 // Pull nav data from multiple data sources to create a more useful card.
 function reorganizeNavData(event, dataArray) {
-  // Locate the various nav data cards
-  const renavIdx = dataArray.findIndex(
-    (x) => x.data_source === "vehicleReNavData");
-  const localIdx = dataArray.findIndex(
-    (x) => x.data_source === "vehicleRealtimeLocalCoordData");
+  // Locate the realtime and renav auxdata
   const realtimeIdx = dataArray.findIndex(
     (x) => x.data_source === "vehicleRealtimeNavData");
+  const renavIdx = dataArray.findIndex(
+    (x) => x.data_source === "vehicleReNavData");
 
-  // If we don't have realtime and local nav data, something went wrong.
-  // TODO: Handle this case if it comes up in real life.
-  if (localIdx === -1 || realtimeIdx === -1)
+  // If we don't have realtime data, something went wrong! This will fall back
+  // to displaying the default tabular cards.
+  if (realtimeIdx === -1)
     return;
 
   // Copy the object
+  const realtime = dataArray[realtimeIdx];
   const renav = renavIdx > -1 ? dataArray[renavIdx] : undefined;
-  const local = localIdx > -1 ? dataArray[localIdx] : undefined;
-  const realtime = realtimeIdx > -1 ? dataArray[realtimeIdx] : undefined;
 
   // Delete the original from the array
-  const toDelete = [];
+  const toDelete = [realtimeIdx];
   if (renavIdx > -1) toDelete.push(renavIdx);
-  if (localIdx > -1) toDelete.push(localIdx);
-  if (realtimeIdx > -1) toDelete.push(realtimeIdx);
   toDelete.sort((a, b) => b - a);
   for (const idx of toDelete) {
     dataArray.splice(idx, 1);
