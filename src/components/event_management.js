@@ -163,7 +163,7 @@ class EventManagement extends Component {
   renderEventListHeader() {
 
     const Label = "Filtered Events";
-    const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.state.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='ASNAP'/>);
+    const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.state.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='Show ASNAP'/>);
 
     return (
       <div>
