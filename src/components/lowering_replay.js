@@ -42,7 +42,7 @@ class LoweringReplay extends Component {
       state: null,
       cruise: props.cruise,
       lowering: props.lowering,
-      utcScrubber: true,  // add a toggle in the UI or possibly put this in a user setting
+      useAbsoluteTimestamp: true,  // TODO: add a toggle in the UI or possibly put this in a user setting
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -123,16 +123,11 @@ class LoweringReplay extends Component {
       let loweringNow = moment(this.props.event.events[v].ts);
       let loweringElapse = loweringNow.diff(loweringStartTime);
 
-      if (this.state.utcScrubber){
-        return moment(loweringNow).toISOString(); // formats scrubber tooltip in UTC ISO8601
+      if(this.state.useAbsoluteTimestamp) {
+        return loweringNow.toISOString(); // formats scrubber tooltip in absolute UTC ISO8601
       }
-      else{
-        return moment.duration(loweringElapse).format("d [days] hh:mm:ss");
-      }
+      return moment.duration(loweringElapse).format("d [days] hh:mm:ss");
 
-      
-      
-      
     }
 
     return '';
@@ -323,9 +318,9 @@ class LoweringReplay extends Component {
       return (
         <Card className="border-secondary p-1">
           <div className="d-flex align-items-center justify-content-between">
-              <span className="text-primary text-nowrap">{(this.state.utcScrubber ? this.state.lowering.start_ts:'00:00:00')}</span>
+              <span className="text-primary text-nowrap">{(this.state.useAbsoluteTimestamp ? this.state.lowering.start_ts:'00:00:00')}</span>
               {buttons}
-              <span className="text-primary text-nowrap">{(this.state.utcScrubber ? this.state.lowering.stop_ts:moment.duration(loweringDuration).format("d [days] hh:mm:ss"))}</span>
+              <span className="text-primary text-nowrap">{(this.state.useAbsoluteTimestamp ? this.state.lowering.stop_ts:moment.duration(loweringDuration).format("d [days] hh:mm:ss"))}</span>
           </div>
           <div className="d-flex align-items-center justify-content-between">
             <SliderWithTooltip
