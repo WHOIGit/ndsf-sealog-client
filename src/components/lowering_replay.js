@@ -327,7 +327,7 @@ class LoweringReplay extends Component {
               className="mx-2"
               value={this.state.replayEventIndex}
               tipFormatter={this.sliderTooltipFormatter}
-              trackStyle={{ opacity: 0.5 }} 
+              trackStyle={{ opacity: 0.5 }}
               railStyle={{ opacity: 0.5 }}
               onBeforeChange={this.handleLoweringReplayPause}
               onChange={this.handleSliderChange}
