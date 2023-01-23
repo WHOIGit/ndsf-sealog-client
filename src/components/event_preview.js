@@ -17,6 +17,30 @@ function makeFakeAuxDataForEventOptions(event) {
   };
 }
 
+function makeFakeAuxDataForSulis(event) {
+
+  const fakeSulisAuxData = {
+
+    data_source : "vehicleRealtimeFramegrabberData",
+    data_array: [
+      {
+        data_name: "camera_name",
+        data_value: "Sulis Camera",
+        data_uom: "",
+      },
+      {
+        data_name: "filename",
+        data_value: event.event_options[0].event_option_value,
+        data_uom: "",
+      }
+    ]
+
+  };
+
+  return fakeSulisAuxData;
+
+}
+
 
 // Pull nav data from multiple data sources to create a more useful card.
 function reorganizeNavData(event, dataArray) {
@@ -115,7 +139,14 @@ export default class EventPreview extends React.Component {
       });
 
     if (this.props.event.event_options.length > 0) {
-      dataArray.push(makeFakeAuxDataForEventOptions(this.props.event));
+
+      if (this.props.event.event_value == 'SulisCam'){
+        dataArray.push(makeFakeAuxDataForSulis(this.props.event));
+      }
+
+      else{
+        dataArray.push(makeFakeAuxDataForEventOptions(this.props.event));
+      }
     }
 
     // Reorganize nav data according to desired display grouping
