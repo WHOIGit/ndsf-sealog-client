@@ -1575,10 +1575,11 @@ export function eventUpdateLoweringReplay(lowering_id, hideASNAP = false) {
     value = (hideASNAP)? `&value=!ASNAP${value}` : value;
     let author = (getState().event.eventFilter.author)? `&author=${getState().event.eventFilter.author.split(',').join("&author=")}` : '';
     let freetext = (getState().event.eventFilter.freetext)? `&freetext=${getState().event.eventFilter.freetext}` : '';
+    let fulltext = (getState().event.eventFilter.fulltext)? `&fulltext=${getState().event.eventFilter.fulltext}` : '';
     let datasource = (getState().event.eventFilter.datasource)? `&datasource=${getState().event.eventFilter.datasource}` : '';
 
     dispatch({ type: EVENT_FETCHING, payload: true});
-    return await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}?${startTS}${stopTS}${value}${author}${freetext}${datasource}`, { headers: { authorization: cookies.get('token') } }
+    return await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}?${startTS}${stopTS}${value}${author}${freetext}${fulltext}${datasource}`, { headers: { authorization: cookies.get('token') } }
     ).then((response) => {
       dispatch({ type: UPDATE_EVENTS, payload: response.data });
       if(response.data.length > 0) {

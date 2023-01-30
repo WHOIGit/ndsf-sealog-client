@@ -45,6 +45,10 @@ class EventFilterForm extends Component {
 
   handleFormSubmit(formProps) {
 
+      if(formProps.fulltext) {
+        formProps.fulltext = formProps.fulltext.split(',').map((fulltext) => fulltext.trim()).join(',')
+      }
+
       if(formProps.startTS && typeof(formProps.startTS) === "object") {
         if(this.props.minDate && formProps.startTS.isBefore(moment(this.props.minDate))) {
           formProps.startTS = this.props.minDate
@@ -74,11 +78,10 @@ class EventFilterForm extends Component {
 
   clearForm() {
     this.props.resetFields('eventFilterForm', {
-      value: '',
+      fulltext: '',
       author: '',
       startTS: '',
       stopTS: '',
-      freetext: '',
       datasource: ''
     });
     this.props.handlePostSubmit();
@@ -97,10 +100,10 @@ class EventFilterForm extends Component {
         <Card.Body className="px-0">
           <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
             <Field
-              name="value"
+              name="fulltext"
               component={renderTextField}
-              label="Event Value"
-              placeholder="e.g., SAMPLE"
+              label="Search"
+              placeholder="e.g., fish"
               disabled={this.props.disabled}
               lg={12}
               sm={12}
@@ -130,14 +133,6 @@ class EventFilterForm extends Component {
               defaultValue={stopTS}
               timeFormat={timeFormat}
               label="Stop Date/Time (UTC)"
-              disabled={this.props.disabled}
-              lg={12}
-              sm={12}
-            />
-            <Field
-              name="freetext"
-              component={renderTextField}
-              label="Freeform Text"
               disabled={this.props.disabled}
               lg={12}
               sm={12}
