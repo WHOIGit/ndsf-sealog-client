@@ -160,14 +160,14 @@ class StatsForROVTeamModal extends Component {
         }
       }
 
-      if (lowering.lowering_additional_meta.milestones && lowering.lowering_additional_meta.milestones.lowering_off_deck) {
-        try {
-          stats.off_deck_dt = moment.utc(lowering.lowering_additional_meta.milestones.lowering_off_deck);
-        }
-        catch(err) {
-          console.error(err);
-        }
-      }
+      // if (lowering.lowering_additional_meta.milestones && lowering.lowering_additional_meta.milestones.lowering_off_deck) {
+      //   try {
+      //     stats.off_deck_dt = moment.utc(lowering.lowering_additional_meta.milestones.lowering_off_deck);
+      //   }
+      //   catch(err) {
+      //     console.error(err);
+      //   }
+      // }
 
       if (lowering.lowering_additional_meta.milestones && lowering.lowering_additional_meta.milestones.lowering_descending) {
         try {

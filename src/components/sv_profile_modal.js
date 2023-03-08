@@ -48,10 +48,10 @@ class SVProfileModal extends Component {
 
   async fetchCTDData() {
 
-    if(this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) {
+    if(this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_descending && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) {
 
       this.setState({status_msg: "Downloading CTD data..."})
-      const ctd_data = await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data?datasource=vehicleRealtimeCTDData&startTS=${this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck}&stopTS=${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}`,
+      const ctd_data = await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data?datasource=vehicleRealtimeCTDData&startTS=${this.props.lowering.lowering_additional_meta.milestones.lowering_descending}&stopTS=${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}`,
         {
           headers: {
           authorization: cookies.get('token')

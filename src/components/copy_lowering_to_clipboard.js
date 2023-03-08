@@ -38,7 +38,7 @@ class CopyLoweringToClipboard extends Component {
     if(this.props.lowering && this.props.lowering.lowering_id) {
 
       let loweringStartTime = moment.utc(this.props.lowering.start_ts);
-      let loweringOffDeckTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) : null;
+      // let loweringOffDeckTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) : null;
       let loweringDescendingTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_descending) : null;
       let loweringOnBottomTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
@@ -60,7 +60,7 @@ class CopyLoweringToClipboard extends Component {
       text += `Location: ${this.props.lowering.lowering_location}\n`;
       text += '\n';
       text += `Start of ${this.state.lowering_name}:${' '.repeat(9-this.state.lowering_name.length)}${this.props.lowering.start_ts}\n`;
-      text += (loweringOffDeckTime) ? `Off Deck:          ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck}\n` : "";
+      // text += (loweringOffDeckTime) ? `Off Deck:          ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck}\n` : "";
       text += (loweringDescendingTime) ? `Descending:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_descending}\n` : "";
       text += (loweringOnBottomTime) ? `On Bottom:         ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
       text += (loweringOffBottomTime) ? `Off Bottom:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";

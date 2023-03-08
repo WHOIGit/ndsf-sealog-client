@@ -55,7 +55,7 @@ class SetLoweringStatsModal extends Component {
       milestone_to_edit: null,
       milestones: {
         lowering_start: this.props.lowering.start_ts,
-        lowering_off_deck: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck : null,
+        // lowering_off_deck: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_deck : null,
         lowering_descending: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_descending) ? this.props.lowering.lowering_additional_meta.milestones.lowering_descending : null,
         lowering_on_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom : null,
         lowering_off_bottom: (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom : null,
@@ -449,7 +449,7 @@ class SetLoweringStatsModal extends Component {
     : [<Col key="milestones" md={6}>
         <div>
           <span className={(this.state.milestone_to_edit == 'lowering_start')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_start')}>{this.state.lowering_name} Start: {this.state.milestones.lowering_start}</span><br/>
-          <span className={(this.state.milestone_to_edit == 'lowering_off_deck')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_deck')}>Off Deck: {this.state.milestones.lowering_off_deck}</span><br/>
+          {/*<span className={(this.state.milestone_to_edit == 'lowering_off_deck')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_deck')}>Off Deck: {this.state.milestones.lowering_off_deck}</span><br/>*/}
           <span className={(this.state.milestone_to_edit == 'lowering_descending')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_descending')}>Descending: {this.state.milestones.lowering_descending}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_on_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_on_bottom')}>On Bottom: {this.state.milestones.lowering_on_bottom}</span><br/>
           <span className={(this.state.milestone_to_edit == 'lowering_off_bottom')? "text-warning" : ""} onClick={() => this.setMilestoneToEdit('lowering_off_bottom')}>Off Bottom: {this.state.milestones.lowering_off_bottom}</span><br/>
