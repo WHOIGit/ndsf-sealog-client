@@ -363,10 +363,12 @@ class LoweringReplay extends Component {
         if(index >= (this.state.activePage-1) * maxEventsPerPage && index < (this.state.activePage * maxEventsPerPage)) {
           
           let comment_exists = false;
+          let comment_callout = '';
 
           let eventOptionsArray = event.event_options.reduce((filtered, option) => {
             if(option.event_option_name === 'event_comment') {
               comment_exists = (option.event_option_value !== '')? true : false;
+              comment_callout = 'COMMENT: ' + option.event_option_value;
             } else {
               filtered.push(`${option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}: "${option.event_option_value}"`);
             }
@@ -385,7 +387,7 @@ class LoweringReplay extends Component {
           let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
           let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null;
 
-          return (<ListGroup.Item className="event-list-item py-1" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${ (event.event_free_text ? '' : event.event_value) } ${eventOptions}`}</span><span className="float-right">{eventComment}</span></ListGroup.Item>);
+          return (<ListGroup.Item className="event-list-item py-1" key={event.id} active={active} ><span onClick={() => this.handleEventClick(index)} >{`${event.ts} <${event.event_author}>: ${ (event.event_free_text ? '' : event.event_value) } ${eventOptions}`} {comment_callout}</span><span className="float-right">{eventComment}</span></ListGroup.Item>);
 
         }
         return null;
