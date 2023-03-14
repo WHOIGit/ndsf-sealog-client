@@ -102,7 +102,7 @@ class LoweringDropdown extends Component {
       <Dropdown className="no-arrow" id="dropdown-custom-menu">
         <Dropdown.Toggle as={LoweringDropdownToggle}>{(this.props.active_lowering.lowering_id) ? this.props.active_lowering.lowering_id : 'Loading...'}</Dropdown.Toggle>
         <Dropdown.Menu as={LoweringDropdownMenu}>
-          {this.state.lowerings.map((lowering) => (<Dropdown.Item className="text-primary" onClick={() => this.props.onClick(lowering.id)} key={lowering.id}>{lowering.lowering_id}</Dropdown.Item>))}
+          {this.state.lowerings.map((lowering) => (<Dropdown.Item className="text-primary" onClick={() => this.props.onLoweringClick(lowering)} key={lowering.id}>{lowering.lowering_id}</Dropdown.Item>))}
         </Dropdown.Menu>
       </Dropdown>
     )

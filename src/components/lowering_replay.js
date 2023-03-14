@@ -204,11 +204,12 @@ class LoweringReplay extends Component {
     }
   }
 
-  handleLoweringSelect(id) {
-    this.props.gotoLoweringReplay(id);
-    this.props.initLoweringReplay(id, this.props.event.hideASNAP);
-    this.props.initCruiseFromLowering(id);
+  handleLoweringSelect(lowering) {
+    this.props.gotoLoweringReplay(lowering.id);
+    this.props.initLoweringReplay(lowering.id, this.props.event.hideASNAP);
+    this.props.initCruiseFromLowering(lowering.id);
     this.setState({replayEventIndex: 0, activePage: 1});
+    this.setState({lowering});
   }
 
   handleLoweringModeSelect(mode) {
@@ -424,7 +425,7 @@ class LoweringReplay extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
+            <LoweringDropdown active_cruise={this.state.cruise} active_lowering={this.state.lowering} onLoweringClick={this.handleLoweringSelect}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Replay" modes={["Map", "Gallery"]}/>
           </ButtonToolbar>
