@@ -42,7 +42,7 @@ class CopyLoweringToClipboard extends Component {
       let loweringDescendingTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_descending) : null;
       let loweringOnBottomTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
-      let loweringFloatsOnSurfaceTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_floats_on_surface) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_floats_on_surface) : null;
+      let loweringOnSurfaceTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface) : null;
       let loweringStopTime = moment.utc(this.props.lowering.stop_ts);
       let loweringAbortTime = (this.props.lowering.lowering_additional_meta.milestones && this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.props.lowering.lowering_additional_meta.milestones.lowering_aborted) : null;
       
@@ -50,8 +50,8 @@ class CopyLoweringToClipboard extends Component {
       let deploymentDurationValue = (loweringStartTime && loweringDescendingTime) ? loweringDescendingTime.diff(loweringStartTime) : null;
       let decentDurationValue = (loweringOnBottomTime && loweringDescendingTime) ? loweringOnBottomTime.diff(loweringDescendingTime) : null;
       let onBottomDurationValue = (loweringOnBottomTime && loweringOffBottomTime) ? loweringOffBottomTime.diff(loweringOnBottomTime) : null;
-      let ascentDurationValue = (loweringOffBottomTime && loweringFloatsOnSurfaceTime) ? loweringFloatsOnSurfaceTime.diff(loweringOffBottomTime) : null;
-      let recoveryDurationValue = (loweringStopTime && loweringFloatsOnSurfaceTime) ? loweringStopTime.diff(loweringFloatsOnSurfaceTime) : null;
+      let ascentDurationValue = (loweringOffBottomTime && loweringOnSurfaceTime) ? loweringOnSurfaceTime.diff(loweringOffBottomTime) : null;
+      let recoveryDurationValue = (loweringStopTime && loweringOnSurfaceTime) ? loweringStopTime.diff(loweringOnSurfaceTime) : null;
 
       let text = "";
 
@@ -64,7 +64,7 @@ class CopyLoweringToClipboard extends Component {
       text += (loweringDescendingTime) ? `Descending:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_descending}\n` : "";
       text += (loweringOnBottomTime) ? `On Bottom:         ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_bottom}\n` : "";
       text += (loweringOffBottomTime) ? `Off Bottom:        ${this.props.lowering.lowering_additional_meta.milestones.lowering_off_bottom}\n` : "";
-      text += (loweringFloatsOnSurfaceTime) ? `Floats on Surface: ${this.props.lowering.lowering_additional_meta.milestones.lowering_floats_on_surface}\n` : "";
+      text += (loweringOnSurfaceTime) ? `Floats on Surface: ${this.props.lowering.lowering_additional_meta.milestones.lowering_on_surface}\n` : "";
       text += `On Deck:           ${this.props.lowering.stop_ts}\n`;
       text += '\n';
       text += (deck2DeckDurationValue) ? `Deck-to-Deck: ${moment.duration(deck2DeckDurationValue).format("d [days] h [hours] m [minutes]")}\n` : "";

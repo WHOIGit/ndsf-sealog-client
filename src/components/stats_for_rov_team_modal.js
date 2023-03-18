@@ -125,11 +125,10 @@ class StatsForROVTeamModal extends Component {
 
       const stats = {
         start_dt: null,
-        off_deck_dt: null,
         descending_dt: null,
         on_bottom_dt: null,
         off_bottom_dt: null,
-        floats_on_surface_dt: null,
+        on_surface_dt: null,
         stop_dt: null,
         max_depth: 0,
         bounding_box: null,
@@ -160,15 +159,6 @@ class StatsForROVTeamModal extends Component {
         }
       }
 
-      // if (lowering.lowering_additional_meta.milestones && lowering.lowering_additional_meta.milestones.lowering_off_deck) {
-      //   try {
-      //     stats.off_deck_dt = moment.utc(lowering.lowering_additional_meta.milestones.lowering_off_deck);
-      //   }
-      //   catch(err) {
-      //     console.error(err);
-      //   }
-      // }
-
       if (lowering.lowering_additional_meta.milestones && lowering.lowering_additional_meta.milestones.lowering_descending) {
         try {
           stats.descending_dt = moment.utc(lowering.lowering_additional_meta.milestones.lowering_descending);
@@ -196,9 +186,9 @@ class StatsForROVTeamModal extends Component {
         }
       }
 
-      if (lowering.lowering_additional_meta.milestones && lowering.lowering_additional_meta.milestones.lowering_floats_on_surface) {
+      if (lowering.lowering_additional_meta.milestones && lowering.lowering_additional_meta.milestones.lowering_on_surface) {
         try {
-          stats.floats_on_surface_dt = moment.utc(lowering.lowering_additional_meta.milestones.lowering_floats_on_surface);
+          stats.on_surface_dt = moment.utc(lowering.lowering_additional_meta.milestones.lowering_on_surface);
         }
         catch(err) {
           console.error(err);
@@ -224,13 +214,13 @@ class StatsForROVTeamModal extends Component {
       }
 
       // total_duration
-      if (stats.off_deck_dt && stats.stop_dt) {
-        stats.total_duration = stats.stop_dt - stats.off_deck_dt
+      if (stats.start_dt && stats.stop_dt) {
+        stats.total_duration = stats.stop_dt - stats.start_dt
       }
 
       // deployment_duration
-      if (stats.off_deck_dt && stats.descending_dt) {
-        stats.deployment_duration = stats.descending_dt - stats.off_deck_dt
+      if (stats.start_dt && stats.descending_dt) {
+        stats.deployment_duration = stats.descending_dt - stats.start_dt
       }
 
       // descent_duration
@@ -244,13 +234,13 @@ class StatsForROVTeamModal extends Component {
       }
 
       // ascent_duration
-      if (stats.off_bottom_dt && stats.floats_on_surface_dt) {
-        stats.ascent_duration = stats.floats_on_surface_dt - stats.off_bottom_dt
+      if (stats.off_bottom_dt && stats.on_surface_dt) {
+        stats.ascent_duration = stats.on_surface_dt - stats.off_bottom_dt
       }
 
       // recovery_duration
-      if (stats.floats_on_surface_dt && stats.stop_dt) {
-        stats.recovery_duration = stats.stop_dt - stats.floats_on_surface_dt
+      if (stats.on_surface_dt && stats.stop_dt) {
+        stats.recovery_duration = stats.stop_dt - stats.on_surface_dt
       }
 
       // samples

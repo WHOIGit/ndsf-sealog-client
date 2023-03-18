@@ -223,7 +223,7 @@ class CruiseMenu extends Component {
       let loweringDescendingTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) : null;
       let loweringOnBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
       let loweringOffBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_off_bottom) : null;
-      let loweringFloatsOnSurfaceTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_floats_on_surface) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_floats_on_surface) : null;
+      let loweringOnSurfaceTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_surface) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_surface) : null;
       let loweringStopTime = moment.utc(this.state.activeLowering.stop_ts);
       let loweringAbortTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_aborted) : null;
       
@@ -231,8 +231,8 @@ class CruiseMenu extends Component {
       let deploymentDuration = (loweringStartTime && loweringDescendingTime) ? loweringDescendingTime.diff(loweringStartTime) : null;
       let decentDurationValue = (loweringOnBottomTime && loweringDescendingTime) ? loweringOnBottomTime.diff(loweringDescendingTime) : null;
       let onBottomDurationValue = (loweringOnBottomTime && loweringOffBottomTime) ? loweringOffBottomTime.diff(loweringOnBottomTime) : null;
-      let ascentDurationValue = (loweringOffBottomTime && loweringFloatsOnSurfaceTime) ? loweringFloatsOnSurfaceTime.diff(loweringOffBottomTime) : null;
-      let recoveryDurationValue = (loweringStopTime && loweringFloatsOnSurfaceTime) ? loweringStopTime.diff(loweringFloatsOnSurfaceTime) : null;
+      let ascentDurationValue = (loweringOffBottomTime && loweringOnSurfaceTime) ? loweringOnSurfaceTime.diff(loweringOffBottomTime) : null;
+      let recoveryDurationValue = (loweringStopTime && loweringOnSurfaceTime) ? loweringStopTime.diff(loweringOnSurfaceTime) : null;
 
       let loweringDescription = (this.state.activeLowering.lowering_additional_meta.lowering_description)? <p className="text-justify"><strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}</p> : null;
       let loweringLocation = (this.state.activeLowering.lowering_location) ? <span><strong>Location:</strong> {this.state.activeLowering.lowering_location}<br/></span> : null;
