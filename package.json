@@ -7,7 +7,7 @@
     "url": "https://github.com/whoigit/ndsf-sealog-client/issues"
   },
   "author": "Woods Hole Oceanographic Institution",
-  "homepage": "/sealog",
+  "homepage": ".",
   "private": true,
   "repository": {
     "type": "git",
