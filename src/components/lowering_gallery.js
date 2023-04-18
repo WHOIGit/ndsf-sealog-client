@@ -142,11 +142,12 @@ class LoweringGallery extends Component {
     this.setState({ maxImagesPerPage: parseInt(event.target.value)});
   }
 
-  handleLoweringSelect(id) {
-    this.props.gotoLoweringGallery(id);
-    this.props.initLowering(id, this.props.event.hideASNAP);
-    this.props.initCruiseFromLowering(id);
-    this.initLoweringImages(id, this.props.event.hideASNAP);
+  handleLoweringSelect(lowering) {
+    this.props.gotoLoweringGallery(lowering.id);
+    this.props.initLowering(lowering.id, this.props.event.hideASNAP);
+    this.props.initCruiseFromLowering(lowering.id);
+    this.initLoweringImages(lowering.id, this.props.event.hideASNAP);
+    this.setState({lowering});
   }
 
   handleLoweringModeSelect(mode) {
@@ -195,7 +196,7 @@ class LoweringGallery extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
+            <LoweringDropdown active_cruise={this.state.cruise} active_lowering={this.state.lowering} onLoweringClick={this.handleLoweringSelect}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Gallery" modes={["Replay", "Map"]}/>
           </ButtonToolbar>
