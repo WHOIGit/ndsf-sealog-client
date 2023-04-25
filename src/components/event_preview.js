@@ -74,12 +74,28 @@ function reorganizeNavData(event, dataArray) {
   const hasRenav = (renavIdx > -1);
   const overridden = [];
 
+  let delta = [];
+
   if (hasRenav) {
+
     for (const entry of renav.data_array) {
       // Remove an existing entry with the same data_name
       const idx = navData.findIndex((x) => x.data_name === entry.data_name);
       if (idx > -1) {
         overridden.push(navData[idx]);
+
+        let delta_float = parseFloat(entry.data_value) - parseFloat(navData[idx].data_value);
+
+        let delta_value = String(delta_float.toPrecision(8));
+        let delta_name = entry.data_name;
+        let delta_uom = entry.data_uom;
+
+        delta.push({
+          data_value: delta_value,
+          data_name: delta_name,
+          data_uom: delta_uom
+        });
+
         navData.splice(idx, 1);
       }
 
@@ -111,11 +127,17 @@ function reorganizeNavData(event, dataArray) {
   // If renav'd, push the original data
   if (hasRenav) {
     dataArray.push({
+      data_source: "navigationDelta",
+      data_array: delta
+    });
+
+    dataArray.push({
       data_source: "originalNavData",
       data_array: overridden,
     });
   }
-}
+
+} //reorganizeNavData()
 
 
 export default class EventPreview extends React.Component {
