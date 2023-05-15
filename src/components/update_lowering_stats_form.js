@@ -187,7 +187,6 @@ class UpdateLoweringStatsForm extends Component {
                       name="aborted"
                       component={renderDateTimePicker}
                       label="Aborted Date/Time (UTC)"
-                      required={true}
                       timeFormat={timeFormat}
                       sm={11}
                       md={11}
