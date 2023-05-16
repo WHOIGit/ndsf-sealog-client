@@ -71,4 +71,7 @@ window.client_config = {
         { name: "origin_y", label: "Origin Y", required: false },
     ],
 
+    // How many decimal places to use for coordinates
+    COORD_DECIMALS: 6,
+
 };
