@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Card } from 'react-bootstrap';
+import Coordinate from '../coordinate'
 
 
 
@@ -30,7 +31,7 @@ export default class TabularDataCard extends React.Component {
         <tr key={i}>
           <td className="data-name">{prettyPrint(data.data_name)}:</td>
           <td style={{textAlign: 'right', wordWrap: 'break-word'}}>
-            {data.data_value} {data.data_uom}
+            {data.data_uom == 'ddeg' ? <Coordinate data={data} /> : data.data_value + " " + data.data_uom}
           </td>
         </tr>
       );
