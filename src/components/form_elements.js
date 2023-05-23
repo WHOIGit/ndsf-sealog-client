@@ -84,8 +84,14 @@ export function renderDatePicker({ input, label, required, meta: { touched, erro
   let requiredField = (required)? <span className='text-danger'> *</span> : '';
   
   const inputProps = {
-    disabled: disabled,
-    onChange: saveCaretFromHandler(input.onChange)
+    disabled,
+    onChange: saveCaretFromHandler(input.onChange),
+    onBlur: (event) => {
+      const value = event.target.value
+      if (value) {
+        input.onChange(moment.utc(value).format(dateFormat))
+      }
+    }
   } 
 
   return (
@@ -101,9 +107,15 @@ export function renderDateTimePicker({ input, label, required, meta: { touched, 
   let requiredField = (required)? <span className='text-danger'> *</span> : ''
 
   const inputProps = {
-    disabled: disabled,
-    onChange: saveCaretFromHandler(input.onChange)
-  } 
+    disabled,
+    onChange: saveCaretFromHandler(input.onChange),
+    onBlur: (event) => {
+      const value = event.target.value
+      if (value) {
+        input.onChange(moment.utc(value).format(dateFormat + ' ' + timeFormat))
+      }
+    }
+  }
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
