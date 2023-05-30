@@ -3,6 +3,35 @@ import React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import DataCard from './data_cards';
 
+function degreesToRadians(degrees) {
+  return degrees * (Math.PI/180);
+}
+
+function deltaLat(renav, realtime, lat_given) {
+
+  const delta_degrees = renav - realtime;
+  const lat_radians = degreesToRadians(lat_given);
+
+  let lat_distance_at_lat = 111132.954 - (559.822 * Math.cos(2 * lat_radians)) + (1.175 * Math.cos(4*lat_radians));
+  
+  return lat_distance_at_lat * delta_degrees
+}
+
+function deltaLong(renav, realtime, lat_given) {
+
+  const delta_degrees = renav - realtime;
+  const lat_radians = degreesToRadians(lat_given);
+
+  const eq_radius = 6378137.0;
+  const eccentricity = 0.081819190842613;
+
+  const numerator = (eq_radius * Math.PI * Math.cos(lat_radians));
+  const denominator = 180 * Math.sqrt(1 - Math.pow(eccentricity, 2) * Math.pow(Math.sin(lat_radians), 2));
+
+  let long_distance_at_lat = numerator/denominator;
+
+  return long_distance_at_lat * delta_degrees;
+}
 
 // Mostly we expect to deal with the aux_data object format, so if we want to
 // display event options, it's easiest to generate a fake aux_data object
@@ -74,13 +103,45 @@ function reorganizeNavData(event, dataArray) {
   const hasRenav = (renavIdx > -1);
   const overridden = [];
 
+  let delta = [];
+
   if (hasRenav) {
+
+    // Grab latitude for oblate spheroid calculations
+    const lat_degrees = navData.filter(datum =>datum.data_name === 'latitude')[0].data_value;
+
     for (const entry of renav.data_array) {
       // Remove an existing entry with the same data_name
       const idx = navData.findIndex((x) => x.data_name === entry.data_name);
       if (idx > -1) {
         overridden.push(navData[idx]);
-        navData.splice(idx, 1);
+
+        // Grab lat and long for delta data
+        if (['latitude', 'longitude'].includes(entry.data_name)) {
+
+          let renav = parseFloat(entry.data_value);
+          let realtime = parseFloat(navData[idx].data_value);
+
+          if (entry.data_name == 'latitude'){
+            var delta_float = deltaLat(renav, realtime, lat_degrees);
+          }
+          else {
+            var delta_float = deltaLong(renav, realtime, lat_degrees);
+          }
+
+          let delta_value = String(delta_float.toPrecision(8));
+          let delta_name = entry.data_name;
+          let delta_uom = "meters";
+
+          delta.push({
+            data_value: delta_value,
+            data_name: delta_name,
+            data_uom: delta_uom
+          });
+
+          navData.splice(idx, 1);
+
+        }
       }
 
       // Append the new value
@@ -108,14 +169,20 @@ function reorganizeNavData(event, dataArray) {
     data_array: navData,
   });
 
-  // If renav'd, push the original data
+  // If renav'd, push the original data and the delta
   if (hasRenav) {
+    dataArray.push({
+      data_source: "navigationDelta",
+      data_array: delta
+    });
+
     dataArray.push({
       data_source: "originalNavData",
       data_array: overridden,
     });
   }
-}
+
+} //reorganizeNavData()
 
 
 export default class EventPreview extends React.Component {
