@@ -43,6 +43,21 @@ export function renderTextArea({ input, label, placeholder, required, meta: { to
   );
 }
 
+/**
+ * Redux-Form controlled fields conflict with react-datetime's controlled input, causing
+ * caret to jump on manual edit. This wraps the handler to save the caret position.
+ * Inspired by https://stackoverflow.com/a/49648061
+ * @param {*} handler Handler which may be called with an event object, typically onChange or onBlur
+ * @returns handler which saves the caret position before calling the original handler
+ */
+function saveCaretFromHandler(handler) {
+  return (event) => {
+    const caret = event.target.selectionStart;
+    window.requestAnimationFrame(() => event.target.selectionStart = event.target.selectionEnd = caret);
+    handler(event);
+  }
+}
+
 export function renderSelectField({ input, label, placeholder, required, options, meta: { touched, error }, disabled=false, xs=12, sm=6, md=12, lg=6 }) {
 
   let requiredField = (required)? <span className='text-danger'> *</span> : '';
@@ -69,13 +84,20 @@ export function renderDatePicker({ input, label, required, meta: { touched, erro
   let requiredField = (required)? <span className='text-danger'> *</span> : '';
   
   const inputProps = {
-    disabled: disabled
+    disabled,
+    onChange: saveCaretFromHandler(input.onChange),
+    onBlur: (event) => {
+      const value = event.target.value
+      if (value) {
+        input.onChange(moment.utc(value).format(dateFormat))
+      }
+    }
   } 
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat) : null} dateFormat={dateFormat} timeFormat={false} selected={input.value ? moment.utc(input.value, dateFormat) : null } inputProps={inputProps} />
+      <Datetime {...input} utc={true} dateFormat={dateFormat} timeFormat={false} inputProps={inputProps} />
       {touched && (error && <div className="w-100 mt-1 text-danger" style={{fontSize: ".7rem"}}>{error}</div>)}
     </Form.Group>
   );
@@ -85,13 +107,20 @@ export function renderDateTimePicker({ input, label, required, meta: { touched, 
   let requiredField = (required)? <span className='text-danger'> *</span> : ''
 
   const inputProps = {
-    disabled: disabled
-  } 
-  
+    disabled,
+    onChange: saveCaretFromHandler(input.onChange),
+    onBlur: (event) => {
+      const value = event.target.value
+      if (value) {
+        input.onChange(moment.utc(value).format(dateFormat + ' ' + timeFormat))
+      }
+    }
+  }
+
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null } inputProps={inputProps} />
+      <Datetime {...input} utc={true} dateFormat={dateFormat} timeFormat={timeFormat} inputProps={inputProps} />
       {error && <div className="w-100 mt-1 text-danger" style={{fontSize: ".7rem"}}>{error}</div>}
     </Form.Group>
   )
