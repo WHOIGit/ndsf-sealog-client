@@ -74,4 +74,6 @@ window.client_config = {
     // How many decimal places to use for coordinates
     COORD_DECIMALS: 6,
 
+    DATA_DECIMALS: 2,
+
 };
