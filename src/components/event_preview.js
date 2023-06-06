@@ -12,7 +12,8 @@ function deltaLat(renav, realtime, lat_given) {
   const delta_degrees = renav - realtime;
   const lat_radians = degreesToRadians(lat_given);
 
-  let lat_distance_at_lat = 111132.954 - (559.822 * Math.cos(2 * lat_radians)) + (1.175 * Math.cos(4*lat_radians));
+  let lat_distance_at_lat = latDistanceAtLat(lat_radians);
+  // let lat_distance_at_lat = metersDegLat(lat_radians);
   
   return lat_distance_at_lat * delta_degrees
 }
@@ -22,15 +23,39 @@ function deltaLong(renav, realtime, lat_given) {
   const delta_degrees = renav - realtime;
   const lat_radians = degreesToRadians(lat_given);
 
+  let long_distance_at_lat = longDistanceAtLat(lat_radians);
+  // let long_distance_at_lat = metersDegLon(lat_radians);
+
+  return long_distance_at_lat * delta_degrees;
+}
+
+function latDistanceAtLat(lat_radians) {
+  return 111132.954 - (559.822 * Math.cos(2 * lat_radians)) + (1.175 * Math.cos(4*lat_radians));
+}
+
+function longDistanceAtLat(lat_radians) {
+
   const eq_radius = 6378137.0;
   const eccentricity = 0.081819190842613;
 
   const numerator = (eq_radius * Math.PI * Math.cos(lat_radians));
   const denominator = 180 * Math.sqrt(1 - Math.pow(eccentricity, 2) * Math.pow(Math.sin(lat_radians), 2));
 
-  let long_distance_at_lat = numerator/denominator;
+  return numerator/denominator;
+}
 
-  return long_distance_at_lat * delta_degrees;
+function metersDegLon(lat_given) {
+  // from rov code
+  return((111415.13 * Math.cos(degreesToRadians(lat_given)))
+    - (94.55 * Math.cos(3.0*degreesToRadians(lat_given)))
+    + (0.12 * Math.cos(5.0*degreesToRadians(lat_given))));
+}
+
+function metersDegLat(lat_given) {
+  // from rov code
+  return(111132.09 - (566.05 * Math.cos(2.0*degreesToRadians(lat_given)))
+    + (1.20 * Math.cos(4.0*degreesToRadians(lat_given)))
+    - (0.002 * Math.cos(6.0*degreesToRadians(lat_given))));
 }
 
 // Mostly we expect to deal with the aux_data object format, so if we want to
