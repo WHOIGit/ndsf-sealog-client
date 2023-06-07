@@ -12,8 +12,8 @@ function deltaLat(renav, realtime, lat_given) {
   const delta_degrees = renav - realtime;
   const lat_radians = degreesToRadians(lat_given);
 
-  let lat_distance_at_lat = latDistanceAtLat(lat_radians);
-  // let lat_distance_at_lat = metersDegLat(lat_radians);
+  // let lat_distance_at_lat = latDistanceAtLat(lat_radians);
+  let lat_distance_at_lat = metersDegLat(lat_radians);
   
   return lat_distance_at_lat * delta_degrees
 }
@@ -23,8 +23,8 @@ function deltaLong(renav, realtime, lat_given) {
   const delta_degrees = renav - realtime;
   const lat_radians = degreesToRadians(lat_given);
 
-  let long_distance_at_lat = longDistanceAtLat(lat_radians);
-  // let long_distance_at_lat = metersDegLon(lat_radians);
+  // let long_distance_at_lat = longDistanceAtLat(lat_radians);
+  let long_distance_at_lat = metersDegLon(lat_radians);
 
   return long_distance_at_lat * delta_degrees;
 }
