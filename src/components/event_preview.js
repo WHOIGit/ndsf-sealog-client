@@ -7,12 +7,25 @@ function degreesToRadians(degrees) {
   return degrees * (Math.PI/180);
 }
 
+function metersDegLon(lat_given) {
+  // from rov code, takes lat_given in degrees and converts to distance of 1 degree of longitude
+  return((111415.13 * Math.cos(degreesToRadians(lat_given)))
+    - (94.55 * Math.cos(3.0*degreesToRadians(lat_given)))
+    + (0.12 * Math.cos(5.0*degreesToRadians(lat_given))));
+}
+
+function metersDegLat(lat_given) {
+  // from rov code, takes lat_given in degrees and converts to distance of 1 degree of latitude
+  return(111132.09 - (566.05 * Math.cos(2.0*degreesToRadians(lat_given)))
+    + (1.20 * Math.cos(4.0*degreesToRadians(lat_given)))
+    - (0.002 * Math.cos(6.0*degreesToRadians(lat_given))));
+}
+
 function deltaLat(renav, realtime, lat_given) {
 
   const delta_degrees = renav - realtime;
-  const lat_radians = degreesToRadians(lat_given);
 
-  let lat_distance_at_lat = 111132.954 - (559.822 * Math.cos(2 * lat_radians)) + (1.175 * Math.cos(4*lat_radians));
+  let lat_distance_at_lat = metersDegLat(lat_given);
   
   return lat_distance_at_lat * delta_degrees
 }
@@ -22,13 +35,7 @@ function deltaLong(renav, realtime, lat_given) {
   const delta_degrees = renav - realtime;
   const lat_radians = degreesToRadians(lat_given);
 
-  const eq_radius = 6378137.0;
-  const eccentricity = 0.081819190842613;
-
-  const numerator = (eq_radius * Math.PI * Math.cos(lat_radians));
-  const denominator = 180 * Math.sqrt(1 - Math.pow(eccentricity, 2) * Math.pow(Math.sin(lat_radians), 2));
-
-  let long_distance_at_lat = numerator/denominator;
+  let long_distance_at_lat = metersDegLon(lat_given);
 
   return long_distance_at_lat * delta_degrees;
 }
