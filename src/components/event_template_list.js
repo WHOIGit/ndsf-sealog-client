@@ -98,7 +98,6 @@ class EventTemplateList extends Component {
     )].sort((a, b) => {
       return (sortCategories.indexOf(a) < sortCategories.indexOf(b)) ? -1 : 1;
     });
-    console.log(template_categories);
 
     if(this.props.event_templates){
       if(template_categories.length > 0) {
