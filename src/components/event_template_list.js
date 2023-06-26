@@ -7,6 +7,8 @@ import { WS_ROOT_URL } from '../client_config';
 
 import * as mapDispatchToProps from '../actions';
 
+const sortCategories = ['science', 'video', 'vehicle'];
+
 class EventTemplateList extends Component {
 
   constructor (props) {
@@ -92,22 +94,16 @@ class EventTemplateList extends Component {
     const template_categories = [...new Set(this.props.event_templates.reduce(function (flat, event_template) {
         return flat.concat(event_template.template_categories);
       }, [])
-    )].sort();
+    // )].sort()
+    )].sort((a, b) => {
+      return (sortCategories.indexOf(a) < sortCategories.indexOf(b)) ? -1 : 1;
+    });
+    console.log(template_categories);
 
     if(this.props.event_templates){
       if(template_categories.length > 0) {
         return (
-          <Tabs className="category-tab" variant="pills" activeKey={(this.props.event_template_category)? this.props.event_template_category : "all"} id="event-template-tabs" onSelect={(category) => this.props.updateEventTemplateCategory(category)}>
-            <Tab eventKey="all" title="All">
-              {
-                this.props.event_templates.filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled).map((event_template) => {
-
-                  return (
-                    <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ (e) => this.handleEventSubmit(event_template, e) }>{ event_template.event_name }</Button>
-                  );
-                })
-              }
-            </Tab>
+          <Tabs className="category-tab" variant="pills" activeKey={(this.props.event_template_category)? this.props.event_template_category : template_categories[0]} id="event-template-tabs" onSelect={(category) => this.props.updateEventTemplateCategory(category)}>
             {
               template_categories.map((template_category) => {
                 return (
@@ -124,6 +120,16 @@ class EventTemplateList extends Component {
                 )
               })
             }
+            <Tab eventKey="all" title="All">
+              {
+                this.props.event_templates.filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled).map((event_template) => {
+
+                  return (
+                    <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ (e) => this.handleEventSubmit(event_template, e) }>{ event_template.event_name }</Button>
+                  );
+                })
+              }
+            </Tab>
           </Tabs>
         )
       }
