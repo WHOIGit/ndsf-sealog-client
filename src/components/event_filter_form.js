@@ -97,6 +97,14 @@ class EventFilterForm extends Component {
         <Card.Body className="px-0">
           <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
             <Field
+              name="freetext"
+              component={renderTextField}
+              label="Freeform Text"
+              disabled={this.props.disabled}
+              lg={12}
+              sm={12}
+            />
+            <Field
               name="value"
               component={renderTextField}
               label="Event Value"
@@ -130,14 +138,6 @@ class EventFilterForm extends Component {
               defaultValue={stopTS}
               timeFormat={timeFormat}
               label="Stop Date/Time (UTC)"
-              disabled={this.props.disabled}
-              lg={12}
-              sm={12}
-            />
-            <Field
-              name="freetext"
-              component={renderTextField}
-              label="Freeform Text"
               disabled={this.props.disabled}
               lg={12}
               sm={12}

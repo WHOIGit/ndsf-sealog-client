@@ -14,6 +14,8 @@ import { API_ROOT_URL, IMAGE_PATH } from '../client_config';
 
 const cookies = new Cookies();
 
+const sortTabs = ['scicam', 'sitcam', 'hdquad', 'sdquad'];
+
 const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
 
 class LoweringGallery extends Component {
@@ -161,7 +163,9 @@ class LoweringGallery extends Component {
   renderGalleries() {
 
     let galleries = [];
-    for (const [key, value] of Object.entries(this.state.aux_data)) {
+    for (const [key, value] of Object.entries(this.state.aux_data).sort((a, b) => {
+      return (sortTabs.indexOf(a) < sortTabs.indexOf(b)) ? -1 : 1;
+    })) {
       galleries.unshift((
         <Tab key={`tab_${key}`} eventKey={`tab_${key}`} title={key}>
           <LoweringGalleryTab imagesSource={key} imagesData={value} maxImagesPerPage={this.state.maxImagesPerPage} />
