@@ -4,10 +4,11 @@ import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { Accordion, Button, Row, Col, Card } from 'react-bootstrap';
+import { Accordion, Button, Row, Col, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import FileDownload from 'js-file-download';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
+import SVProfileModal from './sv_profile_modal';
 import { API_ROOT_URL, MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
@@ -206,6 +207,11 @@ class CruiseMenu extends Component {
     return <div>{output}<br/></div>;
   }
 
+
+  handleSVProfileModal(lowering) {
+    this.props.showModal('svProfile', { lowering: lowering });
+  }
+
   renderLoweringCard() {
 
     if(this.state.activeLowering){
@@ -242,7 +248,8 @@ class CruiseMenu extends Component {
 
       return (          
         <Card className="border-secondary" key={`lowering_card`}>
-          <Card.Header>{this.state.lowering_name}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
+          <Card.Header>{this.state.lowering_name}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><span onClick={() => this.handleSVProfileModal(this.state.activeLowering)}><OverlayTrigger placement="top" overlay={<Tooltip id="svProfileTooltip">SV Profile</Tooltip>}><FontAwesomeIcon icon='table' fixedWidth /></OverlayTrigger></span> <CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
+
           <Card.Body>
             {loweringDescription}
             {loweringLocation}
@@ -513,6 +520,7 @@ class CruiseMenu extends Component {
   render(){
     return (
       <div>
+        <SVProfileModal/>
         <Row>
             <h4>{MAIN_SCREEN_HEADER}</h4>
             <p className="text-justify">{MAIN_SCREEN_TXT}</p>
