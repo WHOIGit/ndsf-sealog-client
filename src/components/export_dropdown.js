@@ -11,7 +11,7 @@ import { API_ROOT_URL } from '../client_config';
 let fileDownload = require('js-file-download');
 
 const dateFormat = "YYYYMMDD";
-const timeFormat = "HHmm";
+const timeFormat = "HHmmSS";
 
 class ExportDropdown extends Component {
 
@@ -28,7 +28,7 @@ class ExportDropdown extends Component {
 
     this.state = {
       id: (this.props.id)? this.props.id : "dropdown-download",
-      prefix: (this.props.prefix)? this.props.prefix : null,
+      prefix: (this.props.prefix)? this.props.prefix : '',
       sort: (this.props.sort)? this.props.sort : null,
       cruiseOrLowering: cruiseOrLowering
     };
@@ -65,10 +65,10 @@ class ExportDropdown extends Component {
     }
   }
 
-  async fetchEvents(format, eventFilter, hideASNAP) {
+  async fetchEvents(exportFormat, eventFilter, hideASNAP) {
 
     const cookies = new Cookies();
-    format = `format=${format}`;
+    let format = (exportFormat==='csv')? `format=${exportFormat}&add_record_ids=true` : `format=${exportFormat}`
     let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
     let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
     let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
@@ -126,10 +126,10 @@ class ExportDropdown extends Component {
     );
   }
 
-  async fetchEventsWithAuxData(format, eventFilter, hideASNAP) {
+  async fetchEventsWithAuxData(exportFormat, eventFilter, hideASNAP) {
 
     const cookies = new Cookies();
-    format = `format=${format}`;
+    let format = (exportFormat==='csv')? `format=${exportFormat}&add_record_ids=true` : `format=${exportFormat}`
     let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
     let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
     let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
@@ -168,8 +168,7 @@ class ExportDropdown extends Component {
 
   exportEvents(format='json') {
     this.fetchEvents(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
-      let prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload((format == 'json')? JSON.stringify(results) : results, `${prefix}_sealog_eventExport.${format}`);
+      fileDownload((format == 'json')? JSON.stringify(results) : results, `${this.state.prefix}_${moment.utc().format(dateFormat + "_" + timeFormat)}_sealog_eventExport.${format}`);
     }).catch((error) => {
       console.log(error);
     });
@@ -177,8 +176,7 @@ class ExportDropdown extends Component {
 
   exportAuxData() {
     this.fetchEventAuxData(this.props.eventFilter, this.props.hideASNAP).then((results) => {
-      let prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload(JSON.stringify(results), `${prefix}_sealog_auxDataExport.json`);
+      fileDownload(JSON.stringify(results), `${this.state.prefix}_${moment.utc().format(dateFormat + "_" + timeFormat)}_sealog_auxDataExport.json`);
     }).catch((error) => {
       console.log(error);
     });
