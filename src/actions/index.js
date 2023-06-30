@@ -160,8 +160,8 @@ export function login({username, password, reCaptcha = null}) {
     return await axios.post(`${API_ROOT_URL}/api/v1/auth/login`, payload
       ).then(response => {
         // If request is good save the JWT token to a cookie
-        cookies.set('token', response.data.token, { path: ROOT_PATH } );
-        cookies.set('id', response.data.id, { path: ROOT_PATH } );
+        cookies.set('token', response.data.token, { path: '/' } );
+        cookies.set('id', response.data.id, { path: '/' } );
 
         dispatch({ type: AUTH_USER });
         return dispatch(updateProfileState());
@@ -189,8 +189,8 @@ export function autoLogin({loginToken, reCaptcha = null}) {
     return await axios.post(`${API_ROOT_URL}/api/v1/auth/login`, payload
       ).then(response => {
         // If request is good save the JWT token to a cookie
-        cookies.set('token', response.data.token, { path: ROOT_PATH } );
-        cookies.set('id', response.data.id, { path: ROOT_PATH } );
+        cookies.set('token', response.data.token, { path: '/' } );
+        cookies.set('id', response.data.id, { path: '/' } );
 
         dispatch({ type: AUTH_USER });
         return dispatch(updateProfileState());
@@ -975,8 +975,8 @@ export function deleteEventTemplate(id) {
 
 export function logout() {
   return function(dispatch) {
-    cookies.remove('token', { path: ROOT_PATH } );
-    cookies.remove('id', { path: ROOT_PATH } );
+    cookies.remove('token', { path: '/' } );
+    cookies.remove('id', { path: '/' } );
     dispatch(push(`/login`));
     return dispatch({type: UNAUTH_USER });
   };
