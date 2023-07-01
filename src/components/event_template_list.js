@@ -96,7 +96,7 @@ class EventTemplateList extends Component {
       }, [])
     // )].sort()
     )].sort((a, b) => {
-      return (sortCategories.indexOf(a) < sortCategories.indexOf(b)) ? -1 : 1;
+      return (sortCategories.indexOf(a.toLowerCase()) < sortCategories.indexOf(b.toLowerCase())) ? -1 : 1;
     });
 
     if(this.props.event_templates){
