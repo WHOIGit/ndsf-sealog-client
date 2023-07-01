@@ -164,9 +164,9 @@ class LoweringGallery extends Component {
 
     let galleries = [];
     for (const [key, value] of Object.entries(this.state.aux_data).sort((a, b) => {
-      return (sortTabs.indexOf(a) < sortTabs.indexOf(b)) ? -1 : 1;
+      return (sortTabs.indexOf(a[0].toLowerCase()) < sortTabs.indexOf(b[0].toLowerCase())) ? -1 : 1;
     })) {
-      galleries.unshift((
+      galleries.push((
         <Tab key={`tab_${key}`} eventKey={`tab_${key}`} title={key}>
           <LoweringGalleryTab imagesSource={key} imagesData={value} maxImagesPerPage={this.state.maxImagesPerPage} />
         </Tab>
