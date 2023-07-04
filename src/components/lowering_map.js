@@ -426,6 +426,8 @@ class LoweringMap extends Component {
             <TileLayer
               attribution={layer.attribution}
               url={layer.url}
+              tms={layer.tms ?? false}
+              zoomOffset={layer.zoomOffset ?? 0}
               maxNativeZoom={layer.maxNativeZoom}
             />
           </BaseLayer>

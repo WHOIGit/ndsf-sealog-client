@@ -14,6 +14,10 @@ import { API_ROOT_URL, IMAGE_PATH } from '../client_config';
 
 const cookies = new Cookies();
 
+const sortTabs = ['camera_source_1', 'camera_source_2', 'camera_source_3', 'camera_source_4', 'camera_source_5', 'camera_source_6', 'camera_source_7', 'camera_source_8'];
+
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+
 class LoweringGallery extends Component {
 
   constructor (props) {
@@ -71,10 +75,10 @@ class LoweringGallery extends Component {
   componentWillUnmount(){
   }
 
-  async initLoweringImages(id, hideASNAP=false, event_filter='', auxDatasourceFilter='vehicleRealtimeFramegrabberData') {
+  async initLoweringImages(id, hideASNAP=false, event_filter='', auxDatasourceFilter=imageAuxDataSources) {
     this.setState({ fetching: true});
 
-    let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter}`
+    let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${auxDatasourceFilter.join('&datasource=')}`
 
     if(hideASNAP) {
       url += '&value=!ASNAP'
@@ -159,7 +163,9 @@ class LoweringGallery extends Component {
   renderGalleries() {
 
     let galleries = [];
-    for (const [key, value] of Object.entries(this.state.aux_data)) {
+    for (const [key, value] of Object.entries(this.state.aux_data).sort((a, b) => {
+      return (sortTabs.indexOf(a[0].toLowerCase()) < sortTabs.indexOf(b[0].toLowerCase())) ? -1 : 1;
+    })) {
       galleries.push((
         <Tab key={`tab_${key}`} eventKey={`tab_${key}`} title={key}>
           <LoweringGalleryTab imagesSource={key} imagesData={value} maxImagesPerPage={this.state.maxImagesPerPage} />

@@ -523,6 +523,7 @@ class CruiseMenu extends Component {
     return (
       <div>
         <StatsForROVTeamModal/>
+        <SVProfileModal/>
         <Row>
             <h4>{MAIN_SCREEN_HEADER}</h4>
             <p className="text-justify">{MAIN_SCREEN_TXT}</p>
