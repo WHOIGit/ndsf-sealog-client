@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Row, Col, Form, Card, Button, Alert } from 'react-bootstrap';
+import { renderTextField } from '../form_elements';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as mapDispatchToProps from '../../actions';
 import { RECAPTCHA_SITE_KEY } from '../../client_config';
@@ -29,33 +30,18 @@ class ResetPassword extends Component {
     this.props.resetPassword({token, password, reCaptcha});
   }
 
-  renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
+  renderMessage(errorMsg, msg) {
 
-    const labelComponent = (label)? <Form.Label>{label}{requiredField}</Form.Label> : null;
-
-    return (
-      <Form.Group as={Col} lg="12">
-        {labelComponent}
-        <Form.Control type={type} {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-  renderAlert() {
-
-    if(this.props.errorMessage) {
+    if(errMsg) {
       return (
         <Alert variant="danger">
-          <strong>Oops!</strong> {this.props.errorMessage}
+          <strong>Oops!</strong> {errorMsg}
         </Alert>
       );
-    } else if (this.props.successMessage) {
+    } else if (msg) {
       return (
         <Alert variant="success">
-          <strong>Sweet!</strong> {this.props.successMessage}
+          {msg}
         </Alert>
       );
     }
@@ -89,7 +75,7 @@ class ResetPassword extends Component {
               <Form.Group>
                 <Field
                   name="password"
-                  component={this.renderTextField}
+                  component={renderTextField}
                   type="password"
                   placeholder="Password"
                   required={true}
@@ -98,7 +84,7 @@ class ResetPassword extends Component {
               <Form.Group>
                 <Field
                   name="confirmPassword"
-                  component={this.renderTextField}
+                  component={renderTextField}
                   type="password"
                   placeholder="Confirm Password"
                   required={true}
@@ -121,15 +107,65 @@ class ResetPassword extends Component {
   }
 
   render() {
+
+    const { handleSubmit, submitting, valid } = this.props;
+    const loginCardHeader = (<h5 className="form-signin-heading">Reset Password</h5>);
+
+    const submitButton = ( RECAPTCHA_SITE_KEY === "")? <Button variant="primary" type="submit" block disabled={submitting || !valid}>Submit</Button> : <Button variant="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Submit</Button>;
+    const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
+      <span>
+        <ReCAPTCHA
+          ref={this.recaptchaRef}
+          sitekey={RECAPTCHA_SITE_KEY}
+          theme="dark"
+          size="invisible"
+        />
+        <br/>
+      </span>
+    ): null;
+
     return(
       <div className="mb-2">
-        <Row>
-          <Col>
-            {this.renderForm()}
+        <Row className="justify-content-center">
+          <Col sm={6} md={4} lg={3}>
+            <Card>
+              <Card.Body>
+                {loginCardHeader}
+                <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+                  <Form.Row>
+                    <Field
+                      name="password"
+                      component={renderTextField}
+                      type="password"
+                      placeholder="Password"
+                      required={true}
+                      lg={12}
+                      sm={12}
+                    />
+                    <Field
+                      name="confirmPassword"
+                      component={renderTextField}
+                      type="password"
+                      placeholder="Confirm Password"
+                      required={true}
+                      lg={12}
+                      sm={12}
+                    />
+                  </Form.Row>
+                  {recaptcha}
+                  {this.renderMessage(this.props.errorMessage, this.props.message)}
+                  {submitButton}
+                </Form>
+                <div className="text-center">
+                  <hr className="border-secondary"/>
+                  <Link className="btn btn-outline-primary btn-block" to={ `/login` }>Back to Login</Link>
+                </div>
+              </Card.Body>
+            </Card>
           </Col>
         </Row>
       </div>
-    );
+    )
   }
 }
 

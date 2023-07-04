@@ -320,7 +320,7 @@ class EventTemplates extends Component {
       );
     }
 
-    if (this.props.roles.includes("admin") || this.props.roles.includes("event_manager")) {
+    if (this.props.roles.includes("admin") || this.props.roles.includes("template_manager")) {
 
       let eventTemplatesForm = (this.props.event_templateid)? <UpdateEventTemplate /> : <CreateEventTemplate />;
 

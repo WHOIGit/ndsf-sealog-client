@@ -1,6 +1,5 @@
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import queryString from 'querystring';
 import { push } from 'connected-react-router';
 import { show } from 'redux-modal';
 import { change, untouch } from 'redux-form';
@@ -1246,7 +1245,7 @@ export function fetchEventTemplatesForMain() {
 
 export function fetchFilteredEvents(filterParams={}) {
 
-  let params = queryString.stringify(filterParams);
+  let params = new URLSearchParams(filterParams).toString();
 
   return async function (dispatch) {
     return await axios.get(API_ROOT_URL + '/api/v1/events' + '?' + params, { headers: { authorization: cookies.get('token') } }

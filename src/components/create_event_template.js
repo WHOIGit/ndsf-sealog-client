@@ -326,13 +326,38 @@ function validate(formProps) {
   }
 
   if (formProps.event_options && formProps.event_options.length) {
+
     const event_optionsArrayErrors = [];
+
+    // look for duplicate keys
+    let seen = []
+    let dupes = []
+
+    formProps.event_options.forEach((event_option) => {
+      if (event_option.event_option_name && event_option.event_option_name.length > 0) {
+        if (seen.indexOf(event_option.event_option_name.toLowerCase()) >= 0) {
+          dupes.push(event_option.event_option_name.toLowerCase())
+        }
+        else {
+          seen.push(event_option.event_option_name.toLowerCase())
+        }
+      }
+    })
+
+    console.log("seen:", seen)
+    console.log("dupes:", dupes)
+
     formProps.event_options.forEach((event_option, event_optionIndex) => {
       const event_optionErrors = {};
       if (!event_option || !event_option.event_option_name) {
         event_optionErrors.event_option_name = 'Required';
         event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
       }
+      else if (dupes.indexOf(event_option.event_option_name.toLowerCase()) >=0) {
+        event_optionErrors.event_option_name = 'Option name must be unique';
+        event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
+      }
+
       if (!event_option || !event_option.event_option_type) {
         event_optionErrors.event_option_type = 'Required';
         event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
