@@ -108,6 +108,10 @@ class EventShowDetailsModal extends Component {
           });
         }
 
+        tmpData.sort(function(a,b) {
+          return (a.source < b.source) ? -1 : ((a.source > b.source) ? 1 : 0);
+        })
+
         return (
           tmpData.map((camera) => {
             return (
