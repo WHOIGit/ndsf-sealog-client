@@ -7,7 +7,7 @@ import { WS_ROOT_URL } from '../client_config';
 
 import * as mapDispatchToProps from '../actions';
 
-const sortCategories = ['science', 'video', 'vehicle'];
+const sortCategories = ['science', 'special ops', 'hydrophone', 'survey', 'video', 'rov ops'];
 
 class EventTemplateList extends Component {
 
