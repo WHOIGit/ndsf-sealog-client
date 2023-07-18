@@ -14,7 +14,15 @@ export default class Datum extends Component {
             var DATA_DECIMALS = 2;
         }
 
-        let str = parseFloat(this.props.data.data_value).toFixed(DATA_DECIMALS);
+        let str = this.props.data.data_value;
+        let float = parseFloat(str);
+
+        if (isNaN(float)) {
+            // datum is not a number, leave formatted as string
+        } else {
+            // datum is floating point, make fixed point
+            str = float.toFixed(DATA_DECIMALS);
+        }
 
         if (str.slice(-1) == '0') {
             str = str.substring(0, str.length-1);
