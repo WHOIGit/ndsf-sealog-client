@@ -15,7 +15,7 @@ export default class Datum extends Component {
         }
 
         let str = this.props.data.data_value;
-        let float = parseFloat(str).toFixed(DATA_DECIMALS);
+        let float = parseFloat(str);
 
         if (isNaN(float)) {
             // datum is not a number, leave formatted as string
