@@ -17,12 +17,11 @@ export default class Datum extends Component {
         let str = this.props.data.data_value;
         let float = parseFloat(str).toFixed(DATA_DECIMALS);
 
-        if(float != 'NaN') {
-            // the datum is a number
-            str = float;
-        }
-        else {
-            // the datum is not a number
+        if (isNaN(float)) {
+            // datum is not a number, leave formatted as string
+        } else {
+            // datum is floating point, make fixed point
+            str = float.toFixed(DATA_DECIMALS);
         }
 
         if (str.slice(-1) == '0') {
