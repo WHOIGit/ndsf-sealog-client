@@ -16,7 +16,7 @@ const cookies = new Cookies();
 
 const sortTabs = ['camera_source_1', 'camera_source_2', 'camera_source_3', 'camera_source_4', 'camera_source_5', 'camera_source_6', 'camera_source_7', 'camera_source_8'];
 
-const imageAuxDataSources = ['vehicleRealtimeFramegrabberData'];
+const imageAuxDataSources = ['vehicleRealtimeFramegrabberData', 'vehicleRealtimeFramegrabber2Data', 'vehicleRealtimeFramegrabber3Data'];
 
 class LoweringGallery extends Component {
 
