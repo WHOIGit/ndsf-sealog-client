@@ -93,10 +93,10 @@ class SVProfileModal extends Component {
     header.push(['Source: Sealog'])
 
     const profile_data = this.state.ctd_data.map((data_point) => {
-      let depth = data_point.data_array.find((value) => value.data_name == 'depth')
+      let depth = data_point.data_array.find((value) => value.data_name == 'pressure')
       depth = (depth) ? parseFloat(depth.data_value) : null
 
-      let sv = data_point.data_array.find((value) => value.data_name == 'sv')
+      let sv = data_point.data_array.find((value) => value.data_name == 'sound_speed')
       sv = (sv) ? parseFloat(sv.data_value) : null
 
       let sal = data_point.data_array.find((value) => value.data_name == 'sal')
@@ -180,10 +180,10 @@ class SVProfileModal extends Component {
     }
 
     const profile_data = ctd_data.map((data_point) => {
-      let depth = data_point.data_array.find((value) => value.data_name == 'depth')
+      let depth = data_point.data_array.find((value) => value.data_name == 'pressure')
       depth = (depth) ? parseFloat(depth.data_value) : null
 
-      let sv = data_point.data_array.find((value) => value.data_name == 'sv')
+      let sv = data_point.data_array.find((value) => value.data_name == 'sound_speed')
       sv = (sv) ? parseFloat(sv.data_value) : null
 
       return [depth, sv]
