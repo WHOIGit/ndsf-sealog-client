@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Alert, Col, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Datetime from 'react-datetime';
 import moment from 'moment';
@@ -43,21 +43,6 @@ export function renderTextArea({ input, label, placeholder, required, meta: { to
   );
 }
 
-/**
- * Redux-Form controlled fields conflict with react-datetime's controlled input, causing
- * caret to jump on manual edit. This wraps the handler to save the caret position.
- * Inspired by https://stackoverflow.com/a/49648061
- * @param {*} handler Handler which may be called with an event object, typically onChange or onBlur
- * @returns handler which saves the caret position before calling the original handler
- */
-function saveCaretFromHandler(handler) {
-  return (event) => {
-    const caret = event.target.selectionStart;
-    window.requestAnimationFrame(() => event.target.selectionStart = event.target.selectionEnd = caret);
-    handler(event);
-  }
-}
-
 export function renderSelectField({ input, label, placeholder, required, options, meta: { touched, error }, disabled=false, xs=12, sm=6, md=12, lg=6 }) {
 
   let requiredField = (required)? <span className='text-danger'> *</span> : '';
@@ -80,39 +65,37 @@ export function renderSelectField({ input, label, placeholder, required, options
   );
 }
 
-export function renderDatePicker({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', disabled=false, xs=12, sm=6, md=12, lg=6 }) {
-  let requiredField = (required)? <span className='text-danger'> *</span> : '';
-  
-  const inputProps = {
-    disabled,
-    onChange: saveCaretFromHandler(input.onChange),
-    onBlur: (event) => {
-      const value = event.target.value
-      if (value) {
-        input.onChange(moment.utc(value).format(dateFormat))
-      }
-    }
-  } 
+/**
+ * This component intentionally not exported, use renderDatePicker or renderDateTimePicker below
+ */
+function DateTimePicker({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', timeFormat, disabled=false, xs=12, sm=6, md=12, lg=6 }) {
+  // Use ref for updating calendar view when user types manually
+  const ref = useRef(null);
 
-  return (
-    <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
-      <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime {...input} utc={true} dateFormat={dateFormat} timeFormat={false} inputProps={inputProps} />
-      {touched && (error && <div className="w-100 mt-1 text-danger" style={{fontSize: ".7rem"}}>{error}</div>)}
-    </Form.Group>
-  );
-}
+  const formatString = timeFormat ? `${dateFormat} ${timeFormat}` : dateFormat;
 
-export function renderDateTimePicker({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', timeFormat='HH:mm:ss', disabled=false, xs=12, sm=6, md=12, lg=6 }) {
-  let requiredField = (required)? <span className='text-danger'> *</span> : ''
+  // react-datetime does not handle empty string well, so convert to null
+  if (input.value == '') {
+    input.value = null;
+  }
+  // Dates are stored as ISO 8601 strings, but react-datetime does not parse without help
+  // Only apply formatting in this condition to avoid overwriting user input as they type
+  else if (moment(input.value, "YYYY-MM-DDTHH:mm:ss.SSS[Z]", true).isValid()) {
+    input.value = moment.utc(input.value, moment.ISO_8601).format(formatString);
+  }
+  let requiredField = required ? <span className='text-danger'> *</span> : '';
 
   const inputProps = {
     disabled,
-    onChange: saveCaretFromHandler(input.onChange),
-    onBlur: (event) => {
-      const value = event.target.value
-      if (value) {
-        input.onChange(moment.utc(value).format(dateFormat + ' ' + timeFormat))
+    onChange: (e) => {
+      // Redux-Form controlled fields conflict with react-datetime's controlled input, causing
+      // caret to jump on manual edit. This saves the caret position.
+      // Inspired by https://stackoverflow.com/a/49648061
+      const caret = e.target.selectionStart;
+      window.requestAnimationFrame(() => e.target.selectionStart = e.target.selectionEnd = caret);
+      if (moment(e.target.value, formatString).isValid()) {
+        // Update calendar view
+        ref.current.setViewDate(moment(e.target.value, formatString))
       }
     }
   }
@@ -120,10 +103,25 @@ export function renderDateTimePicker({ input, label, required, meta: { touched, 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime {...input} utc={true} dateFormat={dateFormat} timeFormat={timeFormat} inputProps={inputProps} />
+      <Datetime 
+        ref={ref}
+        {...input} 
+        utc={true}
+        dateFormat={dateFormat}
+        timeFormat={timeFormat} 
+        inputProps={inputProps}
+      />
       {error && <div className="w-100 mt-1 text-danger" style={{fontSize: ".7rem"}}>{error}</div>}
     </Form.Group>
   )
+}
+
+export function renderDatePicker({ timeFormat=false, ...props}) {
+  return DateTimePicker({ timeFormat, ...props });
+}
+
+export function renderDateTimePicker({ timeFormat='HH:mm:ss', ...props}) {
+  return DateTimePicker({ timeFormat, ...props });
 }
 
 export function renderCheckboxGroup({ label, options, input, required, meta: { dirty, error }, disabled=false, inline=false, indication=false }) {
