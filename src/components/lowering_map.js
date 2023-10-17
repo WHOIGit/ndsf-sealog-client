@@ -29,7 +29,7 @@ const maxEventsPerPage = 10;
 
 const initCenterPosition = DEFAULT_LOCATION;
 
-const positionAuxDataSources = ['vehicleRealtimeNavData'];
+const positionAuxDataSources = ['vehicleRealtimeNavData','vehicleRealtimeUSBLData'];
 
 class LoweringMap extends Component {
 
