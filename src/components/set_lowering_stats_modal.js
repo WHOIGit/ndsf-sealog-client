@@ -219,8 +219,12 @@ class SetLoweringStatsModal extends Component {
               }
             }
 
-            trackline.ts.push(moment.utc(event['ts']).valueOf());
-            trackline.depth.push([trackline.ts[trackline.ts.length-1], parseFloat(aux_data['data_array'].find(data => data['data_name'] == 'depth')['data_value'])]);
+            const depth = aux_data['data_array'].find(data => data['data_name'] == 'depth');
+
+            if(depth) {
+              trackline.ts.push(moment.utc(event['ts']).valueOf());
+              trackline.depth.push([trackline.ts[trackline.ts.length-1], parseFloat(depth['data_value'])]);
+            }
           }
           catch(err) {
             console.log("No latLng found, skipping...");
