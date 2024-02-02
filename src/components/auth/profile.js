@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
 import { reduxForm, Field } from 'redux-form';
 import { Alert, Button, Col, Form, Card, Row} from 'react-bootstrap';
+import { renderTextField } from '../form_elements';
 import * as mapDispatchToProps from '../../actions';
 
 const cookies = new Cookies();
@@ -27,19 +28,6 @@ class UserProfile extends Component {
 
   handleFormSubmit(formProps) {
     this.props.updateProfile(formProps);
-  }
-
-  renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    return (
-      <Form.Group as={Col} lg="12">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control type={type} {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
   }
 
   showToken() {
@@ -94,33 +82,43 @@ class UserProfile extends Component {
                   <Form.Row>
                     <Field
                       name="username"
-                      component={this.renderTextField}
+                      component={renderTextField}
                       label="Username"
                       required={true}
+                      sm={12}
+                      lg={12}
                     />
                     <Field
                       name="fullname"
-                      component={this.renderTextField}
+                      component={renderTextField}
                       label="Full Name"
                       required={true}
+                      sm={12}
+                      lg={12}
                     />
                     <Field
                       name="email"
-                      component={this.renderTextField}
+                      component={renderTextField}
                       label="Email"
                       disabled={true}
+                      sm={12}
+                      lg={12}
                     />
                     <Field
                       name="password"
-                      component={this.renderTextField}
+                      component={renderTextField}
                       type="password"
                       label="Password"
+                      sm={12}
+                      lg={12}
                     />
                     <Field
                       name="confirmPassword"
-                      component={this.renderTextField}
+                      component={renderTextField}
                       type="password"
                       label="Confirm Password"
+                      sm={12}
+                      lg={12}
                     />
                   </Form.Row>
                   {this.renderAlert()}
