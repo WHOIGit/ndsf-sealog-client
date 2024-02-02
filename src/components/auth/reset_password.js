@@ -37,7 +37,7 @@ class ResetPassword extends Component {
       return (
         <Card className="form-signin" >
           <Card.Body>
-            <h4 className="form-signin-heading">Forgot Password</h4>
+            <h5 className="form-signin-heading">Forgot Password</h5>
             <div className="alert alert-success">
               <strong>Success!</strong> {this.props.successMessage}
             </div>
