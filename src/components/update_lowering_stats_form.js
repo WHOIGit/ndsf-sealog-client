@@ -107,6 +107,7 @@ class UpdateLoweringStatsForm extends Component {
                       name="start"
                       component={renderDateTimePicker}
                       label="Off Deck Date/Time (UTC)"
+                      required={true}
                       timeFormat={timeFormat}
                       sm={11}
                       md={11}
