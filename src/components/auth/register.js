@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Card, Form, Button } from 'react-bootstrap';
 import ReCAPTCHA from "react-google-recaptcha";
 import { RECAPTCHA_SITE_KEY } from '../../client_config';
+import { renderTextField } from '../form_elements';
 import * as mapDispatchToProps from '../../actions';
 
 class Register extends Component {
@@ -28,33 +29,18 @@ class Register extends Component {
     this.props.registerUser({username, fullname, email, password, reCaptcha});
   }
 
-  renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    return (
-      <Form.Group as={Col} lg="12">
-        <Form.Label>{label}{requiredField}</Form.Label>
-        <Form.Control type={type} {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
-
   renderSuccess() {
     if (this.props.message) {
-      const panelHeader = (<h4>New User Registration</h4>);
-
       return (
         <Card className="form-signin" >
           <Card.Body>
-            {panelHeader}
+            <h5 className="form-signin-heading">New User Registration</h5>
             <div className="alert alert-success">
               <strong>Success!</strong> {this.props.message}
             </div>
-            <div className="float-right">
-              <Link to={ `/login` }>Proceed to Login {<FontAwesomeIcon icon="arrow-right"/>}</Link>
+            <div className="text-center">
+              <hr className="border-secondary"/>
+              <Link className="btn btn-outline-primary btn-block" to={ `/login` }>Back to Login</Link>
             </div>
           </Card.Body>
         </Card>
@@ -76,9 +62,7 @@ class Register extends Component {
 
     if (!this.props.message) {
 
-      const panelHeader = (<h5 className="form-signin-heading">User Registration</h5>);
       const { handleSubmit, submitting, valid } = this.props;
-      //console.log(this.props);
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
@@ -94,39 +78,49 @@ class Register extends Component {
       return (
         <Card className="form-signin" >
           <Card.Body>
-            {panelHeader}
+            <h5 className="form-signin-heading">User Registration</h5>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <Form.Row>
                 <Field
                   name="username"
-                  component={this.renderTextField}
+                  component={renderTextField}
                   label="Username"
                   required={true}
+                  sm={12}
+                  lg={12}
                 />
                 <Field
                   name="fullname"
-                  component={this.renderTextField}
+                  component={renderTextField}
                   label="Full Name"
                   required={true}
+                  sm={12}
+                  lg={12}
                 />
                 <Field
                   name="email"
-                  component={this.renderTextField}
+                  component={renderTextField}
                   label="Email"
                   required={true}
+                  sm={12}
+                  lg={12}
                 />
                 <Field
                   name="password"
-                  component={this.renderTextField}
+                  component={renderTextField}
                   type="password"
                   label="Password"
+                  sm={12}
+                  lg={12}
                   required={true}
                 />
                 <Field
                   name="confirmPassword"
-                  component={this.renderTextField}
+                  component={renderTextField}
                   type="password"
                   label="Confirm Password"
+                  sm={12}
+                  lg={12}
                   required={true}
                 />
               </Form.Row>

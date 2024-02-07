@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Form, Row, Col, Card, Button, Alert } from 'react-bootstrap';
 import ReCAPTCHA from "react-google-recaptcha";
 import * as mapDispatchToProps from '../../actions';
+import { renderTextField } from '../form_elements';
 import { RECAPTCHA_SITE_KEY } from '../../client_config';
 
 class ForgotPassword extends Component {
@@ -27,35 +28,20 @@ class ForgotPassword extends Component {
     this.props.forgotPassword({email, reCaptcha});
   }
 
-  renderTextField({ input, label, placeholder, type="text", required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : '';
-    let placeholder_txt = (placeholder)? placeholder: label;
-
-    const labelComponent = (label)? <Form.Label>{label}{requiredField}</Form.Label> : null;
-
-    return (
-      <Form.Group as={Col} lg="12">
-        {labelComponent}
-        <Form.Control type={type} {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-        <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-      </Form.Group>
-    );
-  }
-
   renderSuccess() {
 
     if (this.props.successMessage) {
-      const panelHeader = (<h4 className="form-signin-heading">Forgot Password</h4>);
 
       return (
         <Card className="form-signin" >
           <Card.Body>
-            {panelHeader}
+            <h5 className="form-signin-heading">Forgot Password</h5>
             <div className="alert alert-success">
               <strong>Success!</strong> {this.props.successMessage}
             </div>
-            <div className="float-right">
-              <Link to={ `/login` }>Proceed to Login {<FontAwesomeIcon icon="arrow-right"/>}</Link>
+            <div className="text-center">
+              <hr className="border-secondary"/>
+              <Link className="btn btn-outline-primary btn-block" to={ `/login` }>Back to Login</Link>
             </div>
           </Card.Body>
         </Card>
@@ -84,7 +70,6 @@ class ForgotPassword extends Component {
 
     if(!this.props.successMessage) {
 
-      const panelHeader = (<h5 className="form-signin-heading">Forgot Password</h5>);
       const { handleSubmit, submitting, valid } = this.props;
 
       const submitButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Submit</Button>;
@@ -101,15 +86,17 @@ class ForgotPassword extends Component {
       ): null;
 
       return (
-        <Card>
+        <Card className="form-signin" >
           <Card.Body>
-            {panelHeader}
+            <h5 className="form-signin-heading">Forgot Password</h5>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <Form.Row>
                 <Field
                   name="email"
-                  component={this.renderTextField}
+                  component={renderTextField}
                   placeholder="Email Address"
+                  sm={12}
+                  lg={12}
                 />
               </Form.Row>
               {recaptcha}

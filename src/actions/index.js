@@ -592,10 +592,6 @@ export function updateProfile(formProps) {
     fields.fullname = formProps.fullname;
   }
 
-  if(formProps.email) {
-    fields.email = formProps.email;
-  }
-
   if(formProps.password) {
     fields.password = formProps.password;
   }
