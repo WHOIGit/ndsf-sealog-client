@@ -1,4 +1,5 @@
 import { API_ROOT_URL, ROOT_PATH, IMAGE_PATH } from 'client_config';
+import noimage from './assets/images/noimage.jpeg'
 
 // This function constructs a URL to an image served by the Sealog server.
 // Normally, this should correspond to the server's IMAGE_ROUTE setting
@@ -13,5 +14,5 @@ export function getImageUrl(image_path) {
 }
 
 export function handleMissingImage(ev) {
-  ev.target.src = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${ROOT_PATH}images/noimage.jpeg`;
+  ev.target.src = noimage;
 }
