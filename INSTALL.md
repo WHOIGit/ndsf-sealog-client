@@ -106,3 +106,4 @@ To run the client using development mode run the following commands in terminal:
 cd /opt/sealog-client-vehicle
 npm start
 ```
+The client should now be accessible from http://localhost:8080/sealog
