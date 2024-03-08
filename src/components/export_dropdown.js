@@ -129,7 +129,7 @@ class ExportDropdown extends Component {
   async fetchEventsWithAuxData(format, eventFilter, hideASNAP) {
 
     const cookies = new Cookies();
-    format = `format=${format}`;
+    const formatParam = `format=${format}`;
     let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
     let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
     let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
@@ -139,11 +139,12 @@ class ExportDropdown extends Component {
     let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
     let sort = (this.state.sort)? `&sort=${this.state.sort}` : '';
 
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${formatParam}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
       {
         headers: {
           authorization: cookies.get('token')
-        }
+        },
+        responseType: format === 'json' ? 'json' : 'blob'
       }).then((response) => {
       return response.data;
     }).catch((error)=>{
@@ -159,8 +160,9 @@ class ExportDropdown extends Component {
 
   exportEventsWithAuxData(format='json') {
     this.fetchEventsWithAuxData(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
+      const extension = format === 'json' ? 'json' : 'zip';
       let prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload((format === 'json')? JSON.stringify(results) : results, `${prefix}_sealog_export.${format}`);
+      fileDownload((format === 'json')? JSON.stringify(results) : results, `${prefix}_sealog_export.${extension}`);
     }).catch((error) => {
       console.log(error);
     });
