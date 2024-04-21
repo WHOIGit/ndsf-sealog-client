@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  sealog-client-vehicle:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+    image: node:alpine
+    ports:
+      - "8080:8080"
