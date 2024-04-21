@@ -305,12 +305,13 @@ export function gotoLoweringReview(id) {
   };
 }
 
-export async function createEventRequest(eventValue, eventFreeText, eventOptions, eventTS) {
+export async function createEventRequest(eventValue, eventFreeText, eventOptions, eventTS, publish) {
 
   let payload = {
     event_value: eventValue,
     event_free_text: eventFreeText,
-    event_options: eventOptions
+    event_options: eventOptions,
+    publish
   };
 
   if(eventTS.length > 0){
@@ -329,11 +330,11 @@ export async function createEventRequest(eventValue, eventFreeText, eventOptions
   return response;
 }
 
-export function createEvent(eventValue, eventFreeText = '', eventOptions = [], eventTS = '') {
+export function createEvent(eventValue, eventFreeText = '', eventOptions = [], eventTS = '', publish = true) {
 
   return async () => {
     try {
-      const event = await createEventRequest(eventValue, eventFreeText, eventOptions, eventTS);
+      const event = await createEventRequest(eventValue, eventFreeText, eventOptions, eventTS, publish);
       return event;
     } catch (error) {
       console.error(error);
