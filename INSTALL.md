@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
- - [sealog-server v2.0.0+](https://github.com/oceandatatools/sealog-server)
+ - [sealog-server v2.2.10+](https://github.com/oceandatatools/sealog-server)
  - [nodeJS v20.x+](https://nodejs.org)
  - [git](https://git-scm.com)
  - Apache2 Webserver (alternatively NGINX can be used)
@@ -97,6 +97,40 @@ sudo ln -s /opt/sealog-client-vehicle/dist /var/www/html/sealog`
 
 **Be sure to reload Apache for these changes to take affect.**
 `sudo service apache2 reload`
+
+### Configure Nginx to host the client
+Add the following to your nginx server file (i.e. `/etc/nginx/sites-available/sealog_vehicle.conf`).  Modify the path appropriately for your installation. This example assumes the client will live at `http://<serverIP>/sealog`:
+```
+  server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+
+    index index.html;
+
+    server_name _;
+
+    location /sealog {
+      # First attempt to serve request as file, then
+      # as directory, then fall back to displaying a 404.
+      try_files $uri $uri/ /index.html;
+    }
+  }
+```
+
+Enable the site config:
+```
+sudo ln -s /etc/nginx/sites-available/sealog-vehicle.conf /etc/nginx/sites-enabled
+```
+
+Create a symbolic link from the dist directory to the directory where Apache will server the client.  Modify the paths appropriately for your installation.  This example assumes the client will live at `http://<serverIP>/sealog` and the git repo is located at: `/opt/sealog-client-vehicle`:
+```
+sudo ln -s /opt/sealog-client-vehicle/dist /var/www/html/sealog
+```
+
+**Be sure to reload Nginx for these changes to take affect.**
+`sudo service nginx reload`
 
 ### Running in development mode ###
 Optionally you can run the client using node's development web-server.  This removes the need to run Apache however the client will only be accessable from the local machine.
