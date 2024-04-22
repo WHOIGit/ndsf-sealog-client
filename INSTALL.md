@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
- - [sealog-server v2.2.10+](https://github.com/oceandatatools/sealog-server)
+ - [sealog-server v2.2.12+](https://github.com/oceandatatools/sealog-server)
  - [nodeJS v20.x+](https://nodejs.org)
  - [git](https://git-scm.com)
  - Apache2 Webserver (alternatively NGINX can be used)
@@ -15,10 +15,15 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 ```
 Install the LTS version of NodeJS using `nvm`
 ```
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 nvm install --lts
-sudo ln -s $HOME/.nvm/versions/node/v20.11.0/bin/npm /usr/local/bin/
-sudo ln -s $HOME/.nvm/versions/node/v20.11.0/bin/node /usr/local/bin/
+NODE_VERSION=node -v
+sudo ln -s $HOME/.nvm/versions/node/${NODE_VERSION}/bin/npm /usr/local/bin/
+sudo ln -s $HOME/.nvm/versions/node/${NODE_VERSION}/bin/node /usr/local/bin/
 ```
+
 ### Clone the repository
 
 ```
