@@ -3,9 +3,12 @@ import { connect } from 'react-redux';
 import { Client } from '@hapi/nes/lib/client';
 import { Link } from 'react-router-dom';
 import prettyBytes from 'pretty-bytes';
-import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from '../client_config';
+import Cookies from 'universal-cookie';
 
+import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from '../client_config';
 import * as mapDispatchToProps from '../actions';
+
+const cookies = new Cookies();
 
 class Footer extends Component {
 
@@ -26,7 +29,13 @@ class Footer extends Component {
     this.handleASNAPNotification();
 
     if ( !DISABLE_EVENT_LOGGING && this.props.authenticated ) {
-      this.connectToWS();
+      this.connectToWS({
+        auth: {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token')
+          }
+        }
+      });
     }
   }
 
@@ -39,14 +48,13 @@ class Footer extends Component {
   async connectToWS() {
 
     try {
-      await this.client.connect();
-      // {
-      //   auth: {
-      //     headers: {
-      //       authorization: cookies.get('token')
-      //     }
-      //   }
-      // })
+      await this.client.connect({
+        auth: {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token')
+          }
+        }
+      });
 
       const updateHandler = () => {
         this.handleASNAPNotification();

@@ -150,7 +150,7 @@ class LoweringMap extends Component {
       let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${this.auxDatasourceFilters[index]}`;
       await axios.get(url, {
         headers: {
-          authorization: cookies.get('token')
+          Authorization: 'Bearer ' + cookies.get('token')
         }
       }).then((response) => {
         response.data.forEach((r_data) => {

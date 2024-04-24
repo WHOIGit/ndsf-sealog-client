@@ -168,7 +168,7 @@ class SetLoweringStatsModal extends Component {
     const data = await axios.get(`${API_ROOT_URL}/api/v1/event_exports/bylowering/${this.props.lowering.id}`,
       {
         headers: {
-        authorization: cookies.get('token')
+        Authorization: 'Bearer ' + cookies.get('token')
         }
       }      
     ).then((response) => {

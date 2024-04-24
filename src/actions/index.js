@@ -77,7 +77,7 @@ const resetURL = window.location.protocol + '//' + window.location.hostname + po
 
 export const authorizationHeader = { 
   headers: {
-    authorization: cookies.get('token')
+    Authorization: 'Bearer ' + cookies.get('token')
   }
 }
 
@@ -93,8 +93,10 @@ export function validateJWT() {
   }
 
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/auth/validate`, { headers: { authorization: cookies.get('token') } }
-      ).then(() => {
+    return await axios.get(`${API_ROOT_URL}/api/v1/auth/validate`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
         return dispatch({type: AUTH_USER});
       }).catch(()=>{
         console.error("JWT is invalid, logging out");
@@ -118,8 +120,10 @@ export function resetFields(formName, fieldsObj) {
 export function updateProfileState() {
 
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/auth/profile`, { headers: { authorization: cookies.get('token') } }
-      ).then((response) => {
+    return await axios.get(`${API_ROOT_URL}/api/v1/auth/profile`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
         return dispatch({ type: UPDATE_PROFILE, payload: response.data });
       }).catch((error)=>{
         console.error(error);
@@ -129,8 +133,10 @@ export function updateProfileState() {
 
 export function initUser(id) {
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/users/${id}`, { headers: { authorization: cookies.get('token') } }
-      ).then((response) => {
+    return await axios.get(`${API_ROOT_URL}/api/v1/users/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
         return dispatch({ type: INIT_USER, payload: response.data });
       }).catch((error)=>{
         console.error(error);
@@ -140,8 +146,10 @@ export function initUser(id) {
 
 export function initEventTemplate(id) {
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_templates/${id}`, { headers: { authorization: cookies.get('token') } }
-      ).then((response) => {
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_templates/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
 
         response.data.event_options = response.data.event_options.map(event_option => {
           event_option.event_option_values = event_option.event_option_values.join(',');
@@ -321,12 +329,12 @@ export async function createEventRequest(eventValue, eventFreeText, eventOptions
     payload.ts = eventTS;
   }
 
-  const response = await axios.post(`${API_ROOT_URL}/api/v1/events`, payload, { headers: { authorization: cookies.get('token') } }
-    )
-    .then((response) => {
+  const response = await axios.post(`${API_ROOT_URL}/api/v1/events`, payload,
+    {
+      headers: { Authorization: 'Bearer ' + cookies.get('token') }
+    }).then((response) => {
       return response.data.insertedEvent;
-    })
-    .catch((error)=>{
+    }).catch((error)=>{
       console.error(error);
     });
 
@@ -357,12 +365,12 @@ export async function updateEventRequest(event_id, eventValue, eventFreeText = '
     payload.ts = eventTS;
   }
 
-  const response = await axios.patch(`${API_ROOT_URL}/api/v1/events/${event_id}`, payload, { headers: { authorization: cookies.get('token') } }
-    )
-    .then((response) => {
+  const response = await axios.patch(`${API_ROOT_URL}/api/v1/events/${event_id}`, payload,
+    {
+      headers: { Authorization: 'Bearer ' + cookies.get('token') }
+    }).then((response) => {
       return { response };
-    })
-    .catch((error)=>{
+    }).catch((error)=>{
       console.error(error);
     });
   
@@ -385,25 +393,27 @@ export function updateLoweringReplayEvent(event_id) {
 
   return async function (dispatch) {
     
-    return await axios.get(API_ROOT_URL + '/api/v1/events/' + event_id, { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: UPDATE_EVENT, payload: data});
-    }).catch((error) => {
-      if(error.response.status !== 404) {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/events/' + event_id,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: UPDATE_EVENT, payload: data});
+      }).catch((error) => {
+        if(error.response.status !== 404) {
+          console.error(error);
+        }
+      });
   };
 }
 
 export async function deleteEventRequest(event_id) {
 
-  const response = await axios.delete(`${API_ROOT_URL}/api/v1/events/${event_id}`, { headers: { authorization: cookies.get('token') } }
-    )
-    .then((response) => {
+  const response = await axios.delete(`${API_ROOT_URL}/api/v1/events/${event_id}`,
+    {
+      headers: { Authorization: 'Bearer ' + cookies.get('token') }
+    }).then((response) => {
       return { response };
-    })
-    .catch((error)=>{
+    }).catch((error)=>{
       console.error(error);
     });
 
@@ -480,8 +490,10 @@ export function registerUser({username, fullname, password, email, reCaptcha = n
 
 export function createUser({username, fullname, password = '', email, roles, system_user = false, disabled = false}) {
   return async function (dispatch) {
-    return await axios.post(`${API_ROOT_URL}/api/v1/users`, {username, fullname, password, email, roles, system_user, disabled, resetURL}, { headers: { authorization: cookies.get('token') } }
-      ).then(() => {
+    return await axios.post(`${API_ROOT_URL}/api/v1/users`, {username, fullname, password, email, roles, system_user, disabled, resetURL},
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
         dispatch(createUserSuccess('Account created'));
         return dispatch(fetchUsers());
       }).catch((error) => {
@@ -494,8 +506,10 @@ export function createUser({username, fullname, password = '', email, roles, sys
 
 export function createCruise({cruise_id, start_ts, stop_ts, cruise_location = '', cruise_tags = [], cruise_hidden = false, cruise_additional_meta = {} }) {
   return async function (dispatch) {
-    return await axios.post(`${API_ROOT_URL}/api/v1/cruises`, {cruise_id, start_ts, stop_ts, cruise_location, cruise_tags, cruise_hidden, cruise_additional_meta }, { headers: { authorization: cookies.get('token') } }
-      ).then(() => {
+    return await axios.post(`${API_ROOT_URL}/api/v1/cruises`, {cruise_id, start_ts, stop_ts, cruise_location, cruise_tags, cruise_hidden, cruise_additional_meta },
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
         dispatch(createCruiseSuccess('Cruise created'));
         return dispatch(fetchCruises());
       }).catch((error) => {
@@ -509,8 +523,10 @@ export function createCruise({cruise_id, start_ts, stop_ts, cruise_location = ''
 
 export function createLowering({lowering_id, start_ts, stop_ts, lowering_location = '', lowering_tags = [], lowering_hidden = false, lowering_additional_meta = {}  }) {
   return async function (dispatch) {
-    return await axios.post(`${API_ROOT_URL}/api/v1/lowerings`, {lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_additional_meta }, { headers: { authorization: cookies.get('token') } }
-      ).then(() => {
+    return await axios.post(`${API_ROOT_URL}/api/v1/lowerings`, {lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_additional_meta },
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
         dispatch(createLoweringSuccess('Lowering created'));
         return dispatch(fetchLowerings());
       }).catch((error) => {
@@ -571,8 +587,10 @@ export function createEventTemplate(formProps) {
   }
 
   return async function (dispatch) {
-    return await axios.post(`${API_ROOT_URL}/api/v1/event_templates`, fields, { headers: { authorization: cookies.get('token') } }
-      ).then(() => {
+    return await axios.post(`${API_ROOT_URL}/api/v1/event_templates`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
         dispatch(fetchEventTemplates());
         return dispatch(createEventTemplateSuccess('Event Template created'));
       }).catch((error) => {
@@ -601,16 +619,18 @@ export function updateProfile(formProps) {
   }
 
   return async function (dispatch) {
-    return await axios.patch(`${API_ROOT_URL}/api/v1/users/${formProps.id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      dispatch(updateProfileState());
-      return dispatch(updateProfileSuccess('Account updated'));
-    }).catch((error) => {
-      console.error(error);
+    return await axios.patch(`${API_ROOT_URL}/api/v1/users/${formProps.id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        dispatch(updateProfileState());
+        return dispatch(updateProfileSuccess('Account updated'));
+      }).catch((error) => {
+        console.error(error);
 
-      // If request is unauthenticated
-      return dispatch(updateProfileError(error.response.data.message));
-    });
+        // If request is unauthenticated
+        return dispatch(updateProfileError(error.response.data.message));
+      });
   };
 }
 
@@ -619,13 +639,15 @@ export function showCruise(id) {
   let fields = { cruise_hidden: false };
 
   return async function (dispatch) {
-    return await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      return dispatch(fetchCruises());
-    }).catch((error) => {
-      console.error(error);
-      return dispatch(updateCruiseError(error.response.data.message));
-    });
+    return await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        return dispatch(fetchCruises());
+      }).catch((error) => {
+        console.error(error);
+        return dispatch(updateCruiseError(error.response.data.message));
+      });
   };
 }
 
@@ -634,13 +656,15 @@ export function hideCruise(id) {
   let fields = { cruise_hidden: true };
 
   return async function (dispatch) {
-    return await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      return dispatch(fetchCruises());
-    }).catch((error) => {
-      console.error(error);
-      return dispatch(updateCruiseError(error.response.data.message));
-    });
+    return await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        return dispatch(fetchCruises());
+      }).catch((error) => {
+        console.error(error);
+        return dispatch(updateCruiseError(error.response.data.message));
+      });
   };
 }
 
@@ -687,14 +711,16 @@ export function updateCruise(formProps) {
   }
 
   return async function (dispatch) {
-    await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${formProps.id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      dispatch(fetchCruises());
-      return dispatch(updateCruiseSuccess('Cruise updated'));
-    }).catch((error) => {
-      console.error(error);
-      return dispatch(updateCruiseError(error.response.data.message));
-    });
+    await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${formProps.id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        dispatch(fetchCruises());
+        return dispatch(updateCruiseSuccess('Cruise updated'));
+      }).catch((error) => {
+        console.error(error);
+        return dispatch(updateCruiseError(error.response.data.message));
+      });
   };
 }
 
@@ -703,13 +729,15 @@ export function hideLowering(id) {
   let fields = { lowering_hidden: true };
 
   return async function (dispatch) {
-    await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      return dispatch(fetchLowerings());
-    }).catch((error) => {
-      console.error(error);
-      return dispatch(updateLoweringError(error.response.data.message));
-    });
+    await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        return dispatch(fetchLowerings());
+      }).catch((error) => {
+        console.error(error);
+        return dispatch(updateLoweringError(error.response.data.message));
+      });
   };
 }
 
@@ -718,13 +746,15 @@ export function showLowering(id) {
   let fields = { lowering_hidden: false };
 
   return async function (dispatch) {
-    await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      return dispatch(fetchLowerings());
-    }).catch((error) => {
-      console.error(error);
-      return dispatch(updateLoweringError(error.response.data.message));
-    });
+    await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        return dispatch(fetchLowerings());
+      }).catch((error) => {
+        console.error(error);
+        return dispatch(updateLoweringError(error.response.data.message));
+      });
   };
 }
 
@@ -770,14 +800,16 @@ export function updateLowering(formProps) {
   }
 
   return async function (dispatch) {
-    return await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${formProps.id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      dispatch(fetchLowerings());
-      return dispatch(updateLoweringSuccess('Lowering updated'));
-    }).catch((error) => {
-      console.error(error);
-      return dispatch(updateLoweringError(error.response.data.message));
-    });
+    return await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${formProps.id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        dispatch(fetchLowerings());
+        return dispatch(updateLoweringSuccess('Lowering updated'));
+      }).catch((error) => {
+        console.error(error);
+        return dispatch(updateLoweringError(error.response.data.message));
+      });
   };
 }
 
@@ -818,16 +850,18 @@ export function updateUser(formProps) {
   }
 
   return async function (dispatch) {
-    return await axios.patch(`${API_ROOT_URL}/api/v1/users/${formProps.id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      dispatch(fetchUsers());
-      return dispatch(updateUserSuccess('Account updated'));
-    }).catch((error) => {
-      console.error(error);
+    return await axios.patch(`${API_ROOT_URL}/api/v1/users/${formProps.id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        dispatch(fetchUsers());
+        return dispatch(updateUserSuccess('Account updated'));
+      }).catch((error) => {
+        console.error(error);
 
-      // If request is unauthenticated
-      return dispatch(updateUserError(error.response.data.message));
-    });
+        // If request is unauthenticated
+        return dispatch(updateUserError(error.response.data.message));
+      });
   };
 }
 
@@ -892,84 +926,94 @@ export function updateEventTemplate(formProps) {
   }
 
   return async function (dispatch) {
-    return await axios.patch(`${API_ROOT_URL}/api/v1/event_templates/${formProps.id}`, fields, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      dispatch(fetchEventTemplates());
-      return dispatch(updateEventTemplateSuccess('Event template updated'));
-    }).catch((error) => {
-      console.error(error);
+    return await axios.patch(`${API_ROOT_URL}/api/v1/event_templates/${formProps.id}`, fields,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        dispatch(fetchEventTemplates());
+        return dispatch(updateEventTemplateSuccess('Event template updated'));
+      }).catch((error) => {
+        console.error(error);
 
-      // If request is unauthenticated
-      return dispatch(updateEventTemplateError(error.response.data.message));
-    });
+        // If request is unauthenticated
+        return dispatch(updateEventTemplateError(error.response.data.message));
+      });
   };
 }
 
 export function deleteCruise(id) {
 
   return async function (dispatch, getState) {
-    return await axios.delete(`${API_ROOT_URL}/api/v1/cruises/${id}`, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      if(getState().cruise.cruise.id === id) {
-        dispatch(leaveUpdateCruiseForm());
-      }
-      
-      return dispatch(fetchCruises());
+    return await axios.delete(`${API_ROOT_URL}/api/v1/cruises/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        if(getState().cruise.cruise.id === id) {
+          dispatch(leaveUpdateCruiseForm());
+        }
+        
+        return dispatch(fetchCruises());
 
-    }).catch((error) => {
-      console.error(error);
-    });
+      }).catch((error) => {
+        console.error(error);
+      });
   };
 }
 
 export function deleteLowering(id) {
 
   return async function (dispatch, getState) {
-    return await axios.delete(`${API_ROOT_URL}/api/v1/lowerings/${id}`, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      if(getState().lowering.lowering.id === id) {
-        dispatch(leaveUpdateLoweringForm());
-      }
+    return await axios.delete(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        if(getState().lowering.lowering.id === id) {
+          dispatch(leaveUpdateLoweringForm());
+        }
 
-      return dispatch(fetchLowerings());
+        return dispatch(fetchLowerings());
 
-    }).catch((error) => {
-      console.error(error);
-    });
+      }).catch((error) => {
+        console.error(error);
+      });
   };
 }
 
 export function deleteUser(id) {
 
   return async function (dispatch, getState) {
-    return await axios.delete(`${API_ROOT_URL}/api/v1/users/${id}`, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      if(getState().user.user.id === id) {
-        dispatch(leaveUpdateUserForm());
-      }
+    return await axios.delete(`${API_ROOT_URL}/api/v1/users/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        if(getState().user.user.id === id) {
+          dispatch(leaveUpdateUserForm());
+        }
 
-      return dispatch(fetchUsers());
+        return dispatch(fetchUsers());
 
-    }).catch((error) => {
-      console.error(error);
-    });
+      }).catch((error) => {
+        console.error(error);
+      });
   };
 }
 
 export function deleteEventTemplate(id) {
 
   return async function (dispatch, getState) {
-    return await axios.delete(`${API_ROOT_URL}/api/v1/event_templates/${id}`, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      if(getState().event_template.event_template.id === id) {
-        dispatch(leaveUpdateEventTemplateForm());
-      }
+    return await axios.delete(`${API_ROOT_URL}/api/v1/event_templates/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        if(getState().event_template.event_template.id === id) {
+          dispatch(leaveUpdateEventTemplateForm());
+        }
 
-      return dispatch(fetchEventTemplates());
+        return dispatch(fetchEventTemplates());
 
-    }).catch((error) => {
-      console.error(error);
-    });
+      }).catch((error) => {
+        console.error(error);
+      });
   };
 }
 
@@ -1131,48 +1175,54 @@ export function updateUserError(message) {
 export function fetchUsers() {
 
   return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/users', { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: FETCH_USERS, payload: data});
-    }).catch((error) => {
-      if(error.response.status === 404) {
-        return dispatch({type: FETCH_USERS, payload: []});
-      } else {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/users',
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: FETCH_USERS, payload: data});
+      }).catch((error) => {
+        if(error.response.status === 404) {
+          return dispatch({type: FETCH_USERS, payload: []});
+        } else {
+          console.error(error);
+        }
+      });
   };
 }
 
 export function fetchCruises() {
 
   return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/cruises', { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: FETCH_CRUISES, payload: data});
-    }).catch((error) => {
-      if(error.response.status === 404) {
-        return dispatch({type: FETCH_CRUISES, payload: []});
-      } else {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/cruises',
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: FETCH_CRUISES, payload: data});
+      }).catch((error) => {
+        if(error.response.status === 404) {
+          return dispatch({type: FETCH_CRUISES, payload: []});
+        } else {
+          console.error(error);
+        }
+      });
   };
 }
 
 export function fetchLowerings() {
 
   return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/lowerings', { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: FETCH_LOWERINGS, payload: data});
-    }).catch((error) => {
-      if(error.response.status === 404) {
-        return dispatch({type: FETCH_LOWERINGS, payload: []});
-      } else {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/lowerings',
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: FETCH_LOWERINGS, payload: data});
+      }).catch((error) => {
+        if(error.response.status === 404) {
+          return dispatch({type: FETCH_LOWERINGS, payload: []});
+        } else {
+          console.error(error);
+        }
+      });
   };
 }
 
@@ -1180,28 +1230,32 @@ export function fetchLowerings() {
 export function fetchCustomVars() {
 
   return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/custom_vars', { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: FETCH_CUSTOM_VARS, payload: data});
-    }).catch((error) => {
-      if(error.response.status === 404) {
-        return dispatch({type: FETCH_CUSTOM_VARS, payload: []});
-      } else {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/custom_vars',
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: FETCH_CUSTOM_VARS, payload: data});
+      }).catch((error) => {
+        if(error.response.status === 404) {
+          return dispatch({type: FETCH_CUSTOM_VARS, payload: []});
+        } else {
+          console.error(error);
+        }
+      });
   };
 }
 
 export function updateCustomVars(id, value) {
   
   return async function(dispatch) {
-    return await axios.patch(`${API_ROOT_URL}/api/v1/custom_vars/${id}`, value, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      return dispatch(fetchCustomVars());
-    }).catch((error) => {
-      console.error(error);
-    });
+    return await axios.patch(`${API_ROOT_URL}/api/v1/custom_vars/${id}`, value,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        return dispatch(fetchCustomVars());
+      }).catch((error) => {
+        console.error(error);
+      });
   };
 }
 
@@ -1223,16 +1277,18 @@ export function updateEventTemplateError(message) {
 export function fetchEventTemplatesForMain() {
 
   return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/event_templates?sort=event_name', { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: FETCH_EVENT_TEMPLATES_FOR_MAIN, payload: data});
-    }).catch((error) => {
-      if(error.response.status === 404) {
-        return dispatch({type: FETCH_EVENT_TEMPLATES_FOR_MAIN, payload: []});
-      } else {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/event_templates?sort=event_name',
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: FETCH_EVENT_TEMPLATES_FOR_MAIN, payload: data});
+      }).catch((error) => {
+        if(error.response.status === 404) {
+          return dispatch({type: FETCH_EVENT_TEMPLATES_FOR_MAIN, payload: []});
+        } else {
+          console.error(error);
+        }
+      });
   };
 }
 
@@ -1241,45 +1297,51 @@ export function fetchFilteredEvents(filterParams={}) {
   let params = new URLSearchParams(filterParams).toString();
 
   return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/events' + '?' + params, { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: FETCH_FILTERED_EVENTS, payload: data});
-    }).catch((error) => {
-      if(error.response.status === 404) {
-        return dispatch({type: FETCH_FILTERED_EVENTS, payload: []});
-      } else {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/events' + '?' + params,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: FETCH_FILTERED_EVENTS, payload: data});
+      }).catch((error) => {
+        if(error.response.status === 404) {
+          return dispatch({type: FETCH_FILTERED_EVENTS, payload: []});
+        } else {
+          console.error(error);
+        }
+      });
   };
 }
 
 export function fetchEvents() {
 
   return async function (dispatch) {    
-    return await axios.get(API_ROOT_URL + '/api/v1/events', { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: FETCH_EVENTS, payload: data});
-    }).catch((error) => {
-      if(error.response.status === 404) {
-        return dispatch({type: FETCH_EVENTS, payload: []});
-      } else {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/events',
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: FETCH_EVENTS, payload: data});
+      }).catch((error) => {
+        if(error.response.status === 404) {
+          return dispatch({type: FETCH_EVENTS, payload: []});
+        } else {
+          console.error(error);
+        }
+      });
   };
 }
 
 export function fetchSelectedEvent(id) {
   
   return async function(dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${id}`, { headers: { authorization: cookies.get('token') } }      
-    ).then((response) => {
-      return dispatch({type: SET_SELECTED_EVENT, payload: response.data});
-    }).catch((error) => {
-      console.error(error);
-      return dispatch({type: SET_SELECTED_EVENT, payload: {}});
-    });
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
+        return dispatch({type: SET_SELECTED_EVENT, payload: response.data});
+      }).catch((error) => {
+        console.error(error);
+        return dispatch({type: SET_SELECTED_EVENT, payload: {}});
+      });
   };
 }
 
@@ -1312,7 +1374,10 @@ export function fetchEventHistory(asnap=false, filter='', page=0) {
   }
 
   return async function (dispatch) {
-    return await axios.get(url, { headers: { authorization: cookies.get('token') } }
+    return await axios.get(url,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }
     ).then(({data}) => {
       return dispatch({type: FETCH_EVENT_HISTORY, payload: data});
     }).catch((error) => {
@@ -1328,58 +1393,68 @@ export function fetchEventHistory(asnap=false, filter='', page=0) {
 export function fetchEventTemplates() {
 
   return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/event_templates?sort=event_name', { headers: { authorization: cookies.get('token') } }
-    ).then(({data}) => {
-      return dispatch({type: FETCH_EVENT_TEMPLATES, payload: data});
-    }).catch((error) => {
-      if(error.response.data.statusCode === 404) {
-        return dispatch({type: FETCH_EVENT_TEMPLATES, payload: []});
-      } else {
-        console.error(error);
-      }
-    });
+    return await axios.get(API_ROOT_URL + '/api/v1/event_templates?sort=event_name',
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(({data}) => {
+        return dispatch({type: FETCH_EVENT_TEMPLATES, payload: data});
+      }).catch((error) => {
+        if(error.response.data.statusCode === 404) {
+          return dispatch({type: FETCH_EVENT_TEMPLATES, payload: []});
+        } else {
+          console.error(error);
+        }
+      });
   };
 }
 
 export function initCruise(id) {
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/cruises/${id}`, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      return dispatch({ type: INIT_CRUISE, payload: response.data });
-    }).catch((error)=>{
-      console.error(error);
-    });
+    return await axios.get(`${API_ROOT_URL}/api/v1/cruises/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
+        return dispatch({ type: INIT_CRUISE, payload: response.data });
+      }).catch((error)=>{
+        console.error(error);
+      });
   };
 }
 
 export function initCruiseFromLowering(id) {
   // console.log("initcruisefromlowering:", id)
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`, { headers: { authorization: cookies.get('token') } }
-    ).then(async (loweringResponse) => {
-    // console.log("response:", loweringResponse.data)
-      return await axios.get(`${API_ROOT_URL}/api/v1/cruises?startTS=${loweringResponse.data.start_ts}&stopTS=${loweringResponse.data.stop_ts}`, { headers: { authorization: cookies.get('token') } }
-      ).then((response) => {
-        return dispatch({ type: INIT_CRUISE, payload: response.data[0] });
+    return await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(async (loweringResponse) => {
+        // console.log("response:", loweringResponse.data)
+        return await axios.get(`${API_ROOT_URL}/api/v1/cruises?startTS=${loweringResponse.data.start_ts}&stopTS=${loweringResponse.data.stop_ts}`,
+          {
+            headers: { Authorization: 'Bearer ' + cookies.get('token') }
+          }).then((response) => {
+            return dispatch({ type: INIT_CRUISE, payload: response.data[0] });
+          }).catch((error)=>{
+            if(error.response.data.statusCode !== 404) {
+              console.error(error);
+            }
+          });
       }).catch((error)=>{
-        if(error.response.data.statusCode !== 404) {
-          console.error(error);
-        }
+        console.error(error);
       });
-    }).catch((error)=>{
-      console.error(error);
-    });
   };
 }
 
 export function initLowering(id) {
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      return dispatch({ type: INIT_LOWERING, payload: response.data });
-    }).catch((error)=>{
-      console.error(error);
-    });
+    return await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
+        return dispatch({ type: INIT_LOWERING, payload: response.data });
+      }).catch((error)=>{
+        console.error(error);
+      });
   };
 }
 
@@ -1390,30 +1465,34 @@ export function initLoweringReplay(id, hideASNAP = false) {
 
     let url = (hideASNAP)? `${API_ROOT_URL}/api/v1/events/bylowering/${id}?value=!ASNAP`: `${API_ROOT_URL}/api/v1/events/bylowering/${id}`;
 
-    return await axios.get(url, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      dispatch({ type: INIT_EVENT, payload: response.data });
-      if (response.data.length > 0){
-        dispatch(advanceLoweringReplayTo(response.data[0].id));
-      }
-      return dispatch({ type: EVENT_FETCHING, payload: false});
-    }).catch((error)=>{
-      if(error.response.data.statusCode !== 404) {
-        console.error(error);
-      }
-      return dispatch({ type: EVENT_FETCHING, payload: false});
-    });
+    return await axios.get(url,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
+        dispatch({ type: INIT_EVENT, payload: response.data });
+        if (response.data.length > 0){
+          dispatch(advanceLoweringReplayTo(response.data[0].id));
+        }
+        return dispatch({ type: EVENT_FETCHING, payload: false});
+      }).catch((error)=>{
+        if(error.response.data.statusCode !== 404) {
+          console.error(error);
+        }
+        return dispatch({ type: EVENT_FETCHING, payload: false});
+      });
   };
 }
 
 export function advanceLoweringReplayTo(id) {
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${id}`, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      return dispatch({ type: SET_SELECTED_EVENT, payload: response.data });
-    }).catch((err) => {
-      console.error(err);
-    });
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
+        return dispatch({ type: SET_SELECTED_EVENT, payload: response.data });
+      }).catch((err) => {
+        console.error(err);
+      });
   };
 }
 
@@ -1541,19 +1620,21 @@ export function eventUpdate() {
     let datasource = (getState().event.eventFilter.datasource)? `&datasource=${getState().event.eventFilter.datasource}` : '';
 
     dispatch({ type: EVENT_FETCHING, payload: true});
-    return await axios.get(`${API_ROOT_URL}/api/v1/events?${startTS}${stopTS}${value}${author}${freetext}${datasource}`, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      dispatch({ type: UPDATE_EVENTS, payload: response.data });
-      return dispatch({ type: EVENT_FETCHING, payload: false});
-    }).catch((error)=>{
-      console.error(error);
-      if(error.response.data.statusCode === 404) {
-        dispatch({type: UPDATE_EVENTS, payload: []});
-      } else {
-        console.error(error.response);
-      }
-      return dispatch({ type: EVENT_FETCHING, payload: false});
-    });
+    return await axios.get(`${API_ROOT_URL}/api/v1/events?${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
+        dispatch({ type: UPDATE_EVENTS, payload: response.data });
+        return dispatch({ type: EVENT_FETCHING, payload: false});
+      }).catch((error)=>{
+        console.error(error);
+        if(error.response.data.statusCode === 404) {
+          dispatch({type: UPDATE_EVENTS, payload: []});
+        } else {
+          console.error(error.response);
+        }
+        return dispatch({ type: EVENT_FETCHING, payload: false});
+      });
   };
 }
 
@@ -1569,63 +1650,73 @@ export function eventUpdateLoweringReplay(lowering_id, hideASNAP = false) {
     let datasource = (getState().event.eventFilter.datasource)? `&datasource=${getState().event.eventFilter.datasource}` : '';
 
     dispatch({ type: EVENT_FETCHING, payload: true});
-    return await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}?${startTS}${stopTS}${value}${author}${freetext}${datasource}`, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      dispatch({ type: UPDATE_EVENTS, payload: response.data });
-      if(response.data.length > 0) {
-        dispatch(fetchSelectedEvent(response.data[0].id));
-      }
-      return dispatch({ type: EVENT_FETCHING, payload: false});
-    }).catch((error)=>{
-      if(error.response.data.statusCode === 404) {
-        dispatch({type: UPDATE_EVENTS, payload: []});
-        dispatch({ type: SET_SELECTED_EVENT, payload: {} });
+    return await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}?${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
+        dispatch({ type: UPDATE_EVENTS, payload: response.data });
+        if(response.data.length > 0) {
+          dispatch(fetchSelectedEvent(response.data[0].id));
+        }
+        return dispatch({ type: EVENT_FETCHING, payload: false});
+      }).catch((error)=>{
+        if(error.response.data.statusCode === 404) {
+          dispatch({type: UPDATE_EVENTS, payload: []});
+          dispatch({ type: SET_SELECTED_EVENT, payload: {} });
 
-      } else {
-        console.error(error);
-      }
-      return dispatch({ type: EVENT_FETCHING, payload: false});
-    });
+        } else {
+          console.error(error);
+        }
+        return dispatch({ type: EVENT_FETCHING, payload: false});
+      });
   };
 }
 
 export function deleteAllEvents() {
   return async function(dispatch) {
-    return await axios.delete(`${API_ROOT_URL}/api/v1/events/all`, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      return dispatch(fetchEventHistory());
-    }).catch((error)=> {
-      console.error(error.response);
-    });
+    return await axios.delete(`${API_ROOT_URL}/api/v1/events/all`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        return dispatch(fetchEventHistory());
+      }).catch((error)=> {
+        console.error(error.response);
+      });
   };
 }
 
 export function deleteAllLowerings() {
   return async function(dispatch) {
-    return await axios.delete(`${API_ROOT_URL}/api/v1/lowerings/all`, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      return dispatch(fetchLowerings());
-    }).catch((error)=> {
-      console.error(error.response);
-    });
+    return await axios.delete(`${API_ROOT_URL}/api/v1/lowerings/all`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        return dispatch(fetchLowerings());
+      }).catch((error)=> {
+        console.error(error.response);
+      });
   };
 }
 
 export function deleteAllCruises() {
   return async function(dispatch) {
-    return await axios.delete(`${API_ROOT_URL}/api/v1/cruises/all`, { headers: { authorization: cookies.get('token') } }
-    ).then(() => {
-      return dispatch(fetchCruises());
-    }).catch((error)=> {
-      console.error(error.response);
-    });
+    return await axios.delete(`${API_ROOT_URL}/api/v1/cruises/all`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+        return dispatch(fetchCruises());
+      }).catch((error)=> {
+        console.error(error.response);
+      });
   };
 }
 
 export function deleteAllNonSystemUsers() {
   return async function(dispatch) {
-    const users = await axios.get(`${API_ROOT_URL}/api/v1/users?system_user=false`, { headers: { authorization: cookies.get('token') } }
-      ).then((response) => {
+    const users = await axios.get(`${API_ROOT_URL}/api/v1/users?system_user=false`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
         return response.data;
       }).catch((error) =>{
         console.error(error.response);
@@ -1633,7 +1724,7 @@ export function deleteAllNonSystemUsers() {
 
     users.map(async (user) => {
       return await dispatch(deleteUser(user.id, false));
-      });
+    });
 
     return dispatch(fetchUsers());
   };
@@ -1641,8 +1732,10 @@ export function deleteAllNonSystemUsers() {
 
 export function deleteAllNonSystemEventTemplates() {
   return async function(dispatch) {
-    const event_templates = await axios.get(`${API_ROOT_URL}/api/v1/event_templates?system_template=false&sort=event_name`, { headers: { authorization: cookies.get('token') } }
-      ).then((response) => {
+    const event_templates = await axios.get(`${API_ROOT_URL}/api/v1/event_templates?system_template=false&sort=event_name`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
         return response.data;
       }).catch((error)=> {
         console.error(error.response);
@@ -1650,7 +1743,7 @@ export function deleteAllNonSystemEventTemplates() {
 
     event_templates.map(async (event_template) => {
       return await dispatch(deleteEventTemplate(event_template.id, false));
-      });
+    });
 
     return dispatch(fetchEventTemplates());
   };

@@ -84,14 +84,13 @@ class EventHistory extends Component {
   async connectToWS() {
 
     try {
-      await this.client.connect();
-      // {
-      //   auth: {
-      //     headers: {
-      //       authorization: cookies.get('token')
-      //     }
-      //   }
-      // })
+      await this.client.connect({
+        auth: {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token')
+          }
+        }
+      });
 
       const filteredEvent = (event_value) => {
         return (this.state.filter == '') ? true : this.state.filter.split(',').reduce((answer, filter_item) => {
@@ -149,7 +148,7 @@ class EventHistory extends Component {
       let url = `${API_ROOT_URL}/api/v1/events?sort=newest&limit=1`
       const event = await axios.get(url, {
         headers: {
-          authorization: cookies.get('token')
+          Authorization: 'Bearer ' + cookies.get('token')
         }
       }).then((response) => {
         return response.data;
@@ -170,7 +169,7 @@ class EventHistory extends Component {
     let url = `${API_ROOT_URL}/api/v1/event_exports/${event_id}`
     const event_export = await axios.get(url, {
       headers: {
-        authorization: cookies.get('token')
+        Authorization: 'Bearer ' + cookies.get('token')
       }
     }).then((response) => {
       return response.data;

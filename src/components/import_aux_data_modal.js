@@ -42,7 +42,7 @@ class ImportAuxDataModal extends Component {
       {id, event_id, data_source, data_array},
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       })

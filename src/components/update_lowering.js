@@ -77,7 +77,7 @@ class UpdateLowering extends Component {
     await axios.get(`${API_ROOT_URL}${LOWERING_ROUTE}/${this.props.lowering.id}/${filename}`,
     {
       headers: {
-        authorization: cookies.get('token')
+        Authorization: 'Bearer ' + cookies.get('token')
       },
       responseType: 'arraybuffer'
     })
@@ -93,7 +93,7 @@ class UpdateLowering extends Component {
     await axios.delete(`${API_ROOT_URL}${LOWERING_ROUTE}/${this.props.lowering.id}/${filename}`,
     {
       headers: {
-        authorization: cookies.get('token')
+        Authorization: 'Bearer ' + cookies.get('token')
       }
     })
     .then(() => {
@@ -193,11 +193,11 @@ class UpdateLowering extends Component {
                   url: API_ROOT_URL,
                   process: {
                     url: LOWERING_ROUTE + '/filepond/process/' + this.props.lowering.id,
-                    headers: { authorization: cookies.get('token') },
+                    headers: { Authorization: 'Bearer ' + cookies.get('token') },
                   },
                   revert: {
                     url: LOWERING_ROUTE + '/filepond/revert',
-                    headers: { authorization: cookies.get('token') },
+                    headers: { Authorization: 'Bearer ' + cookies.get('token') },
                   }
                 }}
                 onupdatefiles={() => {

@@ -57,7 +57,7 @@ class LoweringPermissionsModal extends Component {
       payload,
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       }).then(async (response) => {
@@ -79,7 +79,7 @@ class LoweringPermissionsModal extends Component {
       const lowering = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}`,
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       }).then((response) => {
@@ -102,7 +102,7 @@ class LoweringPermissionsModal extends Component {
       const users = await axios.get(`${API_ROOT_URL}/api/v1/users`,
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       }).then((response) => {
