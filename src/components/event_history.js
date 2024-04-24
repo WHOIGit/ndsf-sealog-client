@@ -84,14 +84,13 @@ class EventHistory extends Component {
   async connectToWS() {
 
     try {
-      await this.client.connect();
-      // {
-      //   auth: {
-      //     headers: {
-      //       Authorization: 'Bearer ' + cookies.get('token')
-      //     }
-      //   }
-      // })
+      await this.client.connect({
+        auth: {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token')
+          }
+        }
+      });
 
       const filteredEvent = (event_value) => {
         return (this.state.filter == '') ? true : this.state.filter.split(',').reduce((answer, filter_item) => {
