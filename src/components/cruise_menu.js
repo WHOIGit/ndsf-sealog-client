@@ -164,7 +164,7 @@ class CruiseMenu extends Component {
     await axios.get(`${API_ROOT_URL}${LOWERING_ROUTE}/${this.state.activeLowering.id}/${filename}`,
       {
         headers: {
-          authorization: cookies.get('token')
+          Authorization: 'Bearer ' + cookies.get('token')
         },
         responseType: 'arraybuffer'
       })
@@ -180,7 +180,7 @@ class CruiseMenu extends Component {
     await axios.get(`${API_ROOT_URL}${CRUISE_ROUTE}/${this.state.activeCruise.id}/${filename}`,
       {
         headers: {
-          authorization: cookies.get('token')
+          Authorization: 'Bearer ' + cookies.get('token')
         },
         responseType: 'arraybuffer'
       })

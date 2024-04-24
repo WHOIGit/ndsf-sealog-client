@@ -43,7 +43,7 @@ class Footer extends Component {
       // {
       //   auth: {
       //     headers: {
-      //       authorization: cookies.get('token')
+      //       Authorization: 'Bearer ' + cookies.get('token')
       //     }
       //   }
       // })

@@ -43,7 +43,7 @@ class ImportCruisesModal extends Component {
       const result = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${id}`,
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       })
@@ -64,7 +64,7 @@ class ImportCruisesModal extends Component {
           { id, cruise_id, start_ts, stop_ts, cruise_location, cruise_tags, cruise_hidden, cruise_additional_meta},
           {
             headers: {
-              authorization: cookies.get('token'),
+              Authorization: 'Bearer ' + cookies.get('token'),
               'content-type': 'application/json'
             }
           })

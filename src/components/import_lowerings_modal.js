@@ -43,7 +43,7 @@ class ImportLoweringsModal extends Component {
       const result = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       })
@@ -68,7 +68,7 @@ class ImportLoweringsModal extends Component {
           {id, lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_additional_meta},
           {
             headers: {
-              authorization: cookies.get('token'),
+              Authorization: 'Bearer ' + cookies.get('token'),
               'content-type': 'application/json'
             }
           })

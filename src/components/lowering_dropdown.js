@@ -83,7 +83,7 @@ class LoweringDropdown extends Component {
         const response = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/bycruise/${this.props.active_cruise.id}`,
         {
           headers: {
-            authorization: cookies.get('token')
+            Authorization: 'Bearer ' + cookies.get('token')
           }
         })
         

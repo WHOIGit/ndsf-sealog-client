@@ -33,7 +33,7 @@ class DisplayUserTokenModal extends Component {
     const token = await axios.get(`${API_ROOT_URL}/api/v1/users/${this.props.id}/token`,
     {
       headers: {
-        authorization: cookies.get('token'),
+        Authorization: 'Bearer ' + cookies.get('token'),
         'content-type': 'application/json'
       }
     })

@@ -42,7 +42,7 @@ class ImportUsersModal extends Component {
       const result = await axios.get(`${API_ROOT_URL}/api/v1/users/${id}`,
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       })
@@ -65,7 +65,7 @@ class ImportUsersModal extends Component {
           {id, username, fullname, email, password, roles, system_user},
           {
             headers: {
-              authorization: cookies.get('token'),
+              Authorization: 'Bearer ' + cookies.get('token'),
               'content-type': 'application/json'
             }
           })

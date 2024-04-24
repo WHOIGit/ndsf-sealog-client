@@ -42,7 +42,7 @@ class ImportEventTemplatesModal extends Component {
       const result = await axios.get(`${API_ROOT_URL}/api/v1/event_templates/${id}`,
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       })
@@ -66,7 +66,7 @@ class ImportEventTemplatesModal extends Component {
           {id, event_name, event_value, event_free_text_required, event_options, system_template, template_categories },
           {
             headers: {
-              authorization: cookies.get('token'),
+              Authorization: 'Bearer ' + cookies.get('token'),
               'content-type': 'application/json'
             }
           })

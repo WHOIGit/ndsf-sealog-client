@@ -92,7 +92,7 @@ class LoweringGallery extends Component {
     const image_data = await axios.get(url,
       {
         headers: {
-          authorization: cookies.get('token')
+          Authorization: 'Bearer ' + cookies.get('token')
         }
       }).then((response) => {
 

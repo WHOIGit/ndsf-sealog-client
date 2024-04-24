@@ -44,7 +44,7 @@ class ImportEventsModal extends Component {
       {id, ts, event_author, event_value, event_free_text, event_options},
       {
         headers: {
-          authorization: cookies.get('token'),
+          Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       })
