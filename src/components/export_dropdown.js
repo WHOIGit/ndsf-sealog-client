@@ -126,7 +126,7 @@ class ExportDropdown extends Component {
     );
   }
 
-  async fetchEventsWithAuxData(format, eventFilter, hideASNAP) {
+  async fetchEventsWithAuxData(format, eventFilter, hideASNAP, useRenav) {
 
     const cookies = new Cookies();
     format = `format=${format}`;
@@ -138,8 +138,10 @@ class ExportDropdown extends Component {
     let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
     let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
     let sort = (this.state.sort)? `&sort=${this.state.sort}` : '';
+    // Only has an effect in CSV files
+    let nav = useRenav ? '&use_renav=true' : '';
 
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${nav}${sort}`,
       {
         headers: {
           authorization: cookies.get('token')
@@ -157,10 +159,14 @@ class ExportDropdown extends Component {
     );
   }
 
-  exportEventsWithAuxData(format='json') {
-    this.fetchEventsWithAuxData(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
+  exportEventsWithAuxData(format='json', useRenav=false) {
+    this.fetchEventsWithAuxData(format, this.props.eventFilter, this.props.hideASNAP, useRenav).then((results) => {
       let prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload((format === 'json')? JSON.stringify(results) : results, `${prefix}_sealog_export.${format}`);
+      let suffix = '';
+      if (format === 'csv') {
+        suffix = (useRenav)? '_RENAV' : '_REALTIME';
+      }
+      fileDownload((format === 'json')? JSON.stringify(results) : results, `${prefix}_sealog_export${suffix}.${format}`);
     }).catch((error) => {
       console.log(error);
     });
@@ -197,8 +203,9 @@ class ExportDropdown extends Component {
           <Dropdown.Item key="toJSONAuxData" onClick={ () => this.exportAuxData()}>Aux Data Only</Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Header className="text-warning" key="toCSVHeader">CSV format</Dropdown.Header>
-          <Dropdown.Item key="toCSVAll" onClick={ () => this.exportEventsWithAuxData('csv')}>Events w/aux data</Dropdown.Item>
-          <Dropdown.Item key="toCSVEvents" onClick={ () => this.exportEvents('csv')}>Events Only</Dropdown.Item>
+          <Dropdown.Item key="toCSVAll" onClick={ () => this.exportEventsWithAuxData('csv')}>Events w/ realtime</Dropdown.Item>
+          <Dropdown.Item key="toCSVAll" onClick={ () => this.exportEventsWithAuxData('csv', true)}>Events w/ renav</Dropdown.Item>
+          <Dropdown.Item key="toCSVEvents" onClick={ () => this.exportEvents('csv')}>Events w/o aux data</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );
