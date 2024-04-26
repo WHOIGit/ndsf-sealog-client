@@ -262,7 +262,7 @@ class LoweringEditorForm extends Component {
             name="stop_ts"
             component={renderDateTimePicker}
             label="Stop Date/Time (UTC)"
-            required={true}
+            required={false}
           />
         </Form.Row>
         {this.renderCustomFields()}
