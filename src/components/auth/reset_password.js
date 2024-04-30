@@ -5,10 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Row, Col, Form, Card, Button, Alert } from 'react-bootstrap';
-import { renderTextField } from '../form_elements';
 import ReCAPTCHA from "react-google-recaptcha";
-import * as mapDispatchToProps from '../../actions';
 import { RECAPTCHA_SITE_KEY } from '../../client_config';
+import { renderTextField } from '../form_elements';
+import * as mapDispatchToProps from '../../actions';
 
 class ResetPassword extends Component {
  
@@ -66,15 +66,14 @@ class ResetPassword extends Component {
         </Alert>
       );
     }
-  } 
-
+  }
   renderForm() {
 
     if(!this.props.successMessage) {
 
       const { handleSubmit, submitting, valid } = this.props;
 
-      const loginButton = ( RECAPTCHA_SITE_KEY === "")? <Button variant="primary" type="submit" block disabled={submitting || !valid}>Submit</Button> : <Button variant="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Submit</Button>;
+      const submitButton = ( RECAPTCHA_SITE_KEY === "")? <Button variant="primary" type="submit" block disabled={submitting || !valid}>Submit</Button> : <Button variant="primary" type="submit" block disabled={submitting || !valid || !this.state.reCaptcha}>Submit</Button>;
       const recaptcha = ( RECAPTCHA_SITE_KEY !== "")? (
         <span>
           <ReCAPTCHA
@@ -99,8 +98,6 @@ class ResetPassword extends Component {
                   type="password"
                   placeholder="Password"
                   required={true}
-                  sm={12}
-                  lg={12}
                 />
               </Form.Row>
               <Form.Row>
@@ -110,14 +107,12 @@ class ResetPassword extends Component {
                   type="password"
                   placeholder="Confirm Password"
                   required={true}
-                  sm={12}
-                  lg={12}
                 />
               </Form.Row>
               {recaptcha}
               {this.renderAlert()}
               <div>
-                {loginButton}
+                {submitButton}
               </div>
             </Form>
             <div className="text-center">
@@ -149,7 +144,7 @@ const afterSubmit = (result, dispatch) => {
   dispatch(reset('resetPassword'));
 };
 
-const validate = values => {
+const validate = (values) => {
   const errors = {};
 
   if (!values.password) {
@@ -167,7 +162,7 @@ const validate = values => {
   return errors;
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     errorMessage: state.auth.error,
     successMessage: state.auth.message

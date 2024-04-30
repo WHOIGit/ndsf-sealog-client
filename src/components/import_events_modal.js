@@ -39,51 +39,57 @@ class ImportEventsModal extends Component {
 
   async insertEvent({id, ts, event_author, event_value, event_free_text = '', event_options = []}) {
 
-    try {
-      const result = await axios.post(`${API_ROOT_URL}/api/v1/events`,
-      {id, ts, event_author, event_value, event_free_text, event_options},
-      {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token'),
-          'content-type': 'application/json'
+    const eventExists = await axios.get(`${API_ROOT_URL}/api/v1/events/${id}`,
+    {
+      headers: {
+        Authorization: 'Bearer ' + cookies.get('token'),
+        'content-type': 'application/json'
+      }
+    }).then(() => {
+      this.setState( prevState => (
+        {
+          skipped: prevState.skipped + 1,
+          pending: prevState.pending - 1
         }
-      })
+      ))
+      return true
+    }).catch((error) => {
+      return false
+    })
 
-      if(result){
-        this.setState( prevState => (
-          {
-            imported: prevState.imported + 1,
-            pending: prevState.pending - 1
+    if(!eventExists) {
+      await axios.post(`${API_ROOT_URL}/api/v1/events`,
+        { id, ts, event_author, event_value, event_free_text, event_options },
+        {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token'),
+            'content-type': 'application/json'
           }
-        ))
-      }
-
-    } catch(error) {
-      if(error.response.data.statusCode === 400) {
-        console.log("Duplicate ID, skipping");
-        this.setState( prevState => (
-          {
-            skipped: prevState.skipped + 1,
-            pending: prevState.pending - 1
+        }).then((response) => {
+          this.setState( prevState => (
+            {
+              imported: prevState.imported + 1,
+              pending: prevState.pending - 1
+            }
+          ))
+        }).catch((error) => {
+          if(error.response.data.statusCode !== 400) {
+            console.error('Problem connecting to API');
+            console.debug(error);
           }
-        ))
-
-      } else {
-        console.log(error.response.data.message);
-        this.setState( prevState => (
-          {
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }
-        ))
-      }
+          this.setState( prevState => (
+            {
+              errors: prevState.errors + 1,
+              pending: prevState.pending - 1
+            }
+          ))
+        });
     }
   }
 
   importEventsFromFile = async (e) => {
     try {
 
-      // console.log("processing file")
       let json = JSON.parse(e.target.result);
       this.setState({
         pending: json.length,
@@ -103,8 +109,8 @@ class ImportEventsModal extends Component {
         await this.insertEvent(currentEvent);
       }
 
-    } catch (err) {
-      console.log('error when trying to parse json = ' + err);
+    } catch (error) {
+      console.error('Error when trying to parse json = ' + error);
     }
     this.setState({pending: (this.state.quit)?"Quit Early!":"Complete!"})
   }

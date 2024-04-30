@@ -19,13 +19,12 @@ export const LEAVE_UPDATE_PROFILE_FORM = 'leave_update_profile_form';
 export const CREATE_USER = 'create_user';
 export const CREATE_USER_SUCCESS = 'create_user_success';
 export const CREATE_USER_ERROR = 'create_user_error';
-export const LEAVE_CREATE_USER_FORM = 'leave_create_user_form';
 
 export const INIT_USER = 'init_user';
 export const UPDATE_USER = 'update_user';
 export const UPDATE_USER_SUCCESS = 'update_user_success';
 export const UPDATE_USER_ERROR = 'update_user_error';
-export const LEAVE_UPDATE_USER_FORM = 'leave_update_user_form';
+export const LEAVE_USER_FORM = 'leave_user_form';
 
 export const FETCH_USERS = 'fetch_users';
 export const DELETE_USER = 'destory_user';
@@ -45,12 +44,11 @@ export const INIT_EVENT_TEMPLATE = 'init_event_template';
 export const UPDATE_EVENT_TEMPLATE = 'update_event_template';
 export const UPDATE_EVENT_TEMPLATE_SUCCESS = 'update_event_template_success';
 export const UPDATE_EVENT_TEMPLATE_ERROR = 'update_event_template_error';
-export const LEAVE_UPDATE_EVENT_TEMPLATE_FORM = 'leave_update_event_template_form';
+export const LEAVE_EVENT_TEMPLATE_FORM = 'leave_event_template_form';
 
 export const CREATE_EVENT_TEMPLATE = 'create_event_template';
 export const CREATE_EVENT_TEMPLATE_SUCCESS = 'create_event_template_success';
 export const CREATE_EVENT_TEMPLATE_ERROR = 'create_event_template_error';
-export const LEAVE_CREATE_EVENT_TEMPLATE_FORM = 'leave_create_event_template_form';
 
 export const FETCH_EVENT_TEMPLATES = 'fetch_event_templates';
 
@@ -72,18 +70,16 @@ export const INIT_CRUISE = 'init_cruise';
 export const UPDATE_CRUISE = 'update_cruise';
 export const UPDATE_CRUISE_SUCCESS = 'update_cruise_success';
 export const UPDATE_CRUISE_ERROR = 'update_cruise_error';
-export const LEAVE_UPDATE_CRUISE_FORM = 'leave_updagte_cruise_form';
+export const LEAVE_CRUISE_FORM = 'leave_cruise_form';
 export const CREATE_CRUISE_SUCCESS = 'create_cruise_success';
 export const CREATE_CRUISE_ERROR = 'create_cruise_error';
-export const LEAVE_CREATE_CRUISE_FORM = 'leave_create_cruise_form';
 export const FETCH_CRUISES = 'fetch_cruises';
 
 export const INIT_LOWERING = 'init_lowering';
 export const UPDATE_LOWERING = 'update_lowering';
 export const UPDATE_LOWERING_SUCCESS = 'update_lowering_success';
 export const UPDATE_LOWERING_ERROR = 'update_lowering_error';
-export const LEAVE_UPDATE_LOWERING_FORM = 'leave_updagte_lowering_form';
+export const LEAVE_LOWERING_FORM = 'leave_lowering_form';
 export const CREATE_LOWERING_SUCCESS = 'create_lowering_success';
 export const CREATE_LOWERING_ERROR = 'create_lowering_error';
-export const LEAVE_CREATE_LOWERING_FORM = 'leave_create_lowering_form';
 export const FETCH_LOWERINGS = 'fetch_lowerings';

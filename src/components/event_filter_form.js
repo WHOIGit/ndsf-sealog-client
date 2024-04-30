@@ -102,8 +102,6 @@ class EventFilterForm extends Component {
               label="Event Value"
               placeholder="i.e. SAMPLE"
               disabled={this.props.disabled}
-              lg={12}
-              sm={12}
             />
             <Field
               name="author"
@@ -111,8 +109,6 @@ class EventFilterForm extends Component {
               label="Author"
               placeholder="i.e. jsmith"
               disabled={this.props.disabled}
-              lg={12}
-              sm={12}
             />
             <Field
               name="startTS"
@@ -121,8 +117,6 @@ class EventFilterForm extends Component {
               timeFormat={timeFormat}
               label="Start Date/Time (UTC)"
               disabled={this.props.disabled}
-              lg={12}
-              sm={12}
             />
             <Field
               name="stopTS"
@@ -131,16 +125,12 @@ class EventFilterForm extends Component {
               timeFormat={timeFormat}
               label="Stop Date/Time (UTC)"
               disabled={this.props.disabled}
-              lg={12}
-              sm={12}
             />
             <Field
               name="freetext"
               component={renderTextField}
               label="Freeform Text"
               disabled={this.props.disabled}
-              lg={12}
-              sm={12}
             />
             <div className="float-right">
               <Button className="mr-1" variant="secondary" size="sm" disabled={submitting || this.props.disabled} onClick={this.clearForm}>Reset</Button>
@@ -153,12 +143,12 @@ class EventFilterForm extends Component {
   }
 }
 
-function validate() {
+const validate = () => {
   const errors = {};
   return errors;
 }
 
-function mapStateToProps() {
+const mapStateToProps = () => {
   return {};
 }
 

@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { reduxForm, Field, FieldArray, formValueSelector } from 'redux-form';
 import { Button, Form, Card } from 'react-bootstrap';
-import { renderAlert, renderMessage, renderSelectField, renderSwitch, renderTextField, renderTextArea } from './form_elements';
+import PropTypes from 'prop-types';
+import { renderAlert, renderHidden, renderMessage, renderSelectField, renderSwitch, renderTextField, renderTextArea } from './form_elements';
 import * as mapDispatchToProps from '../actions';
 import { EventTemplateOptionTypes } from '../event_template_option_types';
 
-class UpdateEventTemplate extends Component {
+class EventTemplateForm extends Component {
 
   constructor (props) {
     super(props);
@@ -17,34 +18,62 @@ class UpdateEventTemplate extends Component {
     this.renderOptionOptions = this.renderOptionOptions.bind(this);
   }
 
+  static propTypes = {
+    handleFormSubmit: PropTypes.func.isRequired
+  };
+
   componentDidMount() {
-    if(this.props.eventTemplateID) {
-      this.props.initEventTemplate(this.props.eventTemplateID);
-    }
   }
 
   componentWillUnmount() {
-    this.props.leaveUpdateEventTemplateForm();
+    this.props.leaveEventTemplateForm();
   }
 
   handleFormSubmit(formProps) {
-    if(typeof formProps.system_template === 'undefined') {
-      formProps.system_template = false;
-    }
 
-    if(typeof(formProps.disabled) === 'undefined') {
-      formProps.disabled = false;
-    }
+    formProps.system_template = formProps.system_template || false;
+    formProps.disabled = formProps.disabled || false;
+    formProps.template_categories = formProps.template_categories || [];
 
-    if(formProps.template_categories && typeof formProps.template_categories !== 'object') {
+    if(typeof formProps.template_categories === 'string') {
       formProps.template_categories = formProps.template_categories.split(',');
-      formProps.template_categories = formProps.template_categories.map(string => {
-        return string.trim();
-      });
-    }    
+    }
+    formProps.template_categories = formProps.template_categories.map(string => {
+      return string.trim();
+    });
 
-    this.props.updateEventTemplate(formProps);
-    this.props.fetchEventTemplates();
+    formProps.event_free_text_required = formProps.event_free_text_required || false;
+    formProps.event_options = formProps.event_options || [];
+
+    formProps.event_options = formProps.event_options.map(event_option => {
+
+      event_option.event_option_allow_freeform = event_option.event_option_allow_freeform || false;
+      event_option.event_option_required = event_option.event_option_required || false;
+
+      if(['dropdown', 'checkboxes', 'radio buttons'].includes(event_option.event_option_type)) {
+        if(typeof event_option.event_option_values === 'string') {
+          event_option.event_option_values = event_option.event_option_values.split(',');
+        }
+        event_option.event_option_values = event_option.event_option_values.map(string => {
+          return string.trim();
+        });
+      }
+      else {
+        event_option.event_option_values = [];
+      }
+
+      return event_option;
+    });
+
+    if (formProps.id) {
+      this.props.updateEventTemplate(formProps);
+    }
+    else {
+      this.props.createEventTemplate(formProps);
+
+    }
+
+    this.props.handleFormSubmit()
   }
 
   renderOptionOptions(prefix, index) {
@@ -58,8 +87,6 @@ class UpdateEventTemplate extends Component {
               component={renderTextField}
               label="Value"
               required={true}
-              lg={12}
-              sm={12}
             />
           </div>
         );
@@ -70,8 +97,6 @@ class UpdateEventTemplate extends Component {
               name={`${prefix}.event_option_default_value`}
               component={renderTextField}
               label="Default Value"
-              lg={12}
-              sm={12}
             />
           </div>
         );
@@ -90,8 +115,6 @@ class UpdateEventTemplate extends Component {
               component={renderTextField}
               label="Default Selection"
               placeholder="i.e. a value from the list of options"
-              lg={12}
-              sm={12}
             />
           </div>
         );
@@ -110,8 +133,6 @@ class UpdateEventTemplate extends Component {
               component={renderTextField}
               label="Default Selections"
               placeholder="i.e. a value from the list of options"
-              lg={12}
-              sm={12}
             />
           </div>
         );
@@ -130,8 +151,6 @@ class UpdateEventTemplate extends Component {
               component={renderTextField}
               label="Default Selection"
               placeholder="i.e. a value from the list of options"
-              lg={12}
-              sm={12}
             />
           </div>
         );
@@ -171,8 +190,6 @@ class UpdateEventTemplate extends Component {
               component={renderTextField}
               label="Name"
               required={true}
-              lg={12}
-              sm={12}
             />
             <Field
               name={`${options}.event_option_type`}
@@ -180,16 +197,12 @@ class UpdateEventTemplate extends Component {
               options={EventTemplateOptionTypes}
               label="Type"
               required={true}
-              lg={12}
-              sm={12}
             />
             { this.renderOptionOptions(options, index) }
             <Field
               name={`${options}.event_option_required`}
               component={renderSwitch}
               label="Required?"
-              lg={12}
-              sm={12}
             />
           </div>
         )}
@@ -218,8 +231,6 @@ class UpdateEventTemplate extends Component {
         name='system_template'
         component={renderSwitch}
         label="System Template"
-        lg={12}
-        sm={12}
       />
     );
   }
@@ -230,8 +241,6 @@ class UpdateEventTemplate extends Component {
         name="disabled"
         label="Disable Template"
         component={renderSwitch}
-        lg={12}
-        sm={12}
       />
     );
   }
@@ -239,46 +248,43 @@ class UpdateEventTemplate extends Component {
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const formHeader = (<div>Update Event Template</div>);
+    const formHeader = (<div>{(this.props.event_template.id) ? "Update" : "Add"} Event Template</div>);
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes("template_manager"))) {
+
       return (
         <Card className="border-secondary">
           <Card.Header>{formHeader}</Card.Header>
           <Card.Body>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+              <Field
+                name="id"
+                component={renderHidden}
+              />
               <Form.Row>
                 <Field
                   name="event_name"
                   component={renderTextField}
                   label="Button Name"
                   required={true}
-                  lg={12}
-                  sm={12}
                 />
                 <Field
                   name="event_value"
                   component={renderTextField}
                   label="Event Value"
                   required={true}
-                  lg={12}
-                  sm={12}
                 />
                 <Field
                   name={"template_categories"}
                   component={renderTextField}
                   label="Template Categories (comma delimited)"
                   placeholder="i.e. biology,geology"
-                  lg={12}
-                  sm={12}
                 />
                 <Field
                   name='event_free_text_required'
                   id='event_free_text_required'
                   component={renderSwitch}
                   label={"Free text Required?"}
-                  lg={12}
-                  sm={12}
                 />
                 {this.renderAdminOptions()}
               </Form.Row>
@@ -303,7 +309,8 @@ class UpdateEventTemplate extends Component {
   }
 }
 
-function validate(formProps) {
+const validate = (formProps) => {
+
   const errors = {};
 
   if (!formProps.event_name) {
@@ -325,10 +332,9 @@ function validate(formProps) {
     }
   }
 
-  if (formProps.event_options && formProps.event_options.length) {
+  const event_optionsArrayErrors = [];
 
-    const event_optionsArrayErrors = [];
-
+  if (formProps.event_options) {
     // look for duplicate keys
     let seen = []
     let dupes = []
@@ -345,115 +351,74 @@ function validate(formProps) {
     })
 
     formProps.event_options.forEach((event_option, event_optionIndex) => {
+
       const event_optionErrors = {};
-      if (!event_option || !event_option.event_option_name) {
+
+      if (!event_option.event_option_name) {
         event_optionErrors.event_option_name = 'Required';
-        event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
       }
-      else if (dupes.indexOf(event_option.event_option_name.toLowerCase()) >=0) {
+
+      if (event_option.event_option_name && dupes.indexOf(event_option.event_option_name.toLowerCase()) >=0) {
         event_optionErrors.event_option_name = 'Option name must be unique';
         event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
       }
 
-      if (!event_option || !event_option.event_option_type) {
+      if (!event_option.event_option_type) {
         event_optionErrors.event_option_type = 'Required';
-        event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
-      } else {
+      }
 
-        if (event_option.event_option_type === 'dropdown') {
+      if(['dropdown', 'checkboxes', 'radio buttons'].includes(event_option.event_option_type)) {
 
-          let valueArray = [];
+        let valueArray = [];
 
-          if (event_option.event_option_values === "") {
-            event_optionErrors.event_option_values = 'Required';
+        if (event_option.event_option_values === "") {
+          event_optionErrors.event_option_values = 'Required';
+        }
+        else {
+          try {
+            valueArray = (typeof event_option.event_option_values === 'object') ? event_option.event_option_values : event_option.event_option_values.split(',');
+            valueArray = valueArray.map(string => {
+              return string.trim();
+            });
           }
-          else {
-            try {
-              valueArray = event_option.event_option_values.split(',');
-              valueArray = valueArray.map(string => {
-                return string.trim();
-              });
-            }
-            catch(err) {
-              event_optionErrors.event_option_values = 'Invalid csv list';
-            }
+          catch(err) {
+            event_optionErrors.event_option_values = 'Invalid csv list';
           }
+        }
 
-          if(event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
-            event_optionErrors.event_option_default_value = 'Value is not in options list';
-          }
-
-          event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
-
-        } else if (event_option.event_option_type === 'checkboxes') {
-
-          let valueArray = [];
-
-          if (event_option.event_option_values === "") {
-            event_optionErrors.event_option_values = 'Required';
-          }
-          else {
-            try {
-              valueArray = event_option.event_option_values.split(',');
-              valueArray = valueArray.map(string => {
-                return string.trim();
-              });
-            }
-            catch(err) {
-              event_optionErrors.event_option_values = 'Invalid csv list';
-            }
-          }
-
-          if(event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
-            event_optionErrors.event_option_default_value = 'Value is not in options list';
-          }
-
-          event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
-        } else if (event_option.event_option_type === 'radio buttons') {
-
-          let valueArray = [];
-
-          if (event_option.event_option_values === "") {
-            event_optionErrors.event_option_values = 'Required';
-          }
-          else {
-            try {
-              valueArray = event_option.event_option_values.split(',');
-              valueArray = valueArray.map(string => {
-                return string.trim();
-              });
-            }
-            catch(err) {
-              event_optionErrors.event_option_values = 'Invalid csv list';
-            }
-          }
-
-          if(event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
-            event_optionErrors.event_option_default_value = 'Value is not in options list';
-          }
-
-          event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
+        if(event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
+          event_optionErrors.event_option_default_value = 'Value is not in options list';
         }
       }
+
+      if (event_option.event_option_type === 'static text') {
+        if (!event_option.event_option_default_value || event_option.event_option_default_value.trim() === '') {
+          event_optionErrors.event_option_default_value = 'Required';
+        }
+      }
+
+      event_optionsArrayErrors[event_optionIndex] = event_optionErrors;
     });
-    if(event_optionsArrayErrors.length) {
-      errors.event_options = event_optionsArrayErrors;
-    }
   }
 
-  // console.log(errors)
+  if(event_optionsArrayErrors.length) {
+    errors.event_options = event_optionsArrayErrors;
+  }
 
   return errors;
 
 }
 
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
+
+  let initialValues = { ...state.event_template.event_template }
 
   return {
     errorMessage: state.event_template.event_template_error,
     message: state.event_template.event_template_message,
-    initialValues: state.event_template.event_template,
+    initialValues: initialValues,
+    event_template: state.event_template.event_template,
     roles: state.user.profile.roles,
     event_options: selector(state, 'event_options')
   };
@@ -469,4 +434,4 @@ export default compose(
     enableReinitialize: true,
     validate: validate
   })
-)(UpdateEventTemplate);
+)(EventTemplateForm);

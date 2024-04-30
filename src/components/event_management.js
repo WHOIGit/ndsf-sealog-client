@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
-import { Row, Col, Card, ListGroup, Tooltip, OverlayTrigger, Form } from 'react-bootstrap';
+import { Card, Col, Container, Form, ListGroup, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import axios from 'axios';
 import EventFilterForm from './event_filter_form';
 import EventCommentModal from './event_comment_modal';
@@ -12,6 +12,8 @@ import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
 import { API_ROOT_URL } from '../client_config';
+
+const cookies = new Cookies();
 
 const maxEventsPerPage = 15;
 
@@ -89,10 +91,8 @@ class EventManagement extends Component {
   }
 
   async fetchEventsForDisplay(eventFilter = this.state.eventFilter, activePage = this.state.activePage) {
-
     this.setState({fetching: true});
 
-    const cookies = new Cookies();
     let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
     let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
     let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
@@ -106,27 +106,19 @@ class EventManagement extends Component {
 
     await axios.get(`${API_ROOT_URL}/api/v1/events?${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}${offset}${limit}`,
       {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token')
-        }
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
       }).then((response) => {
-      this.setState({fetching: false});
-      this.setState({events: response.data});
-    }).catch((error)=>{
-      if(error.response.data.statusCode === 404){
-        this.setState({fetching: false});
-        this.setState({events: []});
-      } else {
-        console.log(error.response);
-        this.setState({fetching: false});
-        this.setState({events: []});
-      }
-    }
-    );
+        this.setState({events: response.data, fetching: false});
+      }).catch((error) => {
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error.response);
+        }
+        this.setState({events: [], fetching: false});
+      });
   }
 
   async fetchEventCount(eventFilter = this.state.eventFilter) {
-
     const cookies = new Cookies();
     let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
     let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
@@ -138,20 +130,14 @@ class EventManagement extends Component {
 
     await axios.get(`${API_ROOT_URL}/api/v1/events/count?${startTS}${stopTS}${value}${author}${freetext}${datasource}`,
       {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token')
-        }
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
       }).then((response) => {
-      this.setState({eventCount: response.data.events});
-    }).catch((error)=>{
-      if(error.response.data.statusCode === 404){
+        this.setState({eventCount: response.data.events});
+      }).catch((error)=>{
+        console.error('Problem connecting to API');
+        console.debug(error.response);
         this.setState({eventCount: 0});
-      } else {
-        console.log(error.response);
-        this.setState({eventCount: 0});
-      }
-    }
-    );
+      });
   }
 
   async toggleASNAP() {
@@ -191,11 +177,10 @@ class EventManagement extends Component {
           }
           return filtered;
         },[]);
-        
+
         if (event.event_free_text) {
           eventOptionsArray.push(`free_text: "${event.event_free_text}"`);
-        } 
-
+        }
         let eventOptions = (eventOptionsArray.length > 0)? '--> ' + eventOptionsArray.join(', '): '';
         let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(event)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(event)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon className={ "text-secondary" } icon='plus' fixedWidth inverse transform="shrink-4"/></span>;
         let commentTooltip = (comment_exists)? (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
@@ -235,7 +220,7 @@ class EventManagement extends Component {
 
   render(){
     return (
-      <div>
+      <Container className="mt-2">
         <EventCommentModal />
         <DeleteEventModal />
         <EventShowDetailsModal />
@@ -245,15 +230,15 @@ class EventManagement extends Component {
             <CustomPagination className="mt-2" page={this.state.activePage} count={this.state.eventCount} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
           </Col>
           <Col className="px-1 pb-2" sm={12} md={3} lg={3}>
-            <EventFilterForm disabled={this.state.fetching} hideASNAP={this.state.hideASNAP} handlePostSubmit={ this.updateEventFilter } lowering_id={null} sort="newest"/>
+            <EventFilterForm disabled={this.state.fetching} hideASNAP={this.state.hideASNAP} handlePostSubmit={ this.updateEventFilter } sort="newest" lowering_id={null}/>
           </Col>
         </Row>
-      </div>
+      </Container>
     );
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     roles: state.user.profile.roles,
     event: state.event,

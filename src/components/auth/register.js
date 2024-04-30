@@ -31,6 +31,7 @@ class Register extends Component {
 
   renderSuccess() {
     if (this.props.message) {
+
       return (
         <Card className="form-signin" >
           <Card.Body>
@@ -86,32 +87,24 @@ class Register extends Component {
                   component={renderTextField}
                   label="Username"
                   required={true}
-                  sm={12}
-                  lg={12}
                 />
                 <Field
                   name="fullname"
                   component={renderTextField}
                   label="Full Name"
                   required={true}
-                  sm={12}
-                  lg={12}
                 />
                 <Field
                   name="email"
                   component={renderTextField}
                   label="Email"
                   required={true}
-                  sm={12}
-                  lg={12}
                 />
                 <Field
                   name="password"
                   component={renderTextField}
                   type="password"
                   label="Password"
-                  sm={12}
-                  lg={12}
                   required={true}
                 />
                 <Field
@@ -119,8 +112,6 @@ class Register extends Component {
                   component={renderTextField}
                   type="password"
                   label="Confirm Password"
-                  sm={12}
-                  lg={12}
                   required={true}
                 />
               </Form.Row>
@@ -153,7 +144,7 @@ class Register extends Component {
   }
 }
 
-function validate(formProps) {
+const validate = (formProps) => {
   const errors = {};
 
   if (!formProps.username) {
@@ -199,7 +190,7 @@ const afterSubmit = () => {
   }
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     errorMessage: state.user.register_error,
     message: state.user.register_message

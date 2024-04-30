@@ -6,7 +6,7 @@ import { connectModal } from 'redux-modal';
 import ReactFileReader from 'react-file-reader';
 import Cookies from 'universal-cookie';
 import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
-
+import { _Lowerings_ } from '../vocab';
 const cookies = new Cookies();
 
 class ImportLoweringsModal extends Component {
@@ -20,7 +20,6 @@ class ImportLoweringsModal extends Component {
       errors: 0,
       skipped: 0,
       quit: false,
-      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
     }
 
     this.quitImport = this.quitImport.bind(this);
@@ -39,82 +38,57 @@ class ImportLoweringsModal extends Component {
 
   async insertLowering({id, lowering_id, start_ts, stop_ts, lowering_location = '', lowering_tags = [], lowering_hidden = false, lowering_additional_meta = {} }) {
 
-    try {
-      const result = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token'),
-          'content-type': 'application/json'
-        }
-      })
-      if(result) {
-
-        // console.log("User Already Exists");
-        this.setState( prevState => (
-          {
-            skipped: prevState.skipped + 1,
-            pending: prevState.pending - 1
-          }
-        ))
+    const loweringExists = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
+    {
+      headers: {
+        Authorization: 'Bearer ' + cookies.get('token'),
+        'content-type': 'application/json'
       }
-    } catch(error) {
+    }).then(() => {
+      this.setState( prevState => (
+        {
+          skipped: prevState.skipped + 1,
+          pending: prevState.pending - 1
+        }
+      ))
+      return true
+    }).catch((error) => {
+      return false
+    })
 
-      if(error.response.data.statusCode === 404) {
-        // console.log("Attempting to add user")
-
-        try {
-
-          const result = await axios.post(`${API_ROOT_URL}/api/v1/lowerings`,
-          {id, lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_additional_meta},
-          {
-            headers: {
-              Authorization: 'Bearer ' + cookies.get('token'),
-              'content-type': 'application/json'
+    if(!loweringExists) {
+      await axios.post(`${API_ROOT_URL}/api/v1/lowerings`,
+        { id, lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_additional_meta },
+        {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        }).then((response) => {
+          this.setState( prevState => (
+            {
+              imported: prevState.imported + 1,
+              pending: prevState.pending - 1
             }
-          })
-          if(result) {
-            // console.log("User Imported");
-            this.setState( prevState => (
-              {
-                imported: prevState.imported + 1,
-                pending: prevState.pending - 1
-              }
-            ))
+          ))
+        }).catch((error) => {
+          if(error.response.data.statusCode !== 400) {
+            console.error("Problem Problem connecting to API")
+            console.debug(error);
           }
-        } catch(error) {
-          
-          if(error.response.data.statusCode === 400) {
-            // console.log("User Data malformed or incomplete");
-          } else {
-            console.log(error);  
-          }
-          
           this.setState( prevState => (
             {
               errors: prevState.errors + 1,
               pending: prevState.pending - 1
             }
           ))
-        }
-      } else {
-
-        if(error.response.data.statusCode !== 400) {
-          console.log(error.response);
-        }
-        this.setState( prevState => (
-          {
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }
-        ))
-      }
+        });
     }
   }
 
   importLoweringsFromFile = async (e) => {
     try {
 
-      // console.log("processing file")
       let json = JSON.parse(e.target.result);
 
       if(Array.isArray(json)) {
@@ -144,8 +118,8 @@ class ImportLoweringsModal extends Component {
         })
         await this.insertLowering(json);
       }
-    } catch (err) {
-      console.log('error when trying to parse json = ' + err);
+    } catch (error) {
+      console.error('error when trying to parse json = ' + error);
     }
     this.setState({pending: (this.state.quit)?"Quit Early!":"Complete"})
   }
@@ -171,7 +145,7 @@ class ImportLoweringsModal extends Component {
       return (
         <Modal show={show} onExit={handleExit} onHide={this.quitImport}>
           <Modal.Header closeButton>
-            <Modal.Title>Import {this.state.lowerings_name}</Modal.Title>
+            <Modal.Title>Import {_Lowerings_}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
@@ -199,7 +173,7 @@ class ImportLoweringsModal extends Component {
     }
     else {
       return null;
-    }  
+    }
   }
 }
 

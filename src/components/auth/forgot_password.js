@@ -95,8 +95,6 @@ class ForgotPassword extends Component {
                   name="email"
                   component={renderTextField}
                   placeholder="Email Address"
-                  sm={12}
-                  lg={12}
                 />
               </Form.Row>
               {recaptcha}
@@ -128,18 +126,17 @@ class ForgotPassword extends Component {
   }
 }
 
-const validate = values => {
+const validate = (formProps) => {
 
-  // console.log(values)
   const errors = {};
-  if (!values.email) {
+  if (!formProps.email) {
     errors.email = 'Required';
   }
 
   return errors;
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     errorMessage: state.auth.error,
     successMessage: state.auth.message

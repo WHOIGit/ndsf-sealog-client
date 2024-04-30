@@ -7,7 +7,7 @@ import {
 
 const historyLimit = 20;
 
-export default function(state={event_templates: [], history: [], event_template_category: ''}, action) {
+export default (state={event_templates: [], history: [], event_template_category: ''}, action) => {
   switch(action.type){
     case FETCH_EVENT_TEMPLATES_FOR_MAIN:
       return {...state, event_templates: action.payload };

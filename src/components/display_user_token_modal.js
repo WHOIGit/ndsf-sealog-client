@@ -30,21 +30,19 @@ class DisplayUserTokenModal extends Component {
   }
 
   async getUserJWT() {
-    const token = await axios.get(`${API_ROOT_URL}/api/v1/users/${this.props.id}/token`,
-    {
-      headers: {
-        Authorization: 'Bearer ' + cookies.get('token'),
-        'content-type': 'application/json'
-      }
-    })
-    .then((response) => {
-      return response.data.token;
-    })
-    .catch(() => {
-      return "There was an error retriving the JWT for this user.";
-    })
-
-    this.setState( { token } )
+    await axios.get(`${API_ROOT_URL}/api/v1/users/${this.props.id}/token`,
+      {
+        headers: {
+          Authorization: 'Bearer ' + cookies.get('token'),
+          'content-type': 'application/json'
+        }
+      }).then((response) => {
+        this.setState({ token: response.data.token });
+      }).catch((error) => {
+        console.error('Problem connecting to API');
+        console.debug(error);
+        this.setState({ token: null });
+      })
   }
 
   handleConfirm() {

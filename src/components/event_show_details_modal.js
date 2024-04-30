@@ -27,9 +27,7 @@ class EventShowDetailsModal extends Component {
     super(props);
 
     this.state = { event: {} }
-
     this.handleImagePreviewModal = this.handleImagePreviewModal.bind(this);
-
   }
 
   static propTypes = {
@@ -45,19 +43,18 @@ class EventShowDetailsModal extends Component {
   }
 
   async initEvent() {
-    try {
-      const response = await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${this.props.event.id}`,
-        {
-          headers: {
-          Authorization: 'Bearer ' + cookies.get('token')
-          }
-        }      
-      )
-      this.setState({event: response.data});
-    }
-    catch(error) {
-      console.log(error);
-    }    
+    await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${this.props.event.id}`,
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then((response) => {
+        this.setState({ event: response.data });
+      }).catch((error) => {
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error.response);
+        }
+        this.setState({ event: {} });
+      });
   }
 
   handleImagePreviewModal(source, filepath) {
@@ -81,7 +78,6 @@ class EventShowDetailsModal extends Component {
       if(frameGrabberData.length > 0) {
         for (let i = 0; i < frameGrabberData.length; i++) {
           for (let j = 0; j < frameGrabberData[i].data_array.length; j+=2) {
-      
             tmpData.push({
               source: frameGrabberData[i].data_array[j].data_value,
               filepath: getImageUrl(frameGrabberData[i].data_array[j+1].data_value)
@@ -103,8 +99,6 @@ class EventShowDetailsModal extends Component {
   }
 
   renderEventOptionsCard() {
-
-    // return null;
     let return_event_options = this.state.event.event_options.reduce((filtered, event_option, index) => {
       if(event_option.event_option_name !== 'event_comment') {
         filtered.push(<div key={`event_option_${index}`}><span className="data-name">{event_option.event_option_name.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}:</span> <span className="float-right" style={{wordWrap:'break-word'}} >{event_option.event_option_value}</span><br/></div>);
@@ -125,11 +119,9 @@ class EventShowDetailsModal extends Component {
   }
 
   renderAuxDataCard() {
-
     if(this.state.event && this.state.event.aux_data) {
 
       const aux_data = this.state.event.aux_data.filter((data) => !excludeAuxDataSources.includes(data.data_source))
-
       aux_data.sort((a, b) => {
         return (sortAuxDataSourceReference.indexOf(a.data_source) < sortAuxDataSourceReference.indexOf(b.data_source)) ? -1 : 1;
       });
@@ -159,13 +151,11 @@ class EventShowDetailsModal extends Component {
 
   render() {
     const { show, event } = this.props
-
     const event_free_text_card = (this.state.event.event_free_text)? (<Col className="px-1 pb-2" xs={12}><Card className="event-data-card"><Card.Body>Free-form Text: {this.state.event.event_free_text}</Card.Body></Card></Col>) : null;
     const event_comment = (this.state.event.event_options) ? this.state.event.event_options.find((event_option) => (event_option.event_option_name === 'event_comment' && event_option.event_option_value.length > 0)) : null
-
     const event_comment_card = (event_comment)?(<Col className="px-1" xs={12}><Card className="event-data-card"><Card.Body>Comment: {event_comment.event_option_value}</Card.Body></Card></Col>) : null;
-    
-    if (event ) {
+
+    if (event) {
       if(this.state.event.event_options) {
         return (
           <Modal size="lg" show={show} onHide={this.props.handleHide}>
@@ -216,8 +206,7 @@ class EventShowDetailsModal extends Component {
   }
 }
 
-function mapStateToProps(state) {
-
+const mapStateToProps = (state) => {
   return {
     lowering: state.lowering.lowering,
     roles: state.user.profile.roles,

@@ -3,25 +3,40 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { Button, Card, Form, } from 'react-bootstrap';
-import { renderAlert, renderCheckboxGroup, renderMessage, renderSwitch, renderTextField } from './form_elements';
+import PropTypes from 'prop-types';
+import { renderAlert, renderCheckboxGroup, renderHidden, renderMessage, renderSwitch, renderTextField } from './form_elements';
 import * as mapDispatchToProps from '../actions';
 import { standardUserRoleOptions } from '../standard_user_role_options';
 import { systemUserRoleOptions } from '../system_user_role_options';
 
-class UpdateUser extends Component {
+class UserForm extends Component {
+
+  static propTypes = {
+    handleFormSubmit: PropTypes.func.isRequired
+  };
 
   componentDidMount() {
-    if(this.props.userID) {
-      this.props.initUser(this.props.userID);
-    }
   }
 
   componentWillUnmount() {
-    this.props.leaveUpdateUserForm();
+    this.props.leaveUserForm();
   }
 
   handleFormSubmit(formProps) {
-    this.props.updateUser(formProps);
+
+    delete formProps.confirmPassword;
+
+    formProps.system_user = formProps.system_user || false;
+    formProps.disabled = formProps.disabled || false;
+
+    if (formProps.id) {
+      this.props.updateUser(formProps);
+    }
+    else {
+      this.props.createUser(formProps);
+    }
+
+    this.props.handleFormSubmit();
   }
 
   renderAdminOptions() {
@@ -64,58 +79,51 @@ class UpdateUser extends Component {
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const updateUserFormHeader = (<div>Update User</div>);
+    const formHeader = (<div>{(this.props.user.id) ? "Update" : "Add"} User</div>);
 
-
-    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('event_manager'))) {
+    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
       let userRoleOptions = this.props.roles.includes('admin')? systemUserRoleOptions.concat(standardUserRoleOptions): standardUserRoleOptions;
 
       return (
         <Card className="border-secondary">
-          <Card.Header>{updateUserFormHeader}</Card.Header>
+          <Card.Header>{formHeader}</Card.Header>
           <Card.Body>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
-              <Form.Row>
+             <Field
+              name="id"
+              component={renderHidden}
+            />
+             <Form.Row>
                 <Field
                   name="username"
                   component={renderTextField}
                   label="Username"
                   required={true}
-                  lg={12}
-                  sm={12}
                 />
                 <Field
                   name="fullname"
                   component={renderTextField}
                   label="Full Name"
                   required={true}
-                  lg={12}
-                  sm={12}
                 />
                 <Field
                   name="email"
                   component={renderTextField}
                   label="Email"
-                  disabled={true}
-                  lg={12}
-                  sm={12}
+                  disabled={(this.props.user.id) ? true : false}
                 />
                 <Field
                   name="password"
                   component={renderTextField}
                   type="password"
                   label="Password"
-                  lg={12}
-                  sm={12}
                 />
                 <Field
                   name="confirmPassword"
                   component={renderTextField}
                   type="password"
                   label="Confirm Password"
-                  lg={12}
-                  sm={12}
                 />
                 <Field
                   name="roles"
@@ -123,8 +131,6 @@ class UpdateUser extends Component {
                   label="Roles"
                   options={userRoleOptions}
                   required={true}
-                  lg={12}
-                  sm={12}
                 />
               </Form.Row>
               {this.renderAdminOptions()}
@@ -148,7 +154,8 @@ class UpdateUser extends Component {
   }
 }
 
-function validate(formProps) {
+const validate = (formProps) => {
+
   const errors = {};
 
   if (!formProps.username) {
@@ -180,15 +187,16 @@ function validate(formProps) {
   }
 
   return errors;
-
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
+
+  let initialValues = { ...state.user.user }
 
   return {
     errorMessage: state.user.user_error,
     message: state.user.user_message,
-    initialValues: state.user.user,
+    initialValues: initialValues,
     user: state.user.user,
     roles: state.user.profile.roles,
     profile: state.user.profile
@@ -202,4 +210,4 @@ export default compose(
     enableReinitialize: true,
     validate: validate
   })
-)(UpdateUser);
+)(UserForm);

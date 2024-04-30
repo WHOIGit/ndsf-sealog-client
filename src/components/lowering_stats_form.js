@@ -6,19 +6,14 @@ import { Button, Col, Form, Row} from 'react-bootstrap';
 import { renderDateTimePicker, renderTextField, dateFormat } from './form_elements';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { CUSTOM_LOWERING_NAME } from '../client_config';
 import * as mapDispatchToProps from '../actions';
 
 const timeFormat = "HH:mm:ss.SSS";
 
-class UpdateLoweringStatsForm extends Component {
+class LoweringStatsForm extends Component {
 
   constructor (props) {
     super(props);
-
-    this.state = {
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
-    }
   }
 
   static propTypes = {
@@ -54,13 +49,13 @@ class UpdateLoweringStatsForm extends Component {
   handleFormSubmit(formProps) {
 
     let milestones = {
-      lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : formProps.start,
-      lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : formProps.descending,
-      lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : formProps.on_bottom,
-      lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : formProps.off_bottom,
-      lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString() : formProps.on_surface,
-      lowering_stop: (formProps.stop._isAMomentObject) ? formProps.stop.toISOString() : formProps.stop,
-      lowering_aborted: (formProps.aborted && formProps.aborted._isAMomentObject) ? formProps.aborted.toISOString() : formProps.aborted,
+      lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : moment.utc(formProps.start).toISOString(),
+      lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : moment.utc(formProps.descending).toISOString(),
+      lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : moment.utc(formProps.on_bottom).toISOString(),
+      lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : moment.utc(formProps.off_bottom).toISOString(),
+      lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString() : moment.utc(formProps.on_surface).toISOString(),
+      lowering_stop: (formProps.stop._isAMomentObject) ? formProps.stop.toISOString() : moment.utc(formProps.stop).toISOString(),
+      lowering_aborted: (formProps.aborted && formProps.aborted._isAMomentObject) ? formProps.aborted.toISOString() : moment.utc(formProps.aborted).toISOString()
     }
 
     let stats= {
@@ -102,7 +97,7 @@ class UpdateLoweringStatsForm extends Component {
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
               <Row>
                 <Col className="px-1" sm={6}>
-                  <Form.Row className="justify-content-sm-center">  
+                  <Form.Row className="justify-content-sm-center">
                     <Field
                       name="start"
                       component={renderDateTimePicker}
@@ -114,7 +109,7 @@ class UpdateLoweringStatsForm extends Component {
                       lg={7}
                     />
                   </Form.Row>
-                  <Form.Row className="justify-content-sm-center">  
+                  <Form.Row className="justify-content-sm-center">
                     <Field
                       name="descending"
                       component={renderDateTimePicker}
@@ -125,7 +120,7 @@ class UpdateLoweringStatsForm extends Component {
                       lg={7}
                     />
                   </Form.Row>
-                  <Form.Row className="justify-content-sm-center">  
+                  <Form.Row className="justify-content-sm-center">
                     <Field
                       name="on_bottom"
                       component={renderDateTimePicker}
@@ -136,7 +131,7 @@ class UpdateLoweringStatsForm extends Component {
                       lg={7}
                     />
                   </Form.Row>
-                  <Form.Row className="justify-content-sm-center">  
+                  <Form.Row className="justify-content-sm-center">
                     <Field
                       name="off_bottom"
                       component={renderDateTimePicker}
@@ -147,7 +142,7 @@ class UpdateLoweringStatsForm extends Component {
                       lg={7}
                     />
                   </Form.Row>
-                  <Form.Row className="justify-content-sm-center">  
+                  <Form.Row className="justify-content-sm-center">
                     <Field
                       name="on_surface"
                       component={renderDateTimePicker}
@@ -158,7 +153,7 @@ class UpdateLoweringStatsForm extends Component {
                       lg={7}
                     />
                   </Form.Row>
-                  <Form.Row className="justify-content-sm-center">  
+                  <Form.Row className="justify-content-sm-center">
                     <Field
                       name="stop"
                       component={renderDateTimePicker}
@@ -170,7 +165,7 @@ class UpdateLoweringStatsForm extends Component {
                       lg={7}
                     />
                   </Form.Row>
-                  <Form.Row className="justify-content-sm-center">  
+                  <Form.Row className="justify-content-sm-center">
                     <Field
                       name="aborted"
                       component={renderDateTimePicker}
@@ -254,7 +249,7 @@ class UpdateLoweringStatsForm extends Component {
   }
 }
 
-function validate(formProps) {
+const validate = (formProps) => {
 
   const errors = {};
 
@@ -327,7 +322,7 @@ function validate(formProps) {
 
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     roles: state.user.profile.roles
   };
@@ -339,4 +334,4 @@ export default compose(
     form: 'editLoweringStats',
     validate: validate
   })
-)(UpdateLoweringStatsForm);
+)(LoweringStatsForm);

@@ -79,20 +79,20 @@ class LoweringDropdown extends Component {
   async fetchLowerings() {
 
     if ( this.props.active_cruise.id ) {
-      try {
-        const response = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/bycruise/${this.props.active_cruise.id}`,
+      await axios.get(`${API_ROOT_URL}/api/v1/lowerings/bycruise/${this.props.active_cruise.id}`,
         {
           headers: {
             Authorization: 'Bearer ' + cookies.get('token')
           }
+        }).then((response) => {
+          this.setState({ lowerings: response.data });
+        }).catch((error) => {
+          if(error.response.data.statusCode !== 404) {
+            console.error('Problem connecting to API');
+            console.debug(error)
+          }
+          this.setState({ lowerings: [] });
         })
-        
-        const lowerings = await response.data;
-        this.setState({lowerings})
-      }
-      catch(error){
-        console.log(error)
-      }
     }
   }
 

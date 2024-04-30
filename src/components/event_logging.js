@@ -63,7 +63,7 @@ class EventLogging extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
 
   return {
     roles: state.user.profile.roles,

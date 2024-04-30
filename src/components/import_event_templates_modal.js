@@ -38,82 +38,57 @@ class ImportEventTemplatesModal extends Component {
 
   async insertEventTemplate({id, event_name, event_value, event_free_text_required = false, event_options = [], system_template = false, template_categories = [] }) {
 
-    try {
-      const result = await axios.get(`${API_ROOT_URL}/api/v1/event_templates/${id}`,
+    const templateExists = await axios.get(`${API_ROOT_URL}/api/v1/event_templates/${id}`,
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
-      })
-
-      if(result) {
-        // console.log("Event Template Already Exists");
+      }).then(() => {
         this.setState( prevState => (
           {
             skipped: prevState.skipped + 1,
             pending: prevState.pending - 1
           }
         ))
-      }
-    } catch(error) {
+        return true
+      }).catch(() => {
+        return false
+      });
 
-      if(error.response.data.statusCode === 404) {
-      // console.log("Attempting to add event template")
-
-        try {
-          const result = await axios.post(`${API_ROOT_URL}/api/v1/event_templates`,
-          {id, event_name, event_value, event_free_text_required, event_options, system_template, template_categories },
-          {
-            headers: {
-              Authorization: 'Bearer ' + cookies.get('token'),
-              'content-type': 'application/json'
+    if(!templateExists) {
+      await axios.post(`${API_ROOT_URL}/api/v1/event_templates`,
+        { id, event_name, event_value, event_free_text_required, event_options, system_template, template_categories },
+        {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        }).then((response) => {
+          this.setState( prevState => (
+            {
+              imported: prevState.imported + 1,
+              pending: prevState.pending - 1
             }
-          })
-          if(result) {
-            // console.log("Event Template Imported");
-            this.setState( prevState => (
-              {
-                imported: prevState.imported + 1,
-                pending: prevState.pending - 1
-              }
-            ))
+          ))
+        }).catch((error) => {
+          if(error.response.data.statusCode !== 400) {
+            console.error("Problem connecting to API")
+            console.debug(error);
           }
-        } catch(error) {
-          
-          if(error.response.data.statusCode === 400) {
-            // console.log("Event Template Data malformed or incomplete");
-          } else {
-            console.log(error);  
-          }
-          
           this.setState( prevState => (
             {
               errors: prevState.errors + 1,
               pending: prevState.pending - 1
             }
           ))
-        }
-      } else {
-
-        if(error.response.data.statusCode !== 400) {
-          console.log(error.response);
-        }
-
-        this.setState( prevState => (
-          {
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }
-        ))
-      }
+        });
     }
   }
 
   importEventTemplatesFromFile = async (e) => {
     try {
 
-      // console.log("processing file")
       let json = JSON.parse(e.target.result);
       this.setState({
         pending: json.length,
@@ -126,16 +101,14 @@ class ImportEventTemplatesModal extends Component {
 
       for(let i = 0; i < json.length; i++) {
         if(this.state.quit) {
-          // console.log("quiting")
           break;
         }
         currentTemplate = json[i];
-        // console.log("adding template")
         await this.insertEventTemplate(currentTemplate);
       }
 
-    } catch (err) {
-      console.log('error when trying to parse json = ' + err);
+    } catch (error) {
+      console.error('Error when trying to parse json = ' + error);
     }
     this.setState({pending: (this.state.quit)?"Quit Early!":"Complete"})
   }

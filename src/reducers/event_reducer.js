@@ -11,7 +11,7 @@ import {
 
 } from '../actions/types';
 
-export default function( state={ selected_event: {}, events: [], eventFilter: {}, hideASNAP: false, fetching: false}, action) {
+export default ( state={ selected_event: {}, events: [], eventFilter: {}, hideASNAP: false, fetching: false}, action) => {
   switch(action.type){
 
     case INIT_EVENT:
@@ -48,6 +48,6 @@ export default function( state={ selected_event: {}, events: [], eventFilter: {}
     case SHOW_ASNAP:
       return { ...state, hideASNAP: false };
   }
-  
+
   return state;
 }

@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { Row, Button, Col, Card, Form, FormControl, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import CreateUser from './create_user';
-import UpdateUser from './update_user';
+import { Row, Button, Col, Container, Card, Form, FormControl, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import UserForm from './user_form';
 import DisplayUserTokenModal from './display_user_token_modal';
 import NonSystemUsersWipeModal from './non_system_users_wipe_modal';
 import ImportUsersModal from './import_users_modal';
 import DeleteUserModal from './delete_user_modal';
 import UserPermissionsModal from './user_permissions_modal';
 import CustomPagination from './custom_pagination';
-import { USE_ACCESS_CONTROL, CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME } from '../client_config';
+import { USE_ACCESS_CONTROL } from '../client_config';
+import { _Cruise_ } from '../vocab';
 import * as mapDispatchToProps from '../actions';
 
 const disabledAccounts = ['admin', 'guest', 'pi'];
@@ -31,9 +31,7 @@ class Users extends Component {
       activePage: 1,
       activeSystemPage: 1,
       filteredUsers: null,
-      filteredSystemUsers: null,
-      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise",
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
+      filteredSystemUsers: null
     };
 
     this.handlePageSelect = this.handlePageSelect.bind(this);
@@ -73,7 +71,7 @@ class Users extends Component {
   }
 
   handleUserCreate() {
-    this.props.leaveUpdateUserForm();
+    this.props.leaveUserForm();
   }
 
   handleUserImportModal() {
@@ -154,14 +152,16 @@ class Users extends Component {
     const editTooltip = (<Tooltip id="editTooltip">Edit this user.</Tooltip>);
     const tokenTooltip = (<Tooltip id="tokenTooltip">Show user&apos;s JWT token.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this user.</Tooltip>);
-    const permissionTooltip = (<Tooltip id="permissionTooltip">${this.state.cruise_name}/{this.state.lowering_name} permissions.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">${_Cruise_} permissions.</Tooltip>);
 
     let users = (Array.isArray(this.state.filteredUsers)) ? this.state.filteredUsers : this.props.users.filter(user => user.system_user === false);
     users = users.slice((this.state.activePage - 1) * maxUsersPerPage, this.state.activePage * maxUsersPerPage);
 
     return users.map((user) => {
+
       const style = (user.disabled)? {"textDecoration": "line-through"}: {};
       const className = (this.props.userid === user.id)? "text-warning" : "";
+
       return (
         <tr key={user.id}>
           <td style={style} className={className}>{user.username}</td>
@@ -174,7 +174,7 @@ class Users extends Component {
           </td>
         </tr>
       );
-    });      
+    });
   }
 
   renderSystemUsers() {
@@ -182,7 +182,7 @@ class Users extends Component {
     const editTooltip = (<Tooltip id="editTooltip">Edit this user.</Tooltip>);
     const tokenTooltip = (<Tooltip id="tokenTooltip">Show user&apos;s JWT token.</Tooltip>);
     const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this user.</Tooltip>);
-    const permissionTooltip = (<Tooltip id="permissionTooltip">${this.state.cruise_name}/{this.state.lowering_name} permissions.</Tooltip>);
+    const permissionTooltip = (<Tooltip id="permissionTooltip">${_Cruise_} permissions.</Tooltip>);
 
     let system_users = (Array.isArray(this.state.filteredSystemUsers)) ? this.state.filteredSystemUsers : this.props.users.filter(user => user.system_user === true);
     system_users = system_users.slice((this.state.activeSystemPage - 1) * maxSystemUsersPerPage, this.state.activeSystemPage * maxSystemUsersPerPage);
@@ -208,6 +208,7 @@ class Users extends Component {
   }
 
   renderUserTable() {
+
     if(this.props.users.filter(user => user.system_user === false).length > 0){
       return (
         <Table responsive bordered striped size="sm">
@@ -306,10 +307,8 @@ class Users extends Component {
 
     if (this.props.roles.includes("admin") || this.props.roles.includes("cruise_manager")) {
 
-      const  userForm = (this.props.userid) ? <UpdateUser /> : <CreateUser />;
-
       return (
-        <div>
+        <Container className="mt-2">
           <DisplayUserTokenModal />
           <DeleteUserModal />
           <ImportUsersModal handleExit={this.handleUserImportClose}/>
@@ -333,11 +332,12 @@ class Users extends Component {
               </div>
             </Col>
             <Col className="px-1" sm={12} md={5} lg={4} xl={3}>
-              { userForm }
+              <UserForm handleFormSubmit={ this.props.fetchUsers }/>
             </Col>
           </Row>
-        </div>
+        </Container>
       );
+
     } else {
       return (
         <div>
@@ -348,7 +348,7 @@ class Users extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     users: state.user.users,
     userid: state.user.user.id,

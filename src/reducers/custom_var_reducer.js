@@ -4,15 +4,14 @@ import {
 
 } from '../actions/types';
 
-export default function( state={ custom_vars: [] }, action) {
+export default ( state={ custom_vars: [] }, action) => {
   switch(action.type){
 
     case FETCH_CUSTOM_VARS:
       return { ...state, custom_vars: action.payload };
 
     case UPDATE_CUSTOM_VAR:
-      console.log('payload:', action.payload);
       return state;
-  }    
+  }
   return state;
 }

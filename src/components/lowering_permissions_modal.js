@@ -43,17 +43,15 @@ class LoweringPermissionsModal extends Component {
   }
 
   async updateLoweringPermissions(user_id, type) {
-    try {
+    const payload = {};
+    if (type === updateType.ADD) {
+      payload.add = [user_id];
+    }
+    else if (type === updateType.REMOVE) {
+      payload.remove = [user_id];
+    }
 
-      const payload = {};
-      if (type === updateType.ADD) {
-        payload.add = [user_id];
-      }
-      else if (type === updateType.REMOVE) {
-        payload.remove = [user_id];
-      }
-
-      await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}/permissions`,
+    await axios.patch(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}/permissions`,
       payload,
       {
         headers: {
@@ -63,60 +61,56 @@ class LoweringPermissionsModal extends Component {
       }).then(async (response) => {
         await this.fetchLowering();
         return response.data;
-      }).catch((err) => {
-        console.error(err);
+      }).catch((error) => {
+        console.error('Problem connecting to API');
+        console.debug(error);
         return null;
       });
 
-    } catch(error) {
-      console.error(error);
-    }
   }
 
   async fetchLowering() {
     try {
 
-      const lowering = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token'),
-          'content-type': 'application/json'
-        }
-      }).then((response) => {
-        return response.data;
-      }).catch((err) => {
-        console.error(err);
-        return null;
-      });
+      await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${this.props.lowering_id}`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        }).then((response) => {
+          this.setState({ lowering: response.data});
+        }).catch((error) => {
+          if(error.response.data.statusCode !== 404) {
+            console.error('Problem connecting to API');
+            console.debug(error);
+          }
+          this.setState({ lowering: null })
+        });
 
-      this.setState({ lowering })
 
     } catch(error) {
-      console.error(error);
+      console.error('Problem connecting to API');
+      console.debug(error);
     }
   }
 
   async fetchUsers() {
-    try {
-
-      const users = await axios.get(`${API_ROOT_URL}/api/v1/users`,
+    await axios.get(`${API_ROOT_URL}/api/v1/users`,
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       }).then((response) => {
-        return response.data;
-      }).catch((err) => {
-        console.error(err);
-        return [];
+        this.setState({ users: response.data });
+      }).catch((error) => {
+        if(error.response.data.statusCode !== 404) {
+          console.error('Problem connecting to API');
+          console.debug(error);
+        }
+        this.setState({ users: [] });
       });
-
-      this.setState({ users })
-
-    } catch(error) {
-      console.error(error);
-    }
   }
 
   render() {
@@ -139,7 +133,7 @@ class LoweringPermissionsModal extends Component {
         )
       }) :
       null;
-      
+
     if (body) {
       return (
         <Modal show={show} onHide={handleHide}>

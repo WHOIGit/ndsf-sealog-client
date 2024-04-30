@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, change } from 'redux-form';
 import { Button, Card, Form } from 'react-bootstrap';
-import { renderAlert, renderDateTimePicker, renderMessage, renderTextField, renderTextArea } from './form_elements';
+import { renderAlert, renderDateTimePicker, renderHidden, renderMessage, renderTextField, renderTextArea } from './form_elements';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import moment from 'moment';
@@ -12,7 +12,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileDownload from 'js-file-download';
 import { FilePond } from 'react-filepond';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
-import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX, CUSTOM_LOWERING_NAME } from '../client_config';
+import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX } from '../client_config';
+import { _Lowering_ } from '../vocab';
 import * as mapDispatchToProps from '../actions';
 
 const dateFormat = "YYYY-MM-DD"
@@ -22,19 +23,17 @@ const LOWERING_ROUTE = "/files/lowerings";
 
 const cookies = new Cookies();
 
-class UpdateLowering extends Component {
+class LoweringForm extends Component {
 
   constructor (props) {
     super(props);
 
     this.state = {
       filepondPristine: true,
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering"
     }
 
     this.handleFileDownload = this.handleFileDownload.bind(this);
     this.handleFileDelete = this.handleFileDelete.bind(this);
-    this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleSetLoweringStatsModal = this.handleSetLoweringStatsModal.bind(this);
   }
 
@@ -43,73 +42,87 @@ class UpdateLowering extends Component {
   };
 
   componentDidMount() {
-    if(this.props.loweringID) {
-      this.props.initLowering(this.props.loweringID);
+    this.populateDefaultValues();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.props.lowering !== prevProps.lowering && Object.keys(this.props.lowering).length === 0) {
+      this.populateDefaultValues();
     }
   }
 
   componentWillUnmount() {
-    this.props.leaveUpdateLoweringForm();
+    this.props.leaveLoweringForm();
+  }
+
+  populateDefaultValues() {
+    const start_ts = moment.utc().set({minute:0, second:0});
+    const loweringDefaultValues = { start_ts, stop_ts: start_ts.add(1, 'days') };
+    this.props.initialize(loweringDefaultValues);
   }
 
   handleFileDeleteModal(file) {
     this.props.showModal('deleteFile', { file: file, handleDelete: this.handleFileDelete });
   }
 
-  async handleFormSubmit(formProps) {
-    formProps.lowering_tags = (formProps.lowering_tags)? formProps.lowering_tags.map(tag => tag.trim()): [];
+  handleFormSubmit(formProps) {
 
-    if(formProps.lowering_description) {
-      formProps.lowering_additional_meta.lowering_description = formProps.lowering_description
-      delete formProps.lowering_description
+    formProps.lowering_location = formProps.lowering_location || '';
+    formProps.lowering_additional_meta.lowering_description = formProps.lowering_additional_meta.lowering_description || '';
+    formProps.lowering_hidden = formProps.lowering_hidden || false;
+
+    formProps.lowering_tags = formProps.lowering_tags || [];
+    if(typeof formProps.lowering_tags === 'string') {
+      formProps.lowering_tags = formProps.lowering_tags.split(',');
+      formProps.lowering_tags = formProps.lowering_tags.map(string => {
+        return string.trim();
+      });
     }
 
-    if(this.pond) {
-      formProps.lowering_additional_meta.lowering_files = this.pond.getFiles().map(file => file.serverId);
+    formProps.lowering_additional_meta.lowering_files = this.pond.getFiles().map(file => file.serverId)
+
+    if (formProps.id) {
+      this.props.updateLowering(formProps);
+    }
+    else {
+      this.props.createLowering(formProps);
     }
 
-    await this.props.updateLowering({...formProps});
     this.pond.removeFiles();
-    this.props.handleFormSubmit()
+    this.props.handleFormSubmit();
   }
 
   async handleFileDownload(filename) {
     await axios.get(`${API_ROOT_URL}${LOWERING_ROUTE}/${this.props.lowering.id}/${filename}`,
-    {
-      headers: {
-        Authorization: 'Bearer ' + cookies.get('token')
-      },
-      responseType: 'arraybuffer'
-    })
-    .then((response) => {
-        FileDownload(response.data, filename);
-     })
-    .catch(()=>{
-      console.log("JWT is invalid, logging out");
-    });
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') },
+        responseType: 'arraybuffer'
+      }).then((response) => {
+          FileDownload(response.data, filename);
+       }).catch((error)=>{
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error);
+        }
+      });
   }
 
   async handleFileDelete(filename) {
     await axios.delete(`${API_ROOT_URL}${LOWERING_ROUTE}/${this.props.lowering.id}/${filename}`,
-    {
-      headers: {
-        Authorization: 'Bearer ' + cookies.get('token')
-      }
-    })
-    .then(() => {
-        this.props.initLowering(this.props.lowering.id)
-     })
-    .catch(()=>{
-      console.log("JWT is invalid, logging out");
-    });
-  }
-
-  handleSetLoweringStatsModal() {
-    this.props.showModal('setLoweringStats', { lowering: this.props.lowering, handleUpdateLowering: this.handleFormSubmit });
+      {
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
+      }).then(() => {
+          this.props.initLowering(this.props.lowering.id)
+       }).catch((error)=>{
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error);
+        }
+      });
   }
 
   renderFiles() {
-    if(this.props.lowering.lowering_additional_meta && this.props.lowering.lowering_additional_meta.lowering_files && this.props.lowering.lowering_additional_meta.lowering_files.length > 0) {
+    if(this.props.lowering.lowering_additional_meta && this.props.lowering.lowering_additional_meta.lowering_files) {
       let files = this.props.lowering.lowering_additional_meta.lowering_files.map((file, index) => {
         return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleFileDownload(file)}>{file}</a> <FontAwesomeIcon onClick={() => this.handleFileDeleteModal(file)} className='text-danger' icon='trash' fixedWidth /></div>
       })
@@ -124,10 +137,14 @@ class UpdateLowering extends Component {
     return null
   }
 
+  handleSetLoweringStatsModal() {
+    this.props.showModal('setLoweringStats', { lowering: this.props.lowering, handleLoweringForm: this.handleFormSubmit });
+  }
+
   render() {
 
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
-    const updateLoweringFormHeader = (<div>Update {this.state.lowering_name}<span className="float-right"><CopyLoweringToClipboard lowering={this.props.lowering}/></span></div>);
+    const updateLoweringFormHeader = (<div>Update {_Lowering_}<span className="float-right"><CopyLoweringToClipboard lowering={this.props.lowering}/></span></div>);
 
     if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
 
@@ -136,27 +153,43 @@ class UpdateLowering extends Component {
           <Card.Header>{updateLoweringFormHeader}</Card.Header>
           <Card.Body>
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+              <Field
+                name="id"
+                component={renderHidden}
+              />
+              <Field
+                name="lowering_hidden"
+                component={renderHidden}
+              />
+              <Field
+                name="lowering_additional_meta.milestones"
+                component={renderHidden}
+              />
+              <Field
+                name="lowering_additional_meta.stats"
+                component={renderHidden}
+              />
               <Form.Row>
                 <Field
                   name="lowering_id"
                   component={renderTextField}
-                  label={`${this.state.lowering_name} ID`}
+                  label={`${_Lowering_} ID`}
                   placeholder={(LOWERING_ID_PLACEHOLDER) ? LOWERING_ID_PLACEHOLDER : "i.e. ROV-0042"}
                   required={true}
                 />
                 <Field
                   name="lowering_location"
                   component={renderTextField}
-                  label={`${this.state.lowering_name} Location`}
+                  label={`${_Lowering_} Location`}
                   placeholder="i.e. Kelvin Seamount"
                 />
               </Form.Row>
               <Form.Row>
                 <Field
-                  name="lowering_description"
+                  name="lowering_additional_meta.lowering_description"
                   component={renderTextArea}
-                  label={`${this.state.lowering_name} Description`}
-                  placeholder={`i.e. A brief description of the ${this.state.lowering_name.toLowerCase()}`}
+                  label={`${_Lowering_} Description`}
+                  placeholder={`i.e. A brief description of the ${_Lowering_.toLowerCase()}`}
                   rows={8}
                 />
               </Form.Row>
@@ -166,29 +199,33 @@ class UpdateLowering extends Component {
                   component={renderDateTimePicker}
                   label="Start Date/Time (UTC)"
                   required={true}
+                  sm={6}
+                  lg={6}
                 />
                 <Field
                   name="stop_ts"
                   component={renderDateTimePicker}
                   label="Stop Date/Time (UTC)"
                   required={true}
+                  sm={6}
+                  lg={6}
                 />
               </Form.Row>
               <Form.Row>
                 <Field
                   name="lowering_tags"
                   component={renderTextArea}
-                  label={`${this.state.lowering_name} Tags, comma delimited`}
+                  label={`${_Lowering_} Tags, comma delimited`}
                   placeholder="i.e. coral,chemistry,engineering"
                   rows={2}
                 />
               </Form.Row>
-              <Form.Label>{this.state.lowering_name} Files</Form.Label>
+              <Form.Label>{_Lowering_} Files</Form.Label>
               {this.renderFiles()}
               <FilePond
                 ref={ref => this.pond = ref}
                 allowMultiple={true} 
-                maxFiles={5} 
+                maxFiles={5}
                 server={{
                   url: API_ROOT_URL,
                   process: {
@@ -201,8 +238,9 @@ class UpdateLowering extends Component {
                   }
                 }}
                 onupdatefiles={() => {
-                  this.setState({ filepondPristine: false });
+                  this.props.dispatch(change('editLowering', 'lowering_additional_meta.lowering_files', true));
                 }}
+                disabled={(this.props.lowering.id) ? false : true }
               >
               </FilePond>
               {renderAlert(this.props.errorMessage)}
@@ -226,7 +264,7 @@ class UpdateLowering extends Component {
   }
 }
 
-function validate(formProps) {
+const validate = (formProps) => {
 
   const errors = {};
 
@@ -270,7 +308,7 @@ function validate(formProps) {
 
 }
 
-function warn(formProps) {
+const warn = (formProps) => {
 
   const warnings = {}
 
@@ -281,23 +319,12 @@ function warn(formProps) {
   return warnings;
 }
 
-function mapStateToProps(state) {
-
-  let initialValues = { ...state.lowering.lowering }
-
-  if (initialValues.lowering_additional_meta) {
-
-    if (initialValues.lowering_additional_meta.lowering_description) {
-      initialValues.lowering_description = initialValues.lowering_additional_meta.lowering_description
-    }
-
-    // delete initialValues.lowering_additional_meta
-  }
+const mapStateToProps = (state) => {
 
   return {
     errorMessage: state.lowering.lowering_error,
     message: state.lowering.lowering_message,
-    initialValues: initialValues,
+    initialValues: state.lowering.lowering,
     lowering: state.lowering.lowering,
     roles: state.user.profile.roles
   };
@@ -311,4 +338,4 @@ export default compose(
     validate: validate,
     warn: warn
   })
-)(UpdateLowering);
+)(LoweringForm);

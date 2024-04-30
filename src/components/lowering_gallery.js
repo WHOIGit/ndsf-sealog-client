@@ -86,36 +86,34 @@ class LoweringGallery extends Component {
       event_filter.split(',').forEach((filter_item) => {
         filter_item.trim();
         url += '&value='+filter_item;
-      })    
+      })
     }
 
-    const image_data = await axios.get(url,
+    await axios.get(url,
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token')
         }
       }).then((response) => {
+        let image_data = {};
+        response.data.forEach((data) => {
+          for (let i = 0; i < data.data_array.length; i+=2) {
+            if(!(data.data_array[i].data_value in image_data)){
+              image_data[data.data_array[i].data_value] = { images: [] };
+            }
 
-      let image_data = {};
-      response.data.forEach((data) => {
-        for (let i = 0; i < data.data_array.length; i+=2) {
-          if(!(data.data_array[i].data_value in image_data)){
-            image_data[data.data_array[i].data_value] = { images: [] };
+            image_data[data.data_array[i].data_value].images.push({ event_id: data.event_id, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(data.data_array[i+1].data_value) });
           }
+        });
 
-          image_data[data.data_array[i].data_value].images.push({ event_id: data.event_id, filepath: API_ROOT_URL + IMAGE_PATH + '/' + path.basename(data.data_array[i+1].data_value) });
+        this.setState({ aux_data: image_data, fetching: false });
+      }).catch((error)=>{
+        if(error.response.data.statusCode !== 404) {
+          console.error('Problem connecting to API');
+          console.debug(error);
         }
+        this.setState({ aux_data: [], fetching: false });
       });
-
-      return image_data;
-    }).catch((error)=>{
-      if(error.response.data.statusCode !== 404) {
-        console.error(error);
-      }
-      return [];
-    });
-
-    this.setState({ aux_data: image_data, fetching: false });
   }
 
   handleKeyDown(event) {
@@ -222,7 +220,7 @@ class LoweringGallery extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     roles: state.user.profile.roles,
     event: state.event,

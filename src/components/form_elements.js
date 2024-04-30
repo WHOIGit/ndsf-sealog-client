@@ -6,8 +6,8 @@ import moment from 'moment';
 export const dateFormat = "YYYY-MM-DD";
 export const timeFormat = "HH:mm:ss";
 
-export function renderStaticTextField({ input, label, xs=12, sm=6, md=12, lg=6}) {
-  
+export const renderStaticTextField = ({ input, label, xs=12, sm=12, md=12, lg=12}) => {
+
   const labelComponent = (label)? <Form.Label>{label}</Form.Label> : null;
 
   return (
@@ -18,7 +18,7 @@ export function renderStaticTextField({ input, label, xs=12, sm=6, md=12, lg=6})
   );
 }
 
-export function renderTextField({ input, label, placeholder, required, meta: { touched, error, warning }, type="text", disabled=false, xs=12, sm=6, md=12, lg=6}) {
+export const renderTextField = ({ input, label, placeholder, required, meta: { touched, error, warning }, type="text", disabled=false, xs=12, sm=12, md=12, lg=12}) => {
   const requiredField = (required)? <span className='text-danger'> *</span> : '';
   const labelComponent = (label)? <Form.Label>{label}{requiredField}</Form.Label> : null;
 
@@ -31,7 +31,7 @@ export function renderTextField({ input, label, placeholder, required, meta: { t
   );
 }
 
-export function renderTextArea({ input, label, placeholder, required, meta: { touched, error }, rows=4, disabled=false, xs=12, sm=12, md=12, lg=12 }) {
+export const renderTextArea = ({ input, label, placeholder, required, meta: { touched, error }, rows=4, disabled=false, xs=12, sm=12, md=12, lg=12 }) => {
   let requiredField = (required)? <span className='text-danger'> *</span> : '';
 
   return (
@@ -43,7 +43,7 @@ export function renderTextArea({ input, label, placeholder, required, meta: { to
   );
 }
 
-export function renderSelectField({ input, label, placeholder, required, options, meta: { touched, error }, disabled=false, xs=12, sm=6, md=12, lg=6 }) {
+export const renderSelectField = ({ input, label, placeholder, required, options, meta: { touched, error }, disabled=false, xs=12, sm=12, md=12, lg=12 }) => {
 
   let requiredField = (required)? <span className='text-danger'> *</span> : '';
   let defaultOption = ( <option key={`${input.name}.empty`} value=""></option> );
@@ -65,45 +65,53 @@ export function renderSelectField({ input, label, placeholder, required, options
   );
 }
 
-export function renderDatePicker({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', disabled=false, xs=12, sm=6, md=12, lg=6 }) {
+export const renderDatePicker = ({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', disabled=false, xs=12, sm=12, md=12, lg=12 }) => {
   let requiredField = (required)? <span className='text-danger'> *</span> : '';
-  
-  const inputProps = {
-    disabled: disabled
-  } 
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat) : null} dateFormat={dateFormat} timeFormat={false} selected={input.value ? moment.utc(input.value, dateFormat) : null } inputProps={inputProps} />
-      {touched && (error && <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div>)}
+      <Datetime className="rdtPicker-sealog" {...input}
+        utc={true}
+        value={input.value ? moment.utc(input.value).format(dateFormat) : null}
+        dateFormat={dateFormat}
+        timeFormat={false}
+        selected={input.value ? moment.utc(input.value, dateFormat) : null }
+        inputProps={{disabled}}
+        renderInput={(props) => {
+          return <input {...props} value={(input.value) ? props.value : ''} />
+        }}
+      />
+      {(error) ? <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div> : ''}
     </Form.Group>
   );
 }
 
-export function renderDateTimePicker({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', timeFormat='HH:mm:ss', disabled=false, xs=12, sm=6, md=12, lg=6 }) {
+export const renderDateTimePicker = ({ input, label, required, meta: { touched, error }, dateFormat='YYYY-MM-DD', timeFormat='HH:mm:ss', disabled=false, xs=12, sm=12, md=12, lg=12 }) => {
   let requiredField = (required)? <span className='text-danger'> *</span> : ''
-
-  const inputProps = {
-    disabled: disabled
-  } 
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Label>{label}{requiredField}</Form.Label>
-      <Datetime className="rdtPicker-sealog" {...input} utc={true} value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null} dateFormat={dateFormat} timeFormat={timeFormat} selected={input.value ? moment.utc(input.value) : null } inputProps={inputProps} />
-      {touched && (error && <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div>)}
+      <Datetime className="rdtPicker-sealog" {...input}
+        utc={true}
+        value={input.value ? moment.utc(input.value).format(dateFormat + ' ' + timeFormat) : null}
+        dateFormat={dateFormat}
+        timeFormat={timeFormat}
+        selected={input.value ? moment.utc(input.value) : null }
+        inputProps={{disabled}} />
+      {(error) ? <div className={"w-100 mt-1 text-danger"} style={{fontSize: ".7rem"}}>{error}</div> : ''}
     </Form.Group>
   )
 }
 
-export function renderCheckboxGroup({ label, options, input, required, meta: { dirty, error }, disabled=false, inline=false, indication=false }) {
+export const renderCheckboxGroup = ({ label, options, input, required, meta: { dirty, error }, disabled=false, inline=false, indication=false }) => {
 
   const requiredField = (required)? (<span className='text-danger'> *</span>) : '';
   const checkboxList = options.map((option, index) => {
 
     const tooltip = (option.description)? (<Tooltip id={`${option.value}_Tooltip`}>{option.description}</Tooltip>) : null
-    
+
     const checkbox = <Form.Check
       label={(indication && input.value.includes(option.value)) ? <span className="text-warning">{option.value}</span> : option.value }
       name={`${option.label}[${index}]`}
@@ -130,11 +138,11 @@ export function renderCheckboxGroup({ label, options, input, required, meta: { d
     <Form.Group as={Col}>
       <Form.Label><span>{label}{requiredField}</span> {dirty && (error && <span className="text-danger" style={{fontSize: ".7rem"}}>{error}<br/></span>)}</Form.Label><br/>
       {checkboxList}
-    </Form.Group>      
+    </Form.Group>
   );
 }
 
-export function renderCheckbox({ input, label, meta: { dirty, error }, disabled=false, xs=12, sm=6, md=12, lg=6 }) {    
+export const renderCheckbox = ({ input, label, meta: { dirty, error }, disabled=false, xs=12, sm=12, md=12, lg=12 }) => {
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
       <Form.Check
@@ -152,14 +160,13 @@ export function renderCheckbox({ input, label, meta: { dirty, error }, disabled=
 }
 
 
-export function renderRadioGroup({ label, options, input, required, meta: { dirty, error }, disabled=false, inline=false, indication=false }) {
+export const renderRadioGroup = ({ label, options, input, required, meta: { dirty, error }, disabled=false, inline=false, indication=false }) => {
 
   const requiredField = (required)? (<span className='text-danger'> *</span>) : '';
-  // console.log(options);
   const radioList = options.map((option, index) => {
 
     const tooltip = (option.description)? (<Tooltip id={`${option.value}_Tooltip`}>{option.description}</Tooltip>) : null
-    
+
     const radio = <Form.Check
       label={(indication && input.value === option.value) ? <span className="text-warning">{option.value}</span> : option.value }
       name={`${label}`}
@@ -181,12 +188,11 @@ export function renderRadioGroup({ label, options, input, required, meta: { dirt
     <Form.Group as={Col}>
       <Form.Label><span>{label}{requiredField}</span> {dirty && (error && <span className="text-danger" style={{fontSize: ".7rem"}}>{error}<br/></span>)}</Form.Label><br/>
       {radioList}
-    </Form.Group>      
+    </Form.Group>
   );
 }
 
-export function renderSwitch({ input, label, meta: { dirty, error }, disabled=false }) {    
-
+export const renderSwitch = ({ input, label, meta: { dirty, error }, disabled=false }) => {
   return (
     <Form.Group className="ml-2">
       <Form.Switch
@@ -204,8 +210,14 @@ export function renderSwitch({ input, label, meta: { dirty, error }, disabled=fa
   );
 }
 
+export const renderHidden = ({ input }) => {
+  return (
+    <input type="hidden" {...input} id={input.name}/>
+  );
+}
 
-export function renderAlert(message) {
+
+export const renderAlert = (message) => {
   if (message) {
     return (
       <Alert variant="danger">
@@ -215,7 +227,7 @@ export function renderAlert(message) {
   }
 }
 
-export function renderMessage(message) {
+export const renderMessage = (message) => {
   if (message) {
     return (
       <Alert variant="success">

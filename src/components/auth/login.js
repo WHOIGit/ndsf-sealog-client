@@ -39,8 +39,8 @@ class Login extends Component {
           this.handleAutologin(event.data);
         }
       }
-      catch(err) {
-        console.error(err);
+      catch(error) {
+        console.debug(error);
       }
     }
   }
@@ -115,16 +115,12 @@ class Login extends Component {
                       name="username"
                       component={renderTextField}
                       placeholder="Username"
-                      lg={12}
-                      sm={12}
                     />
                     <Field
                       name="password"
                       component={renderTextField}
                       type="password"
                       placeholder="Password"
-                      lg={12}
-                      sm={12}
                     />
                   </Form.Row>
                   {recaptcha}
@@ -150,21 +146,21 @@ class Login extends Component {
   }
 }
 
-const validate = values => {
+const validate = (formProps) => {
 
   const errors = {};
-  if (!values.username) {
+  if (!formProps.username) {
     errors.username = 'Required';
   }
 
-  if (!values.password) {
+  if (!formProps.password) {
     errors.password = 'Required';
   }
 
   return errors;
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     errorMessage: state.auth.error,
     successMessage: state.auth.message

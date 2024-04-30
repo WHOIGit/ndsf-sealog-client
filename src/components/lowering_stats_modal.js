@@ -15,8 +15,8 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { renderAlert, renderMessage } from './form_elements';
-import UpdateLoweringStatsForm from './update_lowering_stats_form';
-import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
+import LoweringStatsForm from './lowering_stats_form';
+import { API_ROOT_URL } from '../client_config';
 import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers';
 import * as mapDispatchToProps from '../actions';
 
@@ -27,14 +27,13 @@ const { BaseLayer } = LayersControl
 
 const cookies = new Cookies();
 
-class SetLoweringStatsModal extends Component {
+class LoweringStatsModal extends Component {
 
   constructor (props) {
     super(props);
 
     this.state = {
       lowering: {},
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
 
       posDataSource: null,
 
@@ -126,7 +125,7 @@ class SetLoweringStatsModal extends Component {
     this.initMapView = this.initMapView.bind(this);
     this.setEventbyTS = this.setEventbyTS.bind(this);
     this.clearEvent = this.clearEvent.bind(this);
-    this.handleTweak = this.handleTweak.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleShowEditForm = this.handleShowEditForm.bind(this);
 
   }
@@ -165,26 +164,21 @@ class SetLoweringStatsModal extends Component {
 
   async initEvents() {
 
-    const data = await axios.get(`${API_ROOT_URL}/api/v1/event_exports/bylowering/${this.props.lowering.id}`,
+    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports/bylowering/${this.props.lowering.id}`,
       {
         headers: {
         Authorization: 'Bearer ' + cookies.get('token')
         }
-      }      
+      }
     ).then((response) => {
-
       return response.data
-
     }).catch((error) => {
       if(error.response.status !== 404) {
-        console.log(error)
+        console.error('Problem connecting to API');
+        console.debug(error)
       }
-
       return []
     })
-
-    return await data
-
   }
 
   async initLoweringTrackline() {
@@ -201,7 +195,7 @@ class SetLoweringStatsModal extends Component {
         polyline: L.polyline([]),
         depth: [],
       };
-    
+
       events.map((event) => {
 
         let aux_data = event['aux_data'].find((aux_data => aux_data['data_source'] == auxDatasource))
@@ -220,9 +214,8 @@ class SetLoweringStatsModal extends Component {
             trackline.ts.push(moment.utc(event['ts']).valueOf());
             trackline.depth.push([trackline.ts[trackline.ts.length-1], parseFloat(aux_data['data_array'].find(data => data['data_name'] == 'depth')['data_value'])]);
           }
-          catch(err) {
-            console.log("No latLng found, skipping...");
-            console.error(err);
+          catch(error) {
+            console.debug(error);
           }
         }
       })
@@ -258,16 +251,14 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleShowEditForm() {
-    this.setState((prevState) => { return { show_edit_form: !prevState.show_edit_form}})  
+    this.setState((prevState) => { return { show_edit_form: !prevState.show_edit_form}})
   }
 
-  handleTweak(milestones, stats) {
-
-    this.setState({milestones, stats})
+  handleFormSubmit(milestones, stats) {
 
     const start_ts = moment.utc(milestones.lowering_start);
     const stop_ts = moment.utc(milestones.lowering_stop);
-    
+
     const newMilestones = {...milestones}
     delete newMilestones.lowering_start;
     delete newMilestones.lowering_stop;
@@ -276,8 +267,9 @@ class SetLoweringStatsModal extends Component {
 
     const newLoweringRecord = { ...this.props.lowering, start_ts, stop_ts, lowering_additional_meta }
 
-    this.props.handleUpdateLowering(newLoweringRecord)
+    this.props.updateLowering(newLoweringRecord);
     this.setState({milestones, stats, touched: false, show_edit_form: false})
+    this.props.handleFormSubmit();
   }
 
   handleCalculateBoundingBox() {
@@ -314,7 +306,7 @@ class SetLoweringStatsModal extends Component {
 
     const newLoweringRecord = { ...this.props.lowering, start_ts: this.state.milestones.lowering_start, stop_ts: this.state.milestones.lowering_stop, lowering_additional_meta: newLoweringAdditionalMeta }
 
-    this.props.handleUpdateLowering(newLoweringRecord)
+    this.props.updateLowering(newLoweringRecord);
     this.setState({touched: false})
   }
 
@@ -443,7 +435,7 @@ class SetLoweringStatsModal extends Component {
 
     const milestones_and_stats = (this.state.show_edit_form) ?
       <Col md={12}>
-        <UpdateLoweringStatsForm milestones={this.state.milestones} stats={this.state.stats} handleHide={this.handleShowEditForm} handleFormSubmit={this.handleTweak}/>
+        <LoweringStatsForm milestones={this.state.milestones} stats={this.state.stats} handleHide={this.handleShowEditForm} handleFormSubmit={this.handleFormSubmit}/>
       </Col>
     : [<Col key="milestones" md={6}>
         <div>
@@ -461,8 +453,7 @@ class SetLoweringStatsModal extends Component {
           <span>Max Depth: {this.state.stats.max_depth} <OverlayTrigger placement="top" overlay={<Tooltip id="maxDepthTooltip">Click to calculate max depth from depth data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateMaxDepth() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
           <span>Bounding Box: {(this.state.stats.bounding_box) ? this.state.stats.bounding_box.join(", ") : ""}  <OverlayTrigger placement="top" overlay={<Tooltip id="boundingBoxTooltip">Click to calculate the bounding box from position data.</Tooltip>}><FontAwesomeIcon className="text-primary" onClick={ () => this.handleCalculateBoundingBox() } icon='calculator' fixedWidth/></OverlayTrigger></span><br/>
         </div>
-      </Col>]     
-
+      </Col>]
     const depth_profile = 
       <HighchartsReact
         highcharts={Highcharts}
@@ -473,7 +464,7 @@ class SetLoweringStatsModal extends Component {
     const trackLine = (this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) ?
       <Polyline color="lime" positions={this.state.tracklines[this.state.posDataSource].polyline.getLatLngs()} />
     : null;
-    
+
     if(this.props.lowering) {
       if(!this.state.fetching) {
         return (
@@ -544,7 +535,7 @@ class SetLoweringStatsModal extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
 
   return {
     roles: state.user.profile.roles,
@@ -556,4 +547,4 @@ function mapStateToProps(state) {
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   connectModal({ name: 'setLoweringStats', destroyOnHide: true })
-)(SetLoweringStatsModal);
+)(LoweringStatsModal);

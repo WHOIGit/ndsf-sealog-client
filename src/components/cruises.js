@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
-import { Row, Button, Col, Card, Form, FormControl, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Row, Button, Col, Card, Container, Form, FormControl, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import moment from 'moment';
-import CreateCruise from './create_cruise';
-import UpdateCruise from './update_cruise';
+import CruiseForm from './cruise_form';
 import DeleteCruiseModal from './delete_cruise_modal';
 import DeleteFileModal from './delete_file_modal';
 import ImportCruisesModal from './import_cruises_modal';
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard';
 import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
-import { USE_ACCESS_CONTROL, DEFAULT_VESSEL, CUSTOM_CRUISE_NAME } from '../client_config';
+import { USE_ACCESS_CONTROL, DEFAULT_VESSEL } from '../client_config';
+import { _Cruises_, _Cruise_, _cruise_ } from '../vocab';
 import * as mapDispatchToProps from '../actions';
 
 let fileDownload = require('js-file-download');
@@ -27,9 +27,7 @@ class Cruises extends Component {
 
     this.state = {
       activePage: 1,
-      filteredCruises: null,
-      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise",
-      cruises_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[1].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[1].slice(1) : "Cruises",
+      filteredCruises: null
     };
 
     this.handlePageSelect = this.handlePageSelect.bind(this);
@@ -67,7 +65,7 @@ class Cruises extends Component {
   }
 
   handleCruiseCreate() {
-    this.props.leaveUpdateCruiseForm();
+    this.props.leaveCruiseForm();
   }
 
   handleCruiseImportModal() {
@@ -112,7 +110,7 @@ class Cruises extends Component {
   renderAddCruiseButton() {
     if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
       return (
-        <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.props.cruiseid}>Add {this.state.cruise_name}</Button>
+        <Button variant="primary" size="sm" onClick={ () => this.handleCruiseCreate()} disabled={!this.props.cruiseid}>Add {_Cruise_}</Button>
       );
     }
   }
@@ -127,10 +125,10 @@ class Cruises extends Component {
 
   renderCruises() {
 
-    const editTooltip = (<Tooltip id="editTooltip">Edit this {this.state.cruise_name.toLowerCase()}.</Tooltip>);
-    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {this.state.cruise_name.toLowerCase()}.</Tooltip>);
-    const showTooltip = (<Tooltip id="showTooltip">{this.state.cruise_name} is hidden, click to show.</Tooltip>);
-    const hideTooltip = (<Tooltip id="hideTooltip">{this.state.cruise_name} is visible, click to hide.</Tooltip>);
+    const editTooltip = (<Tooltip id="editTooltip">Edit this {_cruise_}.</Tooltip>);
+    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {_cruise_}.</Tooltip>);
+    const showTooltip = (<Tooltip id="showTooltip">{_Cruise_} is hidden, click to show.</Tooltip>);
+    const hideTooltip = (<Tooltip id="hideTooltip">{_Cruise_} is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
 
     const cruises = (Array.isArray(this.state.filteredCruises)) ? this.state.filteredCruises : this.props.cruises;
@@ -148,7 +146,7 @@ class Cruises extends Component {
 
         let cruiseName = (cruise.cruise_additional_meta.cruise_name)? <span>Name: {cruise.cruise_additional_meta.cruise_name}<br/></span> : null;
         let cruiseLocation = (cruise.cruise_location)? <span>Location: {cruise.cruise_location}<br/></span> : null;
-        let cruiseVessel = (DEFAULT_VESSEL !== cruise.cruise_additional_meta.cruise_vessel)? <span>Vessel: {cruise.cruise_additional_meta.cruise_vessel}<br/></span> : null;
+        let cruiseVessel = (cruise.cruise_additional_meta.cruise_vessel)? <span>Vessel: {cruise.cruise_additional_meta.cruise_vessel}<br/></span> : null;
         let cruisePi = (cruise.cruise_additional_meta.cruise_pi)? <span>PI: {cruise.cruise_additional_meta.cruise_pi}<br/></span> : null;
 
         return (
@@ -174,7 +172,7 @@ class Cruises extends Component {
         <Table responsive bordered striped size="sm">
           <thead>
             <tr>
-              <th>{this.state.cruise_name}</th>
+              <th>{_Cruise_}</th>
               <th>Details</th>
               <th style={tableHeaderStyle}>Actions</th>
             </tr>
@@ -186,18 +184,18 @@ class Cruises extends Component {
       );
     } else {
       return (
-        <Card.Body>No {this.state.cruises_name} found!</Card.Body>
+        <Card.Body>No {_Cruises_} found!</Card.Body>
       );
     }
   }
 
   renderCruiseHeader() {
 
-    const exportTooltip = (<Tooltip id="exportTooltip">Export {this.state.cruises_name}</Tooltip>);
+    const exportTooltip = (<Tooltip id="exportTooltip">Export {_Cruises_}</Tooltip>);
 
     return (
       <div>
-        {this.state.cruises_name}
+        {_Cruises_}
         <span className="float-right">
           <Form inline>
             <FormControl size="sm" type="text" placeholder="Search" className="mr-sm-2" onChange={this.handleSearchChange}/>
@@ -217,16 +215,8 @@ class Cruises extends Component {
 
     if(this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager')) {
 
-      let cruiseForm = null;
-  
-      if(this.props.cruiseid) {
-        cruiseForm = <UpdateCruise handleFormSubmit={ this.props.fetchCruises } />;
-      } else {
-        cruiseForm = <CreateCruise handleFormSubmit={ this.props.fetchCruises } />;
-      }
-
       return (
-        <div>
+        <Container className="mt-2">
           <DeleteCruiseModal />
           <DeleteFileModal />
           <CruisePermissionsModal />
@@ -244,10 +234,10 @@ class Cruises extends Component {
               </div>
             </Col>
             <Col className="px-1" sm={12} md={5} lg={6} xl={5}>
-              { cruiseForm }
+              <CruiseForm handleFormSubmit={ this.props.fetchCruises } />
             </Col>
           </Row>
-        </div>
+        </Container>
       );
     } else {
       return (
@@ -259,7 +249,7 @@ class Cruises extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     cruises: state.cruise.cruises,
     cruiseid: state.cruise.cruise.id,

@@ -3,16 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import { Row, Button, Col, Card, Form, FormControl, Table, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import moment from 'moment';
-import CreateLowering from './create_lowering';
-import UpdateLowering from './update_lowering';
+import LoweringForm from './lowering_form';
 import DeleteFileModal from './delete_file_modal';
 import DeleteLoweringModal from './delete_lowering_modal';
 import ImportLoweringsModal from './import_lowerings_modal';
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard';
-import SetLoweringStatsModal from './set_lowering_stats_modal';
+import LoweringStatsModal from './lowering_stats_modal';
 import LoweringPermissionsModal from './lowering_permissions_modal';
 import CustomPagination from './custom_pagination';
-import { USE_ACCESS_CONTROL, CUSTOM_LOWERING_NAME } from '../client_config';
+import { USE_ACCESS_CONTROL } from '../client_config';
+import { _Lowerings_, _Lowering_, _lowering_ } from '../vocab';
 import * as mapDispatchToProps from '../actions';
 
 let fileDownload = require('js-file-download');
@@ -29,8 +29,6 @@ class Lowerings extends Component {
     this.state = {
       activePage: 1,
       filteredLowerings: null,
-      lowering_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[0].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[0].slice(1) : "Lowering",
-      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
     };
 
     this.handlePageSelect = this.handlePageSelect.bind(this);
@@ -65,7 +63,7 @@ class Lowerings extends Component {
   }
 
   handleLoweringCreate() {
-    this.props.leaveUpdateLoweringForm();
+    this.props.leaveLoweringForm();
   }
 
   handleLoweringImportModal() {
@@ -107,7 +105,7 @@ class Lowerings extends Component {
   renderAddLoweringButton() {
     if (!this.props.showform && this.props.roles && this.props.roles.includes('admin')) {
       return (
-        <Button variant="primary" size="sm" onClick={ () => this.handleLoweringCreate()} disabled={!this.props.loweringid}>Add {this.state.lowering_name}</Button>
+        <Button variant="primary" size="sm" onClick={ () => this.handleLoweringCreate()} disabled={!this.props.loweringid}>Add {_Lowering_}</Button>
       );
     }
   }
@@ -122,10 +120,10 @@ class Lowerings extends Component {
 
   renderLowerings() {
 
-    const editTooltip = (<Tooltip id="editTooltip">Edit this {this.state.lowering_name.toLowerCase()}.</Tooltip>);
-    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {this.state.lowering_name.toLowerCase()}.</Tooltip>);
-    const showTooltip = (<Tooltip id="showTooltip">{this.state.lowering_name} is hidden, click to show.</Tooltip>);
-    const hideTooltip = (<Tooltip id="hideTooltip">{this.state.lowering_name} is visible, click to hide.</Tooltip>);
+    const editTooltip = (<Tooltip id="editTooltip">Edit this {_lowering_}.</Tooltip>);
+    const deleteTooltip = (<Tooltip id="deleteTooltip">Delete this {_lowering_}.</Tooltip>);
+    const showTooltip = (<Tooltip id="showTooltip">{_Lowering_} is hidden, click to show.</Tooltip>);
+    const hideTooltip = (<Tooltip id="hideTooltip">{_Lowering_} is visible, click to hide.</Tooltip>);
     const permissionTooltip = (<Tooltip id="permissionTooltip">User permissions.</Tooltip>);
 
     const lowerings = (Array.isArray(this.state.filteredLowerings)) ? this.state.filteredLowerings : this.props.lowerings;
@@ -138,7 +136,7 @@ class Lowerings extends Component {
         if(this.props.roles.includes('admin') && lowering.lowering_hidden) {
           hiddenLink = <OverlayTrigger placement="top" overlay={showTooltip}><FontAwesomeIcon onClick={ () => this.handleLoweringShow(lowering.id) } icon='eye-slash' fixedWidth/></OverlayTrigger>;
         } else if(this.props.roles.includes('admin') && !lowering.lowering_hidden) {
-          hiddenLink = <OverlayTrigger placement="top" overlay={hideTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleLoweringHide(lowering.id) } icon='eye' fixedWidth/></OverlayTrigger>;  
+          hiddenLink = <OverlayTrigger placement="top" overlay={hideTooltip}><FontAwesomeIcon className="text-success" onClick={ () => this.handleLoweringHide(lowering.id) } icon='eye' fixedWidth/></OverlayTrigger>;
         }
 
         let loweringLocation = (lowering.lowering_location)? <span>Location: {lowering.lowering_location}<br/></span> : null;
@@ -163,7 +161,7 @@ class Lowerings extends Component {
           </tr>
         );
       }
-    });      
+    });
   }
 
   renderLoweringTable() {
@@ -172,7 +170,7 @@ class Lowerings extends Component {
         <Table responsive bordered striped size="sm">
           <thead>
             <tr>
-              <th>{this.state.lowering_name}</th>
+              <th>{_Lowering_}</th>
               <th>Details</th>
               <th style={tableHeaderStyle}>Actions</th>
             </tr>
@@ -184,18 +182,18 @@ class Lowerings extends Component {
       );
     } else {
       return (
-        <Card.Body>No {this.state.lowerings_name} Found!</Card.Body>
+        <Card.Body>No {_Lowerings_} Found!</Card.Body>
       );
     }
   }
 
   renderLoweringHeader() {
 
-    const exportTooltip = (<Tooltip id="exportTooltip">Export {this.state.lowerings_name}</Tooltip>);
+    const exportTooltip = (<Tooltip id="exportTooltip">Export {_Lowerings_}</Tooltip>);
 
     return (
       <div>
-        {this.state.lowerings_name}
+        {_Lowerings_}
         <span className="float-right">
           <Form inline>
             <FormControl size="sm" type="text" placeholder="Search" className="mr-sm-2" onChange={this.handleSearchChange}/>
@@ -215,14 +213,12 @@ class Lowerings extends Component {
 
     if(this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager')) {
 
-      let loweringForm = (this.props.loweringid) ? <UpdateLowering handleFormSubmit={ this.props.fetchLowerings } /> : <CreateLowering handleFormSubmit={ this.props.fetchLowerings } />;
-
       return (
         <div>
           <DeleteFileModal />
           <DeleteLoweringModal />
-          <ImportLoweringsModal handleExit={this.handleLoweringImportClose} />
-          <SetLoweringStatsModal />
+          <ImportLoweringsModal handleExit={this.handleLoweringImportClose} handleFormSubmit={ this.props.fetchLowerings } />
+          <LoweringStatsModal />
           <LoweringPermissionsModal />
           <Row>
             <Col className="px-1" sm={12} md={7} lg={6} xl={{span:5, offset:1}}>
@@ -237,7 +233,7 @@ class Lowerings extends Component {
               </div>
             </Col>
             <Col className="px-1" sm={12} md={5} lg={6} xl={5}>
-              { loweringForm }
+              <LoweringForm handleFormSubmit={ this.props.fetchLowerings } />
             </Col>
           </Row>
         </div>
@@ -252,7 +248,7 @@ class Lowerings extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   return {
     lowerings: state.lowering.lowerings,
     loweringid: state.lowering.lowering.id,

@@ -172,7 +172,7 @@ class LoweringReplay extends Component {
           this.handlePageSelect(Math.ceil((eventIndex + 2) / maxEventsPerPage))
         }
         else {
-          this.props.advanceLoweringReplayTo(this.props.event.events[eventIndex + 1].id)  
+          this.props.advanceLoweringReplayTo(this.props.event.events[eventIndex + 1].id)
         } 
       }
     }
@@ -233,7 +233,7 @@ class LoweringReplay extends Component {
   }
 
   handleLoweringReplayFRev() {
-    this.setState({replayState: FREV});    
+    this.setState({replayState: FREV});
     if(this.state.replayTimer !== null) {
       clearInterval(this.state.replayTimer);
     }
@@ -293,7 +293,7 @@ class LoweringReplay extends Component {
       if(frameGrabberData.length > 0) {
         for (let i = 0; i < frameGrabberData.length; i++) {
           for (let j = 0; j < frameGrabberData[i].data_array.length; j+=2) {
-      
+
             tmpData.push({
               source: frameGrabberData[i].data_array[j].data_value,
               filepath: getImageUrl(frameGrabberData[i].data_array[j+1].data_value)
@@ -378,7 +378,7 @@ class LoweringReplay extends Component {
       const loweringStartTime = moment(this.props.lowering.start_ts);
       const loweringEndTime = moment(this.props.lowering.stop_ts);
       const loweringDuration = loweringEndTime.diff(loweringStartTime);
-      
+
       const playPause = (this.state.replayState !== 1)? <FontAwesomeIcon className="text-primary" key={`pause_${this.props.lowering.id}`} onClick={ () => this.handleLoweringReplayPause() } icon="pause"/> : <FontAwesomeIcon className="text-primary" key={`play_${this.props.lowering.id}`} onClick={ () => this.handleLoweringReplayPlay() } icon="play"/>;
 
       const buttons = (this.props.event.selected_event.ts && !this.props.event.fetching)? (
@@ -445,7 +445,7 @@ class LoweringReplay extends Component {
 
       let eventList = this.props.event.events.map((event, index) => {
         if(index >= (this.state.activePage-1) * maxEventsPerPage && index < (this.state.activePage * maxEventsPerPage)) {
-          
+
           let comment_exists = false;
 
           let eventOptionsArray = event.event_options.reduce((filtered, option) => {
@@ -456,15 +456,14 @@ class LoweringReplay extends Component {
             }
             return filtered;
           },[]);
-          
+
           if (event.event_free_text) {
             eventOptionsArray.push(`free_text: "${event.event_free_text}"`);
-          } 
-
+          }
           let active = (this.props.event.selected_event.id === event.id)? true : false;
 
           let eventOptions = (eventOptionsArray.length > 0)? '--> ' + eventOptionsArray.join(', '): '';
-          
+
           let commentIcon = (comment_exists)? <FontAwesomeIcon onClick={() => this.handleEventCommentModal(index)} icon='comment' fixedWidth transform="grow-4"/> : <span onClick={() => this.handleEventCommentModal(index)} className="fa-layers fa-fw"><FontAwesomeIcon icon='comment' fixedWidth transform="grow-4"/><FontAwesomeIcon className={(active)? "text-primary" : "text-secondary" } icon='plus' fixedWidth transform="shrink-4"/></span>;
           let commentTooltip = (comment_exists)? (<OverlayTrigger placement="left" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Edit/View Comment</Tooltip>}>{commentIcon}</OverlayTrigger>) : (<OverlayTrigger placement="top" overlay={<Tooltip id={`commentTooltip_${event.id}`}>Add Comment</Tooltip>}>{commentIcon}</OverlayTrigger>);
           let eventComment = (this.props.roles.includes("event_logger") || this.props.roles.includes("admin"))? commentTooltip : null;
@@ -521,18 +520,18 @@ class LoweringReplay extends Component {
           </Col>
           <Col className="px-1 mb-1" md={3} lg={3}>
             <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
-          </Col>          
+          </Col>
         </Row>
       </React.Fragment>
     );
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
 
   return {
     cruise: state.cruise.cruise,
-    lowering: state.lowering.lowering,  
+    lowering: state.lowering.lowering,
     roles: state.user.profile.roles,
     event: state.event
   };

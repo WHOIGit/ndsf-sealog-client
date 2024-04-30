@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Form, ListGroup, Modal } from 'react-bootstrap';
-import { API_ROOT_URL, CUSTOM_CRUISE_NAME } from '../client_config';
+import { API_ROOT_URL } from '../client_config';
+import { _Cruise_ } from '../vocab';
 
 const updateType = {
     ADD: true,
@@ -22,8 +23,7 @@ class CruisePermissionsModal extends Component {
     this.state = {
       users: null,
       cruise: null,
-      Permissions: {},
-      cruise_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[0].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[0].slice(1) : "Cruise"
+      Permissions: {}
     }
 
     this.fetchUsers = this.fetchUsers.bind(this);
@@ -43,17 +43,15 @@ class CruisePermissionsModal extends Component {
   }
 
   async updateCruisePermissions(user_id, type) {
-    try {
+    const payload = {};
+    if (type === updateType.ADD) {
+      payload.add = [user_id];
+    }
+    else if (type === updateType.REMOVE) {
+      payload.remove = [user_id];
+    }
 
-      const payload = {};
-      if (type === updateType.ADD) {
-        payload.add = [user_id];
-      }
-      else if (type === updateType.REMOVE) {
-        payload.remove = [user_id];
-      }
-
-      await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise_id}/permissions`,
+    await axios.patch(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise_id}/permissions`,
       payload,
       {
         headers: {
@@ -62,61 +60,48 @@ class CruisePermissionsModal extends Component {
         }
       }).then(async (response) => {
         await this.fetchCruise();
-        return response.data;
-      }).catch((err) => {
-        console.error(err);
-        return null;
+      }).catch((error) => {
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error);
+        }
       });
-
-    } catch(error) {
-      console.error(error);
-    }
   }
 
   async fetchCruise() {
-    try {
-
-      const cruise = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise_id}`,
+    await axios.get(`${API_ROOT_URL}/api/v1/cruises/${this.props.cruise_id}`,
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       }).then((response) => {
-        return response.data;
-      }).catch((err) => {
-        console.error(err);
-        return null;
+        this.setState({ cruise: response.data });
+      }).catch((error) => {
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error);
+        }
+        this.setState({ cruise: null });
       });
-
-      this.setState({ cruise })
-
-    } catch(error) {
-      console.error(error);
-    }
   }
 
   async fetchUsers() {
-    try {
-
-      const users = await axios.get(`${API_ROOT_URL}/api/v1/users`,
+    await axios.get(`${API_ROOT_URL}/api/v1/users`,
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       }).then((response) => {
-        return response.data;
-      }).catch((err) => {
-        console.error(err);
-        return [];
+        this.setState({ users: response.data });
+      }).catch((error) => {
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error);
+        }
+        this.setState({ users: [] });
       });
-
-      this.setState({ users })
-
-    } catch(error) {
-      console.error(error);
-    }
   }
 
   render() {
@@ -125,38 +110,29 @@ class CruisePermissionsModal extends Component {
 
     const body = ( this.state.cruise && this.state.users) ?
       this.state.users.map((user) => {
+        return ( <ListGroup.Item key={`user_${user.id}`} >
+          <Form.Check 
+            type="switch"
+            id={`user_${user.id}`}
+            label={`${user.fullname}`}
+            checked={(this.state.cruise.cruise_access_list && this.state.cruise.cruise_access_list.includes(user.id))}
+            onChange={ (e) => { this.updateCruisePermissions(user.id, e.target.checked) }}
+          />
+        </ListGroup.Item> )
+      }) : null;
 
-        return (
-          <ListGroup.Item key={`user_${user.id}`} >
-            <Form.Check 
-              type="switch"
-              id={`user_${user.id}`}
-              label={`${user.fullname}`}
-              checked={(this.state.cruise.cruise_access_list && this.state.cruise.cruise_access_list.includes(user.id))}
-              onChange={ (e) => { this.updateCruisePermissions(user.id, e.target.checked) }}
-            />
-          </ListGroup.Item>
-        )
-      }) :
-      null;
-      
-    if (body) {
-      return (
-        <Modal show={show} onHide={handleHide}>
-          <form>
-            <Modal.Header closeButton>
-              <Modal.Title>{this.state.cruise_name} Permissions</Modal.Title>
-            </Modal.Header>
-              <ListGroup>
-                { body }
-              </ListGroup>
-          </form>
-        </Modal>
-      );
-    }
-    else {
-      return null;
-    }
+    return (
+      <Modal show={show} onHide={handleHide}>
+        <form>
+          <Modal.Header closeButton>
+            <Modal.Title>{_Cruise_} Permissions</Modal.Title>
+          </Modal.Header>
+            <ListGroup>
+              { body }
+            </ListGroup>
+        </form>
+      </Modal>
+    );
   }
 }
 

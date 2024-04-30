@@ -17,7 +17,7 @@ export const TILE_LAYERS = (USE_MAPTILE_PROXY) ? [
     name: "GMRT Basemap",
     wms: true,
     url: "https://www.gmrt.org/services/mapserver/wms_merc?map=/public/mgg/web/gmrt.marine-geo.org/htdocs/services/map/wms_merc.map&",
-    attribution:  '&copy 2023 <a href="http://gmrt.marine-geo.org" target="_blank" rel="noopener">GMRT</a>',
+    attribution: '&copy 2024 <a href="http://gmrt.marine-geo.org" target="_blank" rel="noopener">GMRT</a>',
     layers: "topo",
     transparent: false
   }

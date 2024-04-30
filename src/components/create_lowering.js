@@ -129,7 +129,7 @@ class CreateLowering extends Component {
   }
 }
 
-function validate(formProps) {
+const validate = (formProps) => {
   const errors = {};
 
   if (!formProps.lowering_id) {
@@ -164,12 +164,11 @@ function validate(formProps) {
     }
   }
 
-  // console.log('errors:', errors);
   return errors;
 
 }
 
-function warn(formProps) {
+const warn = (formProps) => {
 
   const warnings = {}
 
@@ -183,7 +182,7 @@ function warn(formProps) {
 const afterSubmit = (result, dispatch) =>
   dispatch(reset('createLowering'));
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
 
   return {
     errorMessage: state.lowering.lowering_error,

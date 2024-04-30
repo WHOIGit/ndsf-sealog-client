@@ -28,7 +28,7 @@ class ExportDropdown extends Component {
 
     this.state = {
       id: (this.props.id)? this.props.id : "dropdown-download",
-      prefix: (this.props.prefix)? this.props.prefix : '',
+      prefix: (this.props.prefix)? this.props.prefix : null,
       sort: (this.props.sort)? this.props.sort : null,
       cruiseOrLowering: cruiseOrLowering
     };
@@ -80,20 +80,16 @@ class ExportDropdown extends Component {
 
     return await axios.get(`${API_ROOT_URL}/api/v1/events${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
       {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token')
-        }
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
       }).then((response) => {
-      return response.data;
-    }).catch((error)=>{
-      if(error.response.data.statusCode === 404){
+        return response.data;
+      }).catch((error)=>{
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error.response);
+        }
         return [];
-      } else {
-        console.log(error.response);
-        return [];
-      }
-    }
-    );
+      });
   }
 
   async fetchEventAuxData(eventFilter, hideASNAP) {
@@ -110,20 +106,16 @@ class ExportDropdown extends Component {
 
     return await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data${this.state.cruiseOrLowering}?${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
       {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token')
-        }
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
       }).then((response) => {
-      return response.data;
-    }).catch((error)=>{
-      if(error.response.data.statusCode === 404){
+        return response.data;
+      }).catch((error)=>{
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error.response);
+        }
         return [];
-      } else {
-        console.log(error.response);
-        return [];
-      }
-    }
-    );
+      });
   }
 
   async fetchEventsWithAuxData(exportFormat, eventFilter, hideASNAP) {
@@ -141,44 +133,42 @@ class ExportDropdown extends Component {
 
     return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
       {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token')
-        }
+        headers: { Authorization: 'Bearer ' + cookies.get('token') }
       }).then((response) => {
-      return response.data;
-    }).catch((error)=>{
-      if(error.response.data.statusCode === 404){
+        return response.data;
+      }).catch((error)=>{
+        if(error.response.data.statusCode !== 404){
+          console.error('Problem connecting to API');
+          console.debug(error.response);
+        }
         return [];
-      } else {
-        console.log(error.response);
-        return [];
-      }
-    }
-    );
+      });
   }
 
   exportEventsWithAuxData(format='json') {
     this.fetchEventsWithAuxData(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
-      let prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
+      const prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
       fileDownload((format == 'json')? JSON.stringify(results) : results, `${prefix}_sealog_export.${format}`);
     }).catch((error) => {
-      console.log(error);
+      console.debug(error);
     });
   }
 
   exportEvents(format='json') {
     this.fetchEvents(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
+      const prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
       fileDownload((format == 'json')? JSON.stringify(results) : results, `${this.state.prefix}_${moment.utc().format(dateFormat + "_" + timeFormat)}_sealog_eventExport.${format}`);
     }).catch((error) => {
-      console.log(error);
+      console.debug(error);
     });
   }
 
   exportAuxData() {
     this.fetchEventAuxData(this.props.eventFilter, this.props.hideASNAP).then((results) => {
+      const prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
       fileDownload(JSON.stringify(results), `${this.state.prefix}_${moment.utc().format(dateFormat + "_" + timeFormat)}_sealog_auxDataExport.json`);
     }).catch((error) => {
-      console.log(error);
+      console.debug(error);
     });
   }
 

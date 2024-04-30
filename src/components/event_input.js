@@ -37,11 +37,11 @@ class EventInput extends Component {
   }
 }
 
-function mapStateToProps() {
+const mapStateToProps = () => {
   return {};
 }
 
-function afterSubmit(result, dispatch) {
+const afterSubmit = (result, dispatch) => {
   dispatch(reset('eventInput'));
 }
 

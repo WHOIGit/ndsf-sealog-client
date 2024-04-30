@@ -30,7 +30,7 @@ class RenderTableRow extends Component {
 
   toggleRowCollapse() {
     this.setState((prevState) => {
-      return {open: !prevState.open};
+      return { open: !prevState.open };
     })
   }
 
@@ -127,13 +127,14 @@ class UserPermissionsModal extends Component {
         await this.fetchCruises();
         await this.fetchLowerings();
         return response.data;
-      }).catch((err) => {
-        console.error(err);
+      }).catch((error) => {
+        console.error('Problem connecting to API');
+        console.debug(error);
         return null;
       });
 
     } catch(error) {
-      console.log(error);
+      console.debug(error);
     }
   }
 
@@ -158,60 +159,51 @@ class UserPermissionsModal extends Component {
       }).then(async (response) => {
         await this.fetchLowerings();
         return response.data;
-      }).catch((err) => {
-        console.error(err);
+      }).catch((error) => {
+        console.error('Problem connecting to API');
+        console.debug(error);
         return null;
       });
 
     } catch(error) {
-      console.log(error);
+      console.debug(error);
     }
   }
 
   async fetchCruises() {
-    try {
-
-      const cruises = await axios.get(`${API_ROOT_URL}/api/v1/cruises`,
+    await axios.get(`${API_ROOT_URL}/api/v1/cruises`,
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       }).then((response) => {
-        return response.data;
-      }).catch((err) => {
-        console.error(err);
-        return [];
+        this.setState({ cruises: response.data });
+      }).catch((error) => {
+        if(error.response.data.statusCode !== 404) {
+          console.error('Problem connecting to API');
+          console.debug(error);
+        }
+        this.setState({ cruises: [] });
       });
-
-      this.setState({ cruises })
-
-    } catch(error) {
-      console.log(error);
-    }
   }
 
   async fetchLowerings() {
-    try {
-
-      const lowerings = await axios.get(`${API_ROOT_URL}/api/v1/lowerings`,
+    await axios.get(`${API_ROOT_URL}/api/v1/lowerings`,
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
       }).then((response) => {
-        return response.data;
-      }).catch((err) => {
-        console.error(err);
-        return [];
+        this.setState({ lowerings: response.data.reverse() });
+      }).catch((error) => {
+      if(error.response.data.statusCode !== 404) {
+        console.error('Problem connecting to API');
+        console.debug(error);
+      }
+      this.setState({ lowerings: [] });
       });
-
-      this.setState({ lowerings: lowerings.reverse() });
-
-    } catch(error) {
-      console.log(error);
-    }
   }
 
   render() {
@@ -250,7 +242,7 @@ class UserPermissionsModal extends Component {
         return <RenderTableRow key={cruise.id} cruise={cruiseCheckbox} lowerings={loweringCheckboxes}/>;
       }) :
       null;
-      
+
     if (body) {
       return (
         <Modal show={show} onHide={handleHide}>

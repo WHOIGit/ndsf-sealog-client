@@ -86,7 +86,7 @@ class LoweringGalleryTab extends Component {
   }
 }
 
-function mapStateToProps() {
+const mapStateToProps = () => {
   return {}
 }
 

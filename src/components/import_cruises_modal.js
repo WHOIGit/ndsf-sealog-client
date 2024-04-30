@@ -5,7 +5,8 @@ import { Button, Modal, Row, Col } from 'react-bootstrap';
 import { connectModal } from 'redux-modal';
 import ReactFileReader from 'react-file-reader';
 import Cookies from 'universal-cookie';
-import { API_ROOT_URL, CUSTOM_CRUISE_NAME } from '../client_config';
+import { API_ROOT_URL } from '../client_config';
+import { _Cruises_ } from '../vocab';
 
 const cookies = new Cookies();
 
@@ -20,7 +21,6 @@ class ImportCruisesModal extends Component {
       errors: 0,
       skipped: 0,
       quit: false,
-      cruises_name: (CUSTOM_CRUISE_NAME)? CUSTOM_CRUISE_NAME[1].charAt(0).toUpperCase() + CUSTOM_CRUISE_NAME[1].slice(1) : "Cruises"
     }
 
     this.quitImport = this.quitImport.bind(this);
@@ -39,78 +39,57 @@ class ImportCruisesModal extends Component {
 
   async insertCruise({ id, cruise_id, start_ts, stop_ts, cruise_location = '', cruise_tags = [], cruise_hidden = false, cruise_additional_meta = {} }) {
 
-    try {
-      const result = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${id}`,
+    const cruiseExists = await axios.get(`${API_ROOT_URL}/api/v1/cruises/${id}`,
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
-      })
-
-      if(result) {
+      }).then(() => {
         this.setState( prevState => (
           {
             skipped: prevState.skipped + 1,
             pending: prevState.pending - 1
           }
         ))
-      }
-    } catch(error) {
-      if(error.response.data.statusCode === 404) {
+        return true
+      }).catch((error) => {
+        return false
+      })
 
-        try {
-          const result = await axios.post(`${API_ROOT_URL}/api/v1/cruises`,
-          { id, cruise_id, start_ts, stop_ts, cruise_location, cruise_tags, cruise_hidden, cruise_additional_meta},
-          {
-            headers: {
-              Authorization: 'Bearer ' + cookies.get('token'),
-              'content-type': 'application/json'
+    if(!cruiseExists) {
+      await axios.post(`${API_ROOT_URL}/api/v1/cruises`,
+        {id, cruise_id, start_ts, stop_ts, cruise_location, cruise_tags, cruise_hidden, cruise_additional_meta},
+        {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        }).then((response) => {
+          this.setState( prevState => (
+            {
+              imported: prevState.imported + 1,
+              pending: prevState.pending - 1
             }
-          })
-
-          if(result) {
-            this.setState( prevState => (
-              {
-                imported: prevState.imported + 1,
-                pending: prevState.pending - 1
-              }
-            ))
-          }
-        } catch(error) {
-          
+          ))
+        }).catch((error) => {
           if(error.response.data.statusCode !== 400) {
-            console.log(error);  
-          // } else {
-            // console.log("Cruise Data malformed or incomplete");
+            console.error("Problem Problem connecting to API")
+            console.debug(error);
           }
-          
           this.setState( prevState => (
             {
               errors: prevState.errors + 1,
               pending: prevState.pending - 1
             }
           ))
-        }
-      } else {
-
-        if(error.response.data.statusCode !== 400) {
-          console.log(error.response);
-        }
-        this.setState( prevState => (
-          {
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }
-        ))
-      }
+        });
     }
   }
 
   importCruisesFromFile = async (e) => {
     try {
 
-      // console.log("processing file")
       let json = JSON.parse(e.target.result);
 
       if(Array.isArray(json)) {
@@ -125,7 +104,6 @@ class ImportCruisesModal extends Component {
 
         for(let i = 0; i < json.length; i++) {
           if (this.state.quit) {
-            console.log("quiting")
             break;
           }
           currentCruise = json[i];
@@ -144,8 +122,8 @@ class ImportCruisesModal extends Component {
           this.setState({pending: "Complete!"})
         }
       }
-    } catch (err) {
-      console.log('error when trying to parse json = ' + err);
+    } catch (error) {
+      console.error('error when trying to parse json = ' + error);
     }
     this.setState({pending: (this.state.quit)?"Quit Early!":"Complete"})
   }
@@ -166,12 +144,12 @@ class ImportCruisesModal extends Component {
   render() {
 
     const { show, handleExit } = this.props
-  
-    if (handleExit) {  
+
+    if (handleExit) {
       return (
         <Modal show={show} onExit={handleExit} onHide={this.quitImport}>
           <Modal.Header closeButton>
-            <Modal.Title>Import {this.state.cruises_name}</Modal.Title>
+            <Modal.Title>Import {_Cruises_}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>

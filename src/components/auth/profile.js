@@ -39,7 +39,7 @@ class UserProfile extends Component {
           your account including access to you username and email.</p>
           <span style={{wordWrap: "break-word"}}>{cookies.get('token')}</span>
         </div>
-      );      
+      );
     } else {
       return (
         <Button variant="warning" size="sm" block onClick={()=> {this.setState({showToken: true});setTimeout(()=>{this.setState({showToken: false});}, 10*1000);}}>Show API Token</Button>
@@ -85,40 +85,30 @@ class UserProfile extends Component {
                       component={renderTextField}
                       label="Username"
                       required={true}
-                      sm={12}
-                      lg={12}
                     />
                     <Field
                       name="fullname"
                       component={renderTextField}
                       label="Full Name"
                       required={true}
-                      sm={12}
-                      lg={12}
                     />
                     <Field
                       name="email"
                       component={renderTextField}
                       label="Email"
                       disabled={true}
-                      sm={12}
-                      lg={12}
                     />
                     <Field
                       name="password"
                       component={renderTextField}
                       type="password"
                       label="Password"
-                      sm={12}
-                      lg={12}
                     />
                     <Field
                       name="confirmPassword"
                       component={renderTextField}
                       type="password"
                       label="Confirm Password"
-                      sm={12}
-                      lg={12}
                     />
                   </Form.Row>
                   {this.renderAlert()}
@@ -139,7 +129,7 @@ class UserProfile extends Component {
   }
 }
 
-function validate(formProps) {
+const validate = (formProps) => {
   const errors = {};
 
   if (!formProps.username) {
@@ -168,7 +158,7 @@ function validate(formProps) {
 
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
 
   return {
     errorMessage: state.user.profile_error,

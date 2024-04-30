@@ -38,80 +38,57 @@ class ImportUsersModal extends Component {
 
   async insertUser({id, username, fullname, email, password = '', roles, system_user = false}) {
 
-    try {
-      const result = await axios.get(`${API_ROOT_URL}/api/v1/users/${id}`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token'),
-          'content-type': 'application/json'
-        }
-      })
-
-      if(result) {
-        this.setState( prevState => (
-          {
-            skipped: prevState.skipped + 1,
-            pending: prevState.pending - 1
-          }
-        ))
+    const userExists = await axios.get(`${API_ROOT_URL}/api/v1/users/${id}`,
+    {
+      headers: {
+        Authorization: 'Bearer ' + cookies.get('token'),
+        'content-type': 'application/json'
       }
-    } catch(error) {
+    }).then(() => {
+      this.setState( prevState => (
+        {
+          skipped: prevState.skipped + 1,
+          pending: prevState.pending - 1
+        }
+      ))
+      return true
+    }).catch(() => {
+      return false
+    })
 
-      if(error.response.data.statusCode === 404) {
-        // console.log("Attempting to add user")
-
-        try {
-          const result = await axios.post(`${API_ROOT_URL}/api/v1/users`,
-          {id, username, fullname, email, password, roles, system_user},
-          {
-            headers: {
-              Authorization: 'Bearer ' + cookies.get('token'),
-              'content-type': 'application/json'
+    if(!userExists) {
+      await axios.post(`${API_ROOT_URL}/api/v1/users`,
+        { id, username, fullname, email, password, roles, system_user },
+        {
+          headers: {
+            Authorization: 'Bearer ' + cookies.get('token'),
+            'content-type': 'application/json'
+          }
+        }).then((response) => {
+          this.setState( prevState => (
+            {
+              imported: prevState.imported + 1,
+              pending: prevState.pending - 1
             }
-          })
-
-          if(result) {
-            this.setState( prevState => (
-              {
-                imported: prevState.imported + 1,
-                pending: prevState.pending - 1
-              }
-            ))
+          ))
+        }).catch((error) => {
+          if(error.response.data.statusCode !== 400) {
+            console.error('Problem connecting to API');
+            console.debug(error);
           }
-        } catch(error) {
-          
-          if(error.response.data.statusCode === 400) {
-            // console.log("User Data malformed or incomplete");
-          } else {
-            console.log(error);  
-          }
-          
           this.setState( prevState => (
             {
               errors: prevState.errors + 1,
               pending: prevState.pending - 1
             }
           ))
-        }
-      } else {
-
-        if(error.response.data.statusCode !== 400) {
-          console.log(error.response);
-        }
-        this.setState( prevState => (
-          {
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }
-        ))
-      }
+        });
     }
   }
 
   importUsersFromFile = async (e) => {
     try {
 
-      // console.log("processing file")
       let json = JSON.parse(e.target.result);
       this.setState({
         pending: json.length,
@@ -120,21 +97,18 @@ class ImportUsersModal extends Component {
         skipped: 0
       })
 
-      // console.log("done")
       let currentUser;
 
       for(let i = 0; i < json.length; i++) {
         if(this.state.quit) {
-          // console.log("quiting")
           break;
         }
         currentUser = json[i];
-        // console.log("adding user")
         await this.insertUser(currentUser);
       }
 
-    } catch (err) {
-      console.log('error when trying to parse json = ' + err);
+    } catch (error) {
+      console.error('Error when trying to parse json = ' + error);
     }
     this.setState({pending: (this.state.quit)?"Quit Early!":"Complete"})
   }

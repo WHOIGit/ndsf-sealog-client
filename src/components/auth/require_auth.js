@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as mapDispatchToProps from '../../actions';
 
-export default function(ComposedComponent) {
+export default (ComposedComponent) => {
   class Authentication extends Component {
     static contextTypes = {
       router: PropTypes.object
@@ -32,7 +32,7 @@ export default function(ComposedComponent) {
     }
   }
 
-  function mapStateToProps(state) {
+  const mapStateToProps = (state) => {
     return { authenticated: state.auth.authenticated };
   }
 

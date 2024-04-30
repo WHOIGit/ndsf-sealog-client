@@ -37,18 +37,15 @@ class ImportAuxDataModal extends Component {
 
   async insertAuxData({id, event_id, data_source, data_array}) {
 
-    try { 
-      const result = await axios.post(`${API_ROOT_URL}/api/v1/event_aux_data`,
+    await axios.post(`${API_ROOT_URL}/api/v1/event_aux_data`,
       {id, event_id, data_source, data_array},
       {
         headers: {
           Authorization: 'Bearer ' + cookies.get('token'),
           'content-type': 'application/json'
         }
-      })
-
-      if(result) {
-        if(result.status === 201) {
+      }).then((response) => {
+        if(response.status === 201) {
           this.setState( prevState => (
             {
               imported: prevState.imported + 1,
@@ -63,17 +60,15 @@ class ImportAuxDataModal extends Component {
             }
           ))
         }
-      }
-
-    } catch(error) {
-      console.log(error)
-      this.setState( prevState => (
-        {
-          errors: prevState.errors + 1,
-          pending: prevState.pending - 1
-        }
-      ))
-    }
+      }).catch((error) => {
+        console.error('Problem connecting to API');
+        console.debug(error);
+        this.setState( prevState => ({
+            errors: prevState.errors + 1,
+            pending: prevState.pending - 1
+          })
+        )
+      })
   }
 
   importAuxDataFromFile = async (e) => {
@@ -91,17 +86,16 @@ class ImportAuxDataModal extends Component {
 
       for(let i = 0; i < json.length; i++) {
         if (this.state.quit) {
-          console.log("quiting")
           break;
         }
         currentAuxData = json[i];
         await this.insertAuxData(currentAuxData);
       }
 
-    } catch (err) {
-      console.log('error when trying to parse json = ' + err);
+    } catch (error) {
+      console.debug('Error when trying to parse json = ' + error);
     }
-    this.setState({pending: (this.state.quit)?"Quit Early!":"Complete"})    
+    this.setState({pending: (this.state.quit)?"Quit Early!":"Complete"})
   }
 
   handleAuxDataRecordImport = files => {
