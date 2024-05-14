@@ -1,27 +1,23 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import * as mapDispatchToProps from '../../actions';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import * as mapDispatchToProps from '../../actions'
 
 export default (ComposedComponent) => {
   class Unauthentication extends Component {
-    static contextTypes = {
-      router: PropTypes.object
-    }
-
-    constructor (props, context) {
-      super(props, context);
+    constructor(props, context) {
+      super(props, context)
     }
 
     componentDidMount() {
       if (this.props.authenticated) {
-        this.props.gotoHome();
+        this.props.gotoHome()
       }
     }
 
     componentDidUpdate() {
       if (this.props.authenticated) {
-        this.props.gotoHome();
+        this.props.gotoHome()
       }
     }
 
@@ -30,9 +26,18 @@ export default (ComposedComponent) => {
     }
   }
 
-  const mapStateToProps = (state) => {
-    return { authenticated: state.auth.authenticated };
+  Unauthentication.contextTypes = {
+    router: PropTypes.object
   }
 
-  return connect(mapStateToProps, mapDispatchToProps)(Unauthentication);
+  Unauthentication.propTypes = {
+    authenticated: PropTypes.bool.isRequired,
+    gotoHome: PropTypes.func.isRequired
+  }
+
+  const mapStateToProps = (state) => {
+    return { authenticated: state.auth.authenticated }
+  }
+
+  return connect(mapStateToProps, mapDispatchToProps)(Unauthentication)
 }

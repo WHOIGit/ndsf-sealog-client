@@ -1,196 +1,186 @@
-import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import PropTypes from 'prop-types';
-import axios from 'axios';
-import moment from 'moment';
-import Cookies from 'universal-cookie';
-import { connect } from 'react-redux';
-import { API_ROOT_URL } from '../client_config';
+import React, { Component } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import PropTypes from 'prop-types'
+import moment from 'moment'
+import { connect } from 'react-redux'
+import {
+  get_event_aux_data,
+  get_event_aux_data_by_cruise,
+  get_event_aux_data_by_lowering,
+  get_event_exports,
+  get_event_exports_by_cruise,
+  get_event_exports_by_lowering,
+  get_events,
+  get_events_by_cruise,
+  get_events_by_lowering
+} from '../api'
 
-let fileDownload = require('js-file-download');
+let fileDownload = require('js-file-download')
 
-const dateFormat = "YYYYMMDD";
-const timeFormat = "HHmmSS";
+const dateFormat = 'YYYYMMDD'
+const timeFormat = 'HHmm'
 
 class ExportDropdown extends Component {
-
-  constructor (props) {
-    super(props);
-
-    let cruiseOrLowering = "";
-    if(this.props.cruiseID) {
-      cruiseOrLowering = `/bycruise/${this.props.cruiseID}`
-    }
-    else if(this.props.loweringID) {
-      cruiseOrLowering = `/bylowering/${this.props.loweringID}`
-    }
+  constructor(props) {
+    super(props)
 
     this.state = {
-      id: (this.props.id)? this.props.id : "dropdown-download",
-      prefix: (this.props.prefix)? this.props.prefix : null,
-      sort: (this.props.sort)? this.props.sort : null,
-      cruiseOrLowering: cruiseOrLowering
-    };
+      id: this.props.id ? this.props.id : 'dropdown-download',
+      prefix: this.props.prefix ? this.props.prefix : null,
+      sort: this.props.sort ? this.props.sort : null
+    }
   }
 
-  static propTypes = {
-    id: PropTypes.string,
-    prefix: PropTypes.string,
-    disabled: PropTypes.bool.isRequired,
-    hideASNAP: PropTypes.bool.isRequired,
-    eventFilter: PropTypes.object.isRequired,
-    cruiseID: PropTypes.string,
-    loweringID: PropTypes.string,
-    sort: PropTypes.string
-  };
-
   componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.cruiseID !== prevProps.cruiseID) {
-      const cruiseOrLowering = `/bycruise/${this.props.cruiseID}`
-      this.setState({cruiseOrLowering: cruiseOrLowering});
-    }
-    else if (this.props.loweringID !== prevProps.loweringID) {
-      const cruiseOrLowering = `/bylowering/${this.props.loweringID}`
-      this.setState({cruiseOrLowering: cruiseOrLowering});
-    }
-
     if (this.props.prefix !== prevProps.prefix) {
-      this.setState({prefix: this.props.prefix});
+      this.setState({ prefix: this.props.prefix })
     }
 
     if (this.props.sort !== prevProps.sort) {
-      this.setState({sort: this.props.sort});
+      this.setState({ sort: this.props.sort })
     }
   }
 
-  async fetchEvents(exportFormat, eventFilter, hideASNAP) {
+  async fetchEvents(exportFormat) {
+    let eventFilter_value = this.props.eventFilter.value ? this.props.eventFilter.value : this.props.hideASNAP ? '!ASNAP' : null
 
-    const cookies = new Cookies();
-    let format = (exportFormat==='csv')? `format=${exportFormat}&add_record_ids=true` : `format=${exportFormat}`
-    let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
-    let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
-    let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
-    value = (hideASNAP)? `&value=!ASNAP${value}` : value;
-    let author = (eventFilter.author)? `&author=${eventFilter.author.split(',').join("&author=")}` : '';
-    let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
-    let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
-    let sort = (this.state.sort)? `&sort=${this.state.sort}` : '';
+    const query = {
+      ...this.props.eventFilter,
+      format: exportFormat,
+      add_record_ids: exportFormat === 'json',
+      value: eventFilter_value ? eventFilter_value.split(',') : null,
+      author: this.props.eventFilter.author ? this.props.eventFilter.author.split(',') : null,
+      sort: this.state.sort
+    }
 
-    return await axios.get(`${API_ROOT_URL}/api/v1/events${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
-      {
-        headers: { Authorization: 'Bearer ' + cookies.get('token') }
-      }).then((response) => {
-        return response.data;
-      }).catch((error)=>{
-        if(error.response.data.statusCode !== 404){
-          console.error('Problem connecting to API');
-          console.debug(error.response);
-        }
-        return [];
-      });
+    if (this.props.cruiseID) {
+      return await get_events_by_cruise(query, this.props.cruiseID)
+    } else if (this.props.loweringID) {
+      return await get_events_by_lowering(query, this.props.loweringID)
+    }
+    return await get_events(query)
   }
 
-  async fetchEventAuxData(eventFilter, hideASNAP) {
+  async fetchEventAuxData() {
+    let eventFilter_value = this.props.eventFilter.value ? this.props.eventFilter.value : this.props.hideASNAP ? '!ASNAP' : null
 
-    const cookies = new Cookies();
-    let startTS = (eventFilter.startTS)? `startTS=${eventFilter.startTS}` : '';
-    let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
-    let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
-    value = (hideASNAP)? `&value=!ASNAP${value}` : value;
-    let author = (eventFilter.author)? `&author=${eventFilter.author.split(',').join("&author=")}` : '';
-    let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
-    let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
-    let sort = (this.state.sort)? `&sort=${this.state.sort}` : '';
+    const query = {
+      ...this.props.eventFilter,
+      value: eventFilter_value ? eventFilter_value.split(',') : null,
+      author: this.props.eventFilter.author ? this.props.eventFilter.author.split(',') : null,
+      sort: this.state.sort
+    }
 
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_aux_data${this.state.cruiseOrLowering}?${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
-      {
-        headers: { Authorization: 'Bearer ' + cookies.get('token') }
-      }).then((response) => {
-        return response.data;
-      }).catch((error)=>{
-        if(error.response.data.statusCode !== 404){
-          console.error('Problem connecting to API');
-          console.debug(error.response);
-        }
-        return [];
-      });
+    if (this.props.cruiseID) {
+      return await get_event_aux_data_by_cruise(query, this.props.cruiseID)
+    } else if (this.props.loweringID) {
+      return await get_event_aux_data_by_lowering(query, this.props.loweringID)
+    }
+    return await get_event_aux_data(query)
   }
 
-  async fetchEventsWithAuxData(exportFormat, eventFilter, hideASNAP) {
+  async fetchEventsWithAuxData(exportFormat) {
+    let eventFilter_value = this.props.eventFilter.value ? this.props.eventFilter.value : this.props.hideASNAP ? '!ASNAP' : null
 
-    const cookies = new Cookies();
-    let format = (exportFormat==='csv')? `format=${exportFormat}&add_record_ids=true` : `format=${exportFormat}`
-    let startTS = (eventFilter.startTS)? `&startTS=${eventFilter.startTS}` : '';
-    let stopTS = (eventFilter.stopTS)? `&stopTS=${eventFilter.stopTS}` : '';
-    let value = (eventFilter.value)? `&value=${eventFilter.value.split(',').join("&value=")}` : '';
-    value = (hideASNAP)? `&value=!ASNAP${value}` : value;
-    let author = (eventFilter.author)? `&author=${eventFilter.author.split(',').join("&author=")}` : '';
-    let freetext = (eventFilter.freetext)? `&freetext=${eventFilter.freetext}` : '';
-    let datasource = (eventFilter.datasource)? `&datasource=${eventFilter.datasource}` : '';
-    let sort = (this.state.sort)? `&sort=${this.state.sort}` : '';
+    const query = {
+      ...this.props.eventFilter,
+      format: exportFormat,
+      add_record_ids: exportFormat === 'json',
+      value: eventFilter_value ? eventFilter_value.split(',') : null,
+      author: this.props.eventFilter.author ? this.props.eventFilter.author.split(',') : null,
+      sort: this.state.sort
+    }
 
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports${this.state.cruiseOrLowering}?${format}${startTS}${stopTS}${value}${author}${freetext}${datasource}${sort}`,
-      {
-        headers: { Authorization: 'Bearer ' + cookies.get('token') }
-      }).then((response) => {
-        return response.data;
-      }).catch((error)=>{
-        if(error.response.data.statusCode !== 404){
-          console.error('Problem connecting to API');
-          console.debug(error.response);
-        }
-        return [];
-      });
+    if (this.props.cruiseID) {
+      return await get_event_exports_by_cruise(query, this.props.cruiseID)
+    } else if (this.props.loweringID) {
+      return await get_event_exports_by_lowering(query, this.props.loweringID)
+    }
+    return await get_event_exports(query)
   }
 
-  exportEventsWithAuxData(format='json') {
-    this.fetchEventsWithAuxData(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
-      const prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload((format == 'json')? JSON.stringify(results) : results, `${prefix}_sealog_export.${format}`);
-    }).catch((error) => {
-      console.debug(error);
-    });
+  exportEventsWithAuxData(format = 'json') {
+    this.fetchEventsWithAuxData(format)
+      .then((results) => {
+        const prefix = this.state.prefix ? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + '_' + timeFormat)
+        fileDownload(format == 'json' ? JSON.stringify(results) : results, `${prefix}_sealog_export.${format}`)
+      })
+      .catch((error) => {
+        console.debug(error)
+      })
   }
 
-  exportEvents(format='json') {
-    this.fetchEvents(format, this.props.eventFilter, this.props.hideASNAP).then((results) => {
-      const prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload((format == 'json')? JSON.stringify(results) : results, `${this.state.prefix}_${moment.utc().format(dateFormat + "_" + timeFormat)}_sealog_eventExport.${format}`);
-    }).catch((error) => {
-      console.debug(error);
-    });
+  exportEvents(format = 'json') {
+    this.fetchEvents(format)
+      .then((results) => {
+        const prefix = this.state.prefix ? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + '_' + timeFormat)
+        fileDownload(format == 'json' ? JSON.stringify(results) : results, `${prefix}_sealog_eventExport.${format}`)
+      })
+      .catch((error) => {
+        console.debug(error)
+      })
   }
 
   exportAuxData() {
-    this.fetchEventAuxData(this.props.eventFilter, this.props.hideASNAP).then((results) => {
-      const prefix = (this.state.prefix)? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + "_" + timeFormat);
-      fileDownload(JSON.stringify(results), `${this.state.prefix}_${moment.utc().format(dateFormat + "_" + timeFormat)}_sealog_auxDataExport.json`);
-    }).catch((error) => {
-      console.debug(error);
-    });
+    this.fetchEventAuxData()
+      .then((results) => {
+        const prefix = this.state.prefix ? this.state.prefix : moment.utc(results[0].ts).format(dateFormat + '_' + timeFormat)
+        fileDownload(JSON.stringify(results), `${prefix}_sealog_auxDataExport.json`)
+      })
+      .catch((error) => {
+        console.debug(error)
+      })
   }
 
   render() {
-    const exportTooltip = (<Tooltip id="exportTooltip">Export these events</Tooltip>);
+    const exportTooltip = <Tooltip id='exportTooltip'>Export these events</Tooltip>
 
     return (
       <Dropdown as={'span'} disabled={this.props.disabled} id={this.state.id}>
-        <Dropdown.Toggle as={'span'}><OverlayTrigger placement="top" overlay={exportTooltip}><FontAwesomeIcon icon='download' fixedWidth/></OverlayTrigger></Dropdown.Toggle>
+        <Dropdown.Toggle as={'span'}>
+          <OverlayTrigger placement='top' overlay={exportTooltip}>
+            <FontAwesomeIcon icon='download' fixedWidth />
+          </OverlayTrigger>
+        </Dropdown.Toggle>
         <Dropdown.Menu>
-          <Dropdown.Header className="text-warning" key="toJSONHeader">JSON format</Dropdown.Header>
-          <Dropdown.Item key="toJSONAll" onClick={ () => this.exportEventsWithAuxData('json')}>Events w/aux data</Dropdown.Item>
-          <Dropdown.Item key="toJSONEvents" onClick={ () => this.exportEvents('json')}>Events Only</Dropdown.Item>
-          <Dropdown.Item key="toJSONAuxData" onClick={ () => this.exportAuxData()}>Aux Data Only</Dropdown.Item>
+          <Dropdown.Header className='text-warning' key='toJSONHeader'>
+            JSON format
+          </Dropdown.Header>
+          <Dropdown.Item key='toJSONAll' onClick={() => this.exportEventsWithAuxData('json')}>
+            Events w/aux data
+          </Dropdown.Item>
+          <Dropdown.Item key='toJSONEvents' onClick={() => this.exportEvents('json')}>
+            Events Only
+          </Dropdown.Item>
+          <Dropdown.Item key='toJSONAuxData' onClick={() => this.exportAuxData()}>
+            Aux Data Only
+          </Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Header className="text-warning" key="toCSVHeader">CSV format</Dropdown.Header>
-          <Dropdown.Item key="toCSVAll" onClick={ () => this.exportEventsWithAuxData('csv')}>Events w/aux data</Dropdown.Item>
-          <Dropdown.Item key="toCSVEvents" onClick={ () => this.exportEvents('csv')}>Events Only</Dropdown.Item>
+          <Dropdown.Header className='text-warning' key='toCSVHeader'>
+            CSV format
+          </Dropdown.Header>
+          <Dropdown.Item key='toCSVAll' onClick={() => this.exportEventsWithAuxData('csv')}>
+            Events w/aux data
+          </Dropdown.Item>
+          <Dropdown.Item key='toCSVEvents' onClick={() => this.exportEvents('csv')}>
+            Events Only
+          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-    );
+    )
   }
 }
 
-export default connect(null, null)(ExportDropdown);
+ExportDropdown.propTypes = {
+  id: PropTypes.string,
+  prefix: PropTypes.string,
+  disabled: PropTypes.bool.isRequired,
+  hideASNAP: PropTypes.bool.isRequired,
+  eventFilter: PropTypes.object.isRequired,
+  cruiseID: PropTypes.string,
+  loweringID: PropTypes.string,
+  sort: PropTypes.string
+}
+
+export default connect(null, null)(ExportDropdown)

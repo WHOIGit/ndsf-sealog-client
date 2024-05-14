@@ -6,8 +6,7 @@ import {
   LEAVE_EVENT_FILTER_FORM,
   SET_SELECTED_EVENT,
   EVENT_FETCHING,
-  HIDE_ASNAP,
-  SHOW_ASNAP
+  TOGGLE_ASNAP,
 
 } from '../actions/types';
 
@@ -15,20 +14,30 @@ export default ( state={ selected_event: {}, events: [], eventFilter: {}, hideAS
   switch(action.type){
 
     case INIT_EVENT:
-      return { ...state, events: action.payload, selected_event: action.payload[0] };
+      return { ...state, events: action.payload, selected_event: action.payload[0] || {} };
 
     case UPDATE_EVENT:
-      let newEvents = state.events.map((event) => {
-        if(event.id === action.payload.id) {
-          return action.payload;
+      let updateEventEvent = action.payload;
+      delete updateEventEvent.aux_data;
+
+      let updateEventEvents = state.events.map((event) => {
+        if(event.id === updateEventEvent.id) {
+          return updateEventEvent;
         } else {
           return event;
         }
       });
-      return { ...state, selected_event: {}, events: newEvents };
+
+      return { ...state, selected_event: action.payload, events: updateEventEvents };
 
     case UPDATE_EVENTS:
-      return { ...state, selected_event: {}, events: action.payload };
+      let updateEventsSelectedEvent = action.payload.find((event) => {
+        if(state.selected_event.id === event.id) {
+          return state.selected_event;
+        }
+      }) || {};
+
+      return { ...state, selected_event: updateEventsSelectedEvent, events: action.payload };
 
     case UPDATE_EVENT_FILTER_FORM:
       return { ...state, eventFilter: action.payload };
@@ -42,11 +51,9 @@ export default ( state={ selected_event: {}, events: [], eventFilter: {}, hideAS
     case EVENT_FETCHING:
       return { ...state, fetching: action.payload };
 
-    case HIDE_ASNAP:
-      return { ...state, hideASNAP: true };
-
-    case SHOW_ASNAP:
-      return { ...state, hideASNAP: false };
+    case TOGGLE_ASNAP:
+      const newASNAP = !state.hideASNAP
+      return { ...state, hideASNAP: newASNAP};
   }
 
   return state;

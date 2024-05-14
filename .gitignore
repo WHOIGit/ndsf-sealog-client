@@ -30,6 +30,10 @@ package-lock.json
 # Maptime Config
 /src/map_tilelayers.js
 
+# Docker-related files
+Dockerfile
+docker-compose.yml
+nginx/nginx.conf
 
 # Webpack Config
 webpack.config.js

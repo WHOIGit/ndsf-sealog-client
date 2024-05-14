@@ -1,331 +1,346 @@
-import React, { Component } from 'react';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { reduxForm, Field } from 'redux-form';
-import { Button, Col, Form, Row} from 'react-bootstrap';
-import { renderDateTimePicker, renderTextField, dateFormat } from './form_elements';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import * as mapDispatchToProps from '../actions';
+import React, { Component } from 'react'
+import { compose } from 'redux'
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form'
+import { Button, Col, Form, Row } from 'react-bootstrap'
+import { renderDateTimePicker, renderTextField, dateFormat } from './form_elements'
+import moment from 'moment'
+import PropTypes from 'prop-types'
+import * as mapDispatchToProps from '../actions'
 
-const timeFormat = "HH:mm:ss.SSS";
+const timeFormat = 'HH:mm:ss.SSS'
 
 class LoweringStatsForm extends Component {
-
-  constructor (props) {
-    super(props);
-  }
-
-  static propTypes = {
-    handleFormSubmit: PropTypes.func.isRequired,
-    handleHide: PropTypes.func.isRequired,
-    milestones: PropTypes.object.isRequired,
-    stats: PropTypes.object.isRequired
-  };
-
-  componentDidMount() {
-
-    let initialValues = {
-      start: this.props.milestones.lowering_start,
-      descending: (this.props.milestones.lowering_descending) ? this.props.milestones.lowering_descending : null,
-      on_bottom: (this.props.milestones.lowering_on_bottom) ? this.props.milestones.lowering_on_bottom : null,
-      off_bottom: (this.props.milestones.lowering_off_bottom) ? this.props.milestones.lowering_off_bottom : null,
-      on_surface: (this.props.milestones.lowering_on_surface) ? this.props.milestones.lowering_on_surface : null,
-      stop: this.props.milestones.lowering_stop,
-      aborted: (this.props.milestones.lowering_aborted) ? this.props.milestones.lowering_aborted : null,
-      max_depth: (this.props.stats.max_depth) ? this.props.stats.max_depth : null,
-      bbox_north: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[0] : null,
-      bbox_east: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[1] : null,
-      bbox_south: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[2] : null,
-      bbox_west: (this.props.stats.bounding_box.length == 4) ? this.props.stats.bounding_box[3] : null
-    }
-
-    this.props.initialize(initialValues);
-  }
-
-  componentWillUnmount() {
+  constructor(props) {
+    super(props)
   }
 
   handleFormSubmit(formProps) {
+    formProps.start_ts = formProps.start_ts._isAMomentObject ? formProps.start_ts : moment.utc(formProps.start)
+    formProps.stop_ts = formProps.stop_ts._isAMomentObject ? formProps.stop_ts : moment.utc(formProps.stop_ts)
+    ;(formProps.milestones.lowering_descending =
+      formProps.milestones.lowering_descending && formProps.milestones.lowering_descending._isAMomentObject
+        ? formProps.milestones.lowering_descending.toISOString()
+        : moment.utc(formProps.milestones.lowering_descending).toISOString()),
+      (formProps.milestones.lowering_on_bottom =
+        formProps.milestones.lowering_on_bottom && formProps.milestones.lowering_on_bottom._isAMomentObject
+          ? formProps.milestones.lowering_on_bottom.toISOString()
+          : moment.utc(formProps.milestones.lowering_on_bottom).toISOString()),
+      (formProps.milestones.lowering_off_bottom =
+        formProps.milestones.lowering_on_bottom && formProps.milestones.lowering_off_bottom._isAMomentObject
+          ? formProps.lowering_off_bottom.toISOString()
+          : moment.utc(formProps.lowering_off_bottom).toISOString()),
+      (formProps.milestones.lowering_on_surface =
+        formProps.milestones.lowering_on_surface && formProps.milestones.lowering_on_surface._isAMomentObject
+          ? formProps.milestones.lowering_on_surface.toISOString()
+          : moment.utc(formProps.milestones.lowering_on_surface).toISOString()),
+      (formProps.milestones.lowering_aborted =
+        formProps.milestones.lowering_aborted && formProps.milestones.lowering_aborted._isAMomentObject
+          ? formProps.milestones.lowering_aborted.toISOString()
+          : moment.utc(formProps.milestones.lowering_aborted).toISOString())
 
-    let milestones = {
-      lowering_start: (formProps.start._isAMomentObject) ? formProps.start.toISOString() : moment.utc(formProps.start).toISOString(),
-      lowering_descending: (formProps.descending && formProps.descending._isAMomentObject) ? formProps.descending.toISOString() : moment.utc(formProps.descending).toISOString(),
-      lowering_on_bottom: (formProps.on_bottom && formProps.on_bottom._isAMomentObject) ? formProps.on_bottom.toISOString() : moment.utc(formProps.on_bottom).toISOString(),
-      lowering_off_bottom: (formProps.on_bottom && formProps.off_bottom._isAMomentObject) ? formProps.off_bottom.toISOString() : moment.utc(formProps.off_bottom).toISOString(),
-      lowering_on_surface: (formProps.on_surface && formProps.on_surface._isAMomentObject) ? formProps.on_surface.toISOString() : moment.utc(formProps.on_surface).toISOString(),
-      lowering_stop: (formProps.stop._isAMomentObject) ? formProps.stop.toISOString() : moment.utc(formProps.stop).toISOString(),
-      lowering_aborted: (formProps.aborted && formProps.aborted._isAMomentObject) ? formProps.aborted.toISOString() : moment.utc(formProps.aborted).toISOString()
+    if (
+      (formProps.stats.bounding_box.bbox_north == null || formProps.stats.bounding_box.bbox_north == '') &&
+      (formProps.stats.bounding_box.bbox_east == null || formProps.stats.bounding_box.bbox_east == '') &&
+      (formProps.stats.bounding_box.bbox_south == null || formProps.stats.bounding_box.bbox_south == '') &&
+      (formProps.stats.bounding_box.bbox_west == null || formProps.stats.bounding_box.bbox_west == '')
+    ) {
+      formProps.stats.bounding_box = []
+    } else {
+      formProps.stats.bounding_box = [
+        formProps.stats.bounding_box.bbox_north,
+        formProps.stats.bounding_box.bbox_east,
+        formProps.stats.bounding_box.bbox_south,
+        formProps.stats.bounding_box.bbox_west
+      ]
     }
 
-    let stats= {
-      max_depth: formProps.max_depth,
+    const lowering_additional_meta = {
+      ...this.props.lowering.lowering_additional_meta,
+      milestones: formProps.milestones,
+      stats: formProps.stats
     }
 
-    if((formProps.bbox_north == null || formProps.bbox_north == "") && (formProps.bbox_east == null || formProps.bbox_east == "") && (formProps.bbox_south == null || formProps.bbox_south == "") && (formProps.bbox_west == null || formProps.bbox_west == "")) {
-      stats.bounding_box=[]
-    }
-    else {
-      stats.bounding_box=[formProps.bbox_north, formProps.bbox_east, formProps.bbox_south, formProps.bbox_west]
-    }
-
-    this.props.handleFormSubmit(milestones, stats)
-  }
-
-  renderTextField({ input, label, placeholder, required, meta: { touched, error } }) {
-    let requiredField = (required)? <span className='text-danger'> *</span> : ''
-    let placeholder_txt = (placeholder)? placeholder: label
-
-    return (
-      <Form.Group as={Row}>
-        <Form.Label column sm={4} xs={5}><span className="float-right">{label}{requiredField}</span></Form.Label>
-        <Col sm={8} xs={7}>
-          <Form.Control size="sm" type="text" {...input} placeholder={placeholder_txt} isInvalid={touched && error}/>
-          <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
-        </Col>
-      </Form.Group>
-    )
+    this.props.handleFormSubmit({
+      ...this.props.lowering,
+      start_ts: formProps.start_ts,
+      stop_ts: formProps.stop_ts,
+      lowering_additional_meta
+    })
   }
 
   render() {
+    const { handleSubmit, submitting, valid, pristine } = this.props
 
-    const { handleSubmit, submitting, valid, pristine } = this.props;
-
-    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
-
+    if (this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager'))) {
       return (
-            <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
-              <Row>
-                <Col className="px-1" sm={6}>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="start"
-                      component={renderDateTimePicker}
-                      label="Off Deck Date/Time (UTC)"
-                      required={true}
-                      timeFormat={timeFormat}
-                      sm={11}
-                      md={11}
-                      lg={7}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="descending"
-                      component={renderDateTimePicker}
-                      label="Descending Date/Time (UTC)"
-                      timeFormat={timeFormat}
-                      sm={11}
-                      md={11}
-                      lg={7}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="on_bottom"
-                      component={renderDateTimePicker}
-                      label="On Bottom Date/Time (UTC)"
-                      timeFormat={timeFormat}
-                      sm={11}
-                      md={11}
-                      lg={7}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="off_bottom"
-                      component={renderDateTimePicker}
-                      label="Off Bottom Date/Time (UTC)"
-                      timeFormat={timeFormat}
-                      sm={11}
-                      md={11}
-                      lg={7}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="on_surface"
-                      component={renderDateTimePicker}
-                      label="On Surface Date/Time (UTC)"
-                      timeFormat={timeFormat}
-                      sm={11}
-                      md={11}
-                      lg={7}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="stop"
-                      component={renderDateTimePicker}
-                      label="On Deck/Stop Date/Time (UTC)"
-                      required={true}
-                      timeFormat={timeFormat}
-                      sm={11}
-                      md={11}
-                      lg={7}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="aborted"
-                      component={renderDateTimePicker}
-                      label="Aborted Date/Time (UTC)"
-                      timeFormat={timeFormat}
-                      sm={11}
-                      md={11}
-                      lg={7}
-                    />
-                  </Form.Row>
-                </Col>
-                <Col className='px-1' sm={6}>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="max_depth"
-                      component={renderTextField}
-                      label="Max Depth"
-                      placeholder="in meters"
-                      lg={5}
-                      md={7}
-                      sm={7}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="bbox_north"
-                      component={renderTextField}
-                      label="North"
-                      placeholder="in ddeg"
-                      lg={5}
-                      md={6}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="bbox_west"
-                      component={renderTextField}
-                      label="West"
-                      placeholder="in ddeg"
-                      lg={5}
-                      md={6}
-                    />
-                    <Field
-                      name="bbox_east"
-                      component={renderTextField}
-                      label="East"
-                      placeholder="in ddeg"
-                      lg={5}
-                      md={6}
-                    />
-                  </Form.Row>
-                  <Form.Row className="justify-content-sm-center">
-                    <Field
-                      name="bbox_south"
-                      component={renderTextField}
-                      label="South"
-                      placeholder="in ddeg"
-                      lg={5}
-                      md={6}
-                    />
-                  </Form.Row>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs={12}>
-                  <div className="float-right">
-                    <Button className="mr-1" variant="secondary" size="sm" onClick={this.props.handleHide}>Cancel</Button>
-                    <Button variant="warning" size="sm" type="submit" disabled={pristine || submitting || !valid}>Done</Button>
-                  </div>
-                </Col>
-              </Row>
-            </Form>
+        <Form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
+          <Row>
+            <Col className='px-1' sm={6}>
+              <Form.Row className='justify-content-sm-center'>
+                <Field
+                  name='start_ts'
+                  component={renderDateTimePicker}
+                  label='Off Deck Date/Time (UTC)'
+                  required={true}
+                  timeFormat={timeFormat}
+                  sm={11}
+                  md={11}
+                  lg={7}
+                />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field
+                  name='milestones.lowering_descending'
+                  component={renderDateTimePicker}
+                  label='Descending Date/Time (UTC)'
+                  timeFormat={timeFormat}
+                  sm={11}
+                  md={11}
+                  lg={7}
+                />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field
+                  name='milestones.lowering_on_bottom'
+                  component={renderDateTimePicker}
+                  label='On Bottom Date/Time (UTC)'
+                  timeFormat={timeFormat}
+                  sm={11}
+                  md={11}
+                  lg={7}
+                />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field
+                  name='milestones.lowering_off_bottom'
+                  component={renderDateTimePicker}
+                  label='Off Bottom Date/Time (UTC)'
+                  timeFormat={timeFormat}
+                  sm={11}
+                  md={11}
+                  lg={7}
+                />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field
+                  name='milestones.lowering_on_surface'
+                  component={renderDateTimePicker}
+                  label='On Surface Date/Time (UTC)'
+                  timeFormat={timeFormat}
+                  sm={11}
+                  md={11}
+                  lg={7}
+                />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field
+                  name='stop_ts'
+                  component={renderDateTimePicker}
+                  label='On Deck/Stop Date/Time (UTC)'
+                  required={true}
+                  timeFormat={timeFormat}
+                  sm={11}
+                  md={11}
+                  lg={7}
+                />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field
+                  name='milestones.lowering_aborted'
+                  component={renderDateTimePicker}
+                  label='Aborted Date/Time (UTC)'
+                  timeFormat={timeFormat}
+                  sm={11}
+                  md={11}
+                  lg={7}
+                />
+              </Form.Row>
+            </Col>
+            <Col className='px-1' sm={6}>
+              <Form.Row className='justify-content-sm-center'>
+                <Field name='stats.max_depth' component={renderTextField} label='Max Depth' placeholder='in meters' lg={5} md={7} sm={7} />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field name='stats.bounding_box.bbox_north' component={renderTextField} label='North' placeholder='in ddeg' lg={5} md={6} />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field name='stats.bounding_box.bbox_west' component={renderTextField} label='West' placeholder='in ddeg' lg={5} md={6} />
+                <Field name='stats.bounding_box.bbox_east' component={renderTextField} label='East' placeholder='in ddeg' lg={5} md={6} />
+              </Form.Row>
+              <Form.Row className='justify-content-sm-center'>
+                <Field name='stats.bounding_box.bbox_south' component={renderTextField} label='South' placeholder='in ddeg' lg={5} md={6} />
+              </Form.Row>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12}>
+              <div className='float-right'>
+                <Button className='mr-1' variant='secondary' size='sm' onClick={this.props.handleHide}>
+                  Cancel
+                </Button>
+                <Button variant='warning' size='sm' type='submit' disabled={pristine || submitting || !valid}>
+                  Done
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        </Form>
       )
     } else {
-      return (
-        <div>
-          What are YOU doing here?
-        </div>
-      )
+      return <div>What are YOU doing here?</div>
     }
   }
+}
+
+LoweringStatsForm.propTypes = {
+  handleFormSubmit: PropTypes.func.isRequired,
+  handleHide: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  lowering: PropTypes.object.isRequired,
+  pristine: PropTypes.bool.isRequired,
+  roles: PropTypes.array,
+  submitting: PropTypes.bool.isRequired,
+  valid: PropTypes.bool.isRequired
 }
 
 const validate = (formProps) => {
+  const errors = { milestones: {}, stats: {} }
 
-  const errors = {};
-
-  if (formProps.start === '') {
-    errors.start = 'Required'
-  } else if (!moment.utc(formProps.start).isValid()) {
-    errors.start = 'Invalid timestamp'
+  if (formProps.start_ts === '') {
+    errors.start_ts = 'Required'
+  } else if (!moment.utc(formProps.start_ts).isValid()) {
+    errors.start_ts = 'Invalid timestamp'
   }
 
-  if (formProps.stop === '') {
-    errors.stop = 'Required'
-  } else if (!moment.utc(formProps.stop).isValid()) {
-    errors.stop = 'Invalid timestamp'
+  if (formProps.stop_ts === '') {
+    errors.stop_ts = 'Required'
+  } else if (!moment.utc(formProps.stop_ts).isValid()) {
+    errors.stop_ts = 'Invalid timestamp'
   }
 
-  if ((formProps.start !== '') && (formProps.stop !== '')) {
-    if(moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-      errors.stop = 'Stop date must be later than start date'
+  if (formProps.start_ts !== '' && formProps.stop_ts !== '') {
+    if (
+      moment.utc(formProps.stop_ts, dateFormat + ' ' + timeFormat).isBefore(moment.utc(formProps.start_ts, dateFormat + ' ' + timeFormat))
+    ) {
+      errors.stop_ts = 'Stop date must be later than start date'
     }
   }
 
-  if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.stop, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.stop, dateFormat + " " + timeFormat))) {
-    errors.off_bottom = 'Off bottom date must be before stop date';
+  if (
+    formProps.milestones.lowering_off_bottom &&
+    formProps.milestones.lowering_off_bottom !== '' &&
+    moment.utc(formProps.stop_ts, dateFormat + ' ' + timeFormat).isBefore(moment.utc(formProps.stop_ts, dateFormat + ' ' + timeFormat))
+  ) {
+    errors.milestones.lowering_off_bottom = 'Off bottom date must be before stop date'
   }
 
-  if(formProps.on_surface && formProps.on_surface !== '' && moment.utc(formProps.on_surface, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat))) {
-    errors.on_surface = 'On surface date must be after off bottom date';
+  if (
+    formProps.milestones.lowering_on_surface &&
+    formProps.milestones.lowering_on_surface !== '' &&
+    moment
+      .utc(formProps.milestones.lowering_on_surface, dateFormat + ' ' + timeFormat)
+      .isBefore(moment.utc(formProps.milestones.lowering_off_bottom, dateFormat + ' ' + timeFormat))
+  ) {
+    errors.milestones.lowering_on_surface = 'On surface date must be after off bottom date'
   }
 
-  if(formProps.off_bottom && formProps.off_bottom !== '' && moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {
-    errors.off_bottom = 'Off bottom date must be after on bottom date';
+  if (
+    formProps.milestones.lowering_off_bottom &&
+    formProps.milestones.lowering_off_bottom !== '' &&
+    moment
+      .utc(formProps.milestones.lowering_off_bottom, dateFormat + ' ' + timeFormat)
+      .isBefore(moment.utc(formProps.milestones.lowering_on_bottom, dateFormat + ' ' + timeFormat))
+  ) {
+    errors.milestones.lowering_off_bottom = 'Off bottom date must be after on bottom date'
   }
 
-  if(formProps.on_bottom && formProps.on_bottom !== '' && moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.descending, dateFormat + " " + timeFormat))) {
-    errors.on_bottom = 'On bottom date must be after descending date';
+  if (
+    formProps.milestones.lowering_on_bottom &&
+    formProps.milestones.lowering_on_bottom !== '' &&
+    moment
+      .utc(formProps.milestones.lowering_on_bottom, dateFormat + ' ' + timeFormat)
+      .isBefore(moment.utc(formProps.milestones.lowering_descending, dateFormat + ' ' + timeFormat))
+  ) {
+    errors.milestones.lowering_on_bottom = 'On bottom date must be after descending date'
   }
 
-  if(formProps.descending && formProps.descending !== '' && moment.utc(formProps.descending, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.start, dateFormat + " " + timeFormat))) {
-    errors.descending = 'Descending date must be after off_deck date';
+  if (
+    formProps.milestones.lowering_descending &&
+    formProps.milestones.lowering_descending !== '' &&
+    moment
+      .utc(formProps.milestones.lowering_descending, dateFormat + ' ' + timeFormat)
+      .isBefore(moment.utc(formProps.start, dateFormat + ' ' + timeFormat))
+  ) {
+    errors.milestones.lowering_descending = 'Descending date must be after off_deck date'
   }
 
-  if (formProps.on_bottom && formProps.on_bottom !== '' && formProps.off_bottom && formProps.off_bottom !== '') {
-    if(moment.utc(formProps.off_bottom, dateFormat + " " + timeFormat).isBefore(moment.utc(formProps.on_bottom, dateFormat + " " + timeFormat))) {
-      errors.on_bottom = 'Off bottom date must be later than on bottom date';
-      errors.off_bottom = 'Off bottom date must be later than on bottom date';
+  if (
+    formProps.milestones.lowering_on_bottom &&
+    formProps.milestones.lowering_on_bottom !== '' &&
+    formProps.milestones.lowering_off_bottom &&
+    formProps.milestones.lowering_off_bottom !== ''
+  ) {
+    if (
+      moment
+        .utc(formProps.milestones.lowering_off_bottom, dateFormat + ' ' + timeFormat)
+        .isBefore(moment.utc(formProps.milestones.lowering_on_bottom, dateFormat + ' ' + timeFormat))
+    ) {
+      errors.milestones.lowering_on_bottom = 'Off bottom date must be later than on bottom date'
+      errors.milestones.lowering_off_bottom = 'Off bottom date must be later than on bottom date'
     }
   }
 
-  if (!(formProps.max_depth >= 0)) {
-    errors.max_depth = 'Must be a positive floating point number'
+  if (!(formProps.stats.max_depth >= 0)) {
+    errors.stats.max_depth = 'Must be a positive floating point number'
   }
 
-  if (!(formProps.bbox_north >= -60 && formProps.bbox_north <= 60)) {
-    errors.bbox_north = 'Must be a number between +/- 60'
+  if (!(formProps.stats.bounding_boxbbox_north >= -60 && formProps.stats.bounding_boxbbox_north <= 60)) {
+    errors.stats.bounding_boxbbox_north = 'Must be a number between +/- 60'
   }
 
-  if (!(formProps.bbox_east >= -180 && formProps.bbox_east <= 180)) {
-    errors.bbox_east = 'Must be a number between +/- 180'
+  if (!(formProps.stats.bounding_boxbbox_east >= -180 && formProps.stats.bounding_boxbbox_east <= 180)) {
+    errors.stats.bounding_boxbbox_east = 'Must be a number between +/- 180'
   }
 
-  if (!(formProps.bbox_south >= -60 && formProps.bbox_south <= 60)) {
-    errors.bbox_south = 'Must be a number between +/- 60'
+  if (!(formProps.stats.bounding_boxbbox_south >= -60 && formProps.stats.bounding_boxbbox_south <= 60)) {
+    errors.stats.bounding_boxbbox_south = 'Must be a number between +/- 60'
   }
 
-  if (!(formProps.bbox_west >= -180 && formProps.bbox_west <= 180)) {
-    errors.bbox_west = 'Must be a number between +/- 180'
+  if (!(formProps.stats.bounding_boxbbox_west >= -180 && formProps.stats.bounding_boxbbox_west <= 180)) {
+    errors.stats.bounding_boxbbox_west = 'Must be a number between +/- 180'
   }
 
-  return errors;
-
+  return errors
 }
 
 const mapStateToProps = (state) => {
+  const [bbox_north, bbox_east, bbox_south, bbox_west] = state.lowering.lowering.lowering_additional_meta.stats.bounding_box || [
+    '',
+    '',
+    '',
+    ''
+  ]
+  const initialValues = {
+    start_ts: state.lowering.lowering.start_ts,
+    stop_ts: state.lowering.lowering.stop_ts,
+    milestones: state.lowering.lowering.lowering_additional_meta.milestones,
+    stats: {
+      max_depth: state.lowering.lowering.lowering_additional_meta.stats.max_depth,
+      bounding_box: {
+        bbox_north,
+        bbox_east,
+        bbox_south,
+        bbox_west
+      }
+    }
+  }
+
   return {
+    initialValues,
+    lowering: state.lowering.lowering,
     roles: state.user.profile.roles
-  };
+  }
 }
 
 export default compose(
@@ -334,4 +349,4 @@ export default compose(
     form: 'editLoweringStats',
     validate: validate
   })
-)(LoweringStatsForm);
+)(LoweringStatsForm)

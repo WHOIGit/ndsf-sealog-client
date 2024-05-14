@@ -1,5 +1,5 @@
-import path from 'path';
-import { API_ROOT_URL, ROOT_PATH, IMAGE_PATH } from './client_config';
+import { basename } from 'path'
+import { API_ROOT_URL, ROOT_PATH, IMAGE_PATH } from './client_config'
 
 // This function constructs a URL to an image served by the Sealog server.
 // Normally, this should correspond to the server's IMAGE_ROUTE setting
@@ -10,13 +10,13 @@ import { API_ROOT_URL, ROOT_PATH, IMAGE_PATH } from './client_config';
 //
 // Credit rgov (WHOIGit/ndsf-sealog-client)
 export const getImageUrl = (image_path) => {
-  return API_ROOT_URL + IMAGE_PATH + path.basename(image_path);
+  return `${API_ROOT_URL}${IMAGE_PATH}/${basename(image_path)}`
 }
 
 export const handleMissingImage = (ev) => {
-  ev.target.src = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${ROOT_PATH}images/noimage.jpeg`;
+  ev.target.src = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${ROOT_PATH}images/noimage.jpeg`
 }
 
 export const toTitlecase = (str) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
