@@ -41,10 +41,10 @@ class EventTemplateOptionsModal extends Component {
       if (option.event_option_default_value && option.event_option_type !== 'checkboxes') {
         event_options[`option_${index}`] = option.event_option_default_value
       } else if (option.event_option_default_value && option.event_option_type === 'checkboxes') {
-        event_options[`option_${index}`] = [option.event_option_default_value]
+        event_options[`option_${index}`] = option.event_option_default_value.split(',')
       }
     })
-    this.props.initialize({ id: this.props.event.id || null, ts, ...event_options })
+    this.props.initialize({ id: this.state.event_id, ts, event_options })
   }
 
   handleFormSubmit(formProps) {
@@ -111,7 +111,6 @@ class EventTemplateOptionsModal extends Component {
               required={option.event_option_required}
               validate={option.event_option_required ? required : undefined}
               options={option.event_option_values}
-              defaultValue={option.event_option_default_value}
             />
           </div>
         )

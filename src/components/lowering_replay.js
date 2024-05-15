@@ -43,7 +43,8 @@ class LoweringReplay extends Component {
       replayTimer: null,
       replayState: PAUSE,
       replayEventIndex: 0,
-      activePage: 1
+      activePage: 1,
+      sliderTimer: null
     }
 
     this.handleKeyPress = this.handleKeyPress.bind(this)
@@ -109,8 +110,13 @@ class LoweringReplay extends Component {
     if (this.props.event.events && this.props.event.events[index]) {
       this.handleLoweringReplayPause()
       this.setState({ replayEventIndex: index })
-      this.props.advanceLoweringReplayTo(this.props.event.events[index].id)
-      this.setState({ activePage: Math.ceil((index + 1) / maxEventsPerPage) })
+      clearTimeout(this.state.sliderTimer)
+      this.setState({
+        sliderTimer: setTimeout(() => {
+          this.props.advanceLoweringReplayTo(this.props.event.events[index].id)
+          this.setState({ activePage: Math.ceil((index + 1) / maxEventsPerPage)})
+        }, 500)
+      })
     }
   }
 

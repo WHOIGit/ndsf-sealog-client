@@ -94,10 +94,10 @@ class EventCommentModal extends Component {
 }
 
 EventCommentModal.propTypes = {
-  event: PropTypes.object.isRequired,
+  event: PropTypes.object,
   handleHide: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  handleUpdateEvent: PropTypes.func.isRequired,
+  handleUpdateEvent: PropTypes.func,
   initialize: PropTypes.func.isRequired,
   show: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,

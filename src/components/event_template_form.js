@@ -22,6 +22,7 @@ class EventTemplateForm extends Component {
   }
 
   handleFormSubmit(formProps) {
+
     formProps.system_template = formProps.system_template || false
     formProps.disabled = formProps.disabled || false
     formProps.template_categories = formProps.template_categories || []
@@ -341,8 +342,22 @@ const validate = (formProps) => {
           }
         }
 
-        if (event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
-          event_optionErrors.event_option_default_value = 'Value is not in options list'
+        if (['dropdown', 'radio buttons'].includes(event_option.event_option_type)) {
+          if (event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
+            event_optionErrors.event_option_default_value = 'Value is not in options list'
+          }
+        }
+        else {
+          let defaultValueArray =
+            typeof event_option.event_option_default_value === 'object'
+              ? event_option.event_option_default_value
+              : event_option.event_option_default_value.split(',')
+          defaultValueArray = defaultValueArray.map((string) => {
+            return string.trim()
+          })
+          if(event_option.event_option_default_value && !defaultValueArray.every(element => valueArray.includes(element))) {
+            event_optionErrors.event_option_default_value = 'Value(s) is/are not in options list'
+          }
         }
       }
 
