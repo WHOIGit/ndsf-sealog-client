@@ -40,10 +40,10 @@ class EventFilterForm extends Component {
       }
     }
 
-    if (formProps.value) {
-      formProps.value = formProps.value
+    if (formProps.fulltext) {
+      formProps.fulltext = formProps.fulltext
         .split(',')
-        .map((value) => value.trim())
+        .map((fulltext) => fulltext.trim())
         .join(',')
     }
 
@@ -59,7 +59,7 @@ class EventFilterForm extends Component {
 
   clearForm() {
     this.props.resetFields('eventFilterForm', {
-      value: '',
+      fulltext: '',
       author: '',
       startTS: '',
       stopTS: '',
@@ -80,7 +80,7 @@ class EventFilterForm extends Component {
         <Card.Header>{eventFilterFormHeader}</Card.Header>
         <Card.Body className='px-0'>
           <Form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
-            <Field name='value' component={renderTextField} label='Event Value' placeholder='i.e. SAMPLE' disabled={this.props.disabled} />
+            <Field name='fulltext' component={renderTextField} label='Full text' placeholder='i.e. SAMPLE' disabled={this.props.disabled} />
             <Field name='author' component={renderTextField} label='Author' placeholder='i.e. jsmith' disabled={this.props.disabled} />
             <Field
               name='startTS'
@@ -98,7 +98,6 @@ class EventFilterForm extends Component {
               label='Stop Date/Time (UTC)'
               disabled={this.props.disabled}
             />
-            <Field name='freetext' component={renderTextField} label='Freeform Text' disabled={this.props.disabled} />
             <div className='float-right'>
               <Button className='mr-1' variant='secondary' size='sm' disabled={submitting || this.props.disabled} onClick={this.clearForm}>
                 Reset

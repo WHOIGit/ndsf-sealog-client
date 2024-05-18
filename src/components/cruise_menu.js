@@ -17,6 +17,7 @@ class CruiseMenu extends Component {
     super(props)
 
     this.state = {
+      fetching: true,
       years: null,
       activeYear: this.props.cruise.start_ts ? moment.utc(this.props.cruise.start_ts).format('YYYY') : null,
       yearCruises: null,
@@ -33,6 +34,7 @@ class CruiseMenu extends Component {
   componentDidMount() {
     this.props.fetchCruises()
     this.props.fetchLowerings()
+    this.setState({ fetching: false })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -709,7 +711,7 @@ class CruiseMenu extends Component {
 
     return (
       <Card className='border-secondary'>
-        <Card.Body>No {_cruises_} found!</Card.Body>
+        <Card.Body>{ (this.state.fetching) ? 'Fetching...' : `No ${_cruises_} found!`}</Card.Body>
       </Card>
     )
   }
@@ -724,7 +726,7 @@ class CruiseMenu extends Component {
 
     return (
       <Card className='border-secondary'>
-        <Card.Body>No {_cruises_} found!</Card.Body>
+        <Card.Body>{ (this.state.fetching) ? 'Fetching...' : `No ${_cruises_} found!`}</Card.Body>
       </Card>
     )
   }

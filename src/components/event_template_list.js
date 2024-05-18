@@ -14,7 +14,7 @@ class EventTemplateList extends Component {
 
     this.state = {
       active_template_category: null,
-      fetching: false
+      fetching: true
     }
 
     this.client = new Client(`${WS_ROOT_URL}`)
@@ -90,7 +90,7 @@ class EventTemplateList extends Component {
 
   async fetchEventTemplates() {
     this.setState({ fetching: true })
-    this.props.fetchEventTemplates()
+    await this.props.fetchEventTemplates()
     this.setState({ fetching: false })
   }
 
@@ -180,16 +180,14 @@ class EventTemplateList extends Component {
           })
       }
     }
-
-    return <div>No event template found</div>
   }
 
   render() {
     if (this.state.fetching) {
-      return <div style={this.props.style}>Loading...</div>
+      return <Alert>Loading...</Alert>
     }
 
-    if (this.props.event_templates.length > 0) {
+    if (this.props.event_templates.length) {
       return (
         <div style={this.props.style}>
           <EventTemplateOptionsModal handleUpdateEvent={this.props.updateEvent} handleDeleteEvent={this.props.deleteEvent} />

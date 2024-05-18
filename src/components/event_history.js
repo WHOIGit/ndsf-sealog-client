@@ -134,7 +134,7 @@ class EventHistory extends Component {
     let eventFilterValue = this.state.eventFilterValue ? this.state.eventFilterValue : this.state.hideASNAP ? '!ASNAP' : null
 
     let query = {
-      value: eventFilterValue ? eventFilterValue.split(',') : null,
+      fulltext: eventFilterValue ? eventFilterValue.split(',') : null,
       sort: 'newest',
       offset: (this.state.activePage - 1) * maxEventsPerPage,
       limit: maxEventsPerPage
@@ -147,7 +147,7 @@ class EventHistory extends Component {
   async fetchEventExport(event_id = null) {
     if (!event_id) {
       const query = {
-        value: this.state.hideASNAP ? ['!ASNAP'] : null,
+        fulltext: this.state.hideASNAP ? ['!ASNAP'] : null,
         sort: 'newest',
         limit: 1
       }
