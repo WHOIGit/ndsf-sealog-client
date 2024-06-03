@@ -347,7 +347,7 @@ const validate = (formProps) => {
             event_optionErrors.event_option_default_value = 'Value is not in options list'
           }
         }
-        else {
+        else if (event_option.event_option_default_value) {
           let defaultValueArray =
             typeof event_option.event_option_default_value === 'object'
               ? event_option.event_option_default_value
