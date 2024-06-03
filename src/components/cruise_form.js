@@ -45,7 +45,6 @@ class CruiseForm extends Component {
     formProps.cruise_additional_meta.cruise_name = formProps.cruise_additional_meta.cruise_name || ''
     formProps.cruise_location = formProps.cruise_location || ''
     formProps.cruise_hidden = formProps.cruise_hidden || false
-    formProps.cruise_access_list = formProps.cruise_access_list || []
     formProps.cruise_additional_meta.cruise_description = formProps.cruise_additional_meta.cruise_description || ''
 
     formProps.cruise_tags = formProps.cruise_tags || []
