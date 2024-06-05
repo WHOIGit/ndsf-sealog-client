@@ -26,19 +26,21 @@ class EventCommentModal extends Component {
   componentWillUnmount() {}
 
   async populateDefaultValues() {
-    const event_option_comment = this.props.event
-      ? this.props.event.event_options.find((event_option) => event_option.event_option_name === 'event_comment')
+    const { event, initialize } = this.props
+    const event_option_comment = event
+      ? event.event_options.find((event_option) => event_option.event_option_name === 'event_comment')
       : null
     if (event_option_comment) {
-      this.props.initialize({
+      initialize({
         event_comment: event_option_comment.event_option_value
       })
     }
   }
 
   handleFormSubmit(formProps) {
+    const { event, handleUpdateEvent, handleHide } = this.props;
     let existing_comment = false
-    let event_options = (this.props.event.event_options = this.props.event.event_options.map((event_option) => {
+    let event_options = (event && event.event_options) ? event.event_options.map((event_option) => {
       if (event_option.event_option_name === 'event_comment') {
         existing_comment = true
         return {
@@ -48,7 +50,7 @@ class EventCommentModal extends Component {
       } else {
         return event_option
       }
-    }))
+    }) : []
 
     if (!existing_comment) {
       event_options.push({
@@ -57,8 +59,8 @@ class EventCommentModal extends Component {
       })
     }
 
-    this.props.handleUpdateEvent({ ...this.props.event, event_options })
-    this.props.handleHide()
+    handleUpdateEvent({ ...event, event_options })
+    handleHide()
   }
 
   render() {
@@ -66,8 +68,10 @@ class EventCommentModal extends Component {
 
     if (event) {
       return (
-        <Modal show={show} onHide={handleHide}>
-          <Form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
+        <Modal show={show} onHide={handleHide}
+          onEntered={() => document.getElementsByName('event_comment')[0].focus()}
+        >
+          <Form onSubmit={handleSubmit(this.handleFormSubmit)}>
             <Modal.Header className='bg-light' closeButton>
               <Modal.Title>Add/Update Comment</Modal.Title>
             </Modal.Header>

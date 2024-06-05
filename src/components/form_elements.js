@@ -216,6 +216,7 @@ export const renderCheckboxGroup = ({
         label={indication && input.value.includes(option.value) ? <span className='text-warning'>{option.value}</span> : option.value}
         name={`${option.label}[${index}]`}
         key={`${label}.${index}`}
+        id={`${label}.${index}`}
         value={option.value}
         checked={input.value.indexOf(option.value) !== -1}
         disabled={disabled}
@@ -269,10 +270,12 @@ export const renderCheckbox = ({ input, label, meta: { dirty, error }, disabled 
       <Form.Check
         {...input}
         label={label}
+        id={`${label}.${index}`}
         checked={input.value ? true : false}
         onChange={(e) => input.onChange(e.target.checked)}
         isInvalid={dirty && error}
         disabled={disabled}
+        inline
       ></Form.Check>
       <Form.Control.Feedback type='invalid'>{error}</Form.Control.Feedback>
     </Form.Group>
@@ -297,6 +300,7 @@ export const renderRadioGroup = ({
         label={indication && input.value === option.value ? <span className='text-warning'>{option.value}</span> : option.value}
         name={`${label}`}
         key={`${label}.${index}`}
+        id={`${label}.${index}`}
         value={option.value}
         checked={input.value === option.value}
         disabled={disabled}
