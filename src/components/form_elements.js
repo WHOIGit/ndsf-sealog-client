@@ -270,7 +270,7 @@ export const renderCheckbox = ({ input, label, meta: { dirty, error }, disabled 
       <Form.Check
         {...input}
         label={label}
-        id={`${label}.${index}`}
+        id={`${label}`}
         checked={input.value ? true : false}
         onChange={(e) => input.onChange(e.target.checked)}
         isInvalid={dirty && error}
