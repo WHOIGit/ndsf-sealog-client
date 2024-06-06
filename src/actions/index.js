@@ -202,7 +202,6 @@ export const createEvent = ({ event_value, event_free_text = '', event_options =
       delete fields.ts
     }
 
-    console.og("createEvent:", fields)
     const response = await createEventRequest(fields)
     if (response.success) {
       return response.data.insertedEvent
@@ -212,7 +211,6 @@ export const createEvent = ({ event_value, event_free_text = '', event_options =
 
 export const createEventRequest = async (formProps) => {
   let fields = { ...formProps }
-  console.og("createEventRequest:", fields)
   return await create_event(fields)
 }
 

@@ -84,7 +84,11 @@ class EventTemplateList extends Component {
         return eventOptions
       }, [])
 
-      await this.props.createEvent(event_template.event_value, '', event_options)
+      await this.props.createEvent({
+        event_value: event_template.event_value,
+        event_free_text: '',
+        event_options
+      })
     }
   }
 
