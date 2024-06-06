@@ -194,6 +194,10 @@ class LoweringStatsModal extends Component {
 
       this.state.events.forEach((event) => {
         const aux_data = event['aux_data'].find((aux_data_source) => aux_data_source['data_source'] === datasource) || {}
+        if(aux_data) {
+          return
+        }
+
         const latLng = [
           parseFloat(aux_data['data_array'].find((data) => data['data_name'] === 'latitude')['data_value']),
           parseFloat(aux_data['data_array'].find((data) => data['data_name'] === 'longitude')['data_value'])
@@ -217,14 +221,14 @@ class LoweringStatsModal extends Component {
           return {
             tracklines,
             posDataSource: datasource,
-            depthChartOptions: { ...prevState.depthChartOptions, series: [{ data: tracklines[datasource].depth }] },
-            fetching: false
+            depthChartOptions: { ...prevState.depthChartOptions, series: [{ data: tracklines[datasource].depth }] }
           }
         })
         break
       }
     }
 
+    this.setState({fetching:false})
     this.initMapView()
   }
 
