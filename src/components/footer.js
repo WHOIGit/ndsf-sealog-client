@@ -24,10 +24,20 @@ class Footer extends Component {
   componentDidMount() {
     if (this.props.authenticated) {
       this.fetchCustomVars()
-    }
 
-    if (!DISABLE_EVENT_LOGGING && this.props.authenticated) {
-      this.connectToWS()
+      if (!DISABLE_EVENT_LOGGING) {
+        this.connectToWS()
+      }
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.authenticated !== this.props.authenticated && this.props.authenticated) {
+      this.fetchCustomVars()
+
+      if (!DISABLE_EVENT_LOGGING) {
+        this.connectToWS()
+      }
     }
   }
 

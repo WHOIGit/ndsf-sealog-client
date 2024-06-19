@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { reduxForm, Field, change } from 'redux-form'
 import { Button, Card, Form } from 'react-bootstrap'
 import { renderAlert, renderDatePicker, renderMessage, renderTextField, renderTextArea, dateFormat } from './form_elements'
-import Cookies from 'universal-cookie'
+import cookies from '../cookies'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,8 +15,6 @@ import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX, DEFAULT_VESSEL } 
 import { _Cruise_, _cruise_ } from '../vocab'
 
 import * as mapDispatchToProps from '../actions'
-
-const cookies = new Cookies()
 
 class CruiseForm extends Component {
   constructor(props) {

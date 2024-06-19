@@ -2,12 +2,10 @@ import React, { Component } from 'react'
 import { connectModal } from 'redux-modal'
 import PropTypes from 'prop-types'
 import axios from 'axios'
-import Cookies from 'universal-cookie'
+import cookies from '../cookies'
 import ReactFileReader from 'react-file-reader'
 import { Button, Modal, Row, Col } from 'react-bootstrap'
 import { API_ROOT_URL } from '../client_config'
-
-const cookies = new Cookies()
 
 class ImportAuxDataModal extends Component {
   constructor(props) {

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { ConnectedRouter } from 'connected-react-router'
 import { Route, Switch } from 'react-router'
-import Cookies from 'universal-cookie'
+import cookies from './cookies'
 import L from 'leaflet'
 
 // eslint-disable-next-line no-unused-vars
@@ -117,7 +117,6 @@ import { DISABLE_EVENT_LOGGING } from './client_config'
 
 const store = configureStore()
 
-const cookies = new Cookies()
 const token = cookies.get('token')
 if (token) {
   store.dispatch({ type: AUTH_USER })

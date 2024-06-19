@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import Cookies from 'universal-cookie'
+import cookies from '../cookies'
 import { reduxForm, Field } from 'redux-form'
 import { Alert, Button, Col, Form, Card, Row } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 import { renderTextField } from '../form_elements'
 import * as mapDispatchToProps from '../../actions'
-
-const cookies = new Cookies()
 
 class UserProfile extends Component {
   constructor(props) {

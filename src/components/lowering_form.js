@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { reduxForm, Field, change } from 'redux-form'
 import { Button, Card, Form } from 'react-bootstrap'
 import { renderAlert, renderDateTimePicker, renderMessage, renderTextField, renderTextArea } from './form_elements'
-import Cookies from 'universal-cookie'
+import cookies from '../cookies'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -18,8 +18,6 @@ import * as mapDispatchToProps from '../actions'
 
 const dateFormat = 'YYYY-MM-DD'
 const timeFormat = 'HH:mm'
-
-const cookies = new Cookies()
 
 class LoweringForm extends Component {
   constructor(props) {

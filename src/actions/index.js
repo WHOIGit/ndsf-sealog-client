@@ -1,4 +1,4 @@
-import Cookies from 'universal-cookie'
+import cookies from '../cookies'
 import { push } from 'connected-react-router'
 import { show } from 'redux-modal'
 import { change, untouch } from 'redux-form'
@@ -91,8 +91,6 @@ import {
   UPDATE_USER_SUCCESS
 } from './types'
 
-const cookies = new Cookies()
-
 const port = window.location.port ? ':' + window.location.port : ''
 const resetURL = window.location.protocol + '//' + window.location.hostname + port + '/resetPassword/'
 
@@ -129,8 +127,8 @@ export const autoLogin = ({ loginToken, reCaptcha = null }) => {
   return (dispatch) => {
     post_login(payload).then((response) => {
       if (response.success) {
-        cookies.set('token', response.data.token, { path: ROOT_PATH })
-        cookies.set('id', response.data.id, { path: ROOT_PATH })
+        cookies.set('token', response.data.token)
+        cookies.set('id', response.data.id)
         dispatch({ type: AUTH_USER })
         return dispatch(updateProfileState())
       } else {
@@ -718,8 +716,8 @@ export const login = ({ username, password, reCaptcha = null }) => {
   return async (dispatch) => {
     post_login(payload).then((response) => {
       if (response.success) {
-        cookies.set('token', response.data.token, { path: ROOT_PATH })
-        cookies.set('id', response.data.id, { path: ROOT_PATH })
+        cookies.set('token', response.data.token)
+        cookies.set('id', response.data.id)
         dispatch(updateProfileState())
         return dispatch({ type: AUTH_USER })
       }
@@ -737,8 +735,8 @@ export const login = ({ username, password, reCaptcha = null }) => {
 
 export const logout = () => {
   return (dispatch) => {
-    cookies.remove('token', { path: ROOT_PATH })
-    cookies.remove('id', { path: ROOT_PATH })
+    cookies.remove('token')
+    cookies.remove('id')
     dispatch(push(`/login`))
     return dispatch({ type: UNAUTH_USER })
   }

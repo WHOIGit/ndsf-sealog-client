@@ -4,11 +4,9 @@ import axios from 'axios'
 import { Button, Modal, Row, Col } from 'react-bootstrap'
 import { connectModal } from 'redux-modal'
 import ReactFileReader from 'react-file-reader'
-import Cookies from 'universal-cookie'
+import cookies from '../cookies'
 import { API_ROOT_URL } from '../client_config'
 import { _Cruises_ } from '../vocab'
-
-const cookies = new Cookies()
 
 class ImportCruisesModal extends Component {
   constructor(props) {

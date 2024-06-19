@@ -1,9 +1,7 @@
 import axios from 'axios'
-import Cookies from 'universal-cookie'
+import cookies from './cookies'
 import FileDownload from 'js-file-download'
 import { API_ROOT_URL } from './client_config'
-
-const cookies = new Cookies()
 
 export const CRUISE_ROUTE = '/files/cruises'
 export const LOWERING_ROUTE = '/files/lowerings'
