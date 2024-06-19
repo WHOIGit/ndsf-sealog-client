@@ -10,7 +10,7 @@ import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FilePond } from 'react-filepond'
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard'
-import { handleCruiseFileDelete, handleCruiseFileDownload, CRUISE_ROUTE } from '../api'
+import { handle_cruise_file_delete, handle_cruise_file_download, CRUISE_ROUTE } from '../api'
 import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX, DEFAULT_VESSEL } from '../client_config'
 import { _Cruise_, _cruise_ } from '../vocab'
 
@@ -33,7 +33,7 @@ class CruiseForm extends Component {
     this.props.showModal('deleteFile', {
       file: file,
       handleDelete: (file) =>
-        handleCruiseFileDelete(file, this.props.cruise.id, () => {
+        handle_cruise_file_delete(file, this.props.cruise.id, () => {
           this.props.initCruise(this.props.cruise.id)
         })
     })
@@ -90,7 +90,7 @@ class CruiseForm extends Component {
       let files = this.props.cruise.cruise_additional_meta.cruise_files.map((file, index) => {
         return (
           <div className='pl-2' key={`file_${index}`}>
-            <a className='text-decoration-none' href='#' onClick={() => handleCruiseFileDownload(file, this.props.cruise.id)}>
+            <a className='text-decoration-none' href='#' onClick={() => handle_cruise_file_download(file, this.props.cruise.id)}>
               {file}
             </a>{' '}
             <FontAwesomeIcon onClick={() => this.handleFileDeleteModal(file)} className='text-danger' icon='trash' fixedWidth />

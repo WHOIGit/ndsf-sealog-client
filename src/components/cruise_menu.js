@@ -8,7 +8,7 @@ import ExportDropdown from './export_dropdown'
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard'
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard'
 import { MAIN_SCREEN_HEADER, MAIN_SCREEN_TXT } from '../client_config'
-import { handleCruiseFileDownload, handleLoweringFileDownload } from '../api'
+import { handle_cruise_file_download, handle_lowering_file_download } from '../api'
 import { _Cruise_, _cruises_, _Lowering_, _Lowerings_ } from '../vocab'
 import * as mapDispatchToProps from '../actions'
 
@@ -175,7 +175,7 @@ class CruiseMenu extends Component {
     let output = files.map((file, index) => {
       return (
         <div className='pl-2' key={`file_${index}`}>
-          <a className='text-decoration-none' href='#' onClick={() => handleCruiseFileDownload(file)}>
+          <a className='text-decoration-none' href='#' onClick={() => handle_cruise_file_download(file)}>
             {file}
           </a>
         </div>
@@ -188,7 +188,7 @@ class CruiseMenu extends Component {
     let output = files.map((file, index) => {
       return (
         <div className='pl-2' key={`file_${index}`}>
-          <a className='text-decoration-none' href='#' onClick={() => handleLoweringFileDownload(file)}>
+          <a className='text-decoration-none' href='#' onClick={() => handle_lowering_file_download(file)}>
             {file}
           </a>
         </div>

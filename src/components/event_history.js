@@ -10,7 +10,7 @@ import ImageryCards from './imagery_cards'
 import ImagePreviewModal from './image_preview_modal'
 import { Client } from '@hapi/nes/lib/client'
 import { EXCLUDE_AUX_DATA_SOURCES, IMAGES_AUX_DATA_SOURCES, AUX_DATA_SORT_ORDER, WS_ROOT_URL } from '../client_config'
-import { authorizationHeader, get_events, get_event_exports } from '../api'
+import { authorizationHeader, get_events, get_event_exports, handle_image_file_download } from '../api'
 import * as mapDispatchToProps from '../actions'
 
 const excludeAuxDataSources = Array.from(new Set([...EXCLUDE_AUX_DATA_SOURCES, ...IMAGES_AUX_DATA_SOURCES]))
@@ -325,7 +325,7 @@ class EventHistory extends Component {
 
     return (
       <Card className={this.props.className}>
-        <ImagePreviewModal />
+        <ImagePreviewModal handleDownload={handle_image_file_download} />
         <Card.Header>
           {this.state.event.ts} {`<${this.state.event.event_author}>`}: {this.state.event.event_value}{' '}
           {this.state.event.event_free_text ? ` --> "${this.state.event.event_free_text}"` : null}

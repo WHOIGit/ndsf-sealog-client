@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import cookies from '../cookies'
+import cookies from '../../cookies'
 import { reduxForm, Field } from 'redux-form'
 import { Alert, Button, Col, Form, Card, Row } from 'react-bootstrap'
 import PropTypes from 'prop-types'

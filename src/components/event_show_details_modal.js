@@ -9,7 +9,7 @@ import AuxDataCards from './aux_data_cards'
 import EventOptionsCard from './event_options_card'
 import ImageryCards from './imagery_cards'
 import { EXCLUDE_AUX_DATA_SOURCES, IMAGES_AUX_DATA_SOURCES, AUX_DATA_SORT_ORDER } from '../client_config'
-import { get_event_exports } from '../api'
+import { get_event_exports, handle_image_file_download } from '../api'
 import * as mapDispatchToProps from '../actions'
 
 const excludeAuxDataSources = Array.from(new Set([...EXCLUDE_AUX_DATA_SOURCES, ...IMAGES_AUX_DATA_SOURCES]))
@@ -80,7 +80,7 @@ class EventShowDetailsModal extends Component {
       if (this.state.event.event_options) {
         return (
           <Modal size='lg' show={show} onHide={this.props.handleHide}>
-            <ImagePreviewModal />
+            <ImagePreviewModal handleDownload={handle_image_file_download} />
             <Modal.Header className='bg-light' closeButton>
               <Modal.Title as='h5'>Event Details: {this.state.event.event_value}</Modal.Title>
             </Modal.Header>

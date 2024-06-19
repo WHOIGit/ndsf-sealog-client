@@ -1,6 +1,8 @@
 import axios from 'axios'
+import { basename } from 'path'
 import cookies from './cookies'
 import FileDownload from 'js-file-download'
+import { getImageUrl } from './utils'
 import { API_ROOT_URL } from './client_config'
 
 export const CRUISE_ROUTE = '/files/cruises'
@@ -65,6 +67,18 @@ const _handleFileDownload = async (filename, route, id) => {
     .get(`${API_ROOT_URL}${route}/${id}/${filename}`, authorizationHeader())
     .then((response) => {
       FileDownload(response.data, filename)
+    })
+    .catch((error) => {
+      console.error('Problem connecting to API')
+      console.debug(error)
+    })
+}
+
+const _handleImageDownload = async (image_path) => {
+  await axios
+    .get(getImageUrl(image_path), authorizationHeader())
+    .then((response) => {
+      FileDownload(response.data, basename(image_path))
     })
     .catch((error) => {
       console.error('Problem connecting to API')
@@ -595,18 +609,22 @@ export const update_user = async (payload, id) => {
 }
 
 // File-related
-export const handleCruiseFileDelete = async (filename, cruise_id, callback) => {
+export const handle_cruise_file_delete = async (filename, cruise_id, callback) => {
   await _handleFileDelete(filename, CRUISE_ROUTE, cruise_id, callback)
 }
 
-export const handleLoweringFileDelete = async (filename, lowering_id, callback) => {
+export const handle_lowering_file_delete = async (filename, lowering_id, callback) => {
   await _handleFileDelete(filename, LOWERING_ROUTE, lowering_id, callback)
 }
 
-export const handleCruiseFileDownload = async (filename, cruise_id) => {
+export const handle_cruise_file_download = async (filename, cruise_id) => {
   await _handleFileDownload(filename, CRUISE_ROUTE, cruise_id)
 }
 
-export const handleLoweringFileDownload = async (filename, lowering_id) => {
+export const handle_lowering_file_download = async (filename, lowering_id) => {
   await _handleFileDownload(filename, LOWERING_ROUTE, lowering_id)
+}
+
+export const handle_image_file_download = async (image_path) => {
+  await _handleImageDownload(image_path)
 }

@@ -15,6 +15,7 @@ import LoweringModeDropdown from './lowering_mode_dropdown'
 import CustomPagination from './custom_pagination'
 import ExportDropdown from './export_dropdown'
 import { EXCLUDE_AUX_DATA_SOURCES, IMAGES_AUX_DATA_SOURCES, AUX_DATA_SORT_ORDER } from '../client_config'
+import { handle_image_file_download } from '../api'
 import { handleMissingImage } from '../utils'
 import { _Lowerings_ } from '../vocab'
 import * as mapDispatchToProps from '../actions'
@@ -51,6 +52,7 @@ class LoweringReplay extends Component {
     this.sliderTooltipFormatter = this.sliderTooltipFormatter.bind(this)
     this.handleSliderChange = this.handleSliderChange.bind(this)
     this.handleEventClick = this.handleEventClick.bind(this)
+    this.handleImagePreviewModal = this.handleImagePreviewModal.bind(this)
     this.handlePageSelect = this.handlePageSelect.bind(this)
     this.replayAdvance = this.replayAdvance.bind(this)
     this.handleLoweringReplayPause = this.handleLoweringReplayPause.bind(this)
@@ -129,7 +131,7 @@ class LoweringReplay extends Component {
     }
   }
 
-  handleImageClick(source, filepath) {
+  handleImagePreviewModal(source, filepath) {
     this.handleLoweringReplayPause()
     this.props.showModal('imagePreview', { name: source, filepath: filepath })
   }
@@ -193,15 +195,6 @@ class LoweringReplay extends Component {
     } else if (mode === 'Replay') {
       this.props.gotoLoweringReplay(this.props.match.params.id)
     }
-  }
-
-  renderImage(source, filepath) {
-    return (
-      <Card className='event-image-data-card' id={`image_${source}`}>
-        <Image fluid onError={handleMissingImage} src={filepath} onClick={() => this.handleImageClick(source, filepath)} />
-        <span>{source}</span>
-      </Card>
-    )
   }
 
   handleLoweringReplayStart() {
@@ -488,7 +481,7 @@ class LoweringReplay extends Component {
 
     return (
       <Container className='mt-2'>
-        <ImagePreviewModal />
+        <ImagePreviewModal handleDownload={handle_image_file_download}/>
         <EventCommentModal />
         <Row>
           <ButtonToolbar className='mb-2 ml-1 align-items-center'>

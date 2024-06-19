@@ -10,7 +10,7 @@ import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FilePond } from 'react-filepond'
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard'
-import { handleLoweringFileDelete, handleLoweringFileDownload, LOWERING_ROUTE } from '../api'
+import { handle_lowering_file_delete, handle_lowering_file_download, LOWERING_ROUTE } from '../api'
 import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX } from '../client_config'
 import { _Lowering_ } from '../vocab'
 
@@ -38,7 +38,7 @@ class LoweringForm extends Component {
     this.props.showModal('deleteFile', {
       file: file,
       handleDelete: (file) =>
-        handleLoweringFileDelete(file, this.props.lowering.id, () => {
+        handle_lowering_file_delete(file, this.props.lowering.id, () => {
           this.props.initLowering(this.props.lowering.id)
         })
     })
@@ -76,7 +76,7 @@ class LoweringForm extends Component {
       let files = this.props.lowering.lowering_additional_meta.lowering_files.map((file, index) => {
         return (
           <div className='pl-2' key={`file_${index}`}>
-            <a className='text-decoration-none' href='#' onClick={() => handleLoweringFileDownload(file, this.props.lowering.id)}>
+            <a className='text-decoration-none' href='#' onClick={() => handle_lowering_file_download(file, this.props.lowering.id)}>
               {file}
             </a>{' '}
             <FontAwesomeIcon onClick={() => this.handleFileDeleteModal(file)} className='text-danger' icon='trash' fixedWidth />
