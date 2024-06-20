@@ -116,7 +116,7 @@ class ImportLoweringsModal extends Component {
           <Modal.Body>
             <Row>
               <Col xs={6}>
-                <ReactFileReader fileTypes={['.json']} handleFiles={this.handleLoweringRecordImport}>
+                <ReactFileReader fileTypes={['.json']} handleFiles={this.handleLoweringImport}>
                   <Button size='sm'>Select File</Button>
                 </ReactFileReader>
               </Col>
