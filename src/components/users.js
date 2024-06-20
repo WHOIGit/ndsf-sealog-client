@@ -172,7 +172,7 @@ class Users extends Component {
     const editTooltip = <Tooltip id='editTooltip'>Edit this user.</Tooltip>
     const tokenTooltip = <Tooltip id='tokenTooltip'>Show user&apos;s JWT token.</Tooltip>
     const deleteTooltip = <Tooltip id='deleteTooltip'>Delete this user.</Tooltip>
-    const permissionTooltip = <Tooltip id='permissionTooltip'>${_Cruise_} permissions.</Tooltip>
+    const permissionTooltip = <Tooltip id='permissionTooltip'>{_Cruise_} permissions.</Tooltip>
 
     let users = Array.isArray(this.state.filteredUsers)
       ? this.state.filteredUsers
@@ -231,7 +231,7 @@ class Users extends Component {
     const editTooltip = <Tooltip id='editTooltip'>Edit this user.</Tooltip>
     const tokenTooltip = <Tooltip id='tokenTooltip'>Show user&apos;s JWT token.</Tooltip>
     const deleteTooltip = <Tooltip id='deleteTooltip'>Delete this user.</Tooltip>
-    const permissionTooltip = <Tooltip id='permissionTooltip'>${_Cruise_} permissions.</Tooltip>
+    const permissionTooltip = <Tooltip id='permissionTooltip'>{_Cruise_} permissions.</Tooltip>
 
     let system_users = Array.isArray(this.state.filteredSystemUsers)
       ? this.state.filteredSystemUsers

@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import axios from 'axios'
 import { Button, Modal, Row, Col } from 'react-bootstrap'
 import { connectModal } from 'redux-modal'
 import ReactFileReader from 'react-file-reader'
 import cookies from '../cookies'
-import { API_ROOT_URL } from '../client_config'
+import { create_user, get_users } from '../api'
+import { generateRandomCharacters } from '../utils'
+import { resetURL } from '../actions/index'
 
 class ImportUsersModal extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class ImportUsersModal extends Component {
     }
 
     this.quitImport = this.quitImport.bind(this)
+    this.handleUserImport = this.handleUserImport.bind(this)
   }
 
   quitImport() {
@@ -28,85 +30,76 @@ class ImportUsersModal extends Component {
     this.props.handleHide()
   }
 
-  async insertUser({ id, username, fullname, email, password = '', roles, system_user = false }) {
-    const userExists = await axios
-      .get(`${API_ROOT_URL}/api/v1/users/${id}`, {
-        headers: {
-          Authorization: 'Bearer ' + cookies.get('token'),
-          'content-type': 'application/json'
-        }
-      })
-      .then(() => {
-        this.setState((prevState) => ({
-          skipped: prevState.skipped + 1,
-          pending: prevState.pending - 1
-        }))
-        return true
-      })
-      .catch(() => {
-        return false
-      })
+  async insertUser({
+    id,
+    username,
+    fullname,
+    email,
+    password = generateRandomCharacters(12),
+    roles = [],
+    system_user = false
+  }) {
+    const template = await get_users({}, id)
 
-    if (!userExists) {
-      await axios
-        .post(
-          `${API_ROOT_URL}/api/v1/users`,
-          { id, username, fullname, email, password, roles, system_user },
-          {
-            headers: {
-              Authorization: 'Bearer ' + cookies.get('token'),
-              'content-type': 'application/json'
-            }
-          }
-        )
-        .then(() => {
-          this.setState((prevState) => ({
-            imported: prevState.imported + 1,
-            pending: prevState.pending - 1
-          }))
-        })
-        .catch((error) => {
-          if (error.response && error.response.data.statusCode !== 400) {
-            console.error('Problem connecting to API')
-            console.debug(error)
-          }
-
-          this.setState((prevState) => ({
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }))
-        })
+    if(template) {
+      this.setState((prevState) => ({
+        skipped: prevState.skipped + 1,
+        pending: prevState.pending - 1
+      }))
+      return
     }
+
+    const response = await create_user({
+      id,
+      username,
+      fullname,
+      email,
+      password,
+      roles,
+      system_user,
+      resetURL
+    })
+
+    if (response.success) {
+      this.setState((prevState) => ({
+        imported: prevState.imported + 1,
+        pending: prevState.pending - 1
+      }))
+      return
+    }
+
+    this.setState((prevState) => ({
+      errors: prevState.errors + 1,
+      pending: prevState.pending - 1
+    }))
   }
 
-  async importUsersFromFile(e) {
-    try {
-      let json = JSON.parse(e.target.result)
-      this.setState({
-        pending: json.length,
-        imported: 0,
-        errors: 0,
-        skipped: 0
-      })
+  handleUserImport(files) {
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      try {
+        let json = JSON.parse(e.target.result)
+          this.setState({
+          pending: json.length,
+          imported: 0,
+          errors: 0,
+          skipped: 0
+        })
 
-      let currentUser
+        let currentUser
 
-      for (let i = 0; i < json.length; i++) {
-        if (this.state.quit) {
-          break
+        for (let i = 0; i < json.length; i++) {
+          if (this.state.quit) {
+            break
+          }
+          currentUser = json[i]
+          await this.insertUser(currentUser)
         }
-        currentUser = json[i]
-        await this.insertUser(currentUser)
+      } catch (error) {
+        console.error('Error when trying to parse json = ' + error)
       }
-    } catch (error) {
-      console.error('Error when trying to parse json = ' + error)
+      this.setState({ pending: this.state.quit ? 'Quit Early!' : 'Complete' })
     }
-    this.setState({ pending: this.state.quit ? 'Quit Early!' : 'Complete' })
-  }
-
-  handleUserRecordImport(files) {
-    let reader = new FileReader()
-    reader.onload = this.importUsersFromFile
     reader.readAsText(files[0])
   }
 
@@ -123,11 +116,11 @@ class ImportUsersModal extends Component {
           <Modal.Body>
             <Row>
               <Col xs={6}>
-                <ReactFileReader fileTypes={['.json']} handleFiles={this.handleUserRecordImport}>
+                <ReactFileReader fileTypes={['.json']} handleFiles={this.handleUserImport}>
                   <Button size='sm'>Select File</Button>
                 </ReactFileReader>
               </Col>
-              <Col xs={3}>
+              <Col sm={6} xs={4}>
                 Pending: {this.state.pending}
                 <hr />
                 Imported: {this.state.imported}
