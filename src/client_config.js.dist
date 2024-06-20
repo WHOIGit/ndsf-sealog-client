@@ -42,7 +42,7 @@ const DEFAULT_VESSEL = 'R/V Discovery'
 const USE_MAPTILE_PROXY = false
 
 // Add cruise-level and lowering-level authentication. This needs to match the 'useAccessControl' setting on the sealog-server.
-const USE_ACCESS_CONTROL = true
+const USE_ACCESS_CONTROL = false
 
 // Remove ability to add new events
 const DISABLE_EVENT_LOGGING = false
@@ -51,7 +51,7 @@ const DISABLE_EVENT_LOGGING = false
 const CRUISE_ID_PLACEHOLDER = ''
 
 // RegExp object to use when verifying CruiseID i.e. RegExp(/^OXR20[0-9]{2}[0-1][0-9][0-3][0-9]$/)
-const CRUISE_ID_REGEX = RegExp(/^AT[0-9]{2}-[0-9]{2}$/)
+const CRUISE_ID_REGEX = null
 
 // What to call "cruise/cruises", format: null OR ["single version","plural version"] use lowercase
 const CUSTOM_CRUISE_NAME = null
@@ -63,13 +63,13 @@ const LOWERING_ID_PLACEHOLDER = "";
 const LOWERING_ID_REGEX = null;
 
 // What to call "lowering/lowerings", format: null OR ["single version","plural version"] use lowercase
-const CUSTOM_LOWERING_NAME = ["dive","dives"];
+const CUSTOM_LOWERING_NAME = null;
 
 const POSITION_DATASOURCES = ['vehicleRealtimeNavData']
 
 const EXCLUDE_AUX_DATA_SOURCES = []
 
-const IMAGES_AUX_DATA_SOURCES = ['vehicleRealtimeFramegrabberData']
+const IMAGES_AUX_DATA_SOURCES = ['framegrabber']
 
 const AUX_DATA_SORT_ORDER = ['vehicleRealtimeNavData']
 
