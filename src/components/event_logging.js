@@ -16,12 +16,12 @@ class EventLogging extends Component {
   }
 
   render() {
-    if (this.props.roles && this.props.roles.includes('event_logger') && this.props.roles.includes('event_watcher')) {
+    if (this.props.roles && this.props.roles.some((item) => ['admin', 'cruise_manager', 'event_logger'].includes(item))) {
       return (
         <div>
           <EventShowDetailsModal />
           <EventCommentModal />
-          <Row className='mt-2'>
+          <Row>
             <Col>
               <EventTemplateList />
             </Col>
@@ -44,7 +44,7 @@ class EventLogging extends Component {
           <EventShowDetailsModal />
           <Row>
             <Col>
-              <EventHistory />
+              <EventHistory className='mt-2' />
             </Col>
           </Row>
         </div>

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import { connect } from 'react-redux'
-import { ButtonToolbar, Container, Row, Col, Card, ListGroup, Image, OverlayTrigger, Tooltip, Form } from 'react-bootstrap'
+import { ButtonToolbar, Container, Row, Col, Card, ListGroup, OverlayTrigger, Tooltip, Form } from 'react-bootstrap'
 import Slider, { createSliderWithTooltip } from 'rc-slider'
 import PropTypes from 'prop-types'
 import EventFilterForm from './event_filter_form'
@@ -16,7 +16,6 @@ import CustomPagination from './custom_pagination'
 import ExportDropdown from './export_dropdown'
 import { EXCLUDE_AUX_DATA_SOURCES, IMAGES_AUX_DATA_SOURCES, AUX_DATA_SORT_ORDER } from '../client_config'
 import { handle_image_file_download } from '../api'
-import { handleMissingImage } from '../utils'
 import { _Lowerings_ } from '../vocab'
 import * as mapDispatchToProps from '../actions'
 
@@ -116,8 +115,8 @@ class LoweringReplay extends Component {
       this.setState({
         sliderTimer: setTimeout(() => {
           this.props.advanceLoweringReplayTo(this.props.event.events[index].id)
-          this.setState({ activePage: Math.ceil((index + 1) / maxEventsPerPage)})
-        }, 500)
+          this.setState({ activePage: Math.ceil((index + 1) / maxEventsPerPage) })
+        }, 250)
       })
     }
   }
@@ -186,9 +185,7 @@ class LoweringReplay extends Component {
   }
 
   handleLoweringModeSelect(mode) {
-    if (mode === 'Review') {
-      this.props.gotoLoweringReview(this.props.match.params.id)
-    } else if (mode === 'Gallery') {
+    if (mode === 'Gallery') {
       this.props.gotoLoweringGallery(this.props.match.params.id)
     } else if (mode === 'Map') {
       this.props.gotoLoweringMap(this.props.match.params.id)
@@ -365,6 +362,7 @@ class LoweringReplay extends Component {
         onChange={() => this.toggleASNAP()}
         disabled={this.props.event.fetching}
         label='Hide ASNAP'
+        className='m-0'
       />
     )
 
@@ -454,7 +452,7 @@ class LoweringReplay extends Component {
       <Card className='border-secondary mt-2'>
         <Card.Header>{this.renderEventListHeader()}</Card.Header>
         <ListGroup
-          className='eventList'
+          variant='flush'
           tabIndex='-1'
           onKeyDown={this.handleKeyPress}
           ref={(div) => {
@@ -481,7 +479,7 @@ class LoweringReplay extends Component {
 
     return (
       <Container className='mt-2'>
-        <ImagePreviewModal handleDownload={handle_image_file_download}/>
+        <ImagePreviewModal handleDownload={handle_image_file_download} />
         <EventCommentModal />
         <Row>
           <ButtonToolbar className='mb-2 ml-1 align-items-center'>
@@ -491,7 +489,7 @@ class LoweringReplay extends Component {
             <FontAwesomeIcon icon='chevron-right' fixedWidth />
             <span className='text-warning'>{this.props.lowering.lowering_id || 'Loading...'}</span>
             <FontAwesomeIcon icon='chevron-right' fixedWidth />
-            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={'Replay'} modes={['Review', 'Map', 'Gallery']} />
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={'Replay'} modes={['Map', 'Gallery']} />
           </ButtonToolbar>
         </Row>
         <Row>
@@ -536,7 +534,6 @@ LoweringReplay.propTypes = {
   gotoLoweringGallery: PropTypes.func.isRequired,
   gotoLoweringMap: PropTypes.func.isRequired,
   gotoLoweringReplay: PropTypes.func.isRequired,
-  gotoLoweringReview: PropTypes.func.isRequired,
   initLoweringReplay: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
   roles: PropTypes.array,

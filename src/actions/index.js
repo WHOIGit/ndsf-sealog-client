@@ -3,7 +3,6 @@ import { push } from 'connected-react-router'
 import { show } from 'redux-modal'
 import { change, untouch } from 'redux-form'
 import { _Cruise_, _Lowering_ } from '../vocab'
-import { ROOT_PATH } from '../client_config'
 import {
   create_cruise,
   create_event,
@@ -550,12 +549,6 @@ export const gotoLoweringMap = (id) => {
 export const gotoLoweringReplay = (id) => {
   return (dispatch) => {
     return dispatch(push(`/lowering_replay/${id}`))
-  }
-}
-
-export const gotoLoweringReview = (id) => {
-  return (dispatch) => {
-    return dispatch(push(`/lowering_review/${id}`))
   }
 }
 

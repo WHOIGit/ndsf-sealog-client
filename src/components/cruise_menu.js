@@ -147,14 +147,6 @@ class CruiseMenu extends Component {
     }
   }
 
-  handleLoweringSelectForReview() {
-    if (this.state.activeLowering) {
-      this.props.clearEvents()
-      this.props.initCruise(this.state.activeCruise.id)
-      this.props.gotoLoweringReview(this.state.activeLowering.id)
-    }
-  }
-
   handleLoweringSelectForMap() {
     if (this.state.activeLowering) {
       this.props.clearEvents()
@@ -219,7 +211,7 @@ class CruiseMenu extends Component {
         </span>
       ) : null
       let cruiseDescription = this.state.activeCruise.cruise_additional_meta.cruise_description ? (
-        <p className='text-justify'>
+        <p className='text-justify' style={{whiteSpace: "pre-wrap"}}>
           <strong>Description:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_description}
           <br />
         </p>
@@ -369,8 +361,10 @@ class CruiseMenu extends Component {
       let recoveryDurationValue = loweringStopTime && loweringOnSurfaceTime ? loweringStopTime.diff(loweringOnSurfaceTime) : null
 
       let loweringDescription = this.state.activeLowering.lowering_additional_meta.lowering_description ? (
-        <p className='text-justify'>
-          <strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}
+        <p className='text-justify' style={{whiteSpace: "pre-wrap"}}>
+          <strong>Description:</strong> {
+            this.state.activeLowering.lowering_additional_meta.lowering_description
+          }
         </p>
       ) : null
       let loweringLocation = this.state.activeLowering.lowering_location ? (
@@ -487,9 +481,6 @@ class CruiseMenu extends Component {
             <Row className='px-1 justify-content-center'>
               <Button className='mb-1 mr-1' size='sm' variant='outline-primary' onClick={() => this.handleLoweringSelectForReplay()}>
                 Replay
-              </Button>
-              <Button className='mb-1 mr-1' size='sm' variant='outline-primary' onClick={() => this.handleLoweringSelectForReview()}>
-                Review
               </Button>
               <Button className='mb-1 mr-1' size='sm' variant='outline-primary' onClick={() => this.handleLoweringSelectForMap()}>
                 Map
@@ -711,7 +702,7 @@ class CruiseMenu extends Component {
 
     return (
       <Card className='border-secondary'>
-        <Card.Body>{ (this.state.fetching) ? 'Fetching...' : `No ${_cruises_} found!`}</Card.Body>
+        <Card.Body>{this.state.fetching ? 'Fetching...' : `No ${_cruises_} found!`}</Card.Body>
       </Card>
     )
   }
@@ -726,7 +717,7 @@ class CruiseMenu extends Component {
 
     return (
       <Card className='border-secondary'>
-        <Card.Body>{ (this.state.fetching) ? 'Fetching...' : `No ${_cruises_} found!`}</Card.Body>
+        <Card.Body>{this.state.fetching ? 'Fetching...' : `No ${_cruises_} found!`}</Card.Body>
       </Card>
     )
   }
@@ -763,7 +754,6 @@ CruiseMenu.propTypes = {
   gotoLoweringGallery: PropTypes.func.isRequired,
   gotoLoweringMap: PropTypes.func.isRequired,
   gotoLoweringReplay: PropTypes.func.isRequired,
-  gotoLoweringReview: PropTypes.func.isRequired,
   initCruise: PropTypes.func.isRequired,
   lowering: PropTypes.object.isRequired,
   lowerings: PropTypes.array.isRequired

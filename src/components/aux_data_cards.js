@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Card, Col } from 'react-bootstrap'
+import { formatAuxDataSourceName } from '../vocab'
 
 class AuxDataCard extends Component {
   render() {
@@ -25,7 +26,7 @@ class AuxDataCard extends Component {
         lg={this.props.lg || 3}
       >
         <Card className='event-data-card' key={`${this.props.aux_data.data_source}`}>
-          <Card.Header>{this.props.aux_data.data_source.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</Card.Header>
+          <Card.Header>{formatAuxDataSourceName(this.props.aux_data.data_source)}</Card.Header>
           <Card.Body>{aux_data_points}</Card.Body>
         </Card>
       </Col>

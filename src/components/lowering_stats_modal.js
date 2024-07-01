@@ -170,6 +170,7 @@ class LoweringStatsModal extends Component {
 
   async initEvents() {
     const events = await get_event_exports_by_lowering({}, this.props.lowering.id)
+    console.debug('events:', events)
     this.setState({ events })
     this.initLoweringTrackline()
     this.setPlotLines()
@@ -194,7 +195,8 @@ class LoweringStatsModal extends Component {
 
       this.state.events.forEach((event) => {
         const aux_data = event['aux_data'].find((aux_data_source) => aux_data_source['data_source'] === datasource) || {}
-        if(aux_data) {
+
+        if (!aux_data.data_array) {
           return
         }
 
@@ -217,6 +219,8 @@ class LoweringStatsModal extends Component {
       if (trackline.ts.length) {
         tracklines[datasource] = trackline
 
+        console.debug(tracklines)
+
         this.setState((prevState) => {
           return {
             tracklines,
@@ -228,11 +232,14 @@ class LoweringStatsModal extends Component {
       }
     }
 
-    this.setState({fetching:false})
+    this.setState({ fetching: false })
     this.initMapView()
   }
 
   initMapView() {
+    console.debug(`Init map`)
+    console.debug(this.state.tracklines)
+
     if (this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
       this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter())
       this.map.leafletElement.fitBounds(this.state.tracklines[this.state.posDataSource].polyline.getBounds())

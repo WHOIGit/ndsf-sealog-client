@@ -37,6 +37,7 @@ export const renderTextField = ({
       {requiredField}
     </Form.Label>
   ) : null
+  input.value = typeof input.value === 'object' ? input.value.join(', ') : input.value
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
@@ -64,6 +65,7 @@ export const renderTextArea = ({
   lg = 12
 }) => {
   let requiredField = required ? <span className='text-danger'> *</span> : ''
+  input.value = typeof input.value === 'object' ? input.value.join(', ') : input.value
 
   return (
     <Form.Group as={Col} xs={xs} sm={sm} md={md} lg={lg}>
@@ -213,7 +215,13 @@ export const renderCheckboxGroup = ({
 
     const checkbox = (
       <Form.Check
-        label={indication && input.value.includes(option.value) ? <span className='text-warning'>{option.value}</span> : option.value}
+        label={
+          indication && input.value.includes(option.value) ? (
+            <span className='text-warning'>{option.value}</span>
+          ) : (
+            option.label || option.value
+          )
+        }
         name={`${option.label}[${index}]`}
         key={`${label}.${index}`}
         id={`${label}.${index}`}

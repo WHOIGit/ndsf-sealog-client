@@ -113,7 +113,11 @@ class CruiseForm extends Component {
       </div>
     )
 
-    if (this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager'))) {
+    if (
+      (this.props.roles && this.props.roles.some((item) => ['admin'].includes(item))) ||
+      (this.props.cruise.id && this.props.roles && this.props.roles.some((item) => ['cruise_manager'].includes(item)))
+    ) {
+      const not_admin = !this.props.roles.includes('admin')
       return (
         <Card className='border-secondary'>
           <Card.Header>{formHeader}</Card.Header>
@@ -126,6 +130,7 @@ class CruiseForm extends Component {
                   label={`${_Cruise_} ID`}
                   placeholder={CRUISE_ID_PLACEHOLDER ? CRUISE_ID_PLACEHOLDER : 'i.e. CS2001'}
                   required={true}
+                  disabled={not_admin}
                   sm={6}
                   lg={6}
                 />
@@ -143,6 +148,7 @@ class CruiseForm extends Component {
                   label='Vessel Name'
                   placeholder='i.e. R/V Discovery'
                   required={true}
+                  disabled={not_admin}
                   sm={6}
                   lg={6}
                 />
@@ -152,6 +158,7 @@ class CruiseForm extends Component {
                   label='Primary Investigator'
                   placeholder='i.e. Dr. Susan Lang'
                   required={true}
+                  disabled={not_admin}
                   sm={6}
                   lg={6}
                 />
@@ -172,8 +179,24 @@ class CruiseForm extends Component {
                 />
               </Form.Row>
               <Form.Row>
-                <Field name='start_ts' component={renderDatePicker} label='Start Date (UTC)' required={true} sm={6} lg={6} />
-                <Field name='stop_ts' component={renderDatePicker} label='Stop Date (UTC)' required={true} sm={6} lg={6} />
+                <Field
+                  name='start_ts'
+                  component={renderDatePicker}
+                  label='Start Date (UTC)'
+                  required={true}
+                  disabled={not_admin}
+                  sm={6}
+                  lg={6}
+                />
+                <Field
+                  name='stop_ts'
+                  component={renderDatePicker}
+                  label='Stop Date (UTC)'
+                  required={true}
+                  disabled={not_admin}
+                  sm={6}
+                  lg={6}
+                />
               </Form.Row>
               <Form.Row>
                 <Field
@@ -182,6 +205,7 @@ class CruiseForm extends Component {
                   label='Departure Port'
                   placeholder='i.e. Norfolk, VA'
                   required={true}
+                  disabled={not_admin}
                   sm={6}
                   lg={6}
                 />
@@ -191,6 +215,7 @@ class CruiseForm extends Component {
                   label='Arrival Port'
                   placeholder="i.e. St. George's, Bermuda"
                   required={true}
+                  disabled={not_admin}
                   sm={6}
                   lg={6}
                 />
@@ -257,7 +282,7 @@ class CruiseForm extends Component {
         </Card>
       )
     } else {
-      return <div>What are YOU doing here?</div>
+      return null
     }
   }
 }

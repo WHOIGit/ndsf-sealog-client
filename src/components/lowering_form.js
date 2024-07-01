@@ -103,7 +103,11 @@ class LoweringForm extends Component {
       </div>
     )
 
-    if (this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager'))) {
+    if (
+      (this.props.roles && this.props.roles.some((item) => ['admin'].includes(item))) ||
+      (this.props.lowering.id && this.props.roles && this.props.roles.some((item) => ['cruise_manager'].includes(item)))
+    ) {
+      const not_admin = !this.props.roles.includes('admin')
       return (
         <Card className='border-secondary'>
           <Card.Header>{formHeader}</Card.Header>
@@ -116,6 +120,7 @@ class LoweringForm extends Component {
                   label={`${_Lowering_} ID`}
                   placeholder={LOWERING_ID_PLACEHOLDER ? LOWERING_ID_PLACEHOLDER : 'i.e. ROV-0042'}
                   required={true}
+                  disabled={not_admin}
                   sm={6}
                   lg={6}
                 />
@@ -138,8 +143,24 @@ class LoweringForm extends Component {
                 />
               </Form.Row>
               <Form.Row>
-                <Field name='start_ts' component={renderDateTimePicker} label='Start Date/Time (UTC)' required={true} sm={6} lg={6} />
-                <Field name='stop_ts' component={renderDateTimePicker} label='Stop Date/Time (UTC)' required={true} sm={6} lg={6} />
+                <Field
+                  name='start_ts'
+                  component={renderDateTimePicker}
+                  label='Start Date/Time (UTC)'
+                  required={true}
+                  disabled={not_admin}
+                  sm={6}
+                  lg={6}
+                />
+                <Field
+                  name='stop_ts'
+                  component={renderDateTimePicker}
+                  label='Stop Date/Time (UTC)'
+                  required={true}
+                  disabled={not_admin}
+                  sm={6}
+                  lg={6}
+                />
               </Form.Row>
               <Form.Row>
                 <Field
@@ -201,7 +222,7 @@ class LoweringForm extends Component {
         </Card>
       )
     } else {
-      return <div>What are YOU doing here?</div>
+      return null
     }
   }
 }

@@ -13,6 +13,7 @@ import LoweringStatsModal from './lowering_stats_modal'
 import LoweringPermissionsModal from './lowering_permissions_modal'
 import CustomPagination from './custom_pagination'
 import { USE_ACCESS_CONTROL } from '../client_config'
+import { get_cruises } from '../api'
 import { _Lowerings_, _Lowering_, _lowering_ } from '../vocab'
 import * as mapDispatchToProps from '../actions'
 
@@ -20,18 +21,18 @@ let fileDownload = require('js-file-download')
 
 const maxLoweringsPerPage = 8
 
-const tableHeaderStyle = { width: USE_ACCESS_CONTROL ? '90px' : '80px' }
-
 class Lowerings extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       activePage: 1,
-      filteredLowerings: null,
+      filteredLowerings: [],
+      activeCruise: null,
       previouslySelectedLowering: null
     }
 
+    this.filterLoweringsFromProps = this.filterLoweringsFromProps.bind(this)
     this.handlePageSelect = this.handlePageSelect.bind(this)
     this.handleLoweringImportClose = this.handleLoweringImportClose.bind(this)
     this.handleSearchChange = this.handleSearchChange.bind(this)
@@ -40,14 +41,51 @@ class Lowerings extends Component {
   componentDidMount() {
     this.setState({ previouslySelectedLowering: this.props.lowering_id })
     this.props.fetchLowerings()
+    this.setActiveCruise()
+    this.filterLoweringsFromProps()
     this.props.clearSelectedLowering()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.lowerings !== prevProps.lowerings) {
+      this.setState({ filteredLowerings: this.filterLoweringsFromProps() })
+    }
+
+    if (this.props.roles !== prevProps.roles) {
+      this.setActiveCruise()
+    }
+
+    if (this.state.activeCruise !== prevState.activeCruise) {
+      this.setState({ filteredLowerings: this.filterLoweringsFromProps() })
+    }
   }
 
   componentWillUnmount() {
     this.props.clearSelectedLowering()
-    if (this.state.previouslySelectedCruise) {
+    if (this.state.previouslySelectedLowering) {
       this.props.initLowering(this.state.previouslySelectedLowering)
     }
+  }
+
+  async setActiveCruise() {
+    if (this.props.roles && !this.props.roles.includes('admin')) {
+      const query = { startTS: moment.utc().toISOString() }
+      query.stopTS = query.startTS
+
+      const [activeCruise] = (await get_cruises(query)) || null
+
+      this.setState({ activeCruise })
+    }
+  }
+
+  filterLoweringsFromProps() {
+    return this.state.activeCruise
+      ? this.props.lowerings.filter((lowering) => {
+          return moment
+            .utc(lowering.start_ts)
+            .isBetween(moment.utc(this.state.activeCruise.start_ts), moment.utc(this.state.activeCruise.stop_ts))
+        })
+      : this.props.lowerings
   }
 
   handlePageSelect(eventKey) {
@@ -97,6 +135,14 @@ class Lowerings extends Component {
     if (fieldVal !== '') {
       this.setState({
         filteredLowerings: this.props.lowerings.filter((lowering) => {
+          if (
+            this.state.activeCruise &&
+            !moment
+              .utc(lowering.start_ts)
+              .isBetween(moment.utc(this.state.activeCruise.start_ts), moment.utc(this.state.activeCruise.stop_ts))
+          ) {
+            return false
+          }
           const regex = RegExp(fieldVal, 'i')
           if (lowering.lowering_id.match(regex) || lowering.lowering_location.match(regex)) {
             return lowering
@@ -106,7 +152,7 @@ class Lowerings extends Component {
         })
       })
     } else {
-      this.setState({ filteredLowerings: null })
+      this.setState({ filteredLowerings: this.filterLoweringsFromProps() })
     }
     this.handlePageSelect(1)
   }
@@ -141,30 +187,53 @@ class Lowerings extends Component {
     const showTooltip = <Tooltip id='showTooltip'>{_Lowering_} is hidden, click to show.</Tooltip>
     const hideTooltip = <Tooltip id='hideTooltip'>{_Lowering_} is visible, click to hide.</Tooltip>
     const permissionTooltip = <Tooltip id='permissionTooltip'>User permissions.</Tooltip>
-    const lowerings = Array.isArray(this.state.filteredLowerings) ? this.state.filteredLowerings : this.props.lowerings
 
-    return lowerings.map((lowering, index) => {
+    return this.state.filteredLowerings.map((lowering, index) => {
       if (index >= (this.state.activePage - 1) * maxLoweringsPerPage && index < this.state.activePage * maxLoweringsPerPage) {
+        let editLink = (
+          <OverlayTrigger placement='top' overlay={editTooltip}>
+            <FontAwesomeIcon
+              className='text-warning pl-1'
+              onClick={() => this.handleLoweringUpdate(lowering.id)}
+              icon='pencil-alt'
+              fixedWidth
+            />
+          </OverlayTrigger>
+        )
+
+        let permLink =
+          USE_ACCESS_CONTROL && this.props.roles.includes('admin') ? (
+            <OverlayTrigger placement='top' overlay={permissionTooltip}>
+              <FontAwesomeIcon
+                className='text-info pl-1'
+                onClick={() => this.handleLoweringPermissions(lowering.id)}
+                icon='user-lock'
+                fixedWidth
+              />
+            </OverlayTrigger>
+          ) : null
+
         let deleteLink = this.props.roles.includes('admin') ? (
           <OverlayTrigger placement='top' overlay={deleteTooltip}>
-            <FontAwesomeIcon className='text-danger' onClick={() => this.handleLoweringDeleteModal(lowering.id)} icon='trash' fixedWidth />
+            <FontAwesomeIcon
+              className='text-danger pl-1'
+              onClick={() => this.handleLoweringDeleteModal(lowering.id)}
+              icon='trash'
+              fixedWidth
+            />
           </OverlayTrigger>
         ) : null
-        let hiddenLink = null
 
-        if (this.props.roles.includes('admin') && lowering.lowering_hidden) {
-          hiddenLink = (
-            <OverlayTrigger placement='top' overlay={showTooltip}>
-              <FontAwesomeIcon onClick={() => this.handleLoweringShow(lowering.id)} icon='eye-slash' fixedWidth />
-            </OverlayTrigger>
-          )
-        } else if (this.props.roles.includes('admin') && !lowering.lowering_hidden) {
-          hiddenLink = (
-            <OverlayTrigger placement='top' overlay={hideTooltip}>
-              <FontAwesomeIcon className='text-success' onClick={() => this.handleLoweringHide(lowering.id)} icon='eye' fixedWidth />
-            </OverlayTrigger>
-          )
-        }
+        let hiddenLink = (
+          <OverlayTrigger placement='top' overlay={lowering.lowering_hidden ? showTooltip : hideTooltip}>
+            <FontAwesomeIcon
+              className={lowering.lowering_hidden ? 'pl-1' : 'text-success pl-1'}
+              onClick={() => (lowering.lowering_hidden ? this.handleLoweringShow(lowering.id) : this.handleLoweringHide(lowering.id))}
+              icon={lowering.lowering_hidden ? 'eye-slash' : 'eye'}
+              fixedWidth
+            />
+          </OverlayTrigger>
+        )
 
         let loweringLocation = lowering.lowering_location ? (
           <span>
@@ -172,16 +241,17 @@ class Lowerings extends Component {
             <br />
           </span>
         ) : null
+
         let loweringStartTime = moment.utc(lowering.start_ts)
-        let loweringEndTime = moment.utc(lowering.stop_ts)
         let loweringStarted = (
           <span>
             Started: {loweringStartTime.format('YYYY-MM-DD HH:mm')}
             <br />
           </span>
         )
-        let loweringDuration = loweringEndTime.diff(loweringStartTime)
 
+        let loweringEndTime = moment.utc(lowering.stop_ts)
+        let loweringDuration = loweringEndTime.diff(loweringStartTime)
         let loweringDurationStr = (
           <span>
             Duration: {moment.duration(loweringDuration).format('d [days] h [hours] m [minutes]')}
@@ -197,28 +267,11 @@ class Lowerings extends Component {
               {loweringStarted}
               {loweringDurationStr}
             </td>
-            <td>
-              <OverlayTrigger placement='top' overlay={editTooltip}>
-                <FontAwesomeIcon
-                  className='text-primary'
-                  onClick={() => this.handleLoweringUpdate(lowering.id)}
-                  icon='pencil-alt'
-                  fixedWidth
-                />
-              </OverlayTrigger>
-              {USE_ACCESS_CONTROL && this.props.roles.includes('admin') ? (
-                <OverlayTrigger placement='top' overlay={permissionTooltip}>
-                  <FontAwesomeIcon
-                    className='text-primary'
-                    onClick={() => this.handleLoweringPermissions(lowering.id)}
-                    icon='user-lock'
-                    fixedWidth
-                  />
-                </OverlayTrigger>
-              ) : (
-                ''
-              )}{' '}
-              {hiddenLink} {deleteLink}
+            <td className='text-center'>
+              {editLink}
+              {permLink}
+              {hiddenLink}
+              {deleteLink}
               <CopyLoweringToClipboard lowering={lowering} />
             </td>
           </tr>
@@ -235,7 +288,9 @@ class Lowerings extends Component {
             <tr>
               <th>{_Lowering_}</th>
               <th>Details</th>
-              <th style={tableHeaderStyle}>Actions</th>
+              <th className='text-center' style={{ width: '90px' }}>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>{this.renderLowerings()}</tbody>
@@ -256,7 +311,7 @@ class Lowerings extends Component {
           <Form inline>
             <FormControl size='sm' type='text' placeholder='Search' className='mr-sm-2' onChange={this.handleSearchChange} />
             <OverlayTrigger placement='top' overlay={exportTooltip}>
-              <FontAwesomeIcon onClick={() => this.exportLoweringsToJSON()} icon='download' fixedWidth />
+              <FontAwesomeIcon className='text-primary' onClick={() => this.exportLoweringsToJSON()} icon='download' fixedWidth />
             </OverlayTrigger>
           </Form>
         </span>

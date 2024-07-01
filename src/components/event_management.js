@@ -9,7 +9,7 @@ import DeleteEventModal from './delete_event_modal'
 import EventShowDetailsModal from './event_show_details_modal'
 import CustomPagination from './custom_pagination'
 import ExportDropdown from './export_dropdown'
-import { get_events, get_events_count } from '../api'
+import { get_events, get_events_count, get_events_by_cruise, get_events_count_by_cruise, get_cruises } from '../api'
 import * as mapDispatchToProps from '../actions'
 
 const maxEventsPerPage = 15
@@ -21,6 +21,7 @@ class EventManagement extends Component {
 
     this.state = {
       hideASNAP: true,
+      cruise_id: null,
       activePage: 1,
       fetching: false,
       events: [],
@@ -28,6 +29,7 @@ class EventManagement extends Component {
       eventFilter: {}
     }
 
+    this.initEvents = this.initEvents.bind(this)
     this.handleEventUpdate = this.handleEventUpdate.bind(this)
     this.handleEventDelete = this.handleEventDelete.bind(this)
     this.handlePageSelect = this.handlePageSelect.bind(this)
@@ -35,11 +37,14 @@ class EventManagement extends Component {
   }
 
   componentDidMount() {
-    this.fetchEvents()
-    this.fetchEventsCount()
+    this.initEvents()
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if (prevProps.roles !== this.props.roles) {
+      this.initEvents()
+    }
+
     if (prevState.activePage !== this.state.activePage) {
       this.fetchEvents()
     }
@@ -119,8 +124,38 @@ class EventManagement extends Component {
     })
   }
 
+  async initEvents() {
+    if (!this.props.roles) {
+      return
+    }
+
+    if (this.props.roles && !this.props.roles.includes('admin')) {
+      let query = {
+        startTS: new Date().toISOString()
+      }
+
+      query.stopTS = query.startTS
+      const cruises = await get_cruises(query)
+
+      if (cruises.length) {
+        this.setState({ cruise_id: cruises[0].id })
+      } else {
+        this.setState({ events: [], eventCount: 0, fetching: false })
+        return
+      }
+    }
+
+    this.fetchEvents()
+    this.fetchEventsCount()
+  }
+
   async fetchEvents() {
     this.setState({ fetching: true })
+
+    if (this.props.roles && !this.props.roles.includes('admin') && !this.state.cruise_id) {
+      this.setState({ fetching: false })
+      return
+    }
 
     let eventFilter_value = this.state.eventFilter.value ? this.state.eventFilter.value : this.state.hideASNAP ? '!ASNAP' : null
 
@@ -131,11 +166,15 @@ class EventManagement extends Component {
       offset: (this.state.activePage - 1) * maxEventsPerPage,
       limit: maxEventsPerPage
     }
-    const events = await get_events(query)
+    const events = this.state.cruise_id ? await get_events_by_cruise(query, this.state.cruise_id) : await get_events(query)
     this.setState({ events, fetching: false })
   }
 
   async fetchEventsCount() {
+    if (this.props.roles && !this.props.roles.includes('admin') && !this.state.cruise_id) {
+      return
+    }
+
     let eventFilter_value = this.state.eventFilter.value ? this.state.eventFilter.value : this.state.hideASNAP ? '!ASNAP' : null
 
     let query = {
@@ -143,7 +182,7 @@ class EventManagement extends Component {
       value: eventFilter_value ? eventFilter_value.split(',') : null,
       sort: 'newest'
     }
-    const eventCount = await get_events_count(query)
+    const eventCount = this.state.cruise_id ? await get_events_count_by_cruise(query, this.state.cruise_id) : await get_events_count(query)
 
     this.setState({ eventCount })
   }
@@ -167,6 +206,7 @@ class EventManagement extends Component {
         onChange={() => this.toggleASNAP()}
         disabled={this.state.fetching}
         label='ASNAP'
+        className='mr-0'
       />
     )
 
@@ -248,7 +288,7 @@ class EventManagement extends Component {
     }
 
     return (
-      <ListGroup.Item className='event-list-item py-1' key='emptyHistory'>
+      <ListGroup.Item className='event-list-item' key='emptyHistory'>
         No events found
       </ListGroup.Item>
     )

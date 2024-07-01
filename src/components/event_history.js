@@ -414,7 +414,11 @@ class EventHistory extends Component {
 
     return (
       <React.Fragment>
-        <ListGroup className={`eventList ${!this.state.showEventHistoryFullscreen ? 'collapsed' : ''}`} ref={eventHistoryRef}>
+        <ListGroup
+          variant='flush'
+          className={`eventList ${!this.state.showEventHistoryFullscreen ? 'collapsed' : ''}`}
+          ref={eventHistoryRef}
+        >
           {this.renderEventHistory()}
         </ListGroup>
         <Card.Footer>

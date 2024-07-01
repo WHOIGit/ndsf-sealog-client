@@ -36,19 +36,22 @@ class EventCommentModal extends Component {
   }
 
   handleFormSubmit(formProps) {
-    const { event, handleUpdateEvent, handleHide } = this.props;
+    const { event, handleUpdateEvent, handleHide } = this.props
     let existing_comment = false
-    let event_options = (event && event.event_options) ? event.event_options.map((event_option) => {
-      if (event_option.event_option_name === 'event_comment') {
-        existing_comment = true
-        return {
-          event_option_name: 'event_comment',
-          event_option_value: formProps.event_comment
-        }
-      } else {
-        return event_option
-      }
-    }) : []
+    let event_options =
+      event && event.event_options
+        ? event.event_options.map((event_option) => {
+            if (event_option.event_option_name === 'event_comment') {
+              existing_comment = true
+              return {
+                event_option_name: 'event_comment',
+                event_option_value: formProps.event_comment
+              }
+            } else {
+              return event_option
+            }
+          })
+        : []
 
     if (!existing_comment) {
       event_options.push({
@@ -66,9 +69,7 @@ class EventCommentModal extends Component {
 
     if (event) {
       return (
-        <Modal show={show} onHide={handleHide}
-          onEntered={() => document.getElementsByName('event_comment')[0].focus()}
-        >
+        <Modal show={show} onHide={handleHide} onEntered={() => document.getElementsByName('event_comment')[0].focus()}>
           <Form onSubmit={handleSubmit(this.handleFormSubmit)}>
             <Modal.Header className='bg-light' closeButton>
               <Modal.Title>Add/Update Comment</Modal.Title>

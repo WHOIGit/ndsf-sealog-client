@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Button, Modal, Row, Col } from 'react-bootstrap'
 import { connectModal } from 'redux-modal'
 import ReactFileReader from 'react-file-reader'
-import cookies from '../cookies'
 import { create_cruise, get_cruises } from '../api'
 import { _Cruises_ } from '../vocab'
 
@@ -41,7 +40,7 @@ class ImportCruisesModal extends Component {
   }) {
     const cruise = await get_cruises({}, id)
 
-    if(cruise) {
+    if (cruise) {
       this.setState((prevState) => ({
         skipped: prevState.skipped + 1,
         pending: prevState.pending - 1
@@ -79,7 +78,7 @@ class ImportCruisesModal extends Component {
     reader.onload = async (e) => {
       try {
         let json = JSON.parse(e.target.result)
-          this.setState({
+        this.setState({
           pending: json.length,
           imported: 0,
           errors: 0,

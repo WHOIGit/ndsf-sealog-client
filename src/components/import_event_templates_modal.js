@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Button, Modal, Row, Col } from 'react-bootstrap'
 import { connectModal } from 'redux-modal'
 import ReactFileReader from 'react-file-reader'
-import cookies from '../cookies'
 import { create_event_template, get_event_templates } from '../api'
 
 class ImportEventTemplatesModal extends Component {
@@ -37,10 +36,9 @@ class ImportEventTemplatesModal extends Component {
     system_template = false,
     template_categories = []
   }) {
-
     const template = await get_event_templates({}, id)
 
-    if(template) {
+    if (template) {
       this.setState((prevState) => ({
         skipped: prevState.skipped + 1,
         pending: prevState.pending - 1
@@ -52,7 +50,7 @@ class ImportEventTemplatesModal extends Component {
       id,
       event_name,
       event_value,
-      event_free_text_required ,
+      event_free_text_required,
       event_options,
       system_template,
       template_categories
@@ -77,7 +75,7 @@ class ImportEventTemplatesModal extends Component {
     reader.onload = async (e) => {
       try {
         let json = JSON.parse(e.target.result)
-          this.setState({
+        this.setState({
           pending: json.length,
           imported: 0,
           errors: 0,

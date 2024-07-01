@@ -77,9 +77,7 @@ class LoweringGallery extends Component {
   }
 
   handleLoweringModeSelect(mode) {
-    if (mode === 'Review') {
-      this.props.gotoLoweringReview(this.props.match.params.id)
-    } else if (mode === 'Gallery') {
+    if (mode === 'Gallery') {
       this.props.gotoLoweringGallery(this.props.match.params.id)
     } else if (mode === 'Map') {
       this.props.gotoLoweringMap(this.props.match.params.id)
@@ -175,7 +173,6 @@ LoweringGallery.propTypes = {
   gotoLoweringGallery: PropTypes.func.isRequired,
   gotoLoweringMap: PropTypes.func.isRequired,
   gotoLoweringReplay: PropTypes.func.isRequired,
-  gotoLoweringReview: PropTypes.func.isRequired,
   initLowering: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
   toggleASNAP: PropTypes.func.isRequired

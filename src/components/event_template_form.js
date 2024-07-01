@@ -22,17 +22,14 @@ class EventTemplateForm extends Component {
   }
 
   handleFormSubmit(formProps) {
-
     formProps.system_template = formProps.system_template || false
     formProps.disabled = formProps.disabled || false
+    formProps.admin_only = !formProps.system_template ? false : formProps.admin_only || false
     formProps.template_categories = formProps.template_categories || []
 
     if (typeof formProps.template_categories === 'string') {
-      formProps.template_categories = formProps.template_categories.split(',')
+      formProps.template_categories = formProps.template_categories.split(',').map((item) => item.trim().toLowerCase())
     }
-    formProps.template_categories = formProps.template_categories.map((string) => {
-      return string.trim()
-    })
 
     formProps.event_free_text_required = formProps.event_free_text_required || false
     formProps.event_options = formProps.event_options || []
@@ -43,11 +40,8 @@ class EventTemplateForm extends Component {
 
       if (['dropdown', 'checkboxes', 'radio buttons'].includes(event_option.event_option_type)) {
         if (typeof event_option.event_option_values === 'string') {
-          event_option.event_option_values = event_option.event_option_values.split(',')
+          event_option.event_option_values = event_option.event_option_values.split(',').map((item) => item.trim().toLowerCase())
         }
-        event_option.event_option_values = event_option.event_option_values.map((string) => {
-          return string.trim()
-        })
       } else {
         event_option.event_option_values = []
       }
@@ -188,26 +182,19 @@ class EventTemplateForm extends Component {
     if (this.props.roles.includes('admin')) {
       return (
         <div>
-          {this.renderSystemEventTemplateOption()}
-          {this.renderDisableTemplateOption()}
+          <Field name='system_template' component={renderSwitch} label='System template' />
+          {this.props.system_template ? <Field name='admin_only' component={renderSwitch} label='Only available to admins' /> : null}
+          <Field name='disabled' component={renderSwitch} label='Disable template' />
         </div>
       )
     }
   }
 
-  renderSystemEventTemplateOption() {
-    return <Field name='system_template' component={renderSwitch} label='System Template' />
-  }
-
-  renderDisableTemplateOption() {
-    return <Field name='disabled' label='Disable Template' component={renderSwitch} />
-  }
-
   render() {
-    const { handleSubmit, pristine, reset, submitting, valid } = this.props
+    const { handleSubmit, pristine, reset, submitting, valid, initialValues } = this.props
     const formHeader = <div>{this.props.event_template.id ? 'Update' : 'Add'} Event Template</div>
 
-    if (this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('template_manager'))) {
+    if (this.props.roles && this.props.roles.some((item) => ['admin', 'cruise_manager', 'template_manager'].includes(item))) {
       return (
         <Card className='border-secondary'>
           <Card.Header>{formHeader}</Card.Header>
@@ -229,7 +216,7 @@ class EventTemplateForm extends Component {
                   component={renderSwitch}
                   label={'Free text Required?'}
                 />
-                {this.renderAdminOptions()}
+                {this.renderAdminOptions(initialValues.system_template)}
               </Form.Row>
               <FieldArray name='event_options' component={this.renderOptions} />
               {renderAlert(this.props.errorMessage)}
@@ -259,12 +246,14 @@ EventTemplateForm.propTypes = {
   event_template: PropTypes.object.isRequired,
   handleFormSubmit: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
+  initialValues: PropTypes.object.isRequired,
   leaveEventTemplateForm: PropTypes.func.isRequired,
   message: PropTypes.string.isRequired,
   pristine: PropTypes.bool.isRequired,
   reset: PropTypes.func.isRequired,
   roles: PropTypes.array,
   submitting: PropTypes.bool.isRequired,
+  system_template: PropTypes.object.isRequired,
   updateEventTemplate: PropTypes.func.isRequired,
   valid: PropTypes.bool.isRequired
 }
@@ -334,9 +323,6 @@ const validate = (formProps) => {
               typeof event_option.event_option_values === 'object'
                 ? event_option.event_option_values
                 : event_option.event_option_values.split(',')
-            valueArray = valueArray.map((string) => {
-              return string.trim()
-            })
           } catch (err) {
             event_optionErrors.event_option_values = 'Invalid csv list'
           }
@@ -346,16 +332,12 @@ const validate = (formProps) => {
           if (event_option.event_option_default_value && !valueArray.includes(event_option.event_option_default_value)) {
             event_optionErrors.event_option_default_value = 'Value is not in options list'
           }
-        }
-        else if (event_option.event_option_default_value) {
+        } else if (event_option.event_option_default_value) {
           let defaultValueArray =
             typeof event_option.event_option_default_value === 'object'
               ? event_option.event_option_default_value
               : event_option.event_option_default_value.split(',')
-          defaultValueArray = defaultValueArray.map((string) => {
-            return string.trim()
-          })
-          if(event_option.event_option_default_value && !defaultValueArray.every(element => valueArray.includes(element))) {
+          if (event_option.event_option_default_value && !defaultValueArray.every((element) => valueArray.includes(element))) {
             event_optionErrors.event_option_default_value = 'Value(s) is/are not in options list'
           }
         }
@@ -391,7 +373,8 @@ const mapStateToProps = (state) => {
     initialValues: initialValues,
     event_template: state.event_template.event_template,
     roles: state.user.profile.roles,
-    event_options: selector(state, 'event_options')
+    event_options: selector(state, 'event_options'),
+    system_template: selector(state, 'system_template')
   }
 }
 

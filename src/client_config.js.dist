@@ -73,6 +73,8 @@ const IMAGES_AUX_DATA_SOURCES = ['framegrabber']
 
 const AUX_DATA_SORT_ORDER = ['vehicleRealtimeNavData']
 
+const AUX_DATA_DATASOURCE_REPLACE = []
+
 module.exports = {
   API_ROOT_URL,
   WS_ROOT_URL,
@@ -97,5 +99,6 @@ module.exports = {
   POSITION_DATASOURCES,
   EXCLUDE_AUX_DATA_SOURCES,
   IMAGES_AUX_DATA_SOURCES,
-  AUX_DATA_SORT_ORDER
+  AUX_DATA_SORT_ORDER,
+  AUX_DATA_DATASOURCE_REPLACE
 }

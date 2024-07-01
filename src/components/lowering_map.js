@@ -39,6 +39,7 @@ class LoweringMap extends Component {
 
       replayEventIndex: 0,
       activePage: 1,
+      sliderTimer: null,
 
       zoom: 13,
       center: DEFAULT_LOCATION,
@@ -47,18 +48,17 @@ class LoweringMap extends Component {
       height: '480px'
     }
 
-    this.sliderTooltipFormatter = this.sliderTooltipFormatter.bind(this)
-    this.handleSliderChange = this.handleSliderChange.bind(this)
     this.handleEventClick = this.handleEventClick.bind(this)
     this.handleKeyPress = this.handleKeyPress.bind(this)
-    this.handlePageSelect = this.handlePageSelect.bind(this)
-    this.updateEventFilter = this.updateEventFilter.bind(this)
-
     this.handleLoweringModeSelect = this.handleLoweringModeSelect.bind(this)
     this.handleMoveEnd = this.handleMoveEnd.bind(this)
+    this.handlePageSelect = this.handlePageSelect.bind(this)
+    this.handleSliderChange = this.handleSliderChange.bind(this)
     this.handleZoomEnd = this.handleZoomEnd.bind(this)
     this.initMapView = this.initMapView.bind(this)
+    this.sliderTooltipFormatter = this.sliderTooltipFormatter.bind(this)
     this.toggleASNAP = this.toggleASNAP.bind(this)
+    this.updateEventFilter = this.updateEventFilter.bind(this)
   }
 
   componentDidMount() {
@@ -77,6 +77,12 @@ class LoweringMap extends Component {
 
   componentDidUpdate() {
     this.map.leafletElement.invalidateSize()
+  }
+
+  componentWillUnmount() {
+    if (this.state.replayTimer) {
+      clearInterval(this.state.replayTimer)
+    }
   }
 
   handleKeyPress(event) {
@@ -185,8 +191,15 @@ class LoweringMap extends Component {
   handleSliderChange(index) {
     if (this.props.event.events && this.props.event.events[index]) {
       this.setState({ replayEventIndex: index })
-      this.props.advanceLoweringReplayTo(this.props.event.events[index].id)
-      this.setState({ activePage: Math.ceil((index + 1) / maxEventsPerPage) })
+      clearTimeout(this.state.sliderTimer)
+      this.setState({
+        sliderTimer: setTimeout(() => {
+          this.props.advanceLoweringReplayTo(this.props.event.events[index].id)
+          this.setState({ activePage: Math.ceil((index + 1) / maxEventsPerPage) })
+        }, 250)
+      })
+      // this.props.advanceLoweringReplayTo(this.props.event.events[index].id)
+      // this.setState({ activePage: Math.ceil((index + 1) / maxEventsPerPage) })
     }
   }
 
@@ -238,9 +251,7 @@ class LoweringMap extends Component {
   }
 
   handleLoweringModeSelect(mode) {
-    if (mode === 'Review') {
-      this.props.gotoLoweringReview(this.props.match.params.id)
-    } else if (mode === 'Gallery') {
+    if (mode === 'Gallery') {
       this.props.gotoLoweringGallery(this.props.match.params.id)
     } else if (mode === 'Map') {
       this.props.gotoLoweringMap(this.props.match.params.id)
@@ -288,6 +299,7 @@ class LoweringMap extends Component {
         onChange={() => this.toggleASNAP()}
         disabled={this.props.event.fetching}
         label='Hide ASNAP'
+        className='m-0'
       />
     )
 
@@ -314,7 +326,7 @@ class LoweringMap extends Component {
       <Card className='mt-2 border-secondary'>
         <Card.Header>{this.renderEventListHeader()}</Card.Header>
         <ListGroup
-          className='eventList'
+          variant='flush'
           tabIndex='-1'
           onKeyDown={this.handleKeyPress}
           ref={(div) => {
@@ -467,7 +479,7 @@ class LoweringMap extends Component {
             <FontAwesomeIcon icon='chevron-right' fixedWidth />
             <span className='text-warning'>{this.props.lowering.lowering_id || 'Loading...'}</span>
             <FontAwesomeIcon icon='chevron-right' fixedWidth />
-            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={'Map'} modes={['Replay', 'Review', 'Gallery']} />
+            <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode={'Map'} modes={['Replay', 'Gallery']} />
           </ButtonToolbar>
         </Row>
         <Row>
@@ -526,7 +538,6 @@ LoweringMap.propTypes = {
   gotoLoweringGallery: PropTypes.func.isRequired,
   gotoLoweringMap: PropTypes.func.isRequired,
   gotoLoweringReplay: PropTypes.func.isRequired,
-  gotoLoweringReview: PropTypes.func.isRequired,
   initLoweringReplay: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
   roles: PropTypes.array,

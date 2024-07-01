@@ -155,7 +155,7 @@ class EventTemplates extends Component {
   }
 
   renderAddEventTemplateButton() {
-    if (this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('event_manager'))) {
+    if (this.props.roles && this.props.roles.some((item) => ['admin', 'cruise_manager', 'template_manager'].includes(item))) {
       return (
         <Button variant='primary' size='sm' disabled={!this.props.event_templateid} onClick={() => this.handleEventTemplateCreate()}>
           Add Event Template
@@ -185,6 +185,32 @@ class EventTemplates extends Component {
     templates = templates.slice((this.state.activePage - 1) * maxTemplatesPerPage, this.state.activePage * maxTemplatesPerPage)
 
     return templates.map((template) => {
+      const edit_icon = this.props.roles.some((item) => ['admin', 'cruise_manager', 'template_manager'].includes(item)) ? (
+        <OverlayTrigger placement='top' overlay={editTooltip}>
+          <FontAwesomeIcon
+            className='text-warning pl-1'
+            onClick={() => this.handleEventTemplateSelect(template.id)}
+            icon='pencil-alt'
+            fixedWidth
+          />
+        </OverlayTrigger>
+      ) : null
+      const test_icon = (
+        <OverlayTrigger placement='top' overlay={testTooltip}>
+          <FontAwesomeIcon className='text-success pl-1' onClick={() => this.handleEventTemplateTest(template)} icon='vial' fixedWidth />
+        </OverlayTrigger>
+      )
+      const delete_icon = this.props.roles.some((item) => ['admin', 'cruise_manager', 'template_manager'].includes(item)) ? (
+        <OverlayTrigger placement='top' overlay={deleteTooltip}>
+          <FontAwesomeIcon
+            className='text-danger pl-1'
+            onClick={() => this.handleEventTemplateDelete(template.id)}
+            icon='trash'
+            fixedWidth
+          />
+        </OverlayTrigger>
+      ) : null
+
       const style = template.disabled ? { textDecoration: 'line-through' } : {}
       const className = this.props.event_templateid === template.id ? 'text-warning' : ''
 
@@ -196,26 +222,10 @@ class EventTemplates extends Component {
           <td style={style} className={className}>
             {template.event_value}
           </td>
-          <td>
-            <OverlayTrigger placement='top' overlay={editTooltip}>
-              <FontAwesomeIcon
-                className='text-primary'
-                onClick={() => this.handleEventTemplateSelect(template.id)}
-                icon='pencil-alt'
-                fixedWidth
-              />
-            </OverlayTrigger>{' '}
-            <OverlayTrigger placement='top' overlay={testTooltip}>
-              <FontAwesomeIcon className='text-success' onClick={() => this.handleEventTemplateTest(template)} icon='vial' fixedWidth />
-            </OverlayTrigger>{' '}
-            <OverlayTrigger placement='top' overlay={deleteTooltip}>
-              <FontAwesomeIcon
-                className='text-danger'
-                onClick={() => this.handleEventTemplateDelete(template.id)}
-                icon='trash'
-                fixedWidth
-              />
-            </OverlayTrigger>
+          <td className='text-center'>
+            {edit_icon}
+            {test_icon}
+            {delete_icon}
           </td>
         </tr>
       )
@@ -235,12 +245,12 @@ class EventTemplates extends Component {
       this.state.activeSystemPage * maxSystemTemplatesPerPage
     )
 
-    if (system_templates.length > 0) {
+    if (system_templates.length) {
       return system_templates.map((template) => {
         const edit_icon = this.props.roles.includes('admin') ? (
           <OverlayTrigger placement='top' overlay={editTooltip}>
             <FontAwesomeIcon
-              className='text-primary'
+              className='text-warning pl-1'
               onClick={() => this.handleEventTemplateSelect(template.id)}
               icon='pencil-alt'
               fixedWidth
@@ -249,12 +259,17 @@ class EventTemplates extends Component {
         ) : null
         const test_icon = (
           <OverlayTrigger placement='top' overlay={testTooltip}>
-            <FontAwesomeIcon className='text-success' onClick={() => this.handleEventTemplateTest(template)} icon='vial' fixedWidth />
+            <FontAwesomeIcon className='text-success pl-1' onClick={() => this.handleEventTemplateTest(template)} icon='vial' fixedWidth />
           </OverlayTrigger>
         )
         const delete_icon = this.props.roles.includes('admin') ? (
           <OverlayTrigger placement='top' overlay={deleteTooltip}>
-            <FontAwesomeIcon className='text-danger' onClick={() => this.handleEventTemplateDelete(template.id)} icon='trash' fixedWidth />
+            <FontAwesomeIcon
+              className='text-danger pl-1'
+              onClick={() => this.handleEventTemplateDelete(template.id)}
+              icon='trash'
+              fixedWidth
+            />
           </OverlayTrigger>
         ) : null
 
@@ -269,8 +284,10 @@ class EventTemplates extends Component {
             <td style={style} className={className}>
               {template.event_value}
             </td>
-            <td>
-              {edit_icon} {test_icon} {delete_icon}
+            <td className='text-center'>
+              {edit_icon}
+              {test_icon}
+              {delete_icon}
             </td>
           </tr>
         )
@@ -285,14 +302,16 @@ class EventTemplates extends Component {
   }
 
   renderEventTemplatesTable() {
-    if (this.props.event_templates && this.props.event_templates.filter((template) => template.system_template === false).length > 0) {
+    if (this.props.event_templates && this.props.event_templates.filter((template) => template.system_template === false).length) {
       return (
         <Table responsive bordered striped size='sm'>
           <thead>
             <tr>
               <th>Button Name</th>
               <th>Event Value</th>
-              <th style={{ width: '90px' }}>Actions</th>
+              <th className='text-center' style={{ width: '90px' }}>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>{this.renderEventTemplates()}</tbody>
@@ -303,14 +322,16 @@ class EventTemplates extends Component {
   }
 
   renderSystemEventTemplatesTable() {
-    if (this.props.event_templates && this.props.event_templates.filter((template) => template.system_template === true).length > 0) {
+    if (this.props.event_templates && this.props.event_templates.filter((template) => template.system_template === true).length) {
       return (
         <Table responsive bordered striped size='sm'>
           <thead>
             <tr>
               <th>Button Name</th>
               <th>Event Value</th>
-              <th style={{ width: '90px' }}>Actions</th>
+              <th className='text-center' style={{ width: '90px' }}>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>{this.renderSystemEventTemplates()}</tbody>
@@ -334,10 +355,22 @@ class EventTemplates extends Component {
           <Form inline>
             <FormControl size='sm' type='text' placeholder='Search' className='mr-sm-2' onChange={this.handleSearchChange} />
             <OverlayTrigger placement='top' overlay={deleteAllNonSystemTooltip}>
-              <FontAwesomeIcon onClick={() => this.handleNonSystemEventTemplatesWipe()} disabled={disableBtn} icon='trash' fixedWidth />
-            </OverlayTrigger>{' '}
+              <FontAwesomeIcon
+                className='text-danger pl-1'
+                onClick={() => this.handleNonSystemEventTemplatesWipe()}
+                disabled={disableBtn}
+                icon='trash'
+                fixedWidth
+              />
+            </OverlayTrigger>
             <OverlayTrigger placement='top' overlay={exportTooltip}>
-              <FontAwesomeIcon onClick={() => this.exportTemplatesToJSON()} disabled={disableBtn} icon='download' fixedWidth />
+              <FontAwesomeIcon
+                className='text-primary pl-1'
+                onClick={() => this.exportTemplatesToJSON()}
+                disabled={disableBtn}
+                icon='download'
+                fixedWidth
+              />
             </OverlayTrigger>
           </Form>
         </div>
@@ -357,7 +390,13 @@ class EventTemplates extends Component {
           <Form inline>
             <FormControl size='sm' type='text' placeholder='Search' className='mr-sm-2' onChange={this.handleSystemSearchChange} />
             <OverlayTrigger placement='top' overlay={exportTooltip}>
-              <FontAwesomeIcon onClick={() => this.exportSystemTemplatesToJSON()} disabled={disableBtn} icon='download' fixedWidth />
+              <FontAwesomeIcon
+                className='text-primary pl-1'
+                onClick={() => this.exportSystemTemplatesToJSON()}
+                disabled={disableBtn}
+                icon='download'
+                fixedWidth
+              />
             </OverlayTrigger>
           </Form>
         </span>
@@ -370,7 +409,7 @@ class EventTemplates extends Component {
       return <div>Loading...</div>
     }
 
-    if (this.props.roles.includes('admin') || this.props.roles.includes('event_manager')) {
+    if (this.props.roles.some((item) => ['admin', 'cruise_manager', 'template_manager'].includes(item))) {
       return (
         <Container className='mt-2'>
           <DeleteEventTemplateModal />

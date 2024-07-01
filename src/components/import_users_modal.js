@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Button, Modal, Row, Col } from 'react-bootstrap'
 import { connectModal } from 'redux-modal'
 import ReactFileReader from 'react-file-reader'
-import cookies from '../cookies'
 import { create_user, get_users } from '../api'
 import { generateRandomCharacters } from '../utils'
 import { resetURL } from '../actions/index'
@@ -30,18 +29,10 @@ class ImportUsersModal extends Component {
     this.props.handleHide()
   }
 
-  async insertUser({
-    id,
-    username,
-    fullname,
-    email,
-    password = generateRandomCharacters(12),
-    roles = [],
-    system_user = false
-  }) {
+  async insertUser({ id, username, fullname, email, password = generateRandomCharacters(12), roles = [], system_user = false }) {
     const template = await get_users({}, id)
 
-    if(template) {
+    if (template) {
       this.setState((prevState) => ({
         skipped: prevState.skipped + 1,
         pending: prevState.pending - 1
@@ -79,7 +70,7 @@ class ImportUsersModal extends Component {
     reader.onload = async (e) => {
       try {
         let json = JSON.parse(e.target.result)
-          this.setState({
+        this.setState({
           pending: json.length,
           imported: 0,
           errors: 0,

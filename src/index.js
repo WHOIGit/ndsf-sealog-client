@@ -28,7 +28,6 @@ import Lowerings from './components/lowerings'
 import LoweringMap from './components/lowering_map'
 import LoweringGallery from './components/lowering_gallery'
 import LoweringReplay from './components/lowering_replay'
-import LoweringReview from './components/lowering_review'
 import Cruises from './components/cruises'
 import ForgotPassword from './components/auth/forgot_password'
 import ResetPassword from './components/auth/reset_password'
@@ -152,7 +151,6 @@ ReactDOM.render(
         <Route path={`/lowering_gallery/:id`} exact={true} component={RequireAuth(LoweringGallery)} />
         <Route path={`/lowering_map/:id`} exact={true} component={RequireAuth(LoweringMap)} />
         <Route path={`/lowering_replay/:id`} exact={true} component={RequireAuth(LoweringReplay)} />
-        <Route path={`/lowering_review/:id`} exact={true} component={RequireAuth(LoweringReview)} />
         <Route path={`/event_management`} exact={true} component={RequireAuth(EventManagement)} />
         <Route path={`/event_templates`} exact={true} component={RequireAuth(EventTemplates)} />
       </Switch>

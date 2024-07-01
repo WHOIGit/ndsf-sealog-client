@@ -135,10 +135,11 @@ class ExportDropdown extends Component {
 
   render() {
     const exportTooltip = <Tooltip id='exportTooltip'>Export these events</Tooltip>
+    const className = this.props.className ? this.props.className + ' no-arrow' : 'no-arrow'
 
     return (
       <Dropdown as={'span'} id={this.state.id}>
-        <Dropdown.Toggle variant="link"  disabled={this.props.disabled}>
+        <Dropdown.Toggle className={'px-1 ' + className} variant='link' disabled={this.props.disabled}>
           <OverlayTrigger placement='top' overlay={exportTooltip}>
             <FontAwesomeIcon icon='download' fixedWidth />
           </OverlayTrigger>
@@ -180,7 +181,8 @@ ExportDropdown.propTypes = {
   eventFilter: PropTypes.object.isRequired,
   cruiseID: PropTypes.string,
   loweringID: PropTypes.string,
-  sort: PropTypes.string
+  sort: PropTypes.string,
+  className: PropTypes.string
 }
 
 export default connect(null, null)(ExportDropdown)

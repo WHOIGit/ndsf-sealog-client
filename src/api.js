@@ -50,6 +50,13 @@ const _errorNot401 = (error) => {
   }
 }
 
+const _errorNot400 = (error) => {
+  if (error.response && error.response.data.statusCode !== 400) {
+    console.error('Problem connecting to API')
+    console.debug(error.response)
+  }
+}
+
 const _handleFileDelete = async (filename, route, id, callback) => {
   await axios
     .delete(`${API_ROOT_URL}${route}/${id}/${filename}`, authorizationHeader())
@@ -57,7 +64,7 @@ const _handleFileDelete = async (filename, route, id, callback) => {
       await callback()
     })
     .catch((error) => {
-      console.error('Problem connecting to API')
+      _errorNot401(error)
       console.debug(error)
     })
 }
@@ -69,7 +76,7 @@ const _handleFileDownload = async (filename, route, id) => {
       FileDownload(response.data, filename)
     })
     .catch((error) => {
-      console.error('Problem connecting to API')
+      _errorNot401(error)
       console.debug(error)
     })
 }
@@ -81,7 +88,7 @@ const _handleImageDownload = async (image_path) => {
       FileDownload(response.data, basename(image_path))
     })
     .catch((error) => {
-      console.error('Problem connecting to API')
+      _errorNot401(error)
       console.debug(error)
     })
 }
@@ -125,7 +132,10 @@ export const post_login = async (payload) => {
 
 export const register_user = async (payload) => {
   return await axios.post(`${API_ROOT_URL}/api/v1/auth/register`, payload).then(() => {
-    return { success: true }
+    return { success: true }.catch((error) => {
+      console.debug(error)
+      return { error }
+    })
   })
 }
 
@@ -136,6 +146,7 @@ export const reset_password = async (payload) => {
       return { success: true }
     })
     .catch((error) => {
+      console.debug(error)
       return { error }
     })
 }
@@ -160,7 +171,7 @@ export const create_cruise = async (payload) => {
       return { success: true, data: response.data }
     })
     .catch((error) => {
-      console.debug(error)
+      _errorNot400(error)
       return { error }
     })
 }
@@ -198,7 +209,7 @@ export const update_cruise = async (payload, id) => {
       return { success: true }
     })
     .catch((error) => {
-      _errorNot401(error)
+      _errorNot400(error)
       return { error }
     })
 }
@@ -224,14 +235,14 @@ export const get_custom_vars = async (queryDict = {}, id = null) => {
       return response.data
     })
     .catch((error) => {
-      _errorNot404(error)
+      _errorNot401(error)
       return id ? null : []
     })
 }
 
 export const update_custom_var = async (payload, id) => {
   await axios.patch(`${API_ROOT_URL}/api/v1/custom_vars/${id}`, payload, authorizationHeader()).catch((error) => {
-    _errorNot404(error)
+    _errorNot400(error)
   })
 }
 
@@ -286,7 +297,7 @@ export const create_event_template = async (payload) => {
       return { success: true, data: response.data }
     })
     .catch((error) => {
-      console.debug(error)
+      _errorNot400(error)
       return { error }
     })
 }
@@ -367,7 +378,7 @@ export const update_event_template = async (payload, id) => {
       return { success: true }
     })
     .catch((error) => {
-      _errorNot401(error)
+      _errorNot400(error)
       return { error }
     })
 }
@@ -380,7 +391,7 @@ export const create_event = async (payload) => {
       return { success: true, data: response.data }
     })
     .catch((error) => {
-      console.debug(error)
+      _errorNot400(error)
       return { error }
     })
 }
@@ -445,11 +456,39 @@ export const get_events_by_cruise = async (queryDict, id) => {
     })
 }
 
+export const get_events_count_by_cruise = async (queryDict, id) => {
+  const queryStr = _buildQueryString(queryDict)
+
+  return await axios
+    .get(`${API_ROOT_URL}/api/v1/events/bycruise/${id}/count?${queryStr}`, authorizationHeader())
+    .then((response) => {
+      return response.data
+    })
+    .catch((error) => {
+      _errorNot404(error)
+      return []
+    })
+}
+
 export const get_events_by_lowering = async (queryDict, id) => {
   const queryStr = _buildQueryString(queryDict)
 
   return await axios
     .get(`${API_ROOT_URL}/api/v1/events/bylowering/${id}?${queryStr}`, authorizationHeader())
+    .then((response) => {
+      return response.data
+    })
+    .catch((error) => {
+      _errorNot404(error)
+      return []
+    })
+}
+
+export const get_events_count_by_lowering = async (queryDict, id) => {
+  const queryStr = _buildQueryString(queryDict)
+
+  return await axios
+    .get(`${API_ROOT_URL}/api/v1/events/bylowering/${id}/count?${queryStr}`, authorizationHeader())
     .then((response) => {
       return response.data
     })
@@ -466,7 +505,7 @@ export const update_event = async (payload, id) => {
       return { success: true }
     })
     .catch((error) => {
-      _errorNot401(error)
+      _errorNot400(error)
       return { error }
     })
 }
@@ -603,7 +642,7 @@ export const update_user = async (payload, id) => {
       return { success: true }
     })
     .catch((error) => {
-      _errorNot401(error)
+      _errorNot400(error)
       return { error }
     })
 }

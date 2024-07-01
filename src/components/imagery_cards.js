@@ -4,7 +4,6 @@ import { getImageUrl, handleMissingImage } from '../utils'
 import { Card, Col, Image } from 'react-bootstrap'
 
 class ImageryCard extends Component {
-
   constructor(props) {
     super(props)
 
@@ -19,7 +18,7 @@ class ImageryCard extends Component {
   }
 
   handleOnClick() {
-    if(this.state.validImage) {
+    if (this.state.validImage) {
       this.props.onClick() || null
     }
   }

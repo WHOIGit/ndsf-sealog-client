@@ -191,9 +191,9 @@ class Users extends Component {
           <td style={style} className={className}>
             {user.fullname}
           </td>
-          <td>
+          <td className='text-center'>
             <OverlayTrigger placement='top' overlay={editTooltip}>
-              <FontAwesomeIcon className='text-primary' onClick={() => this.handleUserUpdate(user.id)} icon='pencil-alt' fixedWidth />
+              <FontAwesomeIcon className='text-warning' onClick={() => this.handleUserUpdate(user.id)} icon='pencil-alt' fixedWidth />
             </OverlayTrigger>{' '}
             {USE_ACCESS_CONTROL && this.props.roles.includes('admin') ? (
               <OverlayTrigger placement='top' overlay={permissionTooltip}>
@@ -209,7 +209,7 @@ class Users extends Component {
             )}{' '}
             {this.props.roles.includes('admin') ? (
               <OverlayTrigger placement='top' overlay={tokenTooltip}>
-                <FontAwesomeIcon className='text-warning' onClick={() => this.handleDisplayUserToken(user.id)} icon='eye' fixedWidth />
+                <FontAwesomeIcon className='text-success' onClick={() => this.handleDisplayUserToken(user.id)} icon='eye' fixedWidth />
               </OverlayTrigger>
             ) : (
               ''
@@ -250,10 +250,10 @@ class Users extends Component {
               {user.username}
             </td>
             <td style={style}>{user.fullname}</td>
-            <td>
+            <td className='text-center'>
               {this.props.roles.includes('admin') ? (
                 <OverlayTrigger placement='top' overlay={editTooltip}>
-                  <FontAwesomeIcon className='text-primary' onClick={() => this.handleUserUpdate(user.id)} icon='pencil-alt' fixedWidth />
+                  <FontAwesomeIcon className='text-warning' onClick={() => this.handleUserUpdate(user.id)} icon='pencil-alt' fixedWidth />
                 </OverlayTrigger>
               ) : (
                 ''
@@ -272,7 +272,7 @@ class Users extends Component {
               )}{' '}
               {this.props.roles.includes('admin') ? (
                 <OverlayTrigger placement='top' overlay={tokenTooltip}>
-                  <FontAwesomeIcon className='text-warning' onClick={() => this.handleDisplayUserToken(user.id)} icon='eye' fixedWidth />
+                  <FontAwesomeIcon className='text-success' onClick={() => this.handleDisplayUserToken(user.id)} icon='eye' fixedWidth />
                 </OverlayTrigger>
               ) : (
                 ''
@@ -299,7 +299,9 @@ class Users extends Component {
             <tr>
               <th>User Name</th>
               <th>Full Name</th>
-              <th style={tableHeaderStyle}>Actions</th>
+              <th className='text-center' style={tableHeaderStyle}>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>{this.renderUsers()}</tbody>
@@ -318,7 +320,9 @@ class Users extends Component {
             <tr>
               <th>User Name</th>
               <th>Full Name</th>
-              <th style={tableHeaderStyle}>Actions</th>
+              <th className='text-center' style={tableHeaderStyle}>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>{this.renderSystemUsers()}</tbody>
@@ -344,10 +348,22 @@ class Users extends Component {
           <Form inline>
             <FormControl size='sm' type='text' placeholder='Search' className='mr-sm-2' onChange={this.handleSearchChange} />
             <OverlayTrigger placement='top' overlay={deleteAllNonSystemTooltip}>
-              <FontAwesomeIcon onClick={() => this.handleNonSystemUsersWipe()} disabled={disableBtn} icon='trash' fixedWidth />
+              <FontAwesomeIcon
+                className='text-danger'
+                onClick={() => this.handleNonSystemUsersWipe()}
+                disabled={disableBtn}
+                icon='trash'
+                fixedWidth
+              />
             </OverlayTrigger>{' '}
             <OverlayTrigger placement='top' overlay={exportTooltip}>
-              <FontAwesomeIcon onClick={() => this.exportUsersToJSON()} disabled={disableBtn} icon='download' fixedWidth />
+              <FontAwesomeIcon
+                className='text-primary'
+                onClick={() => this.exportUsersToJSON()}
+                disabled={disableBtn}
+                icon='download'
+                fixedWidth
+              />
             </OverlayTrigger>
           </Form>
         </div>
@@ -360,7 +376,7 @@ class Users extends Component {
     const exportTooltip = <Tooltip id='exportTooltip'>Export System Users</Tooltip>
     let export_icon = this.props.roles.includes('admin') ? (
       <OverlayTrigger placement='top' overlay={exportTooltip}>
-        <FontAwesomeIcon onClick={() => this.exportSystemUsersToJSON()} icon='download' fixedWidth />
+        <FontAwesomeIcon className='text-primary' onClick={() => this.exportSystemUsersToJSON()} icon='download' fixedWidth />
       </OverlayTrigger>
     ) : null
 
@@ -382,7 +398,7 @@ class Users extends Component {
       return <div>Loading...</div>
     }
 
-    if (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) {
+    if (this.props.roles.some((item) => ['admin', 'cruise_manager'].includes(item))) {
       return (
         <Container className='mt-2'>
           <DisplayUserTokenModal />
@@ -392,21 +408,23 @@ class Users extends Component {
           <UserPermissionsModal onClose={this.props.fetchCruises} />
           <Row>
             <Col className='px-1' sm={12} md={7} lg={{ span: 6, offset: 1 }} xl={{ span: 5, offset: 2 }}>
-              <Card className='border-secondary' key='system_users_card'>
-                <Card.Header>{this.renderSystemUsersHeader()}</Card.Header>
-                {this.renderSystemUserTable()}
-                <CustomPagination
-                  className='mt-2'
-                  page={this.state.activeSystemPage}
-                  count={
-                    this.state.filteredSystemUsers
-                      ? this.state.filteredSystemUsers.length
-                      : this.props.users.filter((user) => user.system_user === true).length
-                  }
-                  pageSelectFunc={this.handleSystemPageSelect}
-                  maxPerPage={maxSystemUsersPerPage}
-                />
-              </Card>
+              {this.props.roles.includes('admin') ? (
+                <Card className='border-secondary' key='system_users_card'>
+                  <Card.Header>{this.renderSystemUsersHeader()}</Card.Header>
+                  {this.renderSystemUserTable()}
+                  <CustomPagination
+                    className='mt-2'
+                    page={this.state.activeSystemPage}
+                    count={
+                      this.state.filteredSystemUsers
+                        ? this.state.filteredSystemUsers.length
+                        : this.props.users.filter((user) => user.system_user === true).length
+                    }
+                    pageSelectFunc={this.handleSystemPageSelect}
+                    maxPerPage={maxSystemUsersPerPage}
+                  />
+                </Card>
+              ) : null}
               <Card className='border-secondary mt-2'>
                 <Card.Header>{this.renderUsersHeader()}</Card.Header>
                 {this.renderUserTable()}

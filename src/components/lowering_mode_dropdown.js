@@ -45,7 +45,7 @@ LoweringModeDropdownMenu.propTypes = {
 class LoweringModeDropdown extends Component {
   render() {
     return (
-      <Dropdown className='no-arrow' id='dropdown-custom-menu'>
+      <Dropdown id='dropdown-custom-menu'>
         <Dropdown.Toggle as={LoweringModeDropdownToggle}>{this.props.active_mode ? this.props.active_mode : 'Loading...'}</Dropdown.Toggle>
         <Dropdown.Menu as={LoweringModeDropdownMenu}>
           {this.props.modes.map((mode, index) => (

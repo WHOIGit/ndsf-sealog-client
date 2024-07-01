@@ -18,15 +18,14 @@ class ImagePreviewModal extends Component {
   }
 
   render() {
-    const { show, handleHide, name } = this.props
+    const { show, handleHide, handleDownload, name } = this.props
 
     if (name) {
       return (
         <Modal size='lg' show={show} onHide={handleHide}>
           <Modal.Header className='bg-light' closeButton>
             <Modal.Title as='h5'>
-              Image Preview - {Path.basename(this.props.filepath)}
-              {' '}
+              Image Preview - {Path.basename(this.props.filepath)}{' '}
               <FontAwesomeIcon onClick={() => handleDownload(this.props.filepath)} className='text-primary' icon='download' fixedWidth />
             </Modal.Title>
           </Modal.Header>
