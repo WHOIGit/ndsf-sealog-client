@@ -483,6 +483,16 @@ class LoweringMap extends Component {
           </ButtonToolbar>
         </Row>
         <Row>
+          <Col className='px-1 mb-2'>
+            <Card className='event-data-card'>
+              <Card.Header>
+                {this.props.event.selected_event.event_value}
+                <span className='float-right'>{this.props.event.selected_event.ts}</span>
+              </Card.Header>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
           <Col className='px-1' sm={12}>
             <Card className='border-secondary'>
               <Map

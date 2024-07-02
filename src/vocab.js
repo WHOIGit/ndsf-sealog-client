@@ -13,5 +13,9 @@ export const [_lowering_, _lowerings_] = CUSTOM_LOWERING_NAME || ['lowering', 'l
 export const [_Lowering_, _Lowerings_] = [toTitlecase(_lowering_), toTitlecase(_lowerings_)]
 
 export const formatAuxDataSourceName = (datasourceName) => {
+  if (!AUX_DATA_DATASOURCE_REPLACE) {
+    return datasourceName.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')
+  }
+
   return AUX_DATA_DATASOURCE_REPLACE[datasourceName] || datasourceName.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')
 }

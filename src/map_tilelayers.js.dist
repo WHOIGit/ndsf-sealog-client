@@ -1,26 +1,30 @@
-import { USE_MAPTILE_PROXY } from './client_config';
-
-export const TILE_LAYERS = (USE_MAPTILE_PROXY) ? [
-] : [
+// List of tile layer options for sealog maps.  Format conforms with Leaflet
+// tilelayer object definitions. More information available at:
+// https://leafletjs.com/reference.html#tilelayer
+export const TILE_LAYERS = [
   {
-    name: "Carto Dark",
-    attribution:  '&copy <a href="http://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, &copy <a href="https://carto.com/about-carto/">dark_all</a>',
-    url: "  http://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+    name: 'Carto Dark',
+    attribution:
+      '&copy <a href="http://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, &copy <a href="https://carto.com/about-carto/">dark_all</a>',
+    url: '  http://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
     default: true
   },
   {
-    name: "Carto Voyager",
-    attribution:  '&copy <a href="http://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, &copy <a href="https://carto.com/about-carto/">dark_all</a>',
-    url: "  http://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+    name: 'Carto Voyager',
+    attribution:
+      '&copy <a href="http://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, &copy <a href="https://carto.com/about-carto/">dark_all</a>',
+    url: '  http://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'
   },
   {
-    name: "GMRT Basemap",
+    name: 'GMRT Basemap',
     wms: true,
-    url: "https://www.gmrt.org/services/mapserver/wms_merc?map=/public/mgg/web/gmrt.marine-geo.org/htdocs/services/map/wms_merc.map&",
-    attribution: '&copy 2024 <a href="http://gmrt.marine-geo.org" target="_blank" rel="noopener">GMRT</a>',
-    layers: "topo",
+    url: 'https://www.gmrt.org/services/mapserver/wms_merc?map=/public/mgg/web/gmrt.marine-geo.org/htdocs/services/map/wms_merc.map&',
+    attribution: '&copy 2023 <a href="http://gmrt.marine-geo.org" target="_blank" rel="noopener">GMRT</a>',
+    layers: 'topo',
     transparent: false
   }
 ]
 
-export const DEFAULT_LOCATION = {lat:41.38,lng:-71.50};
+// Default location of map while data is loading or in the absence of position
+// data.
+export const DEFAULT_LOCATION = { lat: 41.38, lng: -71.5 }

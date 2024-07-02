@@ -493,6 +493,16 @@ class LoweringReplay extends Component {
           </ButtonToolbar>
         </Row>
         <Row>
+          <Col className='px-1 mb-2'>
+            <Card className='event-data-card'>
+              <Card.Header>
+                {this.props.event.selected_event.event_value}
+                <span className='float-right'>{this.props.event.selected_event.ts}</span>
+              </Card.Header>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
           <ImageryCards framegrab_data_sources={framegrab_data_sources} onClick={this.handleImagePreviewModal} />
           <AuxDataCards aux_data={aux_data} />
           <EventOptionsCard event_options={this.props.event.selected_event.event_options || []} />

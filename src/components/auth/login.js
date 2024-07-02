@@ -44,18 +44,18 @@ class Login extends Component {
   }
 
   async handleAutologin({ loginToken }) {
-    let reCaptcha = RECAPTCHA_SITE_KEY !== '' ? await this.recaptchaRef.current.executeAsync() : null
+    let reCaptcha = RECAPTCHA_SITE_KEY ? await this.recaptchaRef.current.executeAsync() : null
     await this.props.autoLogin({ loginToken, reCaptcha })
   }
 
   async handleFormSubmit({ username, password }) {
-    let reCaptcha = RECAPTCHA_SITE_KEY !== '' ? await this.recaptchaRef.current.executeAsync() : null
+    let reCaptcha = RECAPTCHA_SITE_KEY ? await this.recaptchaRef.current.executeAsync() : null
     username = username.toLowerCase()
     await this.props.login({ username, password, reCaptcha })
   }
 
   async switch2Guest() {
-    let reCaptcha = RECAPTCHA_SITE_KEY !== '' ? await this.recaptchaRef.current.executeAsync() : null
+    let reCaptcha = RECAPTCHA_SITE_KEY ? await this.recaptchaRef.current.executeAsync() : null
     await this.props.switch2Guest(reCaptcha)
   }
 
@@ -75,13 +75,12 @@ class Login extends Component {
     const { handleSubmit, submitting, valid } = this.props
     const loginCardHeader = <h5 className='form-signin-heading'>Please Sign In</h5>
 
-    const recaptcha =
-      RECAPTCHA_SITE_KEY !== '' ? (
-        <span>
-          <ReCAPTCHA ref={this.recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} size='invisible' />
-          <br />
-        </span>
-      ) : null
+    const recaptcha = RECAPTCHA_SITE_KEY ? (
+      <span>
+        <ReCAPTCHA ref={this.recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} size='invisible' />
+        <br />
+      </span>
+    ) : null
 
     const loginButton = (
       <Button variant='primary' type='submit' block disabled={submitting || !valid}>
@@ -94,12 +93,11 @@ class Login extends Component {
       </Button>
     )
 
-    const loginImage =
-      LOGIN_IMAGE !== '' ? (
-        <div className='d-flex justify-content-center'>
-          <Image style={{ width: '250px' }} fluid src={`${ROOT_PATH}images/${LOGIN_IMAGE}`} />
-        </div>
-      ) : null
+    const loginImage = LOGIN_IMAGE ? (
+      <div className='d-flex justify-content-center'>
+        <Image style={{ width: '250px' }} fluid src={`${ROOT_PATH}images/${LOGIN_IMAGE}`} />
+      </div>
+    ) : null
 
     return (
       <div className='mb-2'>

@@ -287,7 +287,7 @@ const validate = (formProps) => {
 const warn = (formProps) => {
   const warnings = {}
 
-  if (formProps.lowering_id && LOWERING_ID_REGEX != null && !formProps.lowering_id.match(LOWERING_ID_REGEX)) {
+  if (formProps.lowering_id && LOWERING_ID_REGEX && !formProps.lowering_id.match(LOWERING_ID_REGEX)) {
     warnings.lowering_id = 'Non-standard ID'
   }
 

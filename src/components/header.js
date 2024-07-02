@@ -124,7 +124,7 @@ class Header extends Component {
               User Profile
             </NavDropdown.Item>
           ) : null}
-          {this.props.fullname !== 'Guest' && RECAPTCHA_SITE_KEY === '' ? (
+          {this.props.fullname !== 'Guest' && !RECAPTCHA_SITE_KEY ? (
             <NavDropdown.Item key='switch2Guest' onClick={() => this.handleSwitchToGuest()}>
               Switch to Guest
             </NavDropdown.Item>

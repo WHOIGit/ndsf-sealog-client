@@ -211,7 +211,7 @@ class CruiseMenu extends Component {
         </span>
       ) : null
       let cruiseDescription = this.state.activeCruise.cruise_additional_meta.cruise_description ? (
-        <p className='text-justify' style={{whiteSpace: "pre-wrap"}}>
+        <p className='text-justify' style={{ whiteSpace: 'pre-wrap' }}>
           <strong>Description:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_description}
           <br />
         </p>
@@ -361,10 +361,8 @@ class CruiseMenu extends Component {
       let recoveryDurationValue = loweringStopTime && loweringOnSurfaceTime ? loweringStopTime.diff(loweringOnSurfaceTime) : null
 
       let loweringDescription = this.state.activeLowering.lowering_additional_meta.lowering_description ? (
-        <p className='text-justify' style={{whiteSpace: "pre-wrap"}}>
-          <strong>Description:</strong> {
-            this.state.activeLowering.lowering_additional_meta.lowering_description
-          }
+        <p className='text-justify' style={{ whiteSpace: 'pre-wrap' }}>
+          <strong>Description:</strong> {this.state.activeLowering.lowering_additional_meta.lowering_description}
         </p>
       ) : null
       let loweringLocation = this.state.activeLowering.lowering_location ? (

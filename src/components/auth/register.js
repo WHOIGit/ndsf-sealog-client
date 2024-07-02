@@ -22,7 +22,7 @@ class Register extends Component {
   }
 
   async handleFormSubmit({ username, fullname, email, password }) {
-    let reCaptcha = RECAPTCHA_SITE_KEY !== '' ? await this.recaptchaRef.current.executeAsync() : null
+    let reCaptcha = RECAPTCHA_SITE_KEY ? await this.recaptchaRef.current.executeAsync() : null
     username = username.toLowerCase()
     this.props.registerUser({ username, fullname, email, password, reCaptcha })
   }
@@ -61,13 +61,12 @@ class Register extends Component {
   renderForm() {
     if (!this.props.message) {
       const { handleSubmit, submitting, valid } = this.props
-      const recaptcha =
-        RECAPTCHA_SITE_KEY !== '' ? (
-          <span>
-            <ReCAPTCHA ref={this.recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} size='invisible' />
-            <br />
-          </span>
-        ) : null
+      const recaptcha = RECAPTCHA_SITE_KEY ? (
+        <span>
+          <ReCAPTCHA ref={this.recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} size='invisible' />
+          <br />
+        </span>
+      ) : null
 
       return (
         <Card className='form-signin'>

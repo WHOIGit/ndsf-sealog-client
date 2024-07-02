@@ -371,7 +371,7 @@ const validate = (formProps) => {
 const warn = (formProps) => {
   const warnings = {}
 
-  if (formProps.cruise_id && CRUISE_ID_REGEX != null && !formProps.cruise_id.match(CRUISE_ID_REGEX)) {
+  if (formProps.cruise_id && CRUISE_ID_REGEX && !formProps.cruise_id.match(CRUISE_ID_REGEX)) {
     warnings.cruise_id = 'Non-standard ID'
   }
 
