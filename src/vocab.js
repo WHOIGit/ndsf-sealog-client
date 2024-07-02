@@ -4,7 +4,7 @@
 import { CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME, AUX_DATA_DATASOURCE_REPLACE } from './client_config'
 import { toTitlecase } from './utils'
 
-export const [_cruise_, _cruises_] = CUSTOM_CRUISE_NAME || ['cruises', 'cruises']
+export const [_cruise_, _cruises_] = CUSTOM_CRUISE_NAME || ['cruise', 'cruises']
 
 export const [_Cruise_, _Cruises_] = [toTitlecase(_cruise_), toTitlecase(_cruises_)]
 
