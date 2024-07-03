@@ -3,7 +3,7 @@ const Pkg = require('../package.json')
 // Set whether the server is using http/https
 // Default is http. This can be overridden at runtime via the
 // SEALOG_SERVER_TLS environment variable.
-const SERVER_PROTOCOL = (process.env.SEALOG_SERVER_TLS && process.env.SEALOG_SERVER_TLS === 'true') ? 'https' : 'http' || 'http'
+const SERVER_TLS = process.env.SEALOG_SERVER_TLS || false
 
 // Set the server hostname.
 // Default is to use the same hostname as specified in the client URL. This
@@ -19,105 +19,133 @@ const SERVER_PORT = process.env.SEALOG_SERVER_PORT || 8000
 // Complete URLs for the Sealog Server.
 // This is comprised based on the SERVER_PROTOCOL, SERVER_HOSTNAME and
 // SERVER_PORT varialbles
-export const API_ROOT_URL = `${SERVER_PROTOCOL}://${SERVER_HOSTNAME}:${SERVER_PORT}/sealog-server`
-export const WS_ROOT_URL = `${(SERVER_PROTOCOL === 'https')? 'wss' : 'ws'}://${SERVER_HOSTNAME}:${SERVER_PORT}/ws`
+const API_ROOT_URL = `${SERVER_TLS ? 'https' : 'http'}://${SERVER_HOSTNAME}:${SERVER_PORT}/sealog-server`
+const WS_ROOT_URL = `${SERVER_TLS ? 'wss' : 'ws'}://${SERVER_HOSTNAME}:${SERVER_PORT}/ws`
 
 // URL Root path to the client.
 // This MUST match where the client is being hosted by the webserver. This can
 // be overridden at runtime via the SEALOG_ROOT_PATH environment variable.
 // Change this if not hosting the client at the webserver's document root
 // i.e. '/sealog/'
-export const ROOT_PATH = process.env.SEALOG_ROOT_PATH || '/'
+const ROOT_PATH = process.env.SEALOG_ROOT_PATH || '/'
 
 // Where the images are hosted on the webserver.
-export const IMAGE_PATH = '/files/images'
+const IMAGE_PATH = '/files/images'
 
 // Site customization
 // Optional reCaptcha bot abuse protection. This can be overridden at runtime
 // via the SEALOG_RECAPTCHA_SITE_KEY environment variable.
-export const RECAPTCHA_SITE_KEY = process.env.SEALOG_RECAPTCHA_SITE_KEY || null
+const RECAPTCHA_SITE_KEY = process.env.SEALOG_RECAPTCHA_SITE_KEY || null
 
 // Text show on the login page to the right of the login form.
-export const LOGIN_SCREEN_TXT =
+const LOGIN_SCREEN_TXT =
   'Sealog provides the Oceanographic Research community with an open-source tool for recording, reviewing, and exporting insitu scientific and operational observations.'
 
 // Optional image file shown on login page. Will appear under the
 // LOGIN_SCREEN_TXT. This image must end in ".jpg", "jpeg", ".png" format and
 // located in the ./assets/images folder
-export const LOGIN_IMAGE = null
+const LOGIN_IMAGE = null
 
 // Text show on the main page above the cruise list.
-export const MAIN_SCREEN_HEADER = 'Welcome to Sealog'
+const MAIN_SCREEN_HEADER = 'Welcome to Sealog'
 
 // Text show on the main page below MAIN_SCREEN_HEADER and above the cruise
 // list.
-export const MAIN_SCREEN_TXT =
+const MAIN_SCREEN_TXT =
   'Please select a cruise from the list below. Selecting a cruise will open the cruise information panel. At the bottom of the cruise information panel there will be links for selecting a lowering. Selecting a lowering will open the lowering information panel. At the bottom of the lowering information panel there will be links proceeding to the lowering replay section, the lowering map section and the lowering gallery section of Sealog. If at any time you wish to return to this page please click the "Review Cruises/Lowerings" text in upper navigation bar.'
 
 // Text displayed on the left side of the title bar
-export const HEADER_TITLE = `Sealog for Vehicles v${Pkg.version}`
+const HEADER_TITLE = `Sealog for Vehicles v${Pkg.version}`
 
 // Default vessel used when created new cruises
-export const DEFAULT_VESSEL = 'R/V Discovery'
+const DEFAULT_VESSEL = 'R/V Discovery'
 
 // Add cruise-level and lowering-level authentication.
 // This needs to match the 'useAccessControl' setting on the sealog-server.
-export const USE_ACCESS_CONTROL = false
+const USE_ACCESS_CONTROL = false
 
 // Remove ability to add new events. Set to true for read-only instances of Sealog
-export const DISABLE_EVENT_LOGGING = false
+const DISABLE_EVENT_LOGGING = false
 
 // Optional placeholder text displayed in CruiseID textfield.
 // This is just a helpful hint to user on how to properly format the cruise ID.
 // i.e. OXR20210101
-export const CRUISE_ID_PLACEHOLDER = null
+const CRUISE_ID_PLACEHOLDER = null
 
 // Optional RegExp object to use when verifying a cruise ID.
 // Non-compliant cruise ID are allowed but a warning message will be shown.
 // i.e. RegExp(/^OXR20[0-9]{2}[0-1][0-9][0-3][0-9]$/)
-export const CRUISE_ID_REGEX = null
+const CRUISE_ID_REGEX = null
 
 // Optional customization for cruise nominclarture
 // Format: ["single version","plural version"]. Specify lowercase versions,
 // will be capitalized within the client as needed.
 // Default is ['cruise', 'cruises']
-export const CUSTOM_CRUISE_NAME = null
+const CUSTOM_CRUISE_NAME = null
 
 // Optional placeholder text displayed in LoweringID textfield.
 // This is just a helpful hint to user on how to properly format the lowering ID
 // i.e. CHR0001
-export const LOWERING_ID_PLACEHOLDER = null
+const LOWERING_ID_PLACEHOLDER = null
 
 // Optional RegExp object to use when verifying a lowering ID.
 // Non-compliant lowering ID are allowed but a warning message will be shown.
 // i.e. RegExp(/^CHR[0-9]{4}$/)
-export const LOWERING_ID_REGEX = null
+const LOWERING_ID_REGEX = null
 
 // Optional customization for lowering nominclarture
 // Format: ["single version","plural version"]. Specify lowercase versions,
 // will be capitalized within the client as needed.
 // Default is ['lowering', 'lowerings']
-export const CUSTOM_LOWERING_NAME = null
+const CUSTOM_LOWERING_NAME = null
 
 // List of auxdata datasources that should be interpreted as vehicle position.
 // List should be defined in order of importance
-export const POSITION_DATASOURCES = ['vehicleRealtimeNavData']
+const POSITION_DATASOURCES = ['vehicleRealtimeNavData']
 
 // Optional list of auxdata datasources that should NOT be displayed in the
 // event history, lowering replay or lowering map
-export const EXCLUDE_AUX_DATA_SOURCES = []
+const EXCLUDE_AUX_DATA_SOURCES = []
 
 // Optional list of auxdata datasources that should be interpreted as imagery
 // and formatted as such in the event history, lowering replay and lowering
 // gallery.
-export const IMAGES_AUX_DATA_SOURCES = ['framegrabber']
+const IMAGES_AUX_DATA_SOURCES = ['framegrabber']
 
 // Optional list defining how to order auxdata data sources in the event
 // history and lowering replay 
-export const AUX_DATA_SORT_ORDER = ['vehicleRealtimeNavData']
+const AUX_DATA_SORT_ORDER = ['vehicleRealtimeNavData']
 
 // Optional key/value pairs for how to format auxdata data source names in
 // event history and event replay.
 // Format: {<auxdata_datasource>: <display text>}. 
 // i.e. { vehicleRealtimeCTDData: 'Vehicle Realtime CTD Data', ... }
-export const AUX_DATA_DATASOURCE_REPLACE = null
+const AUX_DATA_DATASOURCE_REPLACE = null
+
+module.exports = {
+  API_ROOT_URL,
+  WS_ROOT_URL,
+  ROOT_PATH,
+  IMAGE_PATH,
+  RECAPTCHA_SITE_KEY,
+  LOGIN_SCREEN_TXT,
+  LOGIN_IMAGE,
+  MAIN_SCREEN_HEADER,
+  MAIN_SCREEN_TXT,
+  HEADER_TITLE,
+  DEFAULT_VESSEL,
+  USE_ACCESS_CONTROL,
+  DISABLE_EVENT_LOGGING,
+  CRUISE_ID_PLACEHOLDER,
+  CRUISE_ID_REGEX,
+  CUSTOM_CRUISE_NAME,
+  LOWERING_ID_PLACEHOLDER,
+  LOWERING_ID_REGEX,
+  CUSTOM_LOWERING_NAME,
+  POSITION_DATASOURCES,
+  EXCLUDE_AUX_DATA_SOURCES,
+  IMAGES_AUX_DATA_SOURCES,
+  AUX_DATA_SORT_ORDER,
+  AUX_DATA_DATASOURCE_REPLACE
+}
+
