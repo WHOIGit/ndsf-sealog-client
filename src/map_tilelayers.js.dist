@@ -6,14 +6,14 @@ export const TILE_LAYERS = [
     name: 'Carto Dark',
     attribution:
       '&copy <a href="http://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, &copy <a href="https://carto.com/about-carto/">dark_all</a>',
-    url: '  http://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+    url: '  https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
     default: true
   },
   {
     name: 'Carto Voyager',
     attribution:
       '&copy <a href="http://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, &copy <a href="https://carto.com/about-carto/">dark_all</a>',
-    url: '  http://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'
+    url: '  https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'
   },
   {
     name: 'GMRT Basemap',
