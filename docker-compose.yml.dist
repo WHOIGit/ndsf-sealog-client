@@ -1,11 +1,8 @@
-version: '3.8'
-
 services:
   sealog-client-vehicle:
+    image: sealog-client-vehicle
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - "8081:80"
