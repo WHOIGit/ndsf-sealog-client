@@ -1,6 +1,6 @@
 import Cookies from 'universal-cookie'
-import { ROOT_PATH } from './client_config'
+import { ROOT_PATH, SERVER_TLS } from './client_config'
 
-const cookies = new Cookies(null, { path: ROOT_PATH })
+const cookies = new Cookies(null, { path: ROOT_PATH, sameSite: 'none', secure: SERVER_TLS })
 
 export default cookies
