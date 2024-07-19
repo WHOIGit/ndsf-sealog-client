@@ -1,148 +1,107 @@
-# Installation Instructions
+## Client Installation
+
+Sealog Client is tested on Ubuntu versions 20.04 and 22.04 but will likely work on Ubuntu 24.04, RHEL 9 and Rocky 9 with some adaptation. It is also possible to deploy the server as a container.
 
 ### Prerequisites
-
- - [sealog-server v2.3.0+](https://github.com/oceandatatools/sealog-server)
- - [nodeJS v20.x+](https://nodejs.org)
+ - [nodeJS](https://nodejs.org) >=20.x
+ - [npm](https://www.npmjs.com) >=6.13.x
  - [git](https://git-scm.com)
- - Apache2 Webserver (alternatively NGINX can be used)
+ - [nginx](https://nginx.org/)
  
 #### Installing NodeJS/npm on Ubuntu 22.04 LTS
-
-Download the nvm install script:
+Download/run the nvm install script.  You will want to do this as the system user that runs the Sealog-Server services:
 ```
+cd ~
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 ```
-Install the LTS version of NodeJS using `nvm`
+
+Install the LTS version of NodeJS (v20.x.x) using `nvm`:
 ```
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 nvm install --lts
-NODE_VERSION=node -v
-sudo ln -s $HOME/.nvm/versions/node/${NODE_VERSION}/bin/npm /usr/local/bin/
-sudo ln -s $HOME/.nvm/versions/node/${NODE_VERSION}/bin/node /usr/local/bin/
 ```
 
-### Clone the repository
-
+#### Installing nginx on Ubuntu 22.04 LTS
+Use `apt` to install nginx
 ```
-git clone https://github.com/oceandatatools/sealog-client-vehicle.git
+sudo apt-get install nginx
 ```
 
-This should clone the repo to a directory called `sealog-client-vehicle`
+### Install Sealog Client from GitHub
 
-### Create a new configuration file
-
+#### Clone the Sealog Client repository
+You will want to do this as the system user that runs the Sealog-Server services.
 ```
-cd ~/sealog-client-vehicle
+cd ~
+git clone https://github.com/OceanDataTools/sealog-client-vehicle.git ./sealog-client
+```
+
+This will clone the repo to a `sealog-client` sub-directory.
+
+#### Create the configurations files
+The settings in the default configuration files are appropriate for most single instance deployments.
+
+Create the working configuration files from the distibution versions:
+```
+cd ./sealog-client
 cp ./src/client_settings.js.dist ./src/client_settings.js
-```
-
-### Modify the configuration file
-
-Set the `API_ROOT_URL`, `WS_ROOT_URL`, `ROOT_PATH`, and `IMAGES_PATH` values in the `./sealog-client-vehicle/src/client_settings.js` file to meet your specific installation requirements.
-
-By default the file assumes the sealog-server is available on port 8000 on the same server that is hosting the sealog-server.  The default configuration file also assumes the client will be available from the /sealog directory of the webserver; i.e. `http://<serverIP>/sealog`.  If you want the webclient available at the root directory of the webserver or some custom location :  you need to set `ROOT_PATH` variable appropriately; i.e. `/`, `/custom_path/`. ***NOTICE the starting `/` **AND** trailing `/`.
-
-### Create a deployment file
-```
-cd ~/sealog-client-vehicle
+cp ./src/map_tilelayers.js.dist ./src/map_tilelayers.js
 cp ./webpack.config.js.dist ./webpack.config.js
 ```
 
-### Create a new map tiles file
+#### Move installation to production location
+It is recommended for most Linux distributions to install Sealog Server to the `/opt` directory:
 ```
-cd ~/sealog-client-vehicle
-cp ./src/map_tilelayers.js.dist ./src/map_tilelayers.js
-```
-
-### Move the repo to the installation directory (/opt)
-```
-sudo mv ~/sealog-client-vehicle /opt
+sudo mv sealog-client /opt/
 ```
 
-### Install the nodeJS modules
-From a terminal run:
+#### Install the nodeJS modules
+Run the following commands to install the required `npm` libraries
 ```
-cd /opt/sealog-client-vehicle
+cd /opt/sealog-client`
 npm install
 ```
 
-### Build the client
-From a terminal run:
+### Build and deploy to nginx
+Once the npm libraries are installed the client must be compiled.  To complile the client:
 ```
-cd /opt/sealog-client-vehicle
+cd /opt/sealog-client
 npm run build
 ```
+This will create the `/opt/sealog-client/dist` directory containing the compiled client.
 
-This will create the `dist` directory containing the required html, js, css, images, and fonts.
-
-### Configure Apache to host the client
-Add the following to your Apache vhosts file (i.e. `/etc/apache2/sites-available/000-default.conf`).  Modify the path appropriately for your installation. This example assumes the client will live at `http://<serverIP>/sealog`:
+#### nginx configuration
+Create a nginx configuration file:
 ```
-  <Directory "/var/www/html/sealog">
-    Options +Indexes +FollowSymLinks
-    RewriteEngine on
-  
-    # Don't rewrite files or directories
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
-    
-    # Rewrite everything else to index.html to allow html5 state links
-    RewriteRule ^ index.html [L]
-  </Directory>
+sudo pico /etc/nginx/sites-available/sealog.conf 
 ```
 
-Create a symbolic link from the dist directory to the directory where Apache will server the client.  Modify the paths appropriately for your installation.  This example assumes the client will live at `http://<serverIP>/sealog` and the git repo is located at: `/opt/sealog-client-vehicle`:
+Added the following to the configuration file:
 ```
-sudo ln -s /opt/sealog-client-vehicle/dist /var/www/html/sealog`
-```
+server {
+       listen 80;
+       listen [::]:80;
 
-**Be sure to reload Apache for these changes to take affect.**
-`sudo service apache2 reload`
+       server_name _;
 
-### Configure Nginx to host the client
-Add the following to your nginx server file (i.e. `/etc/nginx/sites-available/sealog_vehicle.conf`).  Modify the path appropriately for your installation. This example assumes the client will live at `http://<serverIP>/sealog`:
-```
-  server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+       root /opt/sealog-client/dist;
+       index index.html;
 
-    root /var/www/html;
-
-    index index.html;
-
-    server_name _;
-
-    location /sealog {
-      # First attempt to serve request as file, then
-      # as directory, then fall back to displaying a 404.
-      try_files $uri $uri/ /index.html;
-    }
-  }
+       location / {
+               try_files $uri $uri/ =404;
+       }
+}
 ```
 
-Enable the site config:
+#### Enable the sealog configuration file
 ```
-sudo ln -s /etc/nginx/sites-available/sealog-vehicle.conf /etc/nginx/sites-enabled
-```
-
-Create a symbolic link from the dist directory to the directory where Apache will server the client.  Modify the paths appropriately for your installation.  This example assumes the client will live at `http://<serverIP>/sealog` and the git repo is located at: `/opt/sealog-client-vehicle`:
-```
-sudo ln -s /opt/sealog-client-vehicle/dist /var/www/html/sealog
+sudo ln -s /etc/nginx/sites-available/sealog.conf /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default.conf
 ```
 
-**Be sure to reload Nginx for these changes to take affect.**
-`sudo service nginx reload`
-
-### Running in development mode ###
-Optionally you can run the client using node's development web-server.  This removes the need to run Apache however the client will only be accessable from the local machine.
-
-To run the client using development mode run the following commands in terminal:
+#### Restart nginx
 ```
-cd /opt/sealog-client-vehicle
-npm start
+sudo service nginx restart
 ```
-The client should now be accessible from http://localhost:8080/sealog
