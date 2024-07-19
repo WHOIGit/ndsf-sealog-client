@@ -1,48 +1,52 @@
-import React, { Component } from 'react';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { reduxForm, Field, reset } from 'redux-form';
-import { Button, Form, InputGroup } from 'react-bootstrap';
-import * as mapDispatchToProps from '../actions';
+import React, { Component } from 'react'
+import { compose } from 'redux'
+import { connect } from 'react-redux'
+import { reduxForm, Field, reset } from 'redux-form'
+import { Button, Form, InputGroup } from 'react-bootstrap'
+import PropTypes from 'prop-types'
+import * as mapDispatchToProps from '../actions'
 
 class EventInput extends Component {
-
-  constructor (props) {
-    super(props);
+  constructor(props) {
+    super(props)
   }
 
-  handleFormSubmit({eventFreeText}) {
-    this.props.createEvent('FREE_FORM', eventFreeText);
+  handleFormSubmit(formProps) {
+    this.props.createEvent({ ...formProps, event_value: 'FREE_FORM' })
   }
 
   render() {
-    const { handleSubmit, submitting, pristine } = this.props;
+    const { handleSubmit, submitting, pristine } = this.props
 
     return (
-      <Form className={this.props.className} onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
+      <Form className={this.props.className} onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
         <InputGroup>
-          <Field
-            name="eventFreeText"
-            component="input"
-            type="text"
-            placeholder="Type new event"
-            className="form-control"
-          />
+          <Field name='event_free_text' component='input' type='text' placeholder='Type new event' className='form-control' />
           <InputGroup.Append>
-            <Button block type="submit" disabled={submitting || pristine}>Submit</Button>
+            <Button block type='submit' disabled={submitting || pristine}>
+              Submit
+            </Button>
           </InputGroup.Append>
         </InputGroup>
       </Form>
-    );
+    )
   }
 }
 
-function mapStateToProps() {
-  return {};
+EventInput.propTypes = {
+  className: PropTypes.string,
+  createEvent: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  pristine: PropTypes.bool.isRequired,
+  submitting: PropTypes.bool.isRequired
 }
 
-function afterSubmit(result, dispatch) {
-  dispatch(reset('eventInput'));
+const mapStateToProps = () => {
+  return {}
+}
+
+const afterSubmit = (result, dispatch) => {
+  dispatch(reset('eventInput'))
 }
 
 export default compose(
@@ -51,4 +55,4 @@ export default compose(
     form: 'eventInput',
     onSubmitSuccess: afterSubmit
   })
-)(EventInput);
+)(EventInput)

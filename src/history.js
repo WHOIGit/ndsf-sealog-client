@@ -1,6 +1,6 @@
-import { createBrowserHistory } from 'history';
-import { ROOT_PATH } from './client_config';
+import { createBrowserHistory } from 'history'
+import { ROOT_PATH } from './client_settings'
 
-const history = createBrowserHistory({basename: ROOT_PATH});
+const history = createBrowserHistory({ basename: ROOT_PATH })
 
-export default history; 
+export default history

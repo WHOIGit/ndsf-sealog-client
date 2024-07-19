@@ -15,9 +15,6 @@ node_modules/
 # Optional npm cache directory
 .npm
 
-# npm package lock file
-package-lock.json
-
 # Because Mac OS X
 .DS_Store
 
@@ -25,11 +22,15 @@ package-lock.json
 /dist
 
 # CLient Config
-/src/client_config.js
+/src/client_settings.js
 
 # Maptime Config
 /src/map_tilelayers.js
 
+# Docker-related files
+Dockerfile
+docker-compose.yml
+nginx/nginx.conf
 
 # Webpack Config
 webpack.config.js

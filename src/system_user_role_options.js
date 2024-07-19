@@ -1,5 +1,3 @@
-export const systemUserRoleOptions = [
-  { value: 'admin', label: 'Admin', description: 'Basically God-like' },
-];
+export const systemUserRoleOptions = [{ value: 'admin', label: 'Admin', description: 'Basically God-like' }]
 
-export const ADMIN = 'admin';
+export const ADMIN = 'admin'

@@ -1,64 +1,67 @@
-import React, { Component } from 'react';
-import { compose } from 'redux';
-import PropTypes from 'prop-types';
-import { Button, Form, Modal } from 'react-bootstrap';
-import { connectModal } from 'redux-modal';
-import { reduxForm, Field } from 'redux-form';
-import { renderTextArea } from './form_elements';
+import React, { Component } from 'react'
+import { compose } from 'redux'
+import PropTypes from 'prop-types'
+import { Button, Form, Modal } from 'react-bootstrap'
+import { connectModal } from 'redux-modal'
+import { reduxForm, Field } from 'redux-form'
+import { renderTextArea } from './form_elements'
 
 class EventCommentModal extends Component {
+  constructor(props) {
+    super(props)
 
-  constructor (props) {
-    super(props);
-
-    this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this)
   }
 
-  static propTypes = {
-    event: PropTypes.object,
-    handleHide: PropTypes.func.isRequired,
-    handleUpdateEvent: PropTypes.func
-  };
-
   componentDidMount() {
-    this.populateDefaultValues();
+    this.populateDefaultValues()
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.event !== this.props.event) {
-      this.populateDefaultValues();
+    if (prevProps.event !== this.props.event) {
+      this.populateDefaultValues()
     }
-  }
-
-  componentWillUnmount() {
   }
 
   async populateDefaultValues() {
-    const event_option_comment = (this.props.event) ? this.props.event.event_options.find(event_option => event_option.event_option_name === 'event_comment') : null;
+    const { event, initialize } = this.props
+    const event_option_comment = event
+      ? event.event_options.find((event_option) => event_option.event_option_name === 'event_comment')
+      : null
     if (event_option_comment) {
-      this.props.initialize({ 'event_comment': event_option_comment.event_option_value });
+      initialize({
+        event_comment: event_option_comment.event_option_value
+      })
     }
   }
 
-
   handleFormSubmit(formProps) {
+    const { event, handleUpdateEvent, handleHide } = this.props
+    let existing_comment = false
+    let event_options =
+      event && event.event_options
+        ? event.event_options.map((event_option) => {
+            if (event_option.event_option_name === 'event_comment') {
+              existing_comment = true
+              return {
+                event_option_name: 'event_comment',
+                event_option_value: formProps.event_comment
+              }
+            } else {
+              return event_option
+            }
+          })
+        : []
 
-    let existing_comment = false;
-    let event_options = this.props.event.event_options = this.props.event.event_options.map(event_option => {
-      if(event_option.event_option_name === 'event_comment') {
-        existing_comment = true;
-        return { event_option_name: 'event_comment', event_option_value: formProps.event_comment}
-      } else {
-        return event_option
-      }
-    })
-
-    if(!existing_comment) {
-      event_options.push({ event_option_name: 'event_comment', event_option_value: formProps.event_comment})
+    if (!existing_comment) {
+      event_options.push({
+        event_option_name: 'event_comment',
+        event_option_value: formProps.event_comment
+      })
     }
 
-    this.props.handleUpdateEvent(this.props.event.id, this.props.event.event_value, this.props.event.event_free_text, event_options, this.props.event.ts);
-    this.props.handleHide();
+    handleUpdateEvent({ ...event, event_options })
+    handleHide()
   }
 
   render() {
@@ -66,34 +69,42 @@ class EventCommentModal extends Component {
 
     if (event) {
       return (
-        <Modal show={show} onHide={handleHide}>
-          <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
-            <Modal.Header closeButton>
+        <Modal show={show} onHide={handleHide} onEntered={() => document.getElementsByName('event_comment')[0].focus()}>
+          <Form onSubmit={handleSubmit(this.handleFormSubmit)}>
+            <Modal.Header className='bg-light' closeButton>
               <Modal.Title>Add/Update Comment</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-              <Field
-                name="event_comment"
-                component={renderTextArea}
-              />
+              <Field name='event_comment' component={renderTextArea} />
             </Modal.Body>
 
             <Modal.Footer>
-              <Button variant="secondary" size="sm" disabled={submitting} onClick={handleHide}>Cancel</Button>
-              <Button variant="primary" size="sm" type="submit" disabled={ submitting || !valid}>Submit</Button>
+              <Button variant='secondary' size='sm' disabled={submitting} onClick={handleHide}>
+                Cancel
+              </Button>
+              <Button variant='primary' size='sm' type='submit' disabled={submitting || !valid}>
+                Submit
+              </Button>
             </Modal.Footer>
           </Form>
         </Modal>
-      );
-    }
-    else {
-      return null;
+      )
+    } else {
+      return null
     }
   }
 }
 
-export default compose(
-  connectModal({name: 'eventComment'}),
-  reduxForm({form: 'eventCommentModal'}),
-)(EventCommentModal)
+EventCommentModal.propTypes = {
+  event: PropTypes.object,
+  handleHide: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  handleUpdateEvent: PropTypes.func,
+  initialize: PropTypes.func.isRequired,
+  show: PropTypes.bool.isRequired,
+  submitting: PropTypes.bool.isRequired,
+  valid: PropTypes.bool.isRequired
+}
+
+export default compose(connectModal({ name: 'eventComment' }), reduxForm({ form: 'eventCommentModal' }))(EventCommentModal)

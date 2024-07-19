@@ -9,17 +9,16 @@ import {
   UPDATE_USER,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
-  LEAVE_UPDATE_USER_FORM,
+  LEAVE_USER_FORM,
   CREATE_USER_SUCCESS,
   CREATE_USER_ERROR,
-  LEAVE_CREATE_USER_FORM,
   REGISTER_USER_SUCCESS,
   REGISTER_USER_ERROR,
   LEAVE_REGISTER_USER_FORM,
   FETCH_USERS
 } from '../actions/types';
 
-export default function(state={ profile: {}, profile_error: '', profile_message: '', user: {}, user_error: '', user_message: '', users: [] }, action) {
+export default (state={ profile: {}, profile_error: '', profile_message: '', user: {}, user_error: '', user_message: '', users: [] }, action) => {
   switch(action.type){
 
     case UNAUTH_USER:
@@ -52,7 +51,7 @@ export default function(state={ profile: {}, profile_error: '', profile_message:
     case UPDATE_USER_ERROR:
       return { ...state, user_error: action.payload, user_message: '' };
 
-    case LEAVE_UPDATE_USER_FORM:
+    case LEAVE_USER_FORM:
       return { ...state, user: {}, user_error: '', user_message: '' };
 
     case CREATE_USER_SUCCESS:
@@ -60,9 +59,6 @@ export default function(state={ profile: {}, profile_error: '', profile_message:
 
     case CREATE_USER_ERROR:
       return { ...state, user_error: action.payload, user_message: '' };
-
-    case LEAVE_CREATE_USER_FORM:
-      return { ...state, user_error: '', user_message: '' };
 
     case REGISTER_USER_SUCCESS:
       return { ...state, register_error: '', register_message: action.payload };
@@ -74,8 +70,11 @@ export default function(state={ profile: {}, profile_error: '', profile_message:
       return { ...state, register_error: '', register_message: '' };
 
     case FETCH_USERS:
-      return { ...state, users: action.payload };
+      const selected_user_id = (state.user.id) ? state.user.id : null;
+      const user = (selected_user_id) ? action.payload.find((user) => user.id === selected_user_id) : {};
+      const profile = (state.profile.id && state.user.id === state.profile.id) ? user : state.profile;
+      return { ...state, profile, user, users: action.payload };
 
-  }    
+  }
   return state;
 }

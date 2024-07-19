@@ -7,7 +7,7 @@ import {
   REFRESH_AUTH_LOGIN_FORM
 } from '../actions/types';
 
-export default function( state={ error: '', message: '', authenticated: false }, action) {
+export default ( state={ error: '', message: '', authenticated: false }, action) => {
   switch(action.type){
     case AUTH_USER:
       return { ...state, error: '', message: '', authenticated: true };

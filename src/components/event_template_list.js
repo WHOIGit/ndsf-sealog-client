@@ -1,176 +1,226 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Alert, Button, Tab, Tabs } from 'react-bootstrap';
-import EventTemplateOptionsModal from './event_template_options_modal';
-import { Client } from '@hapi/nes/lib/client';
-import { WS_ROOT_URL } from '../client_config';
-
-import * as mapDispatchToProps from '../actions';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Alert, Button, Tab, Tabs } from 'react-bootstrap'
+import PropTypes from 'prop-types'
+import EventTemplateOptionsModal from './event_template_options_modal'
+import { Client } from '@hapi/nes/lib/client'
+import { authorizationHeader } from '../api'
+import { WS_ROOT_URL } from '../client_settings'
+import * as mapDispatchToProps from '../actions'
 
 class EventTemplateList extends Component {
+  constructor(props) {
+    super(props)
 
-  constructor (props) {
-    super(props);
+    this.state = {
+      active_template_category: null,
+      fetching: true
+    }
 
-    this.client = new Client(`${WS_ROOT_URL}`);
-    this.connectToWS = this.connectToWS.bind(this);
-
-    this.renderEventTemplates = this.renderEventTemplates.bind(this);
-
+    this.client = new Client(`${WS_ROOT_URL}`)
+    this.connectToWS = this.connectToWS.bind(this)
+    this.fetchEventTemplates = this.fetchEventTemplates.bind(this)
+    this.renderEventTemplates = this.renderEventTemplates.bind(this)
   }
 
   componentDidMount() {
-    if(this.props.authenticated) {
-      this.props.fetchEventTemplatesForMain();
-      this.connectToWS();
+    if (this.props.authenticated) {
+      this.fetchEventTemplates()
+      this.connectToWS()
     }
   }
 
   componentWillUnmount() {
-    this.client.disconnect();
+    this.client.disconnect()
   }
 
-  componentDidUpdate() {}
-
   async connectToWS() {
-
     try {
-      await this.client.connect();
-      // {
-      //   auth: {
-      //     headers: {
-      //       authorization: cookies.get('token')
-      //     }
-      //   }
-      // })
+      await this.client.connect({
+        auth: authorizationHeader
+      })
 
       const deleteHandler = () => {
-        this.props.fetchEventTemplatesForMain();
-      };
+        this.props.fetchEventTemplatesForMain()
+      }
 
       const updateHandler = () => {
-        this.props.fetchEventTemplatesForMain();
-      };
+        this.props.fetchEventTemplatesForMain()
+      }
 
-      this.client.subscribe('/ws/status/newEventTemplates', updateHandler);
-      this.client.subscribe('/ws/status/updateEventTemplates', updateHandler);
-      this.client.subscribe('/ws/status/deleteEventTemplates', deleteHandler);
-
-    } catch(error) {
-      console.log(error);
-      throw(error);
+      this.client.subscribe('/ws/status/newEventTemplates', updateHandler)
+      this.client.subscribe('/ws/status/updateEventTemplates', updateHandler)
+      this.client.subscribe('/ws/status/deleteEventTemplates', deleteHandler)
+    } catch (error) {
+      console.error('Problem connecting to websocket subscriptions')
+      console.debug(error)
     }
   }
 
   async handleEventSubmit(event_template, e = null) {
+    const needs_modal =
+      (e && e.shiftKey) ||
+      event_template.event_options.reduce((needs, option) => {
+        return option.event_option_type !== 'static text' ? true : needs
+      }, false)
 
-    const needs_modal = (e && e.shiftKey) || event_template.event_options.reduce((needs, option) => {
-      return (option.event_option_type !== 'static text') ? true : needs;
-    }, false);
-
-    if( event_template.event_free_text_required || needs_modal ) {
-
-      const event = await this.props.createEvent(event_template.event_value, '', []);
-
-      this.props.showModal('eventOptions', { eventTemplate: event_template, event: event, handleUpdateEvent: this.props.updateEvent, handleDeleteEvent: this.props.deleteEvent });
-
+    if (event_template.event_free_text_required || needs_modal) {
+      const event = await this.props.createEvent({
+        event_value: event_template.event_value,
+        publish: false
+      })
+      this.props.showModal('eventOptions', {
+        eventTemplate: event_template,
+        event: event,
+        handleUpdateEvent: this.props.updateEvent,
+        handleDeleteEvent: this.props.deleteEvent
+      })
     } else {
       const event_options = event_template.event_options.reduce((eventOptions, option) => {
+        eventOptions.push({
+          event_option_name: option.event_option_name,
+          event_option_value: option.event_option_default_value
+        })
+        return eventOptions
+      }, [])
 
-        eventOptions.push({ event_option_name: option.event_option_name, event_option_value: option.event_option_default_value });
-      
-        return eventOptions;
-      
-      }, []);
-
-      await this.props.createEvent(event_template.event_value, '', event_options);
+      await this.props.createEvent({
+        event_value: event_template.event_value,
+        event_free_text: '',
+        event_options
+      })
     }
+  }
+
+  async fetchEventTemplates() {
+    this.setState({ fetching: true })
+    await this.props.fetchEventTemplates()
+    this.setState({ fetching: false })
+  }
+
+  updateEventTemplateCategory(category) {
+    this.setState({ active_template_category: category })
   }
 
   renderEventTemplates() {
+    const template_categories = [
+      ...new Set(
+        this.props.event_templates.reduce((flat, event_template) => {
+          return flat.concat(event_template.template_categories)
+        }, [])
+      )
+    ].sort()
 
-    const template_categories = [...new Set(this.props.event_templates.reduce(function (flat, event_template) {
-        return flat.concat(event_template.template_categories);
-      }, [])
-    )].sort();
-
-    if(this.props.event_templates){
-      if(template_categories.length > 0) {
+    if (this.props.event_templates) {
+      if (template_categories.length > 0) {
         return (
-          <Tabs className="category-tab" variant="pills" activeKey={(this.props.event_template_category)? this.props.event_template_category : template_categories[0]} id="event-template-tabs" onSelect={(category) => this.props.updateEventTemplateCategory(category)}>
-            {
-              template_categories.map((template_category) => {
-                return (
-                  <Tab eventKey={template_category} title={template_category} key={template_category}>
-                    {
-                      this.props.event_templates.filter((event_template) => (typeof event_template.disabled === 'undefined' || !event_template.disabled) && event_template.template_categories.includes(template_category)).map((event_template) => {
-
-                        return (
-                          <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ (e) => this.handleEventSubmit(event_template, e) }>{ event_template.event_name }</Button>
-                        );
-                      })
-                    }
-                  </Tab>
-                )
-              })
-            }
-            <Tab eventKey="all" title="All">
-              {
-                this.props.event_templates.filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled).map((event_template) => {
-
+          <Tabs
+            className='category-tab'
+            variant='pills'
+            transition={false}
+            activeKey={this.state.active_template_category ? this.state.active_template_category : template_categories[0]}
+            id='event-template-tabs'
+            onSelect={(category) => this.updateEventTemplateCategory(category)}
+          >
+            {template_categories.map((template_category) => {
+              return (
+                <Tab eventKey={template_category} title={template_category} key={template_category}>
+                  {this.props.event_templates
+                    .filter(
+                      (event_template) =>
+                        (typeof event_template.disabled === 'undefined' || !event_template.disabled) &&
+                        event_template.template_categories.includes(template_category)
+                    )
+                    .map((event_template) => {
+                      return (
+                        <Button
+                          className='mt-1 mr-1 py-3 btn-template'
+                          variant='primary'
+                          to='#'
+                          key={`template_${event_template.id}`}
+                          onClick={(e) => this.handleEventSubmit(event_template, e)}
+                        >
+                          {event_template.event_name}
+                        </Button>
+                      )
+                    })}
+                </Tab>
+              )
+            })}
+            <Tab eventKey='all' title='All'>
+              {this.props.event_templates
+                .filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled)
+                .map((event_template) => {
                   return (
-                    <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ (e) => this.handleEventSubmit(event_template, e) }>{ event_template.event_name }</Button>
-                  );
-                })
-              }
+                    <Button
+                      className='mt-1 mr-1 py-3 btn-template'
+                      variant='primary'
+                      to='#'
+                      key={`template_${event_template.id}`}
+                      onClick={(e) => this.handleEventSubmit(event_template, e)}
+                    >
+                      {event_template.event_name}
+                    </Button>
+                  )
+                })}
             </Tab>
           </Tabs>
         )
-      }
-      else {
-        return this.props.event_templates.filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled).map((event_template) => {
-          return (
-            <Button className="mt-1 mr-1 py-3 btn-template" variant="primary" to="#" key={`template_${event_template.id}`} onClick={ (e) => this.handleEventSubmit(event_template, e) }>{ event_template.event_name }</Button>
-          );
-        })
+      } else {
+        return this.props.event_templates
+          .filter((event_template) => typeof event_template.disabled === 'undefined' || !event_template.disabled)
+          .map((event_template) => {
+            return (
+              <Button
+                className='mt-1 mr-1 py-3 btn-template'
+                variant='primary'
+                to='#'
+                key={`template_${event_template.id}`}
+                onClick={(e) => this.handleEventSubmit(event_template, e)}
+              >
+                {event_template.event_name}
+              </Button>
+            )
+          })
       }
     }
-
-    return (
-      <div>No event template found</div>
-    );
   }
 
   render() {
-
-    if (!this.props.event_templates) {
-      return (
-        <div style={this.props.style} >Loading...</div>
-      );
+    if (this.state.fetching) {
+      return <Alert>Loading...</Alert>
     }
 
-    if (this.props.event_templates.length > 0) {
+    if (this.props.event_templates.length) {
       return (
-        <div style={this.props.style} >
-          <EventTemplateOptionsModal handleUpdateEvent={this.props.updateEvent} handleDeleteEvent={this.props.deleteEvent}/>
+        <div style={this.props.style}>
+          <EventTemplateOptionsModal handleUpdateEvent={this.props.updateEvent} handleDeleteEvent={this.props.deleteEvent} />
           {this.renderEventTemplates()}
         </div>
-      );
+      )
     }
 
-    return (
-      <Alert variant="danger">No Event Templates found</Alert>
-    );
+    return <Alert variant='danger'>No Event Templates found</Alert>
   }
 }
 
-function mapStateToProps(state) {
-
-  return {
-    authenticated: state.auth.authenticated,
-    event_templates: state.event_history.event_templates,
-    event_template_category: state.event_history.event_template_category
-  };
+EventTemplateList.propTypes = {
+  authenticated: PropTypes.bool.isRequired,
+  createEvent: PropTypes.func.isRequired,
+  deleteEvent: PropTypes.func.isRequired,
+  event_templates: PropTypes.array.isRequired,
+  fetchEventTemplates: PropTypes.func.isRequired,
+  fetchEventTemplatesForMain: PropTypes.func.isRequired,
+  showModal: PropTypes.func.isRequired,
+  style: PropTypes.string,
+  updateEvent: PropTypes.func.isRequired
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EventTemplateList);
+const mapStateToProps = (state) => {
+  return {
+    authenticated: state.auth.authenticated,
+    event_templates: state.event_template.event_templates
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EventTemplateList)

@@ -1,123 +1,83 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
-import { Button, Modal, Row, Col } from 'react-bootstrap';
-import { connectModal } from 'redux-modal';
-import ReactFileReader from 'react-file-reader';
-import Cookies from 'universal-cookie';
-import { API_ROOT_URL, CUSTOM_LOWERING_NAME } from '../client_config';
-
-const cookies = new Cookies();
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { Button, Modal, Row, Col } from 'react-bootstrap'
+import { connectModal } from 'redux-modal'
+import ReactFileReader from 'react-file-reader'
+import { create_lowering, get_lowerings } from '../api'
+import { _Lowerings_ } from '../vocab'
 
 class ImportLoweringsModal extends Component {
-
-  constructor (props) {
-    super(props);
+  constructor(props) {
+    super(props)
 
     this.state = {
       pending: 0,
       imported: 0,
       errors: 0,
       skipped: 0,
-      quit: false,
-      lowerings_name: (CUSTOM_LOWERING_NAME)? CUSTOM_LOWERING_NAME[1].charAt(0).toUpperCase() + CUSTOM_LOWERING_NAME[1].slice(1) : "Lowerings"
+      quit: false
     }
 
-    this.quitImport = this.quitImport.bind(this);
+    this.quitImport = this.quitImport.bind(this)
+    this.handleLoweringImport = this.handleLoweringImport.bind(this)
   }
 
-  static propTypes = {
-    handleHide: PropTypes.func.isRequired,
-    handleExit: PropTypes.func
-  };
-
   quitImport() {
-    this.setState({quit: true})
+    this.setState({ quit: true })
     this.props.handleExit()
     this.props.handleHide()
   }
 
-  async insertLowering({id, lowering_id, start_ts, stop_ts, lowering_location = '', lowering_tags = [], lowering_hidden = false, lowering_additional_meta = {} }) {
+  async insertLowering({
+    id,
+    lowering_id,
+    start_ts,
+    stop_ts,
+    lowering_location = '',
+    lowering_tags = [],
+    lowering_hidden = false,
+    lowering_additional_meta = {}
+  }) {
+    const lowering = await get_lowerings({}, id)
 
-    try {
-      const result = await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`,
-      {
-        headers: {
-          authorization: cookies.get('token'),
-          'content-type': 'application/json'
-        }
-      })
-      if(result) {
-
-        // console.log("User Already Exists");
-        this.setState( prevState => (
-          {
-            skipped: prevState.skipped + 1,
-            pending: prevState.pending - 1
-          }
-        ))
-      }
-    } catch(error) {
-
-      if(error.response.data.statusCode === 404) {
-        // console.log("Attempting to add user")
-
-        try {
-
-          const result = await axios.post(`${API_ROOT_URL}/api/v1/lowerings`,
-          {id, lowering_id, start_ts, stop_ts, lowering_location, lowering_tags, lowering_hidden, lowering_additional_meta},
-          {
-            headers: {
-              authorization: cookies.get('token'),
-              'content-type': 'application/json'
-            }
-          })
-          if(result) {
-            // console.log("User Imported");
-            this.setState( prevState => (
-              {
-                imported: prevState.imported + 1,
-                pending: prevState.pending - 1
-              }
-            ))
-          }
-        } catch(error) {
-          
-          if(error.response.data.statusCode === 400) {
-            // console.log("User Data malformed or incomplete");
-          } else {
-            console.log(error);  
-          }
-          
-          this.setState( prevState => (
-            {
-              errors: prevState.errors + 1,
-              pending: prevState.pending - 1
-            }
-          ))
-        }
-      } else {
-
-        if(error.response.data.statusCode !== 400) {
-          console.log(error.response);
-        }
-        this.setState( prevState => (
-          {
-            errors: prevState.errors + 1,
-            pending: prevState.pending - 1
-          }
-        ))
-      }
+    if (lowering) {
+      this.setState((prevState) => ({
+        skipped: prevState.skipped + 1,
+        pending: prevState.pending - 1
+      }))
+      return
     }
+
+    const response = await create_lowering({
+      id,
+      lowering_id,
+      start_ts,
+      stop_ts,
+      lowering_location,
+      lowering_tags,
+      lowering_hidden,
+      lowering_additional_meta
+    })
+
+    if (response.success) {
+      this.setState((prevState) => ({
+        imported: prevState.imported + 1,
+        pending: prevState.pending - 1
+      }))
+      return
+    }
+
+    this.setState((prevState) => ({
+      errors: prevState.errors + 1,
+      pending: prevState.pending - 1
+    }))
   }
 
-  importLoweringsFromFile = async (e) => {
-    try {
-
-      // console.log("processing file")
-      let json = JSON.parse(e.target.result);
-
-      if(Array.isArray(json)) {
+  handleLoweringImport(files) {
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      try {
+        let json = JSON.parse(e.target.result)
         this.setState({
           pending: json.length,
           imported: 0,
@@ -125,82 +85,70 @@ class ImportLoweringsModal extends Component {
           skipped: 0
         })
 
-        let currentLowering;
+        let currentLowering
 
-        for(let i = 0; i < json.length; i++) {
-          if(this.state.quit) {
-            this.setState({pending: "Quitting"})
-            break;
+        for (let i = 0; i < json.length; i++) {
+          if (this.state.quit) {
+            break
           }
-          currentLowering = json[i];
-          await this.insertLowering(currentLowering);
+          currentLowering = json[i]
+          await this.insertLowering(currentLowering)
         }
-      } else {
-        this.setState({
-          pending: 1,
-          imported: 0,
-          errors: 0,
-          skipped: 0
-        })
-        await this.insertLowering(json);
+      } catch (error) {
+        console.error('Error when trying to parse json = ' + error)
       }
-    } catch (err) {
-      console.log('error when trying to parse json = ' + err);
+      this.setState({ pending: this.state.quit ? 'Quit Early!' : 'Complete' })
     }
-    this.setState({pending: (this.state.quit)?"Quit Early!":"Complete"})
-  }
-
-  handleLoweringRecordImport = files => {
-
-    this.setState(
-      {
-        pending: "Calculating..."
-      }
-    )
-
-    let reader = new FileReader();
-    reader.onload = this.importLoweringsFromFile
-    reader.readAsText(files[0]);
+    reader.readAsText(files[0])
   }
 
   render() {
-
     const { show, handleExit } = this.props
 
     if (handleExit) {
       return (
         <Modal show={show} onExit={handleExit} onHide={this.quitImport}>
-          <Modal.Header closeButton>
-            <Modal.Title>Import {this.state.lowerings_name}</Modal.Title>
+          <Modal.Header className='bg-light' closeButton>
+            <Modal.Title>Import {_Lowerings_}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
             <Row>
               <Col xs={6}>
-                <ReactFileReader fileTypes={[".json"]} handleFiles={this.handleLoweringRecordImport}>
-                    <Button size="sm">Select File</Button>
+                <ReactFileReader fileTypes={['.json']} handleFiles={this.handleLoweringImport}>
+                  <Button size='sm'>Select File</Button>
                 </ReactFileReader>
               </Col>
               <Col xs={4}>
                 Pending: {this.state.pending}
-                <hr/>
-                Imported: {this.state.imported}<br/>
-                Skipped: {this.state.skipped}<br/>
-                Errors: {this.state.errors}<br/>
+                <hr />
+                Imported: {this.state.imported}
+                <br />
+                Skipped: {this.state.skipped}
+                <br />
+                Errors: {this.state.errors}
+                <br />
               </Col>
             </Row>
           </Modal.Body>
 
           <Modal.Footer>
-            <Button size="sm" variant="secondary" onClick={this.quitImport}>Close</Button>
+            <Button size='sm' variant='secondary' onClick={this.quitImport}>
+              Close
+            </Button>
           </Modal.Footer>
         </Modal>
-      );
+      )
+    } else {
+      return null
     }
-    else {
-      return null;
-    }  
   }
+}
+
+ImportLoweringsModal.propTypes = {
+  handleHide: PropTypes.func.isRequired,
+  handleExit: PropTypes.func,
+  show: PropTypes.bool.isRequired
 }
 
 export default connectModal({ name: 'importLowerings' })(ImportLoweringsModal)

@@ -1,0 +1,8 @@
+services:
+  sealog-client-vehicle:
+    image: sealog-client-vehicle
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8082:80"

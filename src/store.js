@@ -1,9 +1,9 @@
-import history from './history';
-import { applyMiddleware, compose, createStore } from 'redux';
-import { routerMiddleware } from "connected-react-router";
-import reduxThunk from 'redux-thunk';
+import history from './history'
+import { applyMiddleware, compose, createStore } from 'redux'
+import { routerMiddleware } from 'connected-react-router'
+import reduxThunk from 'redux-thunk'
 
-import createRootReducer from './reducers';
+import createRootReducer from './reducers'
 
 export default function configureStore(preloadedState) {
   const store = createStore(
@@ -14,9 +14,9 @@ export default function configureStore(preloadedState) {
         routerMiddleware(history), // for dispatching history actions
         reduxThunk
         // ... other middlewares ...
-      ),
-    ),
-  );
+      )
+    )
+  )
 
-  return store;
+  return store
 }

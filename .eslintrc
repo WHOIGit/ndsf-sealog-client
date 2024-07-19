@@ -3,41 +3,48 @@
         "react",
         "react-redux"
     ],
-    parser: "babel-eslint",
     extends: [
         "eslint:recommended",
         "plugin:react/recommended",
-        "plugin:react-redux/recommended"
+        "plugin:react-redux/recommended",
+        "plugin:prettier/recommended"
     ],
     "parserOptions": {
-        ecmaVersion: 9,
+        ecmaVersion: 12,
         sourceType: "module",
         ecmaFeatures: {
             jsx: true,
             modules: true,
             experimentalObjectRestSpread: true
-        }
+        },
+        parser: "@babel/eslint-parser"
     },
     env: {
-        es6: true,
         node: true,
         browser: true,
-        jest: true
+        jest: true,
+        es2021: true
     },
     rules: {
         "react/jsx-no-target-blank": 0,
         "react/jsx-filename-extension": [1, { extensions: [".js", ".jsx"] }],
-        "react/prop-types": 0,
+        "react/prop-types": 1,
         "react-redux/connect-prefer-named-arguments": 2,
         "react-redux/prefer-separate-component-file": 0,
         "quotes": 0,
-        "no-console": 0,
-        "no-trailing-spaces": 0,
-        "eol-last": 0,
+        "no-console": ["error", { allow: ["warn", "error", "debug"] }],
+        "no-trailing-spaces": 1,
+        "eol-last": 1,
         "no-unused-vars": [1, {
             "vars": "all",
             "args": "after-used",
             "argsIgnorePattern": "options"
-        }]
+        }],
+        'prettier/prettier': ['error', {}, { usePrettierrc: true }]
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
 }
