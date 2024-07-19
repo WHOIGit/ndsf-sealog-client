@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FilePond } from 'react-filepond'
 import CopyLoweringToClipboard from './copy_lowering_to_clipboard'
 import { handle_lowering_file_delete, handle_lowering_file_download, LOWERING_ROUTE } from '../api'
-import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX } from '../client_config'
+import { API_ROOT_URL, LOWERING_ID_PLACEHOLDER, LOWERING_ID_REGEX } from '../client_settings'
 import { _Lowering_ } from '../vocab'
 
 import * as mapDispatchToProps from '../actions'

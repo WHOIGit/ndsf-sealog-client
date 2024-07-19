@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import prettyBytes from 'pretty-bytes'
 import { authorizationHeader, get_custom_vars } from '../api'
-import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from '../client_config'
+import { WS_ROOT_URL, DISABLE_EVENT_LOGGING } from '../client_settings'
 import * as mapDispatchToProps from '../actions'
 
 class Footer extends Component {

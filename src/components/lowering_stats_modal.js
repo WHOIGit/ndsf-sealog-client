@@ -15,7 +15,7 @@ import { Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstra
 import { renderAlert, renderMessage } from './form_elements'
 import LoweringStatsForm from './lowering_stats_form'
 import { DEFAULT_LOCATION, TILE_LAYERS } from '../map_tilelayers'
-import { POSITION_DATASOURCES } from '../client_config'
+import { POSITION_DATASOURCES } from '../client_settings'
 import { get_event_exports_by_lowering } from '../api'
 import * as mapDispatchToProps from '../actions'
 

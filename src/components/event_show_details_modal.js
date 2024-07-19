@@ -8,7 +8,7 @@ import ImagePreviewModal from './image_preview_modal'
 import AuxDataCards from './aux_data_cards'
 import EventOptionsCard from './event_options_card'
 import ImageryCards from './imagery_cards'
-import { EXCLUDE_AUX_DATA_SOURCES, IMAGES_AUX_DATA_SOURCES, AUX_DATA_SORT_ORDER } from '../client_config'
+import { EXCLUDE_AUX_DATA_SOURCES, IMAGES_AUX_DATA_SOURCES, AUX_DATA_SORT_ORDER } from '../client_settings'
 import { get_event_exports, handle_image_file_download } from '../api'
 import * as mapDispatchToProps from '../actions'
 

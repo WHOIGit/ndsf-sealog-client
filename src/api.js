@@ -3,7 +3,7 @@ import { basename } from 'path'
 import cookies from './cookies'
 import FileDownload from 'js-file-download'
 import { getImageUrl } from './utils'
-import { API_ROOT_URL } from './client_config'
+import { API_ROOT_URL } from './client_settings'
 
 export const CRUISE_ROUTE = '/files/cruises'
 export const LOWERING_ROUTE = '/files/lowerings'

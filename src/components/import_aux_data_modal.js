@@ -5,7 +5,7 @@ import axios from 'axios'
 import cookies from '../cookies'
 import ReactFileReader from 'react-file-reader'
 import { Button, Modal, Row, Col } from 'react-bootstrap'
-import { API_ROOT_URL } from '../client_config'
+import { API_ROOT_URL } from '../client_settings'
 
 class ImportAuxDataModal extends Component {
   constructor(props) {

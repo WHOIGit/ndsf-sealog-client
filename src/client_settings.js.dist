@@ -1,20 +1,16 @@
 const Pkg = require('../package.json')
 
 // Set whether the server is using http/https
-// Default is http. This can be overridden at runtime via the
-// SEALOG_SERVER_TLS environment variable.
-const SERVER_TLS = process.env.SEALOG_SERVER_TLS || false
+// Default is http.
+const SERVER_TLS = false
 
 // Set the server hostname.
-// Default is to use the same hostname as specified in the client URL. This
-// can be overridden at runtime via the SEALOG_SERVER_HOSTNAME environment
-// variable.
-const SERVER_HOSTNAME = process.env.SEALOG_SERVER_HOSTNAME || typeof window !== 'undefined' && window.location.hostname
+// Default is to use the same hostname as specified in the client URL.
+const SERVER_HOSTNAME = typeof window !== 'undefined' && window.location.hostname
 
 // Set the server port number.
-// Default is 8000. This can be overridden at runtime via the
-// SEALOG_SERVER_PORT environment variable.
-const SERVER_PORT = process.env.SEALOG_SERVER_PORT || 8000
+// Default is 8000.
+const SERVER_PORT = 8000
 
 // Complete URLs for the Sealog Server.
 // This is comprised based on the SERVER_PROTOCOL, SERVER_HOSTNAME and
@@ -27,15 +23,14 @@ const WS_ROOT_URL = `${SERVER_TLS ? 'wss' : 'ws'}://${SERVER_HOSTNAME}:${SERVER_
 // be overridden at runtime via the SEALOG_ROOT_PATH environment variable.
 // Change this if not hosting the client at the webserver's document root
 // i.e. '/sealog/'
-const ROOT_PATH = process.env.SEALOG_ROOT_PATH || '/'
+const ROOT_PATH = '/'
 
 // Where the images are hosted on the webserver.
 const IMAGE_PATH = '/files/images'
 
 // Site customization
-// Optional reCaptcha bot abuse protection. This can be overridden at runtime
-// via the SEALOG_RECAPTCHA_SITE_KEY environment variable.
-const RECAPTCHA_SITE_KEY = process.env.SEALOG_RECAPTCHA_SITE_KEY || null
+// Optional reCaptcha bot abuse protection.
+const RECAPTCHA_SITE_KEY = null
 
 // Text show on the login page to the right of the login form.
 const LOGIN_SCREEN_TXT =

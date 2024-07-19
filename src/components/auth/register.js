@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { Row, Col, Card, Form, Button } from 'react-bootstrap'
 import ReCAPTCHA from 'react-google-recaptcha'
 import PropTypes from 'prop-types'
-import { RECAPTCHA_SITE_KEY } from '../../client_config'
+import { RECAPTCHA_SITE_KEY } from '../../client_settings'
 import { renderTextField } from '../form_elements'
 import * as mapDispatchToProps from '../../actions'
 

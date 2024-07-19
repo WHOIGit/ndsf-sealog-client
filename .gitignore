@@ -25,7 +25,7 @@ package-lock.json
 /dist
 
 # CLient Config
-/src/client_config.js
+/src/client_settings.js
 
 # Maptime Config
 /src/map_tilelayers.js

@@ -1,7 +1,7 @@
 // These constants build lowercase and titlecase versions of the cruise names
 // Credit rgov (WHOIGit/ndsf-sealog-client)
 
-import { CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME, AUX_DATA_DATASOURCE_REPLACE } from './client_config'
+import { CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_NAME, AUX_DATA_DATASOURCE_REPLACE } from './client_settings'
 import { toTitlecase } from './utils'
 
 export const [_cruise_, _cruises_] = CUSTOM_CRUISE_NAME || ['cruise', 'cruises']

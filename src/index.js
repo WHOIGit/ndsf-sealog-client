@@ -112,7 +112,7 @@ L.Marker.prototype.options.icon = DefaultIcon
 import configureStore from './store'
 import history from './history'
 
-import { DISABLE_EVENT_LOGGING } from './client_config'
+import { DISABLE_EVENT_LOGGING } from './client_settings'
 
 const store = configureStore()
 

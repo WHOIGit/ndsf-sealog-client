@@ -12,7 +12,7 @@ RUN npm install
 
 # Copy the rest of the application code to the container
 COPY . .
-COPY src/client_config.js.dist ./src/client_config.js
+COPY src/client_settings.js.dist ./src/client_settings.js
 COPY src/map_tilelayers.js.dist ./src/map_tilelayers.js
 COPY webpack.config.js.dist ./webpack.config.js
 

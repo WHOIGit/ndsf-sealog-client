@@ -1,4 +1,4 @@
-const { ROOT_PATH, HEADER_TITLE } = require('./src/client_config');
+const { ROOT_PATH, HEADER_TITLE } = require('./src/client_settings');
 const webpack = require('webpack');
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');

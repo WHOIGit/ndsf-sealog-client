@@ -8,7 +8,7 @@ import { renderTextField } from '../form_elements'
 import ReCAPTCHA from 'react-google-recaptcha'
 import PropTypes from 'prop-types'
 import * as mapDispatchToProps from '../../actions'
-import { ROOT_PATH, LOGIN_SCREEN_TXT, LOGIN_IMAGE, RECAPTCHA_SITE_KEY } from '../../client_config'
+import { ROOT_PATH, LOGIN_SCREEN_TXT, LOGIN_IMAGE, RECAPTCHA_SITE_KEY } from '../../client_settings'
 
 class Login extends Component {
   constructor(props) {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import EventTemplateOptionsModal from './event_template_options_modal'
 import { Client } from '@hapi/nes/lib/client'
 import { authorizationHeader } from '../api'
-import { WS_ROOT_URL } from '../client_config'
+import { WS_ROOT_URL } from '../client_settings'
 import * as mapDispatchToProps from '../actions'
 
 class EventTemplateList extends Component {

@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FilePond } from 'react-filepond'
 import CopyCruiseToClipboard from './copy_cruise_to_clipboard'
 import { handle_cruise_file_delete, handle_cruise_file_download, CRUISE_ROUTE } from '../api'
-import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX, DEFAULT_VESSEL } from '../client_config'
+import { API_ROOT_URL, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX, DEFAULT_VESSEL } from '../client_settings'
 import { _Cruise_, _cruise_ } from '../vocab'
 
 import * as mapDispatchToProps from '../actions'

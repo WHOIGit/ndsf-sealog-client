@@ -8,7 +8,7 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import PropTypes from 'prop-types'
 import * as mapDispatchToProps from '../../actions'
 import { renderTextField } from '../form_elements'
-import { RECAPTCHA_SITE_KEY } from '../../client_config'
+import { RECAPTCHA_SITE_KEY } from '../../client_settings'
 
 class ForgotPassword extends Component {
   constructor(props) {

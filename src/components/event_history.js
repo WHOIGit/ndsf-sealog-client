@@ -9,7 +9,7 @@ import EventOptionsCard from './event_options_card'
 import ImageryCards from './imagery_cards'
 import ImagePreviewModal from './image_preview_modal'
 import { Client } from '@hapi/nes/lib/client'
-import { EXCLUDE_AUX_DATA_SOURCES, IMAGES_AUX_DATA_SOURCES, AUX_DATA_SORT_ORDER, WS_ROOT_URL } from '../client_config'
+import { EXCLUDE_AUX_DATA_SOURCES, IMAGES_AUX_DATA_SOURCES, AUX_DATA_SORT_ORDER, WS_ROOT_URL } from '../client_settings'
 import { authorizationHeader, get_events, get_event_exports, handle_image_file_download } from '../api'
 import * as mapDispatchToProps from '../actions'
 
