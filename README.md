@@ -1,4 +1,4 @@
-# sealog-client-vehicle
+## sealog-client-vehicle
 React-Redux based client for the Sealog Eventlogging Server.
 
 This variant is tailored towards event-logging individual dives conducted by a submersible or remotely operated vehicle.
@@ -12,16 +12,15 @@ This variant is tailored towards event-logging individual dives conducted by a s
 For installation instruction please look at [INSTALL.md](./INSTALL.md)
 
 [Live Demo](https://sealog-vehicle.oceandatatools.org)
-
 - admin account for demo: admin:demo
 
-# Current Users
+## Current Users
 - ROV Jason and HOV Alvin operated by Woods Hole Oceanographic Institution
-- University of Rhode Island's Inner Space Center in support of ROV operations aboard the NOAA Ship Okeanos Explorer and E/V Nautilus
 - ROV Subastian operated by the Schmidt Ocean Institute
 - ROV Chimaera, HOV Nadir and HOV Neptune operated by OceanX
 - ROV Hercules, operated by Ocean Exploration Trust
 - ROV Lu'ukai, operated by the University of Hawaii
+- ROV Taurus, operated by the Florida Institute of Oceanography
 
-# Thanks and acknowledgments
+## Thanks and acknowledgments
 Sealog exists thanks to financial support from all of it's users and continues to evolve thanks to the UNOLS community who have helped me since the beginning by sharing their wealth of experience and technical ability.
