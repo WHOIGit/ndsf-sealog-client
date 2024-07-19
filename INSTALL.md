@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
- - [sealog-server v2.2.11+](https://github.com/oceandatatools/sealog-server)
+ - [sealog-server v2.3.0+](https://github.com/oceandatatools/sealog-server)
  - [nodeJS v20.x+](https://nodejs.org)
  - [git](https://git-scm.com)
  - Apache2 Webserver (alternatively NGINX can be used)

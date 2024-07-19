@@ -15,9 +15,6 @@ node_modules/
 # Optional npm cache directory
 .npm
 
-# npm package lock file
-package-lock.json
-
 # Because Mac OS X
 .DS_Store
 
