@@ -116,13 +116,13 @@ class Footer extends Component {
         {asnapStatus}
         {freeSpaceStatus}
         <span className='float-right'>
-          <Link to='/github' target='_blank'>
+          <a href='https://oceandatatools.github.io/sealog-docs' target='_blank'>
             Sealog
-          </Link>{' '}
+          </a>{' '}
           is licensed under the{' '}
-          <Link to='/license' target='_blank'>
+          <a href='https://opensource.org/license/mit' target='_blank'>
             MIT
-          </Link>{' '}
+          </a>{' '}
           public license
         </span>
       </div>
