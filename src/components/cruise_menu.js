@@ -725,7 +725,7 @@ class CruiseMenu extends Component {
       <Container className='mt-2'>
         <Row>
           <h4>{MAIN_SCREEN_HEADER}</h4>
-          <p className='text-justify'>{MAIN_SCREEN_TXT}</p>
+          <p className='text-justify' style={{ whiteSpace: 'pre-wrap' }}>{MAIN_SCREEN_TXT}</p>
         </Row>
         <Row>
           <Col className='px-1' sm={3} md={3} lg={2}>
