@@ -130,7 +130,9 @@ class Login extends Component {
           </Col>
           <Col className='justify-content-center d-none d-md-inline' md={5} lg={4} xl={3}>
             {loginImage}
-            <p className='text-justify' style={{ whiteSpace: 'pre-wrap' }}>{LOGIN_SCREEN_TXT}</p>
+            <p className='text-justify' style={{ whiteSpace: 'pre-wrap' }}>
+              {LOGIN_SCREEN_TXT}
+            </p>
           </Col>
         </Row>
       </div>

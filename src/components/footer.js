@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Client } from '@hapi/nes/lib/client'
-import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import prettyBytes from 'pretty-bytes'
 import { authorizationHeader, get_custom_vars } from '../api'
