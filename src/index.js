@@ -127,16 +127,6 @@ ReactDOM.render(
       <Header />
       <Switch>
         <Route path={`/`} exact={true} component={RequireAuth(DISABLE_EVENT_LOGGING ? CruiseMenu : EventLogging)} />
-        <Route
-          path={`/github`}
-          exact={true}
-          component={() => (window.location = 'https://github.com/oceandatatools/sealog-client-vehicle')}
-        />
-        <Route
-          path={`/license`}
-          exact={true}
-          component={() => (window.location = 'https://github.com/oceandatatools/sealog-client-vehicle/blob/master/LICENSE')}
-        />
         <Route path={`/profile`} exact={true} component={RequireAuth(Profile)} />
         <Route path={`/register`} exact={true} component={Register} />
         <Route path={`/forgotPassword`} exact={true} component={ForgotPassword} />

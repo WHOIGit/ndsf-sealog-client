@@ -90,8 +90,10 @@ import {
   UPDATE_USER_SUCCESS
 } from './types'
 
+import { ROOT_PATH } from '../client_settings'
+
 const port = window.location.port ? ':' + window.location.port : ''
-export const resetURL = window.location.protocol + '//' + window.location.hostname + port + '/resetPassword/'
+export const resetURL = window.location.protocol + '//' + window.location.hostname + port + ROOT_PATH + 'resetPassword/'
 
 // export const authorizationHeader = {
 //   headers: {

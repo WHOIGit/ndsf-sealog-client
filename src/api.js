@@ -131,11 +131,14 @@ export const post_login = async (payload) => {
 }
 
 export const register_user = async (payload) => {
-  return await axios.post(`${API_ROOT_URL}/api/v1/auth/register`, payload).then(() => {
-    return { success: true }.catch((error) => {
-      console.debug(error)
-      return { error }
-    })
+  return await axios
+  .post(`${API_ROOT_URL}/api/v1/auth/register`, payload)
+  .then(() => {
+    return { success: true }
+  })
+  .catch((error) => {
+    console.debug(error)
+    return { error }
   })
 }
 

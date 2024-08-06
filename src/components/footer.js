@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Client } from '@hapi/nes/lib/client'
-import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import prettyBytes from 'pretty-bytes'
 import { authorizationHeader, get_custom_vars } from '../api'
@@ -116,13 +115,13 @@ class Footer extends Component {
         {asnapStatus}
         {freeSpaceStatus}
         <span className='float-right'>
-          <Link to='/github' target='_blank'>
+          <a href='https://oceandatatools.github.io/sealog-docs' target='_blank'>
             Sealog
-          </Link>{' '}
+          </a>{' '}
           is licensed under the{' '}
-          <Link to='/license' target='_blank'>
+          <a href='https://opensource.org/license/mit' target='_blank'>
             MIT
-          </Link>{' '}
+          </a>{' '}
           public license
         </span>
       </div>
