@@ -135,14 +135,20 @@ class LoweringMap extends Component {
       }
 
       aux_data.forEach((r_data) => {
-        const latLng = [
-          parseFloat(r_data['data_array'].find((data) => data['data_name'] == 'latitude')['data_value']),
-          parseFloat(r_data['data_array'].find((data) => data['data_name'] == 'longitude')['data_value'])
-        ]
 
-        if (latLng[0] != 0 && latLng[1] != 0) {
-          trackline.polyline.addLatLng(latLng)
-          trackline.eventIDs.push(r_data['event_id'])
+        try {
+          const latLng = [
+            parseFloat(r_data['data_array'].find((data) => data['data_name'] == 'latitude')['data_value']),
+            parseFloat(r_data['data_array'].find((data) => data['data_name'] == 'longitude')['data_value'])
+          ]
+
+          if (latLng[0] != 0 && latLng[1] != 0) {
+            trackline.polyline.addLatLng(latLng)
+            trackline.eventIDs.push(r_data['event_id'])
+          }
+        }
+        catch {
+          console.error('Problem paring', r_data['data_array'])
         }
       })
 
