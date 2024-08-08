@@ -170,7 +170,7 @@ class LoweringStatsModal extends Component {
 
   async initEvents() {
     const events = await get_event_exports_by_lowering({}, this.props.lowering.id)
-    console.debug('events:', events)
+    // console.debug('events:', events)
     this.setState({ events })
     this.initLoweringTrackline()
     this.setPlotLines()
@@ -189,7 +189,7 @@ class LoweringStatsModal extends Component {
       }
 
       if (!this.state.events.length) {
-        console.debug(`No data found for ${datasource}`)
+        // console.debug(`No data found for ${datasource}`)
         continue
       }
 
@@ -200,26 +200,31 @@ class LoweringStatsModal extends Component {
           return
         }
 
-        const latLng = [
-          parseFloat(aux_data['data_array'].find((data) => data['data_name'] === 'latitude')['data_value']),
-          parseFloat(aux_data['data_array'].find((data) => data['data_name'] === 'longitude')['data_value'])
-        ]
+        try {
+          const latLng = [
+            parseFloat(aux_data['data_array'].find((data) => data['data_name'] === 'latitude')['data_value']),
+            parseFloat(aux_data['data_array'].find((data) => data['data_name'] === 'longitude')['data_value'])
+          ]
 
-        if (latLng[0] != 0 && latLng[1] != 0) {
-          trackline.polyline.addLatLng(latLng)
+          if (latLng[0] != 0 && latLng[1] != 0) {
+            trackline.polyline.addLatLng(latLng)
+          }
+
+          trackline.ts.push(moment.utc(event['ts']).valueOf())
+          trackline.depth.push([
+            trackline.ts[trackline.ts.length - 1],
+            parseFloat(aux_data['data_array'].find((data) => data['data_name'] == 'depth')['data_value'])
+          ])
         }
-
-        trackline.ts.push(moment.utc(event['ts']).valueOf())
-        trackline.depth.push([
-          trackline.ts[trackline.ts.length - 1],
-          parseFloat(aux_data['data_array'].find((data) => data['data_name'] == 'depth')['data_value'])
-        ])
+        catch {
+          console.error('Problem paring', aux_data['data_array'])
+        }
       })
 
       if (trackline.ts.length) {
         tracklines[datasource] = trackline
 
-        console.debug(tracklines)
+        // console.debug(tracklines)
 
         this.setState((prevState) => {
           return {
@@ -237,8 +242,8 @@ class LoweringStatsModal extends Component {
   }
 
   initMapView() {
-    console.debug(`Init map`)
-    console.debug(this.state.tracklines)
+    // console.debug(`Init map`)
+    // console.debug(this.state.tracklines)
 
     if (this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
       this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter())
