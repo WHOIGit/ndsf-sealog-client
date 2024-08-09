@@ -217,7 +217,7 @@ class LoweringStatsModal extends Component {
           ])
         }
         catch {
-          console.error('Problem paring', aux_data['data_array'])
+          console.error('Problem parsing', aux_data['data_array'])
         }
       })
 

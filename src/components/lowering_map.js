@@ -148,7 +148,7 @@ class LoweringMap extends Component {
           }
         }
         catch {
-          console.error('Problem paring', r_data['data_array'])
+          console.error('Problem parsing', r_data['data_array'])
         }
       })
 
