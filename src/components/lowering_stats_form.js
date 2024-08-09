@@ -16,28 +16,28 @@ class LoweringStatsForm extends Component {
   }
 
   handleFormSubmit(formProps) {
-    formProps.start_ts = formProps.start_ts._isAMomentObject ? formProps.start_ts : moment.utc(formProps.start)
-    formProps.stop_ts = formProps.stop_ts._isAMomentObject ? formProps.stop_ts : moment.utc(formProps.stop_ts)
-    ;(formProps.milestones.lowering_descending =
+    formProps.start_ts = formProps.start_ts._isAMomentObject ? formProps.start_ts.toISOString() : moment.utc(formProps.start_ts).toISOString()
+    formProps.stop_ts = formProps.stop_ts._isAMomentObject ? formProps.stop_ts.toISOString() : moment.utc(formProps.stop_ts).toISOString()
+    formProps.milestones.lowering_descending =
       formProps.milestones.lowering_descending && formProps.milestones.lowering_descending._isAMomentObject
-        ? formProps.milestones.lowering_descending.toISOString()
-        : moment.utc(formProps.milestones.lowering_descending).toISOString()),
-      (formProps.milestones.lowering_on_bottom =
-        formProps.milestones.lowering_on_bottom && formProps.milestones.lowering_on_bottom._isAMomentObject
-          ? formProps.milestones.lowering_on_bottom.toISOString()
-          : moment.utc(formProps.milestones.lowering_on_bottom).toISOString()),
-      (formProps.milestones.lowering_off_bottom =
-        formProps.milestones.lowering_on_bottom && formProps.milestones.lowering_off_bottom._isAMomentObject
-          ? formProps.lowering_off_bottom.toISOString()
-          : moment.utc(formProps.lowering_off_bottom).toISOString()),
-      (formProps.milestones.lowering_on_surface =
-        formProps.milestones.lowering_on_surface && formProps.milestones.lowering_on_surface._isAMomentObject
-          ? formProps.milestones.lowering_on_surface.toISOString()
-          : moment.utc(formProps.milestones.lowering_on_surface).toISOString()),
-      (formProps.milestones.lowering_aborted =
-        formProps.milestones.lowering_aborted && formProps.milestones.lowering_aborted._isAMomentObject
-          ? formProps.milestones.lowering_aborted.toISOString()
-          : moment.utc(formProps.milestones.lowering_aborted).toISOString())
+      ? formProps.milestones.lowering_descending.toISOString()
+      : moment.utc(formProps.milestones.lowering_descending).toISOString()
+    formProps.milestones.lowering_on_bottom =
+      formProps.milestones.lowering_on_bottom && formProps.milestones.lowering_on_bottom._isAMomentObject
+        ? formProps.milestones.lowering_on_bottom.toISOString()
+        : moment.utc(formProps.milestones.lowering_on_bottom).toISOString()
+    formProps.milestones.lowering_off_bottom =
+      formProps.milestones.lowering_off_bottom && formProps.milestones.lowering_off_bottom._isAMomentObject
+        ? formProps.milestones.lowering_off_bottom.toISOString()
+        : moment.utc(formProps.milestones.lowering_off_bottom).toISOString()
+    formProps.milestones.lowering_on_surface =
+      formProps.milestones.lowering_on_surface && formProps.milestones.lowering_on_surface._isAMomentObject
+        ? formProps.milestones.lowering_on_surface.toISOString()
+        : moment.utc(formProps.milestones.lowering_on_surface).toISOString()
+    formProps.milestones.lowering_aborted =
+      formProps.milestones.lowering_aborted && formProps.milestones.lowering_aborted._isAMomentObject
+        ? formProps.milestones.lowering_aborted.toISOString()
+        : moment.utc(formProps.milestones.lowering_aborted).toISOString()
 
     if (
       (formProps.stats.bounding_box.bbox_north == null || formProps.stats.bounding_box.bbox_north == '') &&
@@ -221,7 +221,9 @@ const validate = (formProps) => {
 
   if (formProps.start_ts !== '' && formProps.stop_ts !== '') {
     if (
-      moment.utc(formProps.stop_ts, dateFormat + ' ' + timeFormat).isBefore(moment.utc(formProps.start_ts, dateFormat + ' ' + timeFormat))
+      moment
+        .utc(formProps.stop_ts, dateFormat + ' ' + timeFormat)
+        .isBefore(moment.utc(formProps.start_ts, dateFormat + ' ' + timeFormat))
     ) {
       errors.stop_ts = 'Stop date must be later than start date'
     }
@@ -230,7 +232,9 @@ const validate = (formProps) => {
   if (
     formProps.milestones.lowering_off_bottom &&
     formProps.milestones.lowering_off_bottom !== '' &&
-    moment.utc(formProps.stop_ts, dateFormat + ' ' + timeFormat).isBefore(moment.utc(formProps.stop_ts, dateFormat + ' ' + timeFormat))
+    moment
+      .utc(formProps.stop_ts, dateFormat + ' ' + timeFormat)
+      .isBefore(moment.utc(formProps.stop_ts, dateFormat + ' ' + timeFormat))
   ) {
     errors.milestones.lowering_off_bottom = 'Off bottom date must be before stop date'
   }
