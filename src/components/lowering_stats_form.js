@@ -319,23 +319,26 @@ const validate = (formProps) => {
 }
 
 const mapStateToProps = (state) => {
-  const [bbox_north, bbox_east, bbox_south, bbox_west] = state.lowering.lowering.lowering_additional_meta.stats.bounding_box || [
-    '',
-    '',
-    '',
-    ''
-  ]
+
+  const max_depth = (state.lowering.lowering.lowering_additional_meta.stats && state.lowering.lowering.lowering_additional_meta.stats.max_depth)
+    ? state.lowering.lowering.lowering_additional_meta.stats.max_depth
+    : null
+
+  const bounding_box = (state.lowering.lowering.lowering_additional_meta.stats && state.lowering.lowering.lowering_additional_meta.stats.bounding_box)
+    ? state.lowering.lowering.lowering_additional_meta.stats.bounding_box
+    : [null, null, null, null]
+
   const initialValues = {
     start_ts: state.lowering.lowering.start_ts,
     stop_ts: state.lowering.lowering.stop_ts,
     milestones: state.lowering.lowering.lowering_additional_meta.milestones,
     stats: {
-      max_depth: state.lowering.lowering.lowering_additional_meta.stats.max_depth,
+      max_depth: max_depth,
       bounding_box: {
-        bbox_north,
-        bbox_east,
-        bbox_south,
-        bbox_west
+        bbox_north: bounding_box[0],
+        bbox_east: bounding_box[1],
+        bbox_south: bounding_box[2],
+        bbox_west: bounding_box[3]
       }
     }
   }
