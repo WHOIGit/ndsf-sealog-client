@@ -117,6 +117,10 @@ const AUX_DATA_SORT_ORDER = ['vehicleRealtimeNavData']
 // i.e. { vehicleRealtimeCTDData: 'Vehicle Realtime CTD Data', ... }
 const AUX_DATA_DATASOURCE_REPLACE = null
 
+// Optional list defining how to order event template categories
+// i.e. ['science','problem','vehicle']
+const CATEGORY_SORT_ORDER = null
+
 module.exports = {
   API_ROOT_URL,
   WS_ROOT_URL,
@@ -141,6 +145,7 @@ module.exports = {
   EXCLUDE_AUX_DATA_SOURCES,
   IMAGES_AUX_DATA_SOURCES,
   AUX_DATA_SORT_ORDER,
-  AUX_DATA_DATASOURCE_REPLACE
+  AUX_DATA_DATASOURCE_REPLACE,
+  CATEGORY_SORT_ORDER
 }
 
