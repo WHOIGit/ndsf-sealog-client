@@ -490,7 +490,6 @@ class LoweringMap extends Component {
         <CircleMarker center={this.state.tracklines[this.state.posDataSource].endPoint} radius={3} color={'red'} />
       ) : null
 
-
     return (
       <Container className='mt-2'>
         <EventCommentModal />
