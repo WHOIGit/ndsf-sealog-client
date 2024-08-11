@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { connectModal } from 'redux-modal'
 import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Map, TileLayer, WMSTileLayer, Marker, Polyline, Popup, LayersControl, ScaleControl } from 'react-leaflet'
+import { Map, TileLayer, WMSTileLayer, Marker, Polyline, Popup, LayersControl, ScaleControl, CircleMarker } from 'react-leaflet'
 import L from 'leaflet'
 import Highcharts from 'highcharts'
 import HighchartsExporting from 'highcharts/modules/exporting'
@@ -185,7 +185,9 @@ class LoweringStatsModal extends Component {
       let trackline = {
         ts: [],
         depth: [],
-        polyline: L.polyline([])
+        polyline: L.polyline([]),
+        startPoint: null,
+        endPoint: null,
       }
 
       if (!this.state.events.length) {
@@ -208,6 +210,10 @@ class LoweringStatsModal extends Component {
 
           if (latLng[0] != 0 && latLng[1] != 0) {
             trackline.polyline.addLatLng(latLng)
+            if (trackline.startPoint === null) {
+              trackline.startPoint = latLng
+            }
+            trackline.endPoint = latLng
           }
 
           trackline.ts.push(moment.utc(event['ts']).valueOf())
@@ -535,8 +541,19 @@ class LoweringStatsModal extends Component {
 
     const trackLine =
       this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty() ? (
-        <Polyline color='lime' positions={this.state.tracklines[this.state.posDataSource].polyline.getLatLngs()} />
+        <Polyline color='yellow' positions={this.state.tracklines[this.state.posDataSource].polyline.getLatLngs()} />
       ) : null
+
+    const startMarker = //null
+      this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].startPoint !== null ? (
+        <CircleMarker center={this.state.tracklines[this.state.posDataSource].startPoint} radius={3} color={'green'} />
+      ) : null
+
+    const endMarker = //null
+      this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].endPoint !== null ? (
+        <CircleMarker center={this.state.tracklines[this.state.posDataSource].endPoint} radius={3} color={'red'} />
+      ) : null
+
 
     if (this.props.lowering) {
       if (!this.state.fetching) {
@@ -560,6 +577,8 @@ class LoweringStatsModal extends Component {
                     <LayersControl position='topright'>{baseLayers}</LayersControl>
                     <ScaleControl position='bottomleft' />
                     {trackLine}
+                    {startMarker}
+                    {endMarker}
                     {this.renderMarker()}
                   </Map>
                 </Col>

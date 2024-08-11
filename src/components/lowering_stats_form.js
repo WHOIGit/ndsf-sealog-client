@@ -205,6 +205,7 @@ LoweringStatsForm.propTypes = {
 }
 
 const validate = (formProps) => {
+
   const errors = { milestones: {}, stats: {} }
 
   if (formProps.start_ts === '') {
@@ -331,7 +332,7 @@ const mapStateToProps = (state) => {
   const initialValues = {
     start_ts: state.lowering.lowering.start_ts,
     stop_ts: state.lowering.lowering.stop_ts,
-    milestones: state.lowering.lowering.lowering_additional_meta.milestones,
+    milestones: state.lowering.lowering.lowering_additional_meta.milestones || {},
     stats: {
       max_depth: max_depth,
       bounding_box: {
