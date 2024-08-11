@@ -99,7 +99,7 @@ class EventTemplateList extends Component {
     if (event_template.event_free_text_required || needs_modal) {
       const event = await this.props.createEvent({
         event_value: event_template.event_value,
-        publish: false
+        // publish: false
       })
       this.props.showModal('eventOptions', {
         eventTemplate: event_template,
