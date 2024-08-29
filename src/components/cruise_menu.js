@@ -178,6 +178,11 @@ class CruiseMenu extends Component {
       });
   }
 
+  isReplayAuthorized() {
+    const authorizedRoles = ['event_watcher', 'event_manager', 'event_logger', 'cruise_manager', 'template_manager', 'admin'];
+    return this.props.roles.some(role => authorizedRoles.includes(role));
+  }
+
   renderCruiseFiles(files) {
     let output = files.map((file, index) => {
       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleCruiseFileDownload(file)}>{file}</a></div>
@@ -190,6 +195,14 @@ class CruiseMenu extends Component {
       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleLoweringFileDownload(file)}>{file}</a></div>
     });
     return <div>{output}<br/></div>;
+  }
+
+  renderLoweringReplayButtons() {
+    return <Row className="px-1 justify-content-center">
+      <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Replay</Button>
+      <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForMap() }>Map</Button>
+      <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForGallery() }>Gallery</Button>
+    </Row>
   }
 
   renderLoweringCard() {
@@ -244,11 +257,11 @@ class CruiseMenu extends Component {
             {loweringBoundingBox}
             {loweringFiles}
             <br/>
-            <Row className="px-1 justify-content-center">
-              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Replay</Button>
-              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForMap() }>Map</Button>
-              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForGallery() }>Gallery</Button>
-            </Row>
+            {this.isReplayAuthorized() ? 
+              this.renderLoweringReplayButtons() :
+              "Not authorized to replay dive events, contact admin for access."
+            }
+            
           </Card.Body>
         </Card>
       );
