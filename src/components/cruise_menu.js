@@ -178,6 +178,11 @@ class CruiseMenu extends Component {
       });
   }
 
+  isReplayAuthorized() {
+    const authorizedRoles = ['event_watcher', 'event_manager', 'event_logger', 'cruise_manager', 'template_manager', 'admin'];
+    return this.props.roles.some(role => authorizedRoles.includes(role));
+  }
+
   renderCruiseFiles(files) {
     let output = files.map((file, index) => {
       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleCruiseFileDownload(file)}>{file}</a></div>
@@ -190,6 +195,26 @@ class CruiseMenu extends Component {
       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleLoweringFileDownload(file)}>{file}</a></div>
     });
     return <div>{output}<br/></div>;
+  }
+
+  renderLoweringReplayButtons() {
+    return <Row className="px-1 justify-content-center">
+      <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Replay</Button>
+      <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForMap() }>Map</Button>
+      <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForGallery() }>Gallery</Button>
+    </Row>
+  }
+
+  renderContactAdmin() {
+    // Require JS to construct email address to reduce spam
+    const addr1 = 'ndsf';
+    const addr2 = '_info@';
+    const addr3 = 'whoi.edu';
+    const addr = addr1 + addr2 + addr3;
+    const email_link = <a href={'mailto:' + addr}>{addr}</a>;
+    return <div>
+      <p className="text-danger">Not authorized to replay dive events, contact admin for access: {email_link}</p>
+    </div>
   }
 
   renderLoweringCard() {
@@ -226,6 +251,8 @@ class CruiseMenu extends Component {
 
       let loweringFiles = (this.state.activeLowering.lowering_additional_meta.lowering_files && this.state.activeLowering.lowering_additional_meta.lowering_files.length > 0)? <div><strong>Files:</strong>{this.renderLoweringFiles(this.state.activeLowering.lowering_additional_meta.lowering_files)}</div>: null;
 
+      
+
       return (          
         <Card className="border-secondary" key="lowering_card">
           <Card.Header>{_Lowering_}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
@@ -244,11 +271,7 @@ class CruiseMenu extends Component {
             {loweringBoundingBox}
             {loweringFiles}
             <br/>
-            <Row className="px-1 justify-content-center">
-              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForReplay() }>Replay</Button>
-              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForMap() }>Map</Button>
-              <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForGallery() }>Gallery</Button>
-            </Row>
+            {this.isReplayAuthorized() ? this.renderLoweringReplayButtons() : this.renderContactAdmin()}
           </Card.Body>
         </Card>
       );
