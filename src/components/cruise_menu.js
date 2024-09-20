@@ -205,6 +205,18 @@ class CruiseMenu extends Component {
     </Row>
   }
 
+  renderContactAdmin() {
+    // Require JS to construct email address to reduce spam
+    const addr1 = 'ndsf';
+    const addr2 = '_info@';
+    const addr3 = 'whoi.edu';
+    const addr = addr1 + addr2 + addr3;
+    const email_link = <a href={'mailto:' + addr}>{addr}</a>;
+    return <div>
+      <p className="text-danger">Not authorized to replay dive events, contact admin for access: {email_link}</p>
+    </div>
+  }
+
   renderLoweringCard() {
 
     if(this.state.activeLowering){
@@ -239,6 +251,8 @@ class CruiseMenu extends Component {
 
       let loweringFiles = (this.state.activeLowering.lowering_additional_meta.lowering_files && this.state.activeLowering.lowering_additional_meta.lowering_files.length > 0)? <div><strong>Files:</strong>{this.renderLoweringFiles(this.state.activeLowering.lowering_additional_meta.lowering_files)}</div>: null;
 
+      
+
       return (          
         <Card className="border-secondary" key="lowering_card">
           <Card.Header>{_Lowering_}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span><span className="float-right"><CopyLoweringToClipboard lowering={this.state.activeLowering}/></span></Card.Header>
@@ -257,11 +271,7 @@ class CruiseMenu extends Component {
             {loweringBoundingBox}
             {loweringFiles}
             <br/>
-            {this.isReplayAuthorized() ? 
-              this.renderLoweringReplayButtons() :
-              "Not authorized to replay dive events, contact admin for access."
-            }
-            
+            {this.isReplayAuthorized() ? this.renderLoweringReplayButtons() : this.renderContactAdmin()}
           </Card.Body>
         </Card>
       );
