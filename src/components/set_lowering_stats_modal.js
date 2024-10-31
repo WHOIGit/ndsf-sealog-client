@@ -261,22 +261,12 @@ class SetLoweringStatsModal extends Component {
   }
 
   handleTweak(milestones, stats) {
-
-    this.setState({milestones, stats})
-
-    const start_ts = moment.utc(milestones.lowering_start);
-    const stop_ts = moment.utc(milestones.lowering_stop);
-    
-    const newMilestones = {...milestones}
-    delete newMilestones.lowering_start;
-    delete newMilestones.lowering_stop;
-
-    const lowering_additional_meta = { ...this.props.lowering.lowering_additional_meta, milestones: newMilestones, stats }
-
-    const newLoweringRecord = { ...this.props.lowering, start_ts, stop_ts, lowering_additional_meta }
-
-    this.props.handleUpdateLowering(newLoweringRecord)
-    this.setState({milestones, stats, touched: false, show_edit_form: false})
+    this.setState({
+      milestones,
+      stats,
+      touched: true,
+      show_edit_form: false
+    });
   }
 
   handleCalculateBoundingBox() {
