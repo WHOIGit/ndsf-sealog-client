@@ -1,10 +1,13 @@
 {
   "name": "ndsf-sealog-client",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "license": "MIT",
   "description": "NDSF edition of the Sealog event logging web client",
   "bugs": {
     "url": "https://github.com/whoigit/ndsf-sealog-client/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "author": "Woods Hole Oceanographic Institution",
   "homepage": ".",
@@ -42,7 +45,7 @@
     "react-redux": "^7.2.6",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.3",
+    "react-scripts": "^5.0.1",
     "redux": "^4.1.2",
     "redux-form": "^8.3.7",
     "redux-modal": "^4.0.0",
