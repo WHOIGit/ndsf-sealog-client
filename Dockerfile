@@ -1,6 +1,6 @@
 ARG NETWORK_ACCESS=online
 
-FROM --platform=$BUILDPLATFORM node:16 AS builder-online
+FROM --platform=$BUILDPLATFORM node:20 AS builder-online
 
 
 # /!\ NOTE FOR AT-SEA DEVELOPMENT

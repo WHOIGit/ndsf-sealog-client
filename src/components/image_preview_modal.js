@@ -1,4 +1,3 @@
-import Path from 'path';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Modal, Image } from 'react-bootstrap';
@@ -26,7 +25,7 @@ export default class ImagePreviewModal extends React.Component {
       <Modal size="lg" show={this.state.show} onHide={this.handleClose}>
         <Modal.Header closeButton>
           <Modal.Title as="h5">
-            Image Preview - {Path.basename(this.props.url)}
+            Image Preview - {this.props.url.split('/').pop()}
           </Modal.Title>
         </Modal.Header>
 
