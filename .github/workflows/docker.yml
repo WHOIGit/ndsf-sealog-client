@@ -78,8 +78,9 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
           cache-from: |
-            type=local,src=/tmp/.buildx-cache-new
+            type=local,src=/tmp/.buildx-cache
           cache-to: |
+            type=local,dest=/tmp/.buildx-cache-new
             type=registry,ref=${{ steps.init.outputs.docker_repo }}:buildcache,mode=max
 
       - name: Update cache
