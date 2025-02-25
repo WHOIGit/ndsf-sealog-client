@@ -86,7 +86,7 @@ class Lowerings extends Component {
 
   activateLowering(lowering) {
     this.setState({ activeLowering: lowering });
-    this.props.initLowering();  // clears messages
+    this.props.initLowering(lowering.id);  // clears messages
     window.scrollTo(0, 0);
   }
 

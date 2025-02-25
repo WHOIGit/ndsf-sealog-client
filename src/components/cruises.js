@@ -92,7 +92,7 @@ class Cruises extends Component {
 
   activateCruise(cruise) {
     this.setState({ activeCruise: cruise });
-    this.props.initCruise();  // clears messages
+    this.props.initCruise(cruise.id);  // clears messages
     window.scrollTo(0, 0);
   }
 
