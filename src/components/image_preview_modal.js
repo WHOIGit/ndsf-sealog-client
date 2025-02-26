@@ -20,14 +20,27 @@ export default class ImagePreviewModal extends React.Component {
   handleClose = () => this.setState({ show: false });
   handleShow = () => this.setState({ show: true });
 
+  renderHeader(title) {
+    return (
+      <Modal.Header closeButton>
+        <Modal.Title as="h5">
+          {title}
+        </Modal.Title>
+      </Modal.Header>
+    )
+  }
+
   render() {
+    if (!this.props.url) {
+      return (
+        <Modal size="lg" show={this.state.show} onHide={this.handleClose}>
+          {this.renderHeader("Image unavailable")}
+        </Modal>
+      );
+    }
     return (
       <Modal size="lg" show={this.state.show} onHide={this.handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title as="h5">
-            Image Preview - {this.props.url.split('/').pop()}
-          </Modal.Title>
-        </Modal.Header>
+        {this.renderHeader(`Image Preview - ${this.props.url.split('/').pop()}`)}
 
         <Modal.Body>
           <div className="text-center">
