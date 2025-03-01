@@ -76,4 +76,7 @@ window.client_config = {
 
     DATA_DECIMALS: 2,
 
+    // Frames grabbed in the event logger will be highlighted in red if they are older than this threshold
+    STALE_FRAME_THRESHOLD: 5,
+
 };
