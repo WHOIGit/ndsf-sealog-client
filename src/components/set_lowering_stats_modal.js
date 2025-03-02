@@ -305,6 +305,7 @@ class SetLoweringStatsModal extends Component {
 
     this.props.handleUpdateLowering(newLoweringRecord)
     this.setState({touched: false})
+    this.props.handleHide()
   }
 
   setMilestoneToEdit(milestone = null) {
