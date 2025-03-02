@@ -13,6 +13,8 @@ import ExportDropdown from './export_dropdown';
 import EventPreview from './event_preview';
 import * as mapDispatchToProps from '../actions';
 import { getCruiseByLowering, getLowering } from '../api';
+import { Popup } from 'react-leaflet';
+import LoweringMapDisplay from './lowering_map_display';
 
 
 const playTimer = 3000;
@@ -43,6 +45,7 @@ class LoweringReplay extends Component {
       cruise: props.cruise,
       lowering: props.lowering,
       useAbsoluteTimestamp: true,  // TODO: add a toggle in the UI or possibly put this in a user setting
+      mapCollapsed: true,
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -56,6 +59,7 @@ class LoweringReplay extends Component {
     this.updateEventFilter = this.updateEventFilter.bind(this);
     this.handleLoweringSelect = this.handleLoweringSelect.bind(this);
     this.handleLoweringModeSelect = this.handleLoweringModeSelect.bind(this);
+    this.toggleMapCollapse = this.toggleMapCollapse.bind(this);
 
   }
 
@@ -289,6 +293,12 @@ class LoweringReplay extends Component {
     }
   }
 
+  toggleMapCollapse() {
+    this.setState(prevState => ({
+      mapCollapsed: !prevState.mapCollapsed
+    }));
+  }
+
   renderControlsCard() {
 
     if(this.state.lowering) {
@@ -438,6 +448,36 @@ class LoweringReplay extends Component {
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Replay" modes={["Map", "Gallery"]}/>
           </ButtonToolbar>
+        </Row>
+        <Row>
+          <Col className="px-1 mb-2" xs={12}>
+            <Card className="border-secondary">
+              <Card.Header 
+                onClick={this.toggleMapCollapse}
+                className="d-flex justify-content-between align-items-center px-2 py-1"
+              >
+                <span>Map View</span>
+                <FontAwesomeIcon 
+                  icon={this.state.mapCollapsed ? "chevron-right" : "chevron-down"} 
+                  fixedWidth 
+                  className="text-primary" 
+                  style={{cursor: 'pointer'}} 
+                />
+              </Card.Header>
+              {!this.state.mapCollapsed && (
+                <LoweringMapDisplay 
+                  loweringID={this.state.lowering.id} 
+                  selectedEvent={this.props.event.selected_event}
+                  height="300px"
+                  renderPopup={() => (
+                    <Popup>
+                      {this.props.event.selected_event.ts} - {this.props.event.selected_event.event_value}
+                    </Popup>
+                  )}
+                />
+              )}
+            </Card>
+          </Col>
         </Row>
         <Row>
           <Col className="px-1 mb-2" xs={12}>
