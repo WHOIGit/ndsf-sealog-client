@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
-import axios from 'axios';
-import Cookies from 'universal-cookie';
-import { Map, TileLayer, WMSTileLayer, Marker, Polyline, Popup, LayersControl, ScaleControl } from 'react-leaflet';
-import L from 'leaflet';
+import { Popup } from 'react-leaflet';
 import { ButtonToolbar, Row, Col, Card, Tooltip, OverlayTrigger, ListGroup, Form } from 'react-bootstrap';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 import EventShowDetailsModal from './event_show_details_modal';
@@ -16,21 +13,13 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
-import { API_ROOT_URL } from 'client_config';
-import { TILE_LAYERS, DEFAULT_LOCATION } from 'map_tilelayers';
 import { getCruiseByLowering, getLowering } from '../api';
+import LoweringMapDisplay from './lowering_map_display';
 
-const { BaseLayer } = LayersControl;
-
-const cookies = new Cookies();
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);
 
 const maxEventsPerPage = 10;
-
-const initCenterPosition = DEFAULT_LOCATION;
-
-const positionAuxDataSources = ['vehicleRealtimeNavData','vehicleRealtimeUSBLData'];
 
 class LoweringMap extends Component {
 
@@ -41,23 +30,14 @@ class LoweringMap extends Component {
 
     this.state = {
       fetching: false,
-      tracklines: {},
       cruise: props.cruise,
       lowering: props.lowering,
 
-      posDataSource: null,
-
       replayEventIndex: 0,
       activePage: 1,
-
-      zoom: 13,
-      center:initCenterPosition,
-      position:initCenterPosition,
-      showMarker: false,
+      
       height: "480px"
     };
-
-    this.auxDatasourceFilters = positionAuxDataSources;
 
     this.sliderTooltipFormatter = this.sliderTooltipFormatter.bind(this);
     this.handleSliderChange = this.handleSliderChange.bind(this);
@@ -68,9 +48,7 @@ class LoweringMap extends Component {
 
     this.handleLoweringSelect = this.handleLoweringSelect.bind(this);
     this.handleLoweringModeSelect = this.handleLoweringModeSelect.bind(this);
-    this.handleMoveEnd = this.handleMoveEnd.bind(this);
-    this.handleZoomEnd = this.handleZoomEnd.bind(this);
-    this.initMapView = this.initMapView.bind(this);
+    
     this.toggleASNAP = this.toggleASNAP.bind(this);
   }
 
@@ -96,16 +74,9 @@ class LoweringMap extends Component {
       getCruiseByLowering(this.props.match.params.id)
         .then((cruise) => this.setState({ cruise }));
     }
-
-    this.initLoweringTrackline(this.props.match.params.id);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(this.map) {
-      this.map.leafletElement.invalidateSize();
-    }
-
-    // Once the lowering data is fetched, focus on the event list
     if(this.state.lowering !== prevState.lowering) {
       this.divFocus.focus();
     }
@@ -145,60 +116,6 @@ class LoweringMap extends Component {
     }
     else if(event.key === "Enter") {
       this.handleEventShowDetailsModal(this.state.replayEventIndex)
-    }
-  }
-
-  async initLoweringTrackline(id) {
-    this.setState({ fetching: true});
-
-    let tracklines = {};
-
-    for (let index=0;index<this.auxDatasourceFilters.length;index++) {
-
-      let trackline = {
-        eventIDs: [],
-        polyline: L.polyline([]),
-      };
-
-      let url = `${API_ROOT_URL}/api/v1/event_aux_data/bylowering/${id}?datasource=${this.auxDatasourceFilters[index]}`;
-      await axios.get(url, {
-        headers: {
-          authorization: cookies.get('token')
-        }
-      }).then((response) => {
-        response.data.forEach((r_data) => {
-          const latLng = [ parseFloat(r_data['data_array'].find(data => data['data_name'] === 'latitude')['data_value']), parseFloat(r_data['data_array'].find(data => data['data_name'] === 'longitude')['data_value'])];
-          if(latLng[0] !== 0 && latLng[1] !== 0) {
-            trackline.polyline.addLatLng(latLng);
-            trackline.eventIDs.push(r_data['event_id']);
-          }
-        });
-
-      }).catch((error)=>{
-        if(error.response && error.response.data.statusCode === 404) {
-          console.warn("No", this.auxDatasourceFilters[index], "data found")
-        }
-      });
-
-      if(trackline.eventIDs.length > 0) {
-        tracklines[this.auxDatasourceFilters[index]] = trackline
-      }
-    }
-
-    for (let index=0;index<this.auxDatasourceFilters.length;index++) {
-      if (tracklines[this.auxDatasourceFilters[index]]) {
-        this.setState({ tracklines: tracklines, fetching: false, posDataSource: this.auxDatasourceFilters[index] });
-        break;
-      }
-    }
-
-    this.initMapView();
-  }
-
-  initMapView() {
-    if(this.state.tracklines[this.state.posDataSource] && !this.state.tracklines[this.state.posDataSource].polyline.isEmpty()) {
-      this.map.leafletElement.panTo(this.state.tracklines[this.state.posDataSource].polyline.getBounds().getCenter());
-      this.map.leafletElement.fitBounds(this.state.tracklines[this.state.posDataSource].polyline.getBounds());
     }
   }
 
@@ -262,27 +179,17 @@ class LoweringMap extends Component {
     this.divFocus.focus();
   }
 
-  handleZoomEnd() {
-    if(this.map) {
-      this.setState({zoom: this.map.leafletElement.getZoom()});
-    }
-  }
-
-  handleMoveEnd() {
-    if(this.map) {
-      this.setState({center: this.map.leafletElement.getCenter()});
-    }
-  }
 
   handleEventShowDetailsModal(index) {
     this.props.showModal('eventShowDetails', { event: this.props.event.events[index], handleUpdateEvent: this.props.updateEvent });
   }
 
-  handleLoweringSelect(id) {
-    this.props.gotoLoweringMap(id);
-    this.props.initLoweringReplay(id);
-    this.props.initCruiseFromLowering(id);
-    this.initLoweringTrackline(id);
+  handleLoweringSelect(lowering) {
+    this.props.gotoLoweringMap(lowering.id);
+    this.props.initLoweringReplay(lowering.id, this.props.event.hideASNAP);
+    this.props.initCruiseFromLowering(lowering.id);
+    this.setState({replayEventIndex: 0, activePage: 1});
+    this.setState({lowering});
   }
 
   handleLoweringModeSelect(mode) {
@@ -386,7 +293,7 @@ class LoweringMap extends Component {
 
           let title = '';
 
-          if(event.event_value != 'FREE_FORM') {
+          if(event.event_value !== 'FREE_FORM') {
 
             // no need to show free_text as event_value
             title += event.event_value;
@@ -405,66 +312,9 @@ class LoweringMap extends Component {
     return (this.props.event.fetching)? (<ListGroup.Item className="event-list-item">Loading...</ListGroup.Item>) : (<ListGroup.Item>No events found</ListGroup.Item>);
   }
 
-  renderMarker() {
-
-    if(this.props.event.selected_event.aux_data && typeof this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource) !== 'undefined') {
-
-      const posData = this.props.event.selected_event.aux_data.find((data) => data['data_source'] === this.state.posDataSource);
-      try {
-        const latLng = [ parseFloat(posData['data_array'].find(data => data['data_name'] === 'latitude')['data_value']), parseFloat(posData['data_array'].find(data => data['data_name'] === 'longitude')['data_value'])]
-        return (
-          <Marker position={latLng}>
-            <Popup>
-              You are here! :-)
-            </Popup>
-          </Marker>
-        );
-      }
-      catch(err) {
-        return null;
-      }
-    }
-  }
-
   render() {
-    // Wait for lowering object before rendering
     if (!this.state.lowering)
       return null;
-
-    const baseLayers = TILE_LAYERS.map((layer, index) => {
-      if(layer.wms) {
-        return (
-          <BaseLayer checked={layer.default} key={`baseLayer_${index}`} name={layer.name}>
-            <WMSTileLayer
-              attribution={layer.attribution}
-              url={layer.url}
-              layers={layer.layers}
-              transparent={layer.transparent}
-            />
-          </BaseLayer>
-        );
-      }
-      else {
-        return (
-          <BaseLayer checked={layer.default} key={`baseLayer_${index}`} name={layer.name}>
-            <TileLayer
-              attribution={layer.attribution}
-              url={layer.url}
-              maxNativeZoom={layer.maxNativeZoom}
-            />
-          </BaseLayer>
-        );
-      }
-    });
-
-    let trackLine = null;
-
-    for (let index=0;index<this.auxDatasourceFilters.length;index++) {
-      if (this.state.tracklines[this.auxDatasourceFilters[index]] && !this.state.tracklines[this.auxDatasourceFilters[index]].polyline.isEmpty()) {
-        trackLine = <Polyline color="lime" positions={this.state.tracklines[this.auxDatasourceFilters[index]].polyline.getLatLngs()} />
-        break;
-      }
-    }
 
     const cruise_id = (this.state.cruise)? this.state.cruise.cruise_id : "Loading...";
     
@@ -476,7 +326,7 @@ class LoweringMap extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering}/>
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering} onLoweringClick={this.handleLoweringSelect} />
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Map" modes={["Replay", "Gallery"]}/>
           </ButtonToolbar>
@@ -484,21 +334,16 @@ class LoweringMap extends Component {
         <Row>
           <Col className="px-1" sm={12}>
             <Card className="border-secondary">
-              <Map
-                style={{ height: this.state.height }}
-                center={this.state.center}
-                zoom={this.state.zoom}
-                onMoveEnd={this.handleMoveEnd}
-                onZoomEnd={this.handleZoomEnd}
-                ref={ (map) => this.map = map}
-              >
-                <ScaleControl position="bottomleft" />
-                <LayersControl position="topright">
-                  {baseLayers}
-                </LayersControl>
-                {trackLine}
-                {this.renderMarker()}
-              </Map>
+              <LoweringMapDisplay 
+                loweringID={this.props.match.params.id}
+                selectedEvent={this.props.event.selected_event}
+                height={this.state.height}
+                renderPopup={() => (
+                  <Popup>
+                    You are here! :-)
+                  </Popup>
+                )}
+              />
             </Card>
           </Col>
         </Row>
