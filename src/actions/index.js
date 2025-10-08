@@ -958,8 +958,13 @@ export function deleteEventTemplate(id) {
   };
 }
 
-export function logout() {
+export function logout(redirectPath = null) {
   return function(dispatch) {
+    // Save the path to redirect to after login (if provided and not /login or /logout)
+    if (redirectPath && redirectPath !== '/login' && redirectPath !== '/logout') {
+      localStorage.setItem('redirectAfterLogin', redirectPath);
+    }
+
     cookies.remove('token', { path: '/' });
     cookies.remove('id', { path: '/' });
     dispatch(push("/login"));

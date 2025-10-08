@@ -12,14 +12,16 @@ export default function(ComposedComponent) {
     componentDidMount() {
       this.props.validateJWT();
       if (!this.props.authenticated) {
-        this.props.logout()
+        // Pass current path so user can be redirected back after login
+        this.props.logout(window.location.pathname);
       }
     }
 
     componentDidUpdate() {
       this.props.validateJWT();
       if (!this.props.authenticated) {
-        this.props.logout();
+        // Pass current path so user can be redirected back after login
+        this.props.logout(window.location.pathname);
       }
     }
 
