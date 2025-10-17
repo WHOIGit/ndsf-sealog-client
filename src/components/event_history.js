@@ -128,8 +128,9 @@ class EventHistory extends Component {
       this.client.subscribe('/ws/status/updateEventAuxData', updateAuxDataHandler);
 
     } catch(error) {
-      console.log(error);
-      throw(error);
+      // Silently handle WebSocket connection errors to avoid console spam
+      // The client will attempt to reconnect automatically
+      console.error('WebSocket connection error:', error.message);
     }
   }
 

@@ -67,7 +67,8 @@ import {
   CREATE_LOWERING_SUCCESS,
   CREATE_LOWERING_ERROR,
   LEAVE_CREATE_LOWERING_FORM,
-  FETCH_LOWERINGS
+  FETCH_LOWERINGS,
+  SET_REDIRECT_PATH
 
 } from './types';
 
@@ -958,8 +959,21 @@ export function deleteEventTemplate(id) {
   };
 }
 
-export function logout() {
+export function setRedirectPath(path = null) {
   return function(dispatch) {
+    return dispatch({ type: SET_REDIRECT_PATH, payload: path });
+  };
+}
+
+export function logout(redirectPath = null) {
+  return function(dispatch) {
+    // Save the path to redirect to after login (if provided and not /login or /logout)
+    if (redirectPath && redirectPath !== '/login' && redirectPath !== '/logout') {
+      dispatch({ type: SET_REDIRECT_PATH, payload: redirectPath });
+    } else {
+      dispatch({ type: SET_REDIRECT_PATH, payload: null });
+    }
+
     cookies.remove('token', { path: '/' });
     cookies.remove('id', { path: '/' });
     dispatch(push("/login"));

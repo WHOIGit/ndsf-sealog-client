@@ -18,17 +18,27 @@ const cookies = new Cookies();
 //
 // axios.defaults.headers.common['Authorization'] = cookies.get('token');
 
+function getAuthHeaders() {
+  const token = cookies.get('token');
+  return token ? { headers: { 'authorization': token } } : {};
+}
 
 export function getCruiseByLowering(id) {
   const url = `${API_ROOT_URL}/api/v1/cruises/bylowering/${id}`;
-  return axios.get(url, { headers: { 'authorization': cookies.get('token') } })
-    .catch((e) => console.error(e))
-    .then((r) => r.data);
+  return axios.get(url, getAuthHeaders())
+    .then((r) => r.data)
+    .catch((e) => {
+      console.error(e);
+      return null;
+    });
 }
 
 export function getLowering(id) {
   const url = `${API_ROOT_URL}/api/v1/lowerings/${id}`;
-  return axios.get(url, { headers: { 'authorization': cookies.get('token') } })
-    .catch((e) => console.error(e))
-    .then((r) => r.data);
+  return axios.get(url, getAuthHeaders())
+    .then((r) => r.data)
+    .catch((e) => {
+      console.error(e);
+      return null;
+    });
 }

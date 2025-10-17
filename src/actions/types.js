@@ -2,6 +2,7 @@ export const AUTH_USER = 'auth_user';
 export const UNAUTH_USER = 'unauth_user';
 export const AUTH_ERROR = 'auth_error';
 export const AUTH_SUCCESS = 'auth_success';
+export const SET_REDIRECT_PATH = 'set_redirect_path';
 
 export const LEAVE_AUTH_LOGIN_FORM = 'leave_auth_login_form';
 export const REFRESH_AUTH_LOGIN_FORM = 'refresh_auth_login_form';
