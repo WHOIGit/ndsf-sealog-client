@@ -18,7 +18,6 @@ const cookies = new Cookies();
 //
 // axios.defaults.headers.common['Authorization'] = cookies.get('token');
 
-// Helper function to get authorization headers only when token exists
 function getAuthHeaders() {
   const token = cookies.get('token');
   return token ? { headers: { 'authorization': token } } : {};

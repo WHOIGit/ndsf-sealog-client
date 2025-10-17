@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { push } from 'connected-react-router';
 import * as mapDispatchToProps from '../../actions';
+import { setRedirectPath } from '../../actions';
 
 export default function(ComposedComponent) {
   class Unauthentication extends Component {
@@ -28,10 +29,9 @@ export default function(ComposedComponent) {
     }
 
     handleRedirect() {
-      // Check if there's a saved redirect path from before login
-      const redirectPath = localStorage.getItem('redirectAfterLogin');
+      const redirectPath = this.props.redirectPath;
       if (redirectPath) {
-        localStorage.removeItem('redirectAfterLogin');
+        this.props.setRedirectPath(null);
         this.props.push(redirectPath);
       } else {
         this.props.gotoHome();
@@ -44,8 +44,11 @@ export default function(ComposedComponent) {
   }
 
   function mapStateToProps(state) {
-    return { authenticated: state.auth.authenticated };
+    return {
+      authenticated: state.auth.authenticated,
+      redirectPath: state.auth.redirectPath
+    };
   }
 
-  return connect(mapStateToProps, { ...mapDispatchToProps, push })(Unauthentication);
+  return connect(mapStateToProps, { ...mapDispatchToProps, push, setRedirectPath })(Unauthentication);
 }

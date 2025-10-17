@@ -7,7 +7,6 @@ module.exports = function(app) {
     createProxyMiddleware({
       target: 'http://localhost:8000',
       changeOrigin: true,
-      // Keep cookies and authentication headers
       onProxyReq: (proxyReq, req, res) => {
         // Forward cookies from the browser
         if (req.headers.cookie) {
