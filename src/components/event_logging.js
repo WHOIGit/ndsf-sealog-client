@@ -19,7 +19,7 @@ class EventLogging extends Component {
 
   render() {
 
-    if(this.props.roles && this.props.roles.includes("event_logger") && this.props.roles.includes("event_watcher")) {
+    if(this.props.roles.includes("event_logger") && this.props.roles.includes("event_watcher")) {
       return (
         <div>
           <EventShowDetailsModal />
@@ -42,19 +42,18 @@ class EventLogging extends Component {
         </div>
       );
     }
-    else if(this.props.roles && this.props.roles.includes("event_watcher")) {
-      return (
-        <div>
-          <EventShowDetailsModal />
-          <Row>
-            <Col>
-              <EventHistory />
-            </Col>
-          </Row>
-        </div>
-      );
-    }
-    return null;
+
+    // Show view-only interface for everyone else (including unauthenticated users)
+    return (
+      <div>
+        <EventShowDetailsModal />
+        <Row>
+          <Col>
+            <EventHistory />
+          </Col>
+        </Row>
+      </div>
+    );
   }
 }
 

@@ -45,7 +45,7 @@ class Cruises extends Component {
   // Helpers for determining user capabilities
 
   hasRole(role) {
-    return (this.props.roles && this.props.roles.includes(role));
+    return this.props.roles.includes(role);
   }
 
   get canDelete() {
