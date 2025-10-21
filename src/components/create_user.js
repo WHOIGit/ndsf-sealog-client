@@ -58,7 +58,7 @@ class CreateUser extends Component {
     const { handleSubmit, pristine, reset, submitting, valid } = this.props;
     const createUserFormHeader = (<div>Create New User</div>);
 
-    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('event_manager'))) {
+    if (this.props.roles.includes("admin") || this.props.roles.includes('event_manager')) {
 
       let userRoleOptions = this.props.roles.includes('admin')? systemUserRoleOptions.concat(standardUserRoleOptions): standardUserRoleOptions;
 

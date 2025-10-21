@@ -20,12 +20,12 @@ import {
   FETCH_GUEST_USERS
 } from '../actions/types';
 
-export default function(state={ profile: {}, profile_error: '', profile_message: '', user: {}, user_error: '', user_message: '', users: [],
+export default function(state={ profile: { roles: [] }, profile_error: '', profile_message: '', user: {}, user_error: '', user_message: '', users: [],
   guest_users: [] }, action) {
   switch(action.type){
 
     case UNAUTH_USER:
-      return { ...state, profile: {} };
+      return { ...state, profile: { roles: [] } };
 
     case INIT_PROFILE:
       return { ...state, profile: action.payload, profile_error: '', profile_message: '' };
