@@ -31,7 +31,7 @@ class Header extends Component {
   }
 
   renderUserOptions() {
-    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
+    if (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoUsers}>Users</NavDropdown.Item>
       );
@@ -39,7 +39,7 @@ class Header extends Component {
   }
 
   renderEventLoggingOptions() {
-    if ( this.props.authenticated && !DISABLE_EVENT_LOGGING ) {
+    if ( !DISABLE_EVENT_LOGGING ) {
       return (
         <Nav.Link onClick={this.props.gotoCruiseMenu}>Review {_Cruises_}/{_Lowerings_}</Nav.Link>
       );
@@ -47,7 +47,7 @@ class Header extends Component {
   }
 
   renderEventManagementOptions() {
-    if ( this.props.roles.includes('admin') || this.props.roles.includes('event_manager') ) {
+    if (this.props.roles.includes('admin') || this.props.roles.includes('event_manager') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoEventManagement}>Event Management</NavDropdown.Item>
       );
@@ -55,7 +55,7 @@ class Header extends Component {
   }
 
   renderEventTemplateOptions() {
-    if ( !DISABLE_EVENT_LOGGING && (this.props.roles.includes('admin') || this.props.roles.includes('template_manager')) ) {
+    if (!DISABLE_EVENT_LOGGING && (this.props.roles.includes('admin') || this.props.roles.includes('template_manager')) ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoEventTemplates}>Event Templates</NavDropdown.Item>
       );
@@ -63,7 +63,7 @@ class Header extends Component {
   }
 
   renderLoweringOptions() {
-    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
+    if (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoLowerings}>{_Lowerings_}</NavDropdown.Item>
       );
@@ -71,7 +71,7 @@ class Header extends Component {
   }
 
   renderCruiseOptions() {
-    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
+    if (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoCruises}>{_Cruises_}</NavDropdown.Item>
       );
@@ -79,7 +79,7 @@ class Header extends Component {
   }
 
   renderTaskOptions() {
-    if ( this.props.roles.includes('admin') ) {
+    if (this.props.roles.includes('admin') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoTasks}>Tasks</NavDropdown.Item>
       );
@@ -87,7 +87,7 @@ class Header extends Component {
   }
 
   renderToggleASNAP() {
-    if ( !DISABLE_EVENT_LOGGING && ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) ) {
+    if (!DISABLE_EVENT_LOGGING && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) ) {
       return (
         <NavDropdown.Item onClick={ () => this.handleASNAPToggle() }>Toggle ASNAP</NavDropdown.Item>
       );
@@ -95,7 +95,7 @@ class Header extends Component {
   }
 
   renderSystemManagerDropdown() {
-    if ( this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('template_manager') || this.props.roles.includes('event_manager')) ) {
+    if (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('template_manager') || this.props.roles.includes('event_manager') ) {
       return (
         <NavDropdown title='System Management' id="basic-nav-dropdown-system">
           {this.renderCruiseOptions()}
@@ -143,6 +143,13 @@ class Header extends Component {
         </NavDropdown>
       );
     }
+
+    // Show login link for unauthenticated users
+    return (
+      <Nav.Link onClick={this.props.gotoLogin}>
+        <FontAwesomeIcon icon="user-lock" /> Login
+      </Nav.Link>
+    );
   }
 
   handleLogout() {

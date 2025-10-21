@@ -138,7 +138,7 @@ class EventTemplates extends Component {
 
   renderAddEventTemplateButton() {
 
-    if (!this.props.showform && this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('event_manager'))) {
+    if (!this.props.showform && (this.props.roles.includes('admin') || this.props.roles.includes('event_manager'))) {
       return (
         <Button variant="primary" size="sm" disabled={!this.props.event_templateid} onClick={ () => this.handleEventTemplateCreate()}>Add Event Template</Button>
       );

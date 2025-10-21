@@ -93,7 +93,7 @@ class UpdateLoweringStatsForm extends Component {
 
     const { handleSubmit, submitting, valid, pristine } = this.props;
 
-    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager'))) {
+    if (this.props.roles.includes("admin") || this.props.roles.includes('cruise_manager')) {
 
       return (
             <Form onSubmit={ handleSubmit(this.handleFormSubmit.bind(this)) }>
