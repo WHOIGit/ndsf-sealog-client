@@ -179,8 +179,9 @@ class CruiseMenu extends Component {
   }
 
   isReplayAuthorized() {
-    const authorizedRoles = ['event_watcher', 'event_manager', 'event_logger', 'cruise_manager', 'template_manager', 'admin'];
-    return this.props.roles.some(role => authorizedRoles.includes(role));
+    // Allow everyone (including unauthenticated users) to view replays, maps, and galleries
+    // They just won't be able to edit/create events without logging in
+    return true;
   }
 
   renderCruiseFiles(files) {

@@ -14,10 +14,6 @@ class Login extends Component {
   constructor (props) {
     super(props);
 
-    this.state = {
-      stdUsers: true
-    };
-
     this.recaptchaRef = React.createRef();
 
     this.handleIFrameAuth = this.handleIFrameAuth.bind(this);
@@ -26,7 +22,6 @@ class Login extends Component {
 
   componentDidMount() {
     window.addEventListener('message', this.handleIFrameAuth);
-    this.props.fetchGuestUsers();
   }
 
   componentWillUnmount() {
@@ -55,11 +50,6 @@ class Login extends Component {
     let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
     username = username.toLowerCase();
     this.props.login({username, password, reCaptcha});
-  }
-
-  async switch2Guest(user) {
-    let reCaptcha = ( RECAPTCHA_SITE_KEY !== "") ? await this.recaptchaRef.current.executeAsync() : null
-    this.props.switch2Guest(user, reCaptcha);
   }
 
   renderMessage(errorMsg, msg){
@@ -95,12 +85,8 @@ class Login extends Component {
     ): null;
 
     const loginButton = <Button variant="primary" type="submit" block disabled={submitting || !valid}>Login</Button>;
-    const loginAsGuestButtons = this.props.guest_users.map((user) =>
-      <Button key={user.username} variant="success" onClick={() => this.switch2Guest(user.username)} block>
-        Login as {user.fullname}
-      </Button>);
 
-    const loginImage = ( LOGIN_IMAGE !== "" )? 
+    const loginImage = ( LOGIN_IMAGE !== "" )?
     <div className="d-flex justify-content-center">
       <Image style={{width:"250px"}} fluid src={`${ROOT_PATH}static/media/${LOGIN_IMAGE}`} />
     </div> : null
@@ -134,7 +120,6 @@ class Login extends Component {
                   {recaptcha}
                   {this.renderMessage(this.props.errorMessage, this.props.message)}
                   {loginButton}
-                  {loginAsGuestButtons}
                 </Form>
                 <div className="text-center">
                   <hr className="border-secondary"/>
@@ -172,7 +157,6 @@ function mapStateToProps(state) {
   return {
     errorMessage: state.auth.error,
     successMessage: state.auth.message,
-    guest_users: state.user.guest_users,
   };
 }
 

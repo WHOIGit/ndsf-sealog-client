@@ -16,12 +16,10 @@ import {
   REGISTER_USER_SUCCESS,
   REGISTER_USER_ERROR,
   LEAVE_REGISTER_USER_FORM,
-  FETCH_USERS,
-  FETCH_GUEST_USERS
+  FETCH_USERS
 } from '../actions/types';
 
-export default function(state={ profile: {}, profile_error: '', profile_message: '', user: {}, user_error: '', user_message: '', users: [],
-  guest_users: [] }, action) {
+export default function(state={ profile: {}, profile_error: '', profile_message: '', user: {}, user_error: '', user_message: '', users: [] }, action) {
   switch(action.type){
 
     case UNAUTH_USER:
@@ -78,9 +76,6 @@ export default function(state={ profile: {}, profile_error: '', profile_message:
     case FETCH_USERS:
       return { ...state, users: action.payload };
 
-    case FETCH_GUEST_USERS:
-      return { ...state, guest_users: action.payload };
-
-  }    
+  }
   return state;
 }

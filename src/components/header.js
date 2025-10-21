@@ -31,7 +31,7 @@ class Header extends Component {
   }
 
   renderUserOptions() {
-    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
+    if ( this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoUsers}>Users</NavDropdown.Item>
       );
@@ -39,7 +39,7 @@ class Header extends Component {
   }
 
   renderEventLoggingOptions() {
-    if ( this.props.authenticated && !DISABLE_EVENT_LOGGING ) {
+    if ( !DISABLE_EVENT_LOGGING ) {
       return (
         <Nav.Link onClick={this.props.gotoCruiseMenu}>Review {_Cruises_}/{_Lowerings_}</Nav.Link>
       );
@@ -47,7 +47,7 @@ class Header extends Component {
   }
 
   renderEventManagementOptions() {
-    if ( this.props.roles.includes('admin') || this.props.roles.includes('event_manager') ) {
+    if ( this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('event_manager')) ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoEventManagement}>Event Management</NavDropdown.Item>
       );
@@ -55,7 +55,7 @@ class Header extends Component {
   }
 
   renderEventTemplateOptions() {
-    if ( !DISABLE_EVENT_LOGGING && (this.props.roles.includes('admin') || this.props.roles.includes('template_manager')) ) {
+    if ( !DISABLE_EVENT_LOGGING && this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('template_manager')) ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoEventTemplates}>Event Templates</NavDropdown.Item>
       );
@@ -63,7 +63,7 @@ class Header extends Component {
   }
 
   renderLoweringOptions() {
-    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
+    if ( this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoLowerings}>{_Lowerings_}</NavDropdown.Item>
       );
@@ -71,7 +71,7 @@ class Header extends Component {
   }
 
   renderCruiseOptions() {
-    if ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') ) {
+    if ( this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager')) ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoCruises}>{_Cruises_}</NavDropdown.Item>
       );
@@ -79,7 +79,7 @@ class Header extends Component {
   }
 
   renderTaskOptions() {
-    if ( this.props.roles.includes('admin') ) {
+    if ( this.props.roles && this.props.roles.includes('admin') ) {
       return (
         <NavDropdown.Item onClick={this.props.gotoTasks}>Tasks</NavDropdown.Item>
       );
@@ -87,7 +87,7 @@ class Header extends Component {
   }
 
   renderToggleASNAP() {
-    if ( !DISABLE_EVENT_LOGGING && ( this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) ) {
+    if ( !DISABLE_EVENT_LOGGING && this.props.roles && (this.props.roles.includes('admin') || this.props.roles.includes('cruise_manager') || this.props.roles.includes('event_manager') || this.props.roles.includes('event_logger')) ) {
       return (
         <NavDropdown.Item onClick={ () => this.handleASNAPToggle() }>Toggle ASNAP</NavDropdown.Item>
       );
@@ -110,47 +110,26 @@ class Header extends Component {
     }
   }
 
-  renderUserSwitchButtons() {
-    return this.props.guest_users.map((guest) => {
-      if (RECAPTCHA_SITE_KEY !== "")
-        return null;
-
-      if (guest.username === this.props.user.profile.username)
-        return null;
-
-      return (
-        <NavDropdown.Item key={`switch2${guest.username}`}
-            onClick={ () => this.handleSwitchToUser(guest.username) }>
-
-            Switch to {guest.fullname}
-        </NavDropdown.Item>
-      );
-    });
-  }
-
-  userIsGuest() {
-    return this.props.guest_users.some(
-      (guest) => guest.username === this.props.user.username);
-  }
-
   renderUserDropdown() {
     if(this.props.authenticated) {
       return (
         <NavDropdown title={<span>{this.props.user.profile.fullname} <FontAwesomeIcon icon="user" /></span>} id="basic-nav-dropdown-user">
-          {this.userIsGuest() ? <NavDropdown.Item onClick={this.props.gotoProfile} key="profile" >User Profile</NavDropdown.Item> : null }
-          {this.renderUserSwitchButtons()}
+          <NavDropdown.Item onClick={this.props.gotoProfile} key="profile" >User Profile</NavDropdown.Item>
           <NavDropdown.Item key="logout" onClick={ () => this.handleLogout() } >Log Out</NavDropdown.Item>
         </NavDropdown>
       );
     }
+
+    // Show login link for unauthenticated users
+    return (
+      <Nav.Link onClick={this.props.gotoLogin}>
+        <FontAwesomeIcon icon="user-lock" /> Login
+      </Nav.Link>
+    );
   }
 
   handleLogout() {
     this.props.logout();
-  }
-
-  handleSwitchToUser(user) {
-    this.props.switch2Guest(user);
   }
 
   render () {
@@ -174,7 +153,6 @@ function mapStateToProps(state){
   return {
     authenticated: state.auth.authenticated,
     user: state.user,
-    guest_users: state.user.guest_users,
     roles: state.user.profile.roles,
     asnapStatus: (state.custom_var)? state.custom_var.custom_vars.find(custom_var => custom_var.custom_var_name === "asnapStatus") : null
   };
