@@ -11,11 +11,11 @@ import {
 
 } from '../actions/types';
 
-export default function(state={ cruises: [], cruise_message: '', cruise_error: '' }, action) {
+export default function(state={ cruises: [], cruise: null, cruise_message: '', cruise_error: '' }, action) {
   switch(action.type){
 
     case INIT_CRUISE:
-      return { ...state, cruise_message: '', cruise_error: '' };
+      return { ...state, cruise: action.payload, cruise_message: '', cruise_error: '' };
 
     case UPDATE_CRUISE:
       return { ...state };

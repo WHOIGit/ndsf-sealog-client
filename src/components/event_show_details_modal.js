@@ -37,18 +37,18 @@ class EventShowDetailsModal extends Component {
 
   async initEvent() {
     try {
-      const response = await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${this.props.event.id}`,
+      const response = await axios.get(`${API_ROOT_URL}/api/v1/events/${this.props.event.id}?aux_data=true`,
         {
           headers: {
           authorization: cookies.get('token')
           }
-        }      
+        }
       )
       this.setState({event: response.data});
     }
     catch(error) {
       console.log(error);
-    }    
+    }
   }
 
   render() {

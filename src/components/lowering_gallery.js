@@ -11,7 +11,6 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import * as mapDispatchToProps from '../actions';
 import { API_ROOT_URL } from 'client_config';
 import { getImageUrl } from '../utils';
-import { getCruiseByLowering, getLowering } from '../api';
 
 const cookies = new Cookies();
 
@@ -25,9 +24,7 @@ class LoweringGallery extends Component {
       aux_data: [],
       maxImagesPerPage: 16,
       filterTimer: null,
-      filter: '',
-      cruise: props.cruise,
-      lowering: props.lowering,
+      filter: ''
     };
 
     this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -37,33 +34,54 @@ class LoweringGallery extends Component {
 
   }
 
-  componentDidMount() {
-    this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);
+  async componentDidMount() {
+    const param = this.props.match.params.id;
 
-    if(!this.state.lowering) {
-      getLowering(this.props.match.params.id)
-        .then((lowering) => this.setState({ lowering }));
-    }
+    // Fetch lowering data via Redux if not already present
+    if (!this.props.lowering) {
+      const lowering = await this.props.initLowering(param);
+      if (lowering) {
+        this.initLoweringImages(lowering.id, this.props.event.hideASNAP);
 
-    if(!this.state.cruise) {
-      getCruiseByLowering(this.props.match.params.id)
-        .then((cruise) => this.setState({ cruise }));
+        // Fetch cruise data now that lowering is loaded
+        // initCruiseFromLowering will reuse the lowering data from Redux state
+        if(!this.props.cruise) {
+          await this.props.initCruiseFromLowering(param);
+        }
+      }
+    } else {
+      this.initLoweringImages(this.props.lowering.id, this.props.event.hideASNAP);
+
+      // Fetch cruise data if not already loaded
+      if(!this.props.cruise) {
+        await this.props.initCruiseFromLowering(param);
+      }
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-
-    if(prevProps.event.hideASNAP !== this.props.event.hideASNAP) {
-      this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP);
+  async componentDidUpdate(prevProps, prevState) {
+    // Check if the route param (lowering ID) changed
+    if(this.props.match.params.id !== prevProps.match.params.id) {
+      // Reload data for the new lowering
+      const param = this.props.match.params.id;
+      const lowering = await this.props.initLowering(param);
+      if (lowering) {
+        this.initLoweringImages(lowering.id, this.props.event.hideASNAP);
+        await this.props.initCruiseFromLowering(param);
+      }
     }
 
-    if(prevState.filter !== this.state.filter) {
-      this.initLoweringImages(this.props.match.params.id, this.props.event.hideASNAP, this.state.filter);
+    if(prevProps.event.hideASNAP !== this.props.event.hideASNAP && this.props.lowering) {
+      this.initLoweringImages(this.props.lowering.id, this.props.event.hideASNAP);
+    }
+
+    if(prevState.filter !== this.state.filter && this.props.lowering) {
+      this.initLoweringImages(this.props.lowering.id, this.props.event.hideASNAP, this.state.filter);
     }
   }
 
   toggleASNAP() {
-    this.props.eventUpdateLoweringReplay(this.props.match.params.id, this.props.event.hideASNAP);
+    this.props.eventUpdateLoweringReplay(this.props.lowering.id, this.props.event.hideASNAP);
 
     if(this.props.event.hideASNAP) {
       this.props.showASNAP();
@@ -143,20 +161,16 @@ class LoweringGallery extends Component {
   }
 
   handleLoweringSelect(lowering) {
-    this.props.gotoLoweringGallery(lowering.id);
-    this.props.initLowering(lowering.id, this.props.event.hideASNAP);
-    this.props.initCruiseFromLowering(lowering.id);
-    this.initLoweringImages(lowering.id, this.props.event.hideASNAP);
-    this.setState({lowering});
+    this.props.gotoLoweringGallery(lowering.lowering_id);
   }
 
   handleLoweringModeSelect(mode) {
     if (mode === "Gallery") {
-      this.props.gotoLoweringGallery(this.props.match.params.id);
+      this.props.gotoLoweringGallery(this.props.lowering.lowering_id);
     } else if (mode === "Map") {
-      this.props.gotoLoweringMap(this.props.match.params.id);
+      this.props.gotoLoweringMap(this.props.lowering.lowering_id);
     } else if (mode === "Replay") {
-      this.props.gotoLoweringReplay(this.props.match.params.id);
+      this.props.gotoLoweringReplay(this.props.lowering.lowering_id);
     }
   }
 
@@ -199,10 +213,10 @@ class LoweringGallery extends Component {
     }
 
     // Wait for lowering object before rendering
-    if (!this.state.lowering)
+    if (!this.props.lowering)
       return null;
 
-    const cruise_id = (this.state.cruise)? this.state.cruise.cruise_id : "loading...";
+    const cruise_id = (this.props.cruise)? this.props.cruise.cruise_id : "loading...";
     const galleries = (this.state.fetching)? <div><hr className="border-secondary"/><span className="pl-2">Loading...</span></div> : this.renderGalleries();
 
     const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.props.event.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='Show ASNAP'/>);
@@ -214,7 +228,7 @@ class LoweringGallery extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown active_cruise={this.state.cruise} active_lowering={this.state.lowering} onLoweringClick={this.handleLoweringSelect}/>
+            <LoweringDropdown active_cruise={this.props.cruise} active_lowering={this.props.lowering} onLoweringClick={this.handleLoweringSelect}/>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Gallery" modes={["Replay", "Map"]}/>
           </ButtonToolbar>
