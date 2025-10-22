@@ -1268,7 +1268,7 @@ export function fetchEvents() {
 export function fetchSelectedEvent(id) {
 
   return async function(dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/event/${id}`, { headers: { authorization: cookies.get('token') } }
+    return await axios.get(`${API_ROOT_URL}/api/v1/events/${id}?aux_data=true`, { headers: { authorization: cookies.get('token') } }
     ).then((response) => {
       return dispatch({type: SET_SELECTED_EVENT, payload: response.data});
     }).catch((error) => {
@@ -1444,7 +1444,7 @@ export function initLoweringReplay(id, hideASNAP = false) {
 
 export function advanceLoweringReplayTo(id) {
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/event/${id}`, { headers: { authorization: cookies.get('token') } }
+    return await axios.get(`${API_ROOT_URL}/api/v1/events/${id}?aux_data=true`, { headers: { authorization: cookies.get('token') } }
     ).then((response) => {
       return dispatch({ type: SET_SELECTED_EVENT, payload: response.data });
     }).catch((err) => {
