@@ -286,7 +286,6 @@ export function gotoUsers() {
 export function gotoLoweringGallery(id) {
 
   return function (dispatch) {
-    dispatch(initLowering(id));
     return dispatch(push(`/lowering_gallery/${id}`));
   };
 }
@@ -294,7 +293,6 @@ export function gotoLoweringGallery(id) {
 export function gotoLoweringMap(id) {
 
   return function (dispatch) {
-    dispatch(initLowering(id));
     return dispatch(push(`/lowering_map/${id}`));
   };
 }
@@ -302,7 +300,6 @@ export function gotoLoweringMap(id) {
 export function gotoLoweringReplay(id) {
 
   return function (dispatch) {
-    dispatch(initLowering(id));
     return dispatch(push(`/lowering_replay/${id}`));
   };
 }
@@ -1296,9 +1293,9 @@ export function fetchEvents() {
 }
 
 export function fetchSelectedEvent(id) {
-  
+
   return async function(dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${id}`, { headers: { authorization: cookies.get('token') } }      
+    return await axios.get(`${API_ROOT_URL}/api/v1/events/${id}?aux_data=true`, { headers: { authorization: cookies.get('token') } }
     ).then((response) => {
       return dispatch({type: SET_SELECTED_EVENT, payload: response.data});
     }).catch((error) => {
@@ -1409,20 +1406,27 @@ export function initCruiseFromLowering(id) {
         `${API_ROOT_URL}/api/v1/cruises?startTS=${loweringData.start_ts}&stopTS=${loweringData.stop_ts}`,
         { headers: { authorization: cookies.get('token') } }
       );
-        return dispatch({ type: INIT_CRUISE, payload: response.data[0] });
+      return dispatch({ type: INIT_CRUISE, payload: response.data[0] });
     } catch (error) {
       if(error.response && error.response.data.statusCode !== 404) {
           console.error(error);
-        }
+      }
     }
   };
 }
 
 export function initLowering(id) {
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/lowerings/${id}`, { headers: { authorization: cookies.get('token') } }
+    // Determine if id is a database ID (24 hex chars) or a lowering_id (semantic string)
+    const isDatabaseId = /^[0-9a-f]{24}$/i.test(id);
+    const url = isDatabaseId
+      ? `${API_ROOT_URL}/api/v1/lowerings/${id}`
+      : `${API_ROOT_URL}/api/v1/lowerings/byloweringid/${id}`;
+
+    return await axios.get(url, { headers: { authorization: cookies.get('token') } }
     ).then((response) => {
-      return dispatch({ type: INIT_LOWERING, payload: response.data });
+      dispatch({ type: INIT_LOWERING, payload: response.data });
+      return response.data; // Return the lowering data for use by callers
     }).catch((error)=>{
       console.error(error);
 
@@ -1452,10 +1456,22 @@ export function initLowering(id) {
 
 export function initLoweringReplay(id, hideASNAP = false) {
   return async function (dispatch) {
-    dispatch(initLowering(id));
     dispatch({ type: EVENT_FETCHING, payload: true});
 
-    let url = (hideASNAP)? `${API_ROOT_URL}/api/v1/events/bylowering/${id}?value=!ASNAP`: `${API_ROOT_URL}/api/v1/events/bylowering/${id}`;
+    // Fetch the lowering and cruise
+    const lowering = await dispatch(initLowering(id));
+    if (!lowering) {
+      return dispatch({ type: EVENT_FETCHING, payload: false});
+    }
+
+    await dispatch(initCruiseFromLowering(id));
+
+    // Use the database ID from the fetched lowering
+    const databaseId = lowering.id;
+
+    let url = (hideASNAP)
+      ? `${API_ROOT_URL}/api/v1/events/bylowering/${databaseId}?value=!ASNAP`
+      : `${API_ROOT_URL}/api/v1/events/bylowering/${databaseId}`;
 
     return await axios.get(url, { headers: { authorization: cookies.get('token') } }
     ).then((response) => {
@@ -1475,7 +1491,7 @@ export function initLoweringReplay(id, hideASNAP = false) {
 
 export function advanceLoweringReplayTo(id) {
   return async function (dispatch) {
-    return await axios.get(`${API_ROOT_URL}/api/v1/event_exports/${id}`, { headers: { authorization: cookies.get('token') } }
+    return await axios.get(`${API_ROOT_URL}/api/v1/events/${id}?aux_data=true`, { headers: { authorization: cookies.get('token') } }
     ).then((response) => {
       return dispatch({ type: SET_SELECTED_EVENT, payload: response.data });
     }).catch((err) => {
