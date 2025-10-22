@@ -11,11 +11,11 @@ import {
 
 } from '../actions/types';
 
-export default function(state={ lowerings: [], lowering_message: '', lowering_error: '' }, action) {
+export default function(state={ lowerings: [], lowering: null, lowering_message: '', lowering_error: '' }, action) {
   switch(action.type){
 
     case INIT_LOWERING:
-      return { ...state, lowering_message: '', lowering_error: '' };
+      return { ...state, lowering: action.payload, lowering_message: '', lowering_error: '' };
 
     case UPDATE_LOWERING:
       return { ...state };

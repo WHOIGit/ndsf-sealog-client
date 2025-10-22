@@ -128,21 +128,21 @@ class CruiseMenu extends Component {
   handleLoweringSelectForReplay() {
     if(this.state.activeLowering) {
       this.props.clearEvents();
-      this.props.gotoLoweringReplay(this.state.activeLowering.id);
+      this.props.gotoLoweringReplay(this.state.activeLowering.lowering_id);
     }
   }
 
   handleLoweringSelectForMap() {
     if(this.state.activeLowering) {
       this.props.clearEvents();
-      this.props.gotoLoweringMap(this.state.activeLowering.id);
+      this.props.gotoLoweringMap(this.state.activeLowering.lowering_id);
     }
   }
 
   handleLoweringSelectForGallery() {
     if(this.state.activeLowering) {
       this.props.clearEvents();
-      this.props.gotoLoweringGallery(this.state.activeLowering.id);
+      this.props.gotoLoweringGallery(this.state.activeLowering.lowering_id);
     }
   }
 
