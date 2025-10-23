@@ -305,6 +305,24 @@ class LoweringMap extends Component {
   }
 
   render() {
+    // Display error message if lowering failed to load
+    if (!this.props.lowering && this.props.loweringError) {
+      return (
+        <Row className="justify-content-center mt-4">
+          <Col md={6}>
+            <Card className="border-danger">
+              <Card.Header className="bg-danger text-white">
+                {this.props.loweringUnauthorized ? 'Access Denied' : 'Error Loading Lowering'}
+              </Card.Header>
+              <Card.Body>
+                <p>{this.props.loweringError}</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      );
+    }
+
     if (!this.props.lowering)
       return null;
 
@@ -361,6 +379,8 @@ function mapStateToProps(state) {
     roles: state.user.profile.roles,
     event: state.event,
     lowering: state.lowering.lowering,
+    loweringError: state.lowering.lowering_error,
+    loweringUnauthorized: state.lowering.lowering_unauthorized,
     cruise: state.cruise.cruise
   };
 }

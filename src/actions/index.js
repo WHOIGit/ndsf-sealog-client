@@ -61,6 +61,7 @@ import {
   LEAVE_CREATE_CRUISE_FORM,
   FETCH_CRUISES,
   INIT_LOWERING,
+  INIT_LOWERING_ERROR,
   UPDATE_LOWERING_SUCCESS,
   UPDATE_LOWERING_ERROR,
   LEAVE_UPDATE_LOWERING_FORM,
@@ -1428,6 +1429,26 @@ export function initLowering(id) {
       return response.data; // Return the lowering data for use by callers
     }).catch((error)=>{
       console.error(error);
+
+      // Check if this is an authorization error (401)
+      if(error.response && error.response.status === 401) {
+        dispatch({
+          type: INIT_LOWERING_ERROR,
+          payload: {
+            message: 'You are not authorized to view this lowering. Please request access.',
+            unauthorized: true
+          }
+        });
+      } else {
+        dispatch({
+          type: INIT_LOWERING_ERROR,
+          payload: {
+            message: error.response?.data?.message || 'Failed to load lowering',
+            unauthorized: false
+          }
+        });
+      }
+
       return null;
     });
   };
