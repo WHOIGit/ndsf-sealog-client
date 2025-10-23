@@ -178,12 +178,6 @@ class CruiseMenu extends Component {
       });
   }
 
-  isReplayAuthorized() {
-    // Allow everyone (including unauthenticated users) to view replays, maps, and galleries
-    // They just won't be able to edit/create events without logging in
-    return true;
-  }
-
   renderCruiseFiles(files) {
     let output = files.map((file, index) => {
       return <div className="pl-2" key={`file_${index}`}><a className="text-decoration-none" href="#"  onClick={() => this.handleCruiseFileDownload(file)}>{file}</a></div>
@@ -204,18 +198,6 @@ class CruiseMenu extends Component {
       <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForMap() }>Map</Button>
       <Button className="mb-1 mr-1" size="sm" variant="outline-primary" onClick={ () => this.handleLoweringSelectForGallery() }>Gallery</Button>
     </Row>
-  }
-
-  renderContactAdmin() {
-    // Require JS to construct email address to reduce spam
-    const addr1 = 'ndsf';
-    const addr2 = '_info@';
-    const addr3 = 'whoi.edu';
-    const addr = addr1 + addr2 + addr3;
-    const email_link = <a href={'mailto:' + addr}>{addr}</a>;
-    return <div>
-      <p className="text-danger">Not authorized to replay dive events, contact admin for access: {email_link}</p>
-    </div>
   }
 
   renderLoweringCard() {
