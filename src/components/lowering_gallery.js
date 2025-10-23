@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ButtonToolbar, Row, Col, Tabs, Tab, Form, FormControl } from 'react-bootstrap';
+import { ButtonToolbar, Row, Col, Card, Tabs, Tab, Form, FormControl } from 'react-bootstrap';
 import EventShowDetailsModal from './event_show_details_modal';
 import LoweringGalleryTab from './lowering_gallery_tab';
 import LoweringDropdown from './lowering_dropdown';
@@ -180,6 +180,24 @@ class LoweringGallery extends Component {
   }
 
   render(){
+    // Display error message if lowering failed to load
+    if (!this.props.lowering && this.props.loweringError) {
+      return (
+        <Row className="justify-content-center mt-4">
+          <Col md={6}>
+            <Card className="border-danger">
+              <Card.Header className="bg-danger text-white">
+                {this.props.loweringUnauthorized ? 'Access Denied' : 'Error Loading Lowering'}
+              </Card.Header>
+              <Card.Body>
+                <p>{this.props.loweringError}</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      );
+    }
+
     // Wait for lowering object before rendering
     if (!this.state.lowering)
       return null;
@@ -231,6 +249,10 @@ function mapStateToProps(state) {
   return {
     roles: state.user.profile.roles,
     event: state.event,
+    lowering: state.lowering.lowering,
+    loweringError: state.lowering.lowering_error,
+    loweringUnauthorized: state.lowering.lowering_unauthorized,
+    cruise: state.cruise.cruise
   };
 }
 

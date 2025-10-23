@@ -61,6 +61,7 @@ import {
   LEAVE_CREATE_CRUISE_FORM,
   FETCH_CRUISES,
   INIT_LOWERING,
+  INIT_LOWERING_ERROR,
   UPDATE_LOWERING_SUCCESS,
   UPDATE_LOWERING_ERROR,
   LEAVE_UPDATE_LOWERING_FORM,
@@ -1424,6 +1425,27 @@ export function initLowering(id) {
       return dispatch({ type: INIT_LOWERING, payload: response.data });
     }).catch((error)=>{
       console.error(error);
+
+      // Check if this is an authorization error (401)
+      if(error.response && error.response.status === 401) {
+        dispatch({
+          type: INIT_LOWERING_ERROR,
+          payload: {
+            message: 'The data you\'re trying to view is currently under embargo. For access, please contact ndsf_info@whoi.edu',
+            unauthorized: true
+          }
+        });
+      } else {
+        dispatch({
+          type: INIT_LOWERING_ERROR,
+          payload: {
+            message: error.response?.data?.message || 'Failed to load lowering',
+            unauthorized: false
+          }
+        });
+      }
+
+      return null;
     });
   };
 }

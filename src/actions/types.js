@@ -81,6 +81,7 @@ export const LEAVE_CREATE_CRUISE_FORM = 'leave_create_cruise_form';
 export const FETCH_CRUISES = 'fetch_cruises';
 
 export const INIT_LOWERING = 'init_lowering';
+export const INIT_LOWERING_ERROR = 'init_lowering_error';
 export const UPDATE_LOWERING = 'update_lowering';
 export const UPDATE_LOWERING_SUCCESS = 'update_lowering_success';
 export const UPDATE_LOWERING_ERROR = 'update_lowering_error';
