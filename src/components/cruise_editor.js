@@ -212,9 +212,8 @@ class CruiseEditorForm extends Component {
   }
 
   get canEditCruise() {
-    return (this.props.roles &&
-      (this.props.roles.includes("admin") ||
-       this.props.roles.includes("cruise_manager")));
+    return (this.props.roles.includes("admin") ||
+            this.props.roles.includes("cruise_manager"));
   }
 
   render() {

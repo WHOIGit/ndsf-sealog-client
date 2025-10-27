@@ -241,7 +241,7 @@ class CreateEventTemplate extends Component {
     const formHeader = <div>Create Event Template</div>;
 
 
-    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes("template_manager"))) {
+    if (this.props.roles.includes("admin") || this.props.roles.includes("template_manager")) {
       return (
         <Card className="border-secondary">
           <Card.Header>{formHeader}</Card.Header>

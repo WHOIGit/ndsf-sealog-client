@@ -67,7 +67,7 @@ class UpdateUser extends Component {
     const updateUserFormHeader = (<div>Update User</div>);
 
 
-    if (this.props.roles && (this.props.roles.includes("admin") || this.props.roles.includes('event_manager'))) {
+    if (this.props.roles.includes("admin") || this.props.roles.includes('event_manager')) {
 
       let userRoleOptions = this.props.roles.includes('admin')? systemUserRoleOptions.concat(standardUserRoleOptions): standardUserRoleOptions;
 

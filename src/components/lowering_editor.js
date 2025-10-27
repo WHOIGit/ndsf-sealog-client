@@ -214,9 +214,8 @@ class LoweringEditorForm extends Component {
   }
 
   get canEditLowering() {
-    return (this.props.roles &&
-      (this.props.roles.includes("admin") ||
-       this.props.roles.includes("cruise_manager")));
+    return (this.props.roles.includes("admin") ||
+            this.props.roles.includes("cruise_manager"));
   }
 
   render() {

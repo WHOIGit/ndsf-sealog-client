@@ -159,7 +159,7 @@ class EventHistory extends Component {
       event_id = event[0].id;
     }
 
-    let url = `${API_ROOT_URL}/api/v1/event_exports/${event_id}`
+    let url = `${API_ROOT_URL}/api/v1/events/${event_id}?aux_data=true`
     const event_export = await axios.get(url, {
       headers: {
         authorization: cookies.get('token')

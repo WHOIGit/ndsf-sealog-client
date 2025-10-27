@@ -13,7 +13,6 @@ import LoweringModeDropdown from './lowering_mode_dropdown';
 import CustomPagination from './custom_pagination';
 import ExportDropdown from './export_dropdown';
 import * as mapDispatchToProps from '../actions';
-import { getCruiseByLowering, getLowering } from '../api';
 import LoweringMapDisplay from './lowering_map_display';
 
 
@@ -30,12 +29,9 @@ class LoweringMap extends Component {
 
     this.state = {
       fetching: false,
-      cruise: props.cruise,
-      lowering: props.lowering,
-
       replayEventIndex: 0,
       activePage: 1,
-      
+
       height: "480px"
     };
 
@@ -53,8 +49,10 @@ class LoweringMap extends Component {
   }
 
   componentDidMount() {
+    const param = this.props.match.params.id;
+
     if(this.props.event.events.length === 0) {
-      this.props.initLoweringReplay(this.props.match.params.id, this.props.event.hideASNAP);
+      this.props.initLoweringReplay(param, this.props.event.hideASNAP);
     } else {
       const eventIndex = this.props.event.events.findIndex((event) => event.id === this.props.event.selected_event.id);
       this.setState(
@@ -64,20 +62,18 @@ class LoweringMap extends Component {
         }
       );
     }
-
-    if(!this.state.lowering) {
-      getLowering(this.props.match.params.id)
-        .then((lowering) => this.setState({ lowering }));
-    }
-
-    if(!this.state.cruise) {
-      getCruiseByLowering(this.props.match.params.id)
-        .then((cruise) => this.setState({ cruise }));
-    }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if(this.state.lowering !== prevState.lowering) {
+  componentDidUpdate(prevProps) {
+    // Check if the route param (lowering ID) changed
+    if(this.props.match.params.id !== prevProps.match.params.id) {
+      // Reload data for the new lowering
+      const param = this.props.match.params.id;
+      this.props.initLoweringReplay(param, this.props.event.hideASNAP);
+      this.setState({replayEventIndex: 0, activePage: 1});
+    }
+
+    if(this.props.lowering && this.props.lowering !== prevProps.lowering) {
       this.divFocus.focus();
     }
   }
@@ -122,11 +118,11 @@ class LoweringMap extends Component {
   updateEventFilter(filter = {}) {
     this.setState({ activePage: 1, replayEventIndex: 0 });
     this.props.updateEventFilterForm(filter);
-    this.props.eventUpdateLoweringReplay(this.props.match.params.id, this.props.event.hideASNAP);
+    this.props.eventUpdateLoweringReplay(this.props.lowering.id, this.props.event.hideASNAP);
   }
 
   toggleASNAP() {
-    this.props.eventUpdateLoweringReplay(this.props.match.params.id, !this.props.event.hideASNAP);
+    this.props.eventUpdateLoweringReplay(this.props.lowering.id, !this.props.event.hideASNAP);
     if(this.props.event.hideASNAP) {
       this.props.showASNAP();
       this.handleEventClick(0);
@@ -140,7 +136,7 @@ class LoweringMap extends Component {
 
   sliderTooltipFormatter(v) {
     if(this.props.event.events && this.props.event.events[v]) {
-      let loweringStartTime = moment(this.state.lowering.start_ts);
+      let loweringStartTime = moment(this.props.lowering.start_ts);
       let loweringNow = moment(this.props.event.events[v].ts);
       let loweringElapse = loweringNow.diff(loweringStartTime);
       return moment.duration(loweringElapse).format("d [days] hh:mm:ss");
@@ -185,63 +181,59 @@ class LoweringMap extends Component {
   }
 
   handleLoweringSelect(lowering) {
-    this.props.gotoLoweringMap(lowering.id);
-    this.props.initLoweringReplay(lowering.id, this.props.event.hideASNAP);
-    this.props.initCruiseFromLowering(lowering.id);
-    this.setState({replayEventIndex: 0, activePage: 1});
-    this.setState({lowering});
+    this.props.gotoLoweringMap(lowering.lowering_id);
   }
 
   handleLoweringModeSelect(mode) {
     if (mode === "Gallery") {
-      this.props.gotoLoweringGallery(this.props.match.params.id);
+      this.props.gotoLoweringGallery(this.props.lowering.lowering_id);
     } else if (mode === "Map") {
-      this.props.gotoLoweringMap(this.props.match.params.id);
+      this.props.gotoLoweringMap(this.props.lowering.lowering_id);
     } else if (mode === "Replay") {
-      this.props.gotoLoweringReplay(this.props.match.params.id);
+      this.props.gotoLoweringReplay(this.props.lowering.lowering_id);
     }
   }
 
   renderControlsCard() {
+    const loweringStartTime = moment(this.props.lowering.start_ts);
+    const loweringEndTime = moment(this.props.lowering.stop_ts);
+    const loweringDuration = loweringEndTime.diff(loweringStartTime);
 
-    if(this.state.lowering) {
-      const loweringStartTime = moment(this.state.lowering.start_ts);
-      const loweringEndTime = moment(this.state.lowering.stop_ts);
-      const loweringDuration = loweringEndTime.diff(loweringStartTime);
-      
-      return (
-        <Card className="border-secondary p-1">
-          <div className="d-flex align-items-center justify-content-between">
-              <span className="text-primary">00:00:00</span>
-              <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
-          </div>
-          <div className="d-flex align-items-center justify-content-between">
-            <SliderWithTooltip
-              className="mx-2"
-              value={this.state.replayEventIndex}
-              tipFormatter={this.sliderTooltipFormatter}
-              trackStyle={{ opacity: 0.5 }}
-              railStyle={{ opacity: 0.5 }}
-              onChange={this.handleSliderChange}
-              max={this.props.event.events.length-1}
-            />
-          </div>
-        </Card>
-      );
-    }
+    return (
+      <Card className="border-secondary p-1">
+        <div className="d-flex align-items-center justify-content-between">
+            <span className="text-primary">00:00:00</span>
+            <span className="text-primary">{moment.duration(loweringDuration).format("d [days] hh:mm:ss")}</span>
+        </div>
+        <div className="d-flex align-items-center justify-content-between">
+          <SliderWithTooltip
+            className="mx-2"
+            value={this.state.replayEventIndex}
+            tipFormatter={this.sliderTooltipFormatter}
+            trackStyle={{ opacity: 0.5 }}
+            railStyle={{ opacity: 0.5 }}
+            onChange={this.handleSliderChange}
+            max={this.props.event.events.length-1}
+          />
+        </div>
+      </Card>
+    );
   }
 
   renderEventListHeader() {
 
     const Label = "Filtered Events";
     const ASNAPToggle = (<Form.Check id="ASNAP" type='switch' inline checked={!this.props.event.hideASNAP} onChange={() => this.toggleASNAP()} disabled={this.props.event.fetching} label='Show ASNAP'/>);
+    const exportDropdown = this.props.authenticated ? (
+      <ExportDropdown id="dropdown-download" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} eventFilter={this.props.event.eventFilter} loweringID={this.props.lowering.id} prefix={this.props.lowering.lowering_id}/>
+    ) : null;
 
     return (
       <div>
         { Label }
         <span className="float-right">
           {ASNAPToggle}
-          <ExportDropdown id="dropdown-download" disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} eventFilter={this.props.event.eventFilter} loweringID={this.state.lowering.id} prefix={this.state.lowering.lowering_id}/>
+          {exportDropdown}
         </span>
       </div>
     );
@@ -313,10 +305,28 @@ class LoweringMap extends Component {
   }
 
   render() {
-    if (!this.state.lowering)
+    // Display error message if lowering failed to load
+    if (!this.props.lowering && this.props.loweringError) {
+      return (
+        <Row className="justify-content-center mt-4">
+          <Col md={6}>
+            <Card className="border-danger">
+              <Card.Header className="bg-danger text-white">
+                {this.props.loweringUnauthorized ? 'Access Denied' : 'Error Loading Lowering'}
+              </Card.Header>
+              <Card.Body>
+                <p>{this.props.loweringError}</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      );
+    }
+
+    if (!this.props.lowering)
       return null;
 
-    const cruise_id = (this.state.cruise)? this.state.cruise.cruise_id : "Loading...";
+    const cruise_id = (this.props.cruise)? this.props.cruise.cruise_id : "Loading...";
     
     return (
       <div>
@@ -326,7 +336,7 @@ class LoweringMap extends Component {
           <ButtonToolbar className="mb-2 ml-1 align-items-center">
             <span onClick={() => this.props.gotoCruiseMenu()} className="text-warning">{cruise_id}</span>
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
-            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.state.cruise} active_lowering={this.state.lowering} onLoweringClick={this.handleLoweringSelect} />
+            <LoweringDropdown onClick={this.handleLoweringSelect} active_cruise={this.props.cruise} active_lowering={this.props.lowering} onLoweringClick={this.handleLoweringSelect} />
             <FontAwesomeIcon icon="chevron-right" fixedWidth/>
             <LoweringModeDropdown onClick={this.handleLoweringModeSelect} active_mode="Map" modes={["Replay", "Gallery"]}/>
           </ButtonToolbar>
@@ -354,7 +364,7 @@ class LoweringMap extends Component {
             <CustomPagination className="mt-2" page={this.state.activePage} count={this.props.event.events.length} pageSelectFunc={this.handlePageSelect} maxPerPage={maxEventsPerPage}/>
           </Col>          
           <Col className="px-1 mb-1" md={3} lg={3}>
-            <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.state.lowering.start_ts} maxDate={this.state.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
+            <EventFilterForm disabled={this.props.event.fetching} hideASNAP={this.props.event.hideASNAP} handlePostSubmit={ this.updateEventFilter } minDate={this.props.lowering.start_ts} maxDate={this.props.lowering.stop_ts} initialValues={this.props.event.eventFilter}/>
           </Col>          
         </Row>
       </div>
@@ -365,8 +375,13 @@ class LoweringMap extends Component {
 function mapStateToProps(state) {
 
   return {
+    authenticated: state.auth.authenticated,
     roles: state.user.profile.roles,
-    event: state.event
+    event: state.event,
+    lowering: state.lowering.lowering,
+    loweringError: state.lowering.lowering_error,
+    loweringUnauthorized: state.lowering.lowering_unauthorized,
+    cruise: state.cruise.cruise
   };
 }
 
