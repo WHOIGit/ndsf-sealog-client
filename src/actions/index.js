@@ -1166,8 +1166,11 @@ export function fetchGuestUsers() {
 
 export function fetchCruises() {
 
-  return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/cruises', { headers: { authorization: cookies.get('token') } }
+  return async function (dispatch, getState) {
+    const isAdmin = getState().user.profile?.roles.includes('admin');
+    const hiddenParam = isAdmin ? '?hidden=true' : '';
+
+    return await axios.get(API_ROOT_URL + '/api/v1/cruises' + hiddenParam, { headers: { authorization: cookies.get('token') } }
     ).then(({data}) => {
       return dispatch({type: FETCH_CRUISES, payload: data});
     }).catch((error) => {
@@ -1182,8 +1185,11 @@ export function fetchCruises() {
 
 export function fetchLowerings() {
 
-  return async function (dispatch) {
-    return await axios.get(API_ROOT_URL + '/api/v1/lowerings', { headers: { authorization: cookies.get('token') } }
+  return async function (dispatch, getState) {
+    const isAdmin = getState().user.profile?.roles.includes('admin');
+    const hiddenParam = isAdmin ? '?hidden=true' : '';
+
+    return await axios.get(API_ROOT_URL + '/api/v1/lowerings' + hiddenParam, { headers: { authorization: cookies.get('token') } }
     ).then(({data}) => {
       return dispatch({type: FETCH_LOWERINGS, payload: data});
     }).catch((error) => {
