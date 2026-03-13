@@ -2,11 +2,11 @@
 @import "variables.scss";
 
 // Import Bootstrap
-@import "~bootstrap/scss/bootstrap.scss";
+@import "bootstrap/scss/bootstrap.scss";
 
 // Import fonts
-@import "~@fontsource/roboto/index.css"; // Weight 400.
-@import "~@fontsource/roboto/700.css"; // Weight 700.
+@import "@fontsource/roboto/index.css"; // Weight 400.
+@import "@fontsource/roboto/700.css"; // Weight 700.
 
 // Import FontAwesome
 //@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
@@ -87,7 +87,7 @@
 }
 
 // react-datetime styles
-@import "~react-datetime/css/react-datetime.css";
+@import "react-datetime/css/react-datetime.css";
 
 // react-datetime customizations
 

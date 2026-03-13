@@ -6,8 +6,9 @@ import { Route, Switch } from 'react-router';
 import Cookies from 'universal-cookie';
 import L from 'leaflet';
 
-// eslint-disable-next-line no-unused-vars
+import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
+momentDurationFormatSetup(moment);
 
 import { AUTH_USER } from './actions/types';
 import Header from './components/header';
@@ -65,7 +66,7 @@ import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaxi
 import "filepond/dist/filepond.min.css";
 import 'rc-slider/assets/index.css';
 import 'leaflet/dist/leaflet.css';
-import "./assets/scss/sealog.scss?v=1.1.0";
+import "./assets/scss/sealog.scss";
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';

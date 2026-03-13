@@ -13,9 +13,8 @@ import LoweringPermissionsModal from './lowering_permissions_modal';
 import CustomPagination from './custom_pagination';
 import { USE_ACCESS_CONTROL } from 'client_config';
 import * as mapDispatchToProps from '../actions';
+import fileDownload from 'js-file-download';
 import { _Lowering_, _Lowerings_, _lowering_, _lowerings_ } from '../vocab';
-
-let fileDownload = require('js-file-download');
 
 const maxLoweringsPerPage = 8;
 
