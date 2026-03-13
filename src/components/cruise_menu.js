@@ -200,9 +200,32 @@ class CruiseMenu extends Component {
     </Row>
   }
 
+  renderContactAdmin() {
+    // Require JS to construct email address to reduce spam
+    const addr1 = 'ndsf';
+    const addr2 = '_info@';
+    const addr3 = 'whoi.edu';
+    const addr = addr1 + addr2 + addr3;
+    const email_link = <a href={'mailto:' + addr}>{addr}</a>;
+    return <div>
+      <p className="text-danger">The data you are trying to view is currently under embargo. For access, please contact: {email_link}</p>
+    </div>;
+  }
+
   renderLoweringCard() {
 
     if(this.state.activeLowering){
+
+      if (this.state.activeLowering.access_denied) {
+        return (
+          <Card className="border-secondary" key="lowering_card">
+            <Card.Header>{_Lowering_}: <span className="text-warning">{this.state.activeLowering.lowering_id}</span></Card.Header>
+            <Card.Body>
+              {this.renderContactAdmin()}
+            </Card.Body>
+          </Card>
+        );
+      }
       let loweringStartTime = moment.utc(this.state.activeLowering.start_ts);
       let loweringDescendingTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_descending) : null;
       let loweringOnBottomTime = (this.state.activeLowering.lowering_additional_meta.milestones && this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) ? moment.utc(this.state.activeLowering.lowering_additional_meta.milestones.lowering_on_bottom) : null;
@@ -265,6 +288,33 @@ class CruiseMenu extends Component {
 
     if(this.state.activeCruise) {
 
+      /* If entire cruise is embargoed, put lock next to each dive */
+      if (this.state.activeCruise.access_denied) {
+        let cruiseLowerings = this.state.cruiseLowerings || [];
+        let lowerings = (cruiseLowerings.length > 0)?
+          cruiseLowerings.map((lowering) => {
+            return (<div key={`select_${lowering.id}`} className="text-warning ml-2"><FontAwesomeIcon icon='lock' className="mr-1" size="xs" />{lowering.lowering_id}</div>);
+          })
+        : null;
+
+        return (
+          <Card className="border-secondary" key={`cruise_${this.state.activeCruise.cruise_id}`}>
+            <Card.Header>{_Cruise_}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span></Card.Header>
+            <Card.Body>
+              {this.renderContactAdmin()}
+              {
+                (lowerings)? (
+                  <div>
+                    <strong>{_Lowerings_}:</strong>
+                    {lowerings}
+                  </div>
+                ): null
+              }
+            </Card.Body>
+          </Card>
+        );
+      }
+
       let cruiseStartTime = moment.utc(this.state.activeCruise.start_ts);
       let cruiseStopTime = moment.utc(this.state.activeCruise.stop_ts);
       let cruiseDurationValue = cruiseStopTime.diff(cruiseStartTime);
@@ -284,11 +334,8 @@ class CruiseMenu extends Component {
 
       let lowerings = (cruiseLowerings.length > 0)?
         cruiseLowerings.map((lowering) => {
-          if(this.state.activeLowering && lowering.id === this.state.activeLowering.id) {
-            return (<div key={`select_${lowering.id}`} className="text-warning ml-2">{lowering.lowering_id}</div>);
-          }
-
-          return (<div key={`select_${lowering.id}`} className={(this.state.activeLowering && lowering.id === this.state.activeLowering.id) ? "text-warning ml-2" : "text-primary ml-2"} onClick={ () => this.handleLoweringSelect(lowering.id) }>{lowering.lowering_id}</div>);
+          const lockIcon = lowering.access_denied ? <FontAwesomeIcon icon='lock' className="mr-1" size="xs" /> : '';
+          return (<div key={`select_${lowering.id}`} className={(this.state.activeLowering && lowering.id === this.state.activeLowering.id) ? "text-warning ml-2" : "text-primary ml-2"} onClick={ () => this.handleLoweringSelect(lowering.id) }>{lockIcon}{lowering.lowering_id}</div>);
         })
       : null;
 
