@@ -9,9 +9,8 @@ import DeleteEventTemplateModal from './delete_event_template_modal';
 import ImportEventTemplatesModal from './import_event_templates_modal';
 import EventTemplateOptionsModal from './event_template_options_modal';
 import CustomPagination from './custom_pagination';
+import fileDownload from 'js-file-download';
 import * as mapDispatchToProps from '../actions';
-
-let fileDownload = require('js-file-download');
 
 const maxSystemTemplatesPerPage = 8;
 const maxTemplatesPerPage = 8;
