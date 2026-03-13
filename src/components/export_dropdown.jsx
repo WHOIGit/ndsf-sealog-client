@@ -6,9 +6,8 @@ import axios from 'axios';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
 import { connect } from 'react-redux';
+import fileDownload from 'js-file-download';
 import { API_ROOT_URL } from 'client_config';
-
-let fileDownload = require('js-file-download');
 
 const dateFormat = "YYYYMMDD";
 const timeFormat = "HHmm";
