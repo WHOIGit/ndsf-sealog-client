@@ -49,6 +49,7 @@ import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash';
 import { faForward } from '@fortawesome/free-solid-svg-icons/faForward';
 import { faLink } from '@fortawesome/free-solid-svg-icons/faLink';
+import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
 import { faPause } from '@fortawesome/free-solid-svg-icons/faPause';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons/faPencilAlt';
 import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
@@ -75,7 +76,7 @@ import history from './history';
 
 import { DISABLE_EVENT_LOGGING } from 'client_config';
 
-library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
+library.add(faArrowRight,faBackward,faCalculator,faChevronDown,faChevronRight,faChevronUp,faClipboard,faComment,faCompress,faDownload,faExpand,faEye,faEyeSlash,faForward,faLink,faLock,faPause,faPencilAlt,faPlay,faPlus,faStepBackward,faStepForward,faTimes,faTrash,faVial,faUser,faUserLock,faWindowMaximize);
 
 let DefaultIcon = L.icon({
     iconUrl: icon,
