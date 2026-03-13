@@ -12,9 +12,8 @@ import CruisePermissionsModal from './cruise_permissions_modal';
 import CustomPagination from './custom_pagination';
 import { USE_ACCESS_CONTROL, DEFAULT_VESSEL } from 'client_config';
 import * as mapDispatchToProps from '../actions';
+import fileDownload from 'js-file-download';
 import { _Cruise_, _Cruises_, _cruises_ } from '../vocab';
-
-let fileDownload = require('js-file-download');
 
 const maxCruisesPerPage = 6;
 

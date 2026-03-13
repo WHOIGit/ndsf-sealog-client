@@ -12,13 +12,12 @@ import UserPermissionsModal from './user_permissions_modal';
 import CustomPagination from './custom_pagination';
 import { USE_ACCESS_CONTROL } from 'client_config';
 import * as mapDispatchToProps from '../actions';
+import fileDownload from 'js-file-download';
 import { _Cruise_, _lowering_ } from '../vocab';
 
 // These aren't "disabled", the UI just doesn't allow them to be deleted.
 // The server does not enforce this restriction anyway.
 const disabledAccounts = ['admin'];
-
-let fileDownload = require('js-file-download');
 
 const maxSystemUsersPerPage = 4;
 const maxUsersPerPage = 6;
