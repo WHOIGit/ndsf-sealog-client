@@ -65,7 +65,7 @@ import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons/faWindowMaxi
 import "filepond/dist/filepond.min.css";
 import 'rc-slider/assets/index.css';
 import 'leaflet/dist/leaflet.css';
-import "./assets/scss/sealog.scss?v=1.1.0";
+import "./assets/scss/sealog.scss";
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
