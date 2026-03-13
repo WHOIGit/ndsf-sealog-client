@@ -40,6 +40,8 @@ RUN npm install
 # Copy sources
 COPY public ./public
 COPY src ./src
+COPY index.html ./
+COPY vite.config.js ./
 
 # Build the application
 RUN mkdir ./config  `# Must be present for copy stage` \
