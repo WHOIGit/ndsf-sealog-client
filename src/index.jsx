@@ -6,8 +6,9 @@ import { Route, Switch } from 'react-router';
 import Cookies from 'universal-cookie';
 import L from 'leaflet';
 
-// eslint-disable-next-line no-unused-vars
+import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
+momentDurationFormatSetup(moment);
 
 import { AUTH_USER } from './actions/types';
 import Header from './components/header';
