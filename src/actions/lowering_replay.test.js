@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   eventUpdateLoweringReplay,
   initLoweringReplay
@@ -13,13 +14,15 @@ import {
   UPDATE_EVENTS
 } from './types';
 
-jest.mock('axios');
-jest.mock('client_config', () => ({
+vi.mock('axios');
+vi.mock('client_config', () => ({
   API_ROOT_URL: 'http://api.test/sealog-server'
 }));
-jest.mock('universal-cookie', () => jest.fn().mockImplementation(() => ({
-  get: () => 'test-token'
-})));
+vi.mock('universal-cookie', () => ({
+  default: vi.fn(function MockCookies() {
+    return { get: () => 'test-token' };
+  })
+}));
 
 const lowering = {
   id: 'lowering-db-id',
@@ -57,7 +60,7 @@ function createThunkHarness(initialState = {}) {
   const actions = [];
 
   const getState = () => state;
-  const dispatch = jest.fn((action) => {
+  const dispatch = vi.fn((action) => {
     if(typeof action === 'function') {
       return action(dispatch, getState);
     }
