@@ -16,16 +16,6 @@ export default defineConfig({
       },
     },
   },
-  esbuild: {
-    loader: 'jsx',
-    include: /\.jsx?$/,
-    exclude: [],
-  },
-  optimizeDeps: {
-    esbuild: {
-      loader: { '.js': 'jsx' },
-    },
-  },
   resolve: {
     alias: {
       'client_config': path.resolve(import.meta.dirname, 'src/shims/client_config/index.js'),
