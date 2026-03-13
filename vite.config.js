@@ -8,6 +8,14 @@ export default defineConfig({
   build: {
     outDir: 'build',
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Bootstrap 4 uses deprecated Sass features; silence until Bootstrap 5 upgrade
+        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function', 'abs-percent'],
+      },
+    },
+  },
   esbuild: {
     loader: 'jsx',
     include: /\.jsx?$/,
