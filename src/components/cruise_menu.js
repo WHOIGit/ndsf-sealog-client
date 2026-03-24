@@ -288,46 +288,21 @@ class CruiseMenu extends Component {
 
     if(this.state.activeCruise) {
 
-      /* If entire cruise is embargoed, put lock next to each dive */
-      if (this.state.activeCruise.access_denied) {
-        let cruiseLowerings = this.state.cruiseLowerings || [];
-        let lowerings = (cruiseLowerings.length > 0)?
-          cruiseLowerings.map((lowering) => {
-            return (<div key={`select_${lowering.id}`} className="text-warning ml-2"><FontAwesomeIcon icon='lock' className="mr-1" size="xs" />{lowering.lowering_id}</div>);
-          })
-        : null;
-
-        return (
-          <Card className="border-secondary" key={`cruise_${this.state.activeCruise.cruise_id}`}>
-            <Card.Header>{_Cruise_}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span></Card.Header>
-            <Card.Body>
-              {this.renderContactAdmin()}
-              {
-                (lowerings)? (
-                  <div>
-                    <strong>{_Lowerings_}:</strong>
-                    {lowerings}
-                  </div>
-                ): null
-              }
-            </Card.Body>
-          </Card>
-        );
-      }
+      const accessDenied = !!this.state.activeCruise.access_denied;
+      const { cruise_additional_meta: meta, cruise_location } = this.state.activeCruise;
 
       let cruiseStartTime = moment.utc(this.state.activeCruise.start_ts);
       let cruiseStopTime = moment.utc(this.state.activeCruise.stop_ts);
       let cruiseDurationValue = cruiseStopTime.diff(cruiseStartTime);
 
-      let cruiseFiles = (this.state.activeCruise.cruise_additional_meta.cruise_files && this.state.activeCruise.cruise_additional_meta.cruise_files.length > 0)? <div><strong>Files:</strong>{this.renderCruiseFiles(this.state.activeCruise.cruise_additional_meta.cruise_files)}</div>: null;
-
-      let cruiseName = (this.state.activeCruise.cruise_additional_meta.cruise_name)? <span><strong>{_Cruise_} Name:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_name}<br/></span> : null;
-      let cruiseDescription = (this.state.activeCruise.cruise_additional_meta.cruise_description)? <p className="text-justify"><strong>Description:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_description}<br/></p> : null;
-      let cruiseVessel = <span><strong>Vessel:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_vessel}<br/></span>;
-      let cruiseLocation = (this.state.activeCruise.cruise_location)? <span><strong>Location:</strong> {this.state.activeCruise.cruise_location}<br/></span> : null;
-      let cruisePorts = (this.state.activeCruise.cruise_additional_meta.cruise_departure_location)? <span><strong>Ports:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_departure_location} <FontAwesomeIcon icon='arrow-right' fixedWidth /> {this.state.activeCruise.cruise_additional_meta.cruise_arrival_location}<br/></span> : null;
+      let cruiseFiles = (meta?.cruise_files?.length > 0)? <div><strong>Files:</strong>{this.renderCruiseFiles(meta.cruise_files)}</div>: null;
+      let cruiseName = meta?.cruise_name ? <span><strong>{_Cruise_} Name:</strong> {meta.cruise_name}<br/></span> : null;
+      let cruiseDescription = meta?.cruise_description ? <p className="text-justify"><strong>Description:</strong> {meta.cruise_description}<br/></p> : null;
+      let cruiseVessel = meta?.cruise_vessel ? <span><strong>Vessel:</strong> {meta.cruise_vessel}<br/></span> : null;
+      let cruiseLocation = cruise_location ? <span><strong>Location:</strong> {cruise_location}<br/></span> : null;
+      let cruisePorts = meta?.cruise_departure_location ? <span><strong>Ports:</strong> {meta.cruise_departure_location} <FontAwesomeIcon icon='arrow-right' fixedWidth /> {meta.cruise_arrival_location}<br/></span> : null;
       let cruiseDates = <span><strong>Dates:</strong> {cruiseStartTime.format("YYYY/MM/DD")} <FontAwesomeIcon icon='arrow-right' fixedWidth /> {cruiseStopTime.format("YYYY/MM/DD")}<br/></span>;
-      let cruisePi = <span><strong>Chief Scientist:</strong> {this.state.activeCruise.cruise_additional_meta.cruise_pi}<br/></span>;
+      let cruisePi = meta?.cruise_pi ? <span><strong>Chief Scientist:</strong> {meta.cruise_pi}<br/></span> : null;
       let cruiseLowerings = this.props.lowerings.filter(lowering => moment.utc(lowering.start_ts).isBetween(cruiseStartTime, cruiseStopTime));
 
       let cruiseDuration = <span><strong>Duration:</strong> {moment.duration(cruiseDurationValue).format("d [days] h [hours] m [minutes]")}<br/></span>;
@@ -339,10 +314,11 @@ class CruiseMenu extends Component {
         })
       : null;
 
-      return (          
+      return (
         <Card className="border-secondary" key={`cruise_${this.state.activeCruise.cruise_id}`}>
-          <Card.Header>{_Cruise_}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span><span className="float-right"><CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span></Card.Header>
+          <Card.Header>{_Cruise_}: <span className="text-warning">{this.state.activeCruise.cruise_id}</span>{!accessDenied && <span className="float-right"><CopyCruiseToClipboard cruise={this.state.activeCruise} cruiseLowerings={cruiseLowerings}/></span>}</Card.Header>
           <Card.Body>
+            {accessDenied && this.renderContactAdmin()}
             {cruiseName}
             {cruisePi}
             {cruiseDescription}
