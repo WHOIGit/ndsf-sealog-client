@@ -17,25 +17,68 @@ jobs:
       - name: Initialize
         id: init
         run: |
-          # Determine whether to push to Docker Hub based on the event type
-          case "${{ github.event_name }}" in
-            push)
-              DOCKER_PUSH=true ;;
-            *)
-              DOCKER_PUSH=false ;;
-          esac
+          echo ::set-output name=docker_repo::whoi/$(basename "${{ github.repository }}" | tr A-Z a-z)
+          echo ::set-output name=docker_platforms::linux/amd64,linux/arm64
 
-          # Map git ref branch or tag name to Docker tag version
-          case "${{ github.ref }}" in
-            # Do not push upstream branches and tags to Docker Hub
-            refs/heads/upstream/*|refs/tags/upstream/*)
-              DOCKER_PUSH=false ;;
-            # Do not push pull request branches
-            refs/pulls/*)
-              DOCKER_PUSH=false ;;
-          esac
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ steps.init.outputs.docker_repo }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=sha
 
-          echo ::set-output name=docker_push::$DOCKER_PUSH
+      # Enable Docker layer caching in the GitHub Actions cache.
+      #
+      # https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-multi-buildx
+
+      - name: Build the Docker image for native
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+          cache-from: |
+            type=local,src=/tmp/.buildx-cache
+            type=registry,ref=${{ steps.init.outputs.docker_repo }}:buildcache
+          cache-to: |
+            type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Update cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      # There aren't any tests yet...
+      # - name: Run test suite
+      #   run: docker-compose run sealog-client npm test
+
+  docker-push:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: docker/setup-qemu-action@v1
+      - uses: docker/setup-buildx-action@v1
+
+      - name: Initialize
+        id: init
+        run: |
           echo ::set-output name=docker_repo::whoi/$(basename "${{ github.repository }}" | tr A-Z a-z)
           echo ::set-output name=docker_platforms::linux/amd64,linux/arm64
 
@@ -52,15 +95,12 @@ jobs:
             type=sha
 
       - name: Log into registry
-        if: steps.init.outputs.docker_push == 'true'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      # Enable Docker layer caching in the GitHub Actions cache.
-      #
-      # https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
+      # Restore the cache warmed by the build job
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
@@ -68,26 +108,16 @@ jobs:
           key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
           restore-keys: ${{ runner.os }}-multi-buildx
 
-      - name: Build (and maybe push) the Docker image
+      - name: Push multi-platform image
         uses: docker/build-push-action@v2
         with:
           context: .
           platforms: ${{ steps.init.outputs.docker_platforms }}
-          push: ${{ steps.init.outputs.docker_push }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
           cache-from: |
             type=local,src=/tmp/.buildx-cache
           cache-to: |
-            type=local,dest=/tmp/.buildx-cache-new
             type=registry,ref=${{ steps.init.outputs.docker_repo }}:buildcache,mode=max
-
-      - name: Update cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-      # There aren't any tests yet...
-      # - name: Run test suite
-      #   run: docker-compose run sealog-client npm test
