@@ -378,7 +378,7 @@ class LoweringReplay extends Component {
             railStyle={{ opacity: 0.5 }}
             onBeforeChange={this.handleLoweringReplayPause}
             onChange={this.handleSliderChange}
-            max={this.props.event.events.length-1}
+            max={Math.max(this.props.event.events.length-1, 0)}
           />
         </div>
       </Card>
