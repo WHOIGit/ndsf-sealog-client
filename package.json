@@ -64,6 +64,9 @@
       "react-app/jest"
     ]
   },
+  "overrides": {
+    "babel-preset-current-node-syntax": "1.0.1"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
