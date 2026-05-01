@@ -144,4 +144,17 @@ describe('lowering replay actions', () => {
     expect(actions).toContainEqual({ type: UPDATE_EVENTS, payload: [asnapEvent] });
     expect(actions).toContainEqual({ type: EVENT_FETCHING, payload: false });
   });
+
+  it('does not auto-show ASNAP when replay updates opt out of fallback', async () => {
+    axios.get.mockResolvedValueOnce({ data: [] });
+
+    const { actions, dispatch, getState } = createThunkHarness();
+
+    await eventUpdateLoweringReplay('lowering-db-id', true, false)(dispatch, getState);
+
+    expect(axios.get).toHaveBeenCalledTimes(1);
+    expect(urlForCall(0).searchParams.getAll('value')).toEqual(['!ASNAP']);
+    expect(actions).not.toContainEqual({ type: SHOW_ASNAP });
+    expect(actions).toContainEqual({ type: UPDATE_EVENTS, payload: [] });
+  });
 });

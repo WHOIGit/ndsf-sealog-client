@@ -119,7 +119,7 @@ class LoweringReplay extends Component {
   }
 
   toggleASNAP() {
-    this.props.eventUpdateLoweringReplay(this.props.lowering.id, !this.props.event.hideASNAP);
+    this.props.eventUpdateLoweringReplay(this.props.lowering.id, !this.props.event.hideASNAP, false);
     this.handleLoweringReplayPause();
     if(this.props.event.hideASNAP) {
       this.props.showASNAP();

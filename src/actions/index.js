@@ -81,6 +81,20 @@ export const authorizationHeader = {
   }
 }
 
+async function fetchEventsWithASNAPFallback(url, showASNAPUrl, hideASNAP, autoShowASNAP = true) {
+  const response = await axios.get(url, { headers: { authorization: cookies.get('token') } });
+
+  if(autoShowASNAP && hideASNAP && response.data.length === 0) {
+    const showASNAPResponse = await axios.get(showASNAPUrl, { headers: { authorization: cookies.get('token') } });
+
+    if(showASNAPResponse.data.length > 0) {
+      return { events: showASNAPResponse.data, showASNAP: true };
+    }
+  }
+
+  return { events: response.data, showASNAP: false };
+}
+
 export function validateJWT() {
 
   const token = cookies.get('token');
@@ -1469,15 +1483,20 @@ export function initLoweringReplay(id, hideASNAP = false) {
     // Use the database ID from the fetched lowering
     const databaseId = lowering.id;
 
-    let url = (hideASNAP)
+    const url = (hideASNAP)
       ? `${API_ROOT_URL}/api/v1/events/bylowering/${databaseId}?value=!ASNAP`
       : `${API_ROOT_URL}/api/v1/events/bylowering/${databaseId}`;
+    const showASNAPUrl = `${API_ROOT_URL}/api/v1/events/bylowering/${databaseId}`;
 
-    return await axios.get(url, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      dispatch({ type: INIT_EVENT, payload: response.data });
-      if (response.data.length > 0){
-        dispatch(advanceLoweringReplayTo(response.data[0].id));
+    return await fetchEventsWithASNAPFallback(url, showASNAPUrl, hideASNAP)
+    .then((response) => {
+      if(response.showASNAP) {
+        dispatch({ type: SHOW_ASNAP });
+      }
+
+      dispatch({ type: INIT_EVENT, payload: response.events });
+      if (response.events.length > 0){
+        dispatch(advanceLoweringReplayTo(response.events[0].id));
       }
       return dispatch({ type: EVENT_FETCHING, payload: false});
     }).catch((error)=>{
@@ -1640,24 +1659,30 @@ export function eventUpdate() {
   };
 }
 
-export function eventUpdateLoweringReplay(lowering_id, hideASNAP = false) {
+export function eventUpdateLoweringReplay(lowering_id, hideASNAP = false, autoShowASNAP = true) {
   return async function (dispatch, getState) {
 
     let startTS = (getState().event.eventFilter.startTS)? `startTS=${getState().event.eventFilter.startTS}` : '';
     let stopTS = (getState().event.eventFilter.stopTS)? `&stopTS=${getState().event.eventFilter.stopTS}` : '';
     let value = (getState().event.eventFilter.value)? `&value=${getState().event.eventFilter.value.split(',').join("&value=")}` : '';
-    value = (hideASNAP)? `&value=!ASNAP${value}` : value;
+    let hiddenASNAPValue = (hideASNAP)? `&value=!ASNAP${value}` : value;
     let author = (getState().event.eventFilter.author)? `&author=${getState().event.eventFilter.author.split(',').join("&author=")}` : '';
     let freetext = (getState().event.eventFilter.freetext)? `&freetext=${getState().event.eventFilter.freetext}` : '';
     let fulltext = (getState().event.eventFilter.fulltext)? `&fulltext=${getState().event.eventFilter.fulltext}` : '';
     let datasource = (getState().event.eventFilter.datasource)? `&datasource=${getState().event.eventFilter.datasource}` : '';
+    const url = `${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}?${startTS}${stopTS}${hiddenASNAPValue}${author}${freetext}${fulltext}${datasource}`;
+    const showASNAPUrl = `${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}?${startTS}${stopTS}${value}${author}${freetext}${fulltext}${datasource}`;
 
     dispatch({ type: EVENT_FETCHING, payload: true});
-    return await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}?${startTS}${stopTS}${value}${author}${freetext}${fulltext}${datasource}`, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      dispatch({ type: UPDATE_EVENTS, payload: response.data });
-      if(response.data.length > 0) {
-        dispatch(fetchSelectedEvent(response.data[0].id));
+    return await fetchEventsWithASNAPFallback(url, showASNAPUrl, hideASNAP, autoShowASNAP)
+    .then((response) => {
+      if(response.showASNAP) {
+        dispatch({ type: SHOW_ASNAP });
+      }
+
+      dispatch({ type: UPDATE_EVENTS, payload: response.events });
+      if(response.events.length > 0) {
+        dispatch(fetchSelectedEvent(response.events[0].id));
       }
       return dispatch({ type: EVENT_FETCHING, payload: false});
     }).catch((error)=>{
