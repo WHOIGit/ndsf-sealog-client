@@ -81,6 +81,26 @@ export const authorizationHeader = {
   }
 }
 
+async function fetchEventsWithASNAPFallback(url, hideASNAP, showASNAPAnywayIfEmpty = true) {
+  const showASNAPUrl = url.toString();
+
+  if(hideASNAP) {
+    url.searchParams.append('value', '!ASNAP');
+  }
+
+  const response = await axios.get(url.toString(), { headers: { authorization: cookies.get('token') } });
+
+  if(showASNAPAnywayIfEmpty && hideASNAP && response.data.length === 0) {
+    const showASNAPResponse = await axios.get(showASNAPUrl, { headers: { authorization: cookies.get('token') } });
+
+    if(showASNAPResponse.data.length > 0) {
+      return { events: showASNAPResponse.data, showASNAP: true };
+    }
+  }
+
+  return { events: response.data, showASNAP: false };
+}
+
 export function validateJWT() {
 
   const token = cookies.get('token');
@@ -1469,15 +1489,17 @@ export function initLoweringReplay(id, hideASNAP = false) {
     // Use the database ID from the fetched lowering
     const databaseId = lowering.id;
 
-    let url = (hideASNAP)
-      ? `${API_ROOT_URL}/api/v1/events/bylowering/${databaseId}?value=!ASNAP`
-      : `${API_ROOT_URL}/api/v1/events/bylowering/${databaseId}`;
+    const url = new URL(`${API_ROOT_URL}/api/v1/events/bylowering/${databaseId}`);
 
-    return await axios.get(url, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      dispatch({ type: INIT_EVENT, payload: response.data });
-      if (response.data.length > 0){
-        dispatch(advanceLoweringReplayTo(response.data[0].id));
+    return await fetchEventsWithASNAPFallback(url, hideASNAP)
+    .then((response) => {
+      if(response.showASNAP) {
+        dispatch({ type: SHOW_ASNAP });
+      }
+
+      dispatch({ type: INIT_EVENT, payload: response.events });
+      if (response.events.length > 0){
+        dispatch(advanceLoweringReplayTo(response.events[0].id));
       }
       return dispatch({ type: EVENT_FETCHING, payload: false});
     }).catch((error)=>{
@@ -1640,24 +1662,54 @@ export function eventUpdate() {
   };
 }
 
-export function eventUpdateLoweringReplay(lowering_id, hideASNAP = false) {
+export function eventUpdateLoweringReplay(lowering_id, hideASNAP = false, showASNAPAnywayIfEmpty = true) {
   return async function (dispatch, getState) {
 
-    let startTS = (getState().event.eventFilter.startTS)? `startTS=${getState().event.eventFilter.startTS}` : '';
-    let stopTS = (getState().event.eventFilter.stopTS)? `&stopTS=${getState().event.eventFilter.stopTS}` : '';
-    let value = (getState().event.eventFilter.value)? `&value=${getState().event.eventFilter.value.split(',').join("&value=")}` : '';
-    value = (hideASNAP)? `&value=!ASNAP${value}` : value;
-    let author = (getState().event.eventFilter.author)? `&author=${getState().event.eventFilter.author.split(',').join("&author=")}` : '';
-    let freetext = (getState().event.eventFilter.freetext)? `&freetext=${getState().event.eventFilter.freetext}` : '';
-    let fulltext = (getState().event.eventFilter.fulltext)? `&fulltext=${getState().event.eventFilter.fulltext}` : '';
-    let datasource = (getState().event.eventFilter.datasource)? `&datasource=${getState().event.eventFilter.datasource}` : '';
+    const eventFilter = getState().event.eventFilter;
+    const url = new URL(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}`);
+
+    if(eventFilter.startTS) {
+      url.searchParams.set('startTS', eventFilter.startTS);
+    }
+
+    if(eventFilter.stopTS) {
+      url.searchParams.set('stopTS', eventFilter.stopTS);
+    }
+
+    if(eventFilter.value) {
+      eventFilter.value.split(',').forEach((value) => {
+        url.searchParams.append('value', value);
+      });
+    }
+
+    if(eventFilter.author) {
+      eventFilter.author.split(',').forEach((author) => {
+        url.searchParams.append('author', author);
+      });
+    }
+
+    if(eventFilter.freetext) {
+      url.searchParams.set('freetext', eventFilter.freetext);
+    }
+
+    if(eventFilter.fulltext) {
+      url.searchParams.set('fulltext', eventFilter.fulltext);
+    }
+
+    if(eventFilter.datasource) {
+      url.searchParams.set('datasource', eventFilter.datasource);
+    }
 
     dispatch({ type: EVENT_FETCHING, payload: true});
-    return await axios.get(`${API_ROOT_URL}/api/v1/events/bylowering/${lowering_id}?${startTS}${stopTS}${value}${author}${freetext}${fulltext}${datasource}`, { headers: { authorization: cookies.get('token') } }
-    ).then((response) => {
-      dispatch({ type: UPDATE_EVENTS, payload: response.data });
-      if(response.data.length > 0) {
-        dispatch(fetchSelectedEvent(response.data[0].id));
+    return await fetchEventsWithASNAPFallback(url, hideASNAP, showASNAPAnywayIfEmpty)
+    .then((response) => {
+      if(response.showASNAP) {
+        dispatch({ type: SHOW_ASNAP });
+      }
+
+      dispatch({ type: UPDATE_EVENTS, payload: response.events });
+      if(response.events.length > 0) {
+        dispatch(fetchSelectedEvent(response.events[0].id));
       }
       return dispatch({ type: EVENT_FETCHING, payload: false});
     }).catch((error)=>{
