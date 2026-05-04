@@ -134,7 +134,7 @@ describe('lowering replay actions', () => {
     await eventUpdateLoweringReplay('lowering-db-id', true)(dispatch, getState);
     await Promise.resolve();
 
-    expect(urlForCall(0).searchParams.getAll('value')).toEqual(['!ASNAP', 'BIOLOGY', 'SAMPLE']);
+    expect(urlForCall(0).searchParams.getAll('value')).toEqual(['BIOLOGY', 'SAMPLE', '!ASNAP']);
     expect(urlForCall(1).searchParams.getAll('value')).toEqual(['BIOLOGY', 'SAMPLE']);
     expect(urlForCall(1).searchParams.getAll('author')).toEqual(['alvin', 'bob']);
     expect(urlForCall(1).searchParams.get('freetext')).toBe('vent');
@@ -145,7 +145,7 @@ describe('lowering replay actions', () => {
     expect(actions).toContainEqual({ type: EVENT_FETCHING, payload: false });
   });
 
-  it('does not auto-show ASNAP when replay updates opt out of fallback', async () => {
+  it('does not show ASNAP anyway when replay updates opt out of fallback', async () => {
     axios.get.mockResolvedValueOnce({ data: [] });
 
     const { actions, dispatch, getState } = createThunkHarness();
