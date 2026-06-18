@@ -100,7 +100,7 @@ ReactDOM.render(
     <ConnectedRouter history={history}>
       <Header />
       <Switch>
-        <Route path="/" exact={true} component={(DISABLE_EVENT_LOGGING) ? CruiseMenu : EventLogging }/>
+        <Route path="/" exact={true} component={(DISABLE_EVENT_LOGGING) ? CruiseMenu : RequireAuth(EventLogging) }/>
         <Route path="/github" exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/'}/>
         <Route path="/license" exact={true} component={() => window.location = 'https://github.com/whoigit/ndsf-sealog-client/blob/main/LICENSE'}/>
         <Route path="/profile" exact={true} component={RequireAuth(Profile)} />
