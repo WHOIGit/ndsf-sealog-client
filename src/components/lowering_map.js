@@ -345,7 +345,7 @@ class LoweringMap extends Component {
           <Col className="px-1" sm={12}>
             <Card className="border-secondary">
               <LoweringMapDisplay 
-                loweringID={this.props.match.params.id}
+                loweringID={this.props.lowering.id}
                 selectedEvent={this.props.event.selected_event}
                 height={this.state.height}
                 renderPopup={() => (
