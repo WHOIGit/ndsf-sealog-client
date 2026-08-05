@@ -82,6 +82,9 @@ class LoweringMapDisplay extends Component {
         if (error.response && error.response.data.statusCode === 404) {
           console.warn("No", this.auxDatasourceFilters[index], "data found");
         }
+        else {
+          console.error("Error fetching", this.auxDatasourceFilters[index], "data:", error.message);
+        }
       });
 
       if (trackline.eventIDs.length > 0) {
