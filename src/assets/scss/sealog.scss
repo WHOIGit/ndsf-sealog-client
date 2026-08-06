@@ -79,6 +79,22 @@
   text-transform: capitalize;
 }
 
+.stale-image-container {
+  position: relative;
+  border: 2px solid red;
+}
+
+.stale-image-indicator {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  padding: 2px 5px;
+  font-size: 0.8rem;
+  border-radius: 3px;
+}
+
 // Utility class to hide arrow from dropdown
 .dropdown.no-arrow {
   .dropdown-toggle::after {
