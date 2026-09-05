@@ -1,4 +1,6 @@
-These are shim modules that allow us to load the real content later.
+These ESM adapter modules expose configuration that is loaded separately from
+the application bundle. The classic script tags in `../../index.html` assign
+the corresponding global variables before the main application module starts.
 
-The shim modules just re-export a global variable which must be assigned before
-the main application starts. See public/index.html.
+The adapters deliberately fail during application startup if either runtime
+configuration file is missing or loaded out of order.
