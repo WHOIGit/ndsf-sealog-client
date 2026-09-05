@@ -192,13 +192,13 @@ export function login({username, password, reCaptcha = null}) {
 
         if(error.response && error.response.status !== 401) {
           // If request is unauthenticated
-          return dispatch(authError(error.response.data.message));
+          return dispatch(authError(error.response?.data?.message || error.message));
         }
         else if(error.message === "Network Error") {
           return dispatch(authError("Unable to connect to server"));
         }
 
-        return dispatch(authError(error.response.data.message));
+        return dispatch(authError(error.response?.data?.message || error.message));
 
       });
   };
@@ -221,13 +221,13 @@ export function autoLogin({loginToken, reCaptcha = null}) {
 
         if(error.response && error.response.status !== 401) {
           // If request is unauthenticated
-          return dispatch(authError(error.response.data.message));
+          return dispatch(authError(error.response?.data?.message || error.message));
         }
         else if(error.message === "Network Error") {
           return dispatch(authError("Unable to connect to server"));
         }
 
-        return dispatch(authError(error.response.data.message));
+        return dispatch(authError(error.response?.data?.message || error.message));
 
       });
   };
@@ -404,7 +404,7 @@ export function updateLoweringReplayEvent(event_id) {
     ).then(({data}) => {
       return dispatch({type: UPDATE_EVENT, payload: data});
     }).catch((error) => {
-      if(error.response.status !== 404) {
+      if(error.response?.status !== 404) {
         console.error(error);
       }
     });
@@ -449,7 +449,7 @@ export function forgotPassword({email, reCaptcha = null}) {
         console.error(error);
 
         // If request is invalid
-       return dispatch(authError(error.response.data.message));
+       return dispatch(authError(error.response?.data?.message || error.message));
 
       });
   };
@@ -468,7 +468,7 @@ export function resetPassword({token, password, reCaptcha = null}) {
         console.error(error);
 
         // If request is unauthenticated
-        return dispatch(authError(error.response.data.message));
+        return dispatch(authError(error.response?.data?.message || error.message));
 
       });
   };
@@ -487,7 +487,7 @@ export function registerUser({username, fullname, password, email, reCaptcha = n
         console.error(error);
 
         // If request is unauthenticated
-        return dispatch(registerUserError(error.response.data.message));
+        return dispatch(registerUserError(error.response?.data?.message || error.message));
 
       });
   };
@@ -503,7 +503,7 @@ export function createUser({username, fullname, password = '', email, roles, sys
       }).catch((error) => {
       // If request is unauthenticated
         console.error(error);
-        return dispatch(createUserError(error.response.data.message));
+        return dispatch(createUserError(error.response?.data?.message || error.message));
       });
   };
 }
@@ -518,7 +518,7 @@ export function createCruise({cruise_id, start_ts, stop_ts, cruise_location = ''
 
       // If request is unauthenticated
       console.error(error);
-      return dispatch(createCruiseError(error.response.data.message));
+      return dispatch(createCruiseError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -533,7 +533,7 @@ export function createLowering({lowering_id, start_ts, stop_ts, lowering_locatio
       
       // If request is unauthenticated
       console.error(error);
-      return dispatch(createLoweringError(error.response.data.message));
+      return dispatch(createLoweringError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -595,7 +595,7 @@ export function createEventTemplate(formProps) {
         console.error(error);
 
         // If request is unauthenticated
-        return dispatch(createEventTemplateError(error.response.data.message));
+        return dispatch(createEventTemplateError(error.response?.data?.message || error.message));
       });
   };
 }
@@ -629,7 +629,7 @@ export function updateProfile(formProps) {
       console.error(error);
 
       // If request is unauthenticated
-      return dispatch(updateProfileError(error.response.data.message));
+      return dispatch(updateProfileError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -644,7 +644,7 @@ export function showCruise(id) {
       return dispatch(fetchCruises());
     }).catch((error) => {
       console.error(error);
-      return dispatch(updateCruiseError(error.response.data.message));
+      return dispatch(updateCruiseError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -659,7 +659,7 @@ export function hideCruise(id) {
       return dispatch(fetchCruises());
     }).catch((error) => {
       console.error(error);
-      return dispatch(updateCruiseError(error.response.data.message));
+      return dispatch(updateCruiseError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -713,7 +713,7 @@ export function updateCruise(formProps) {
       return dispatch(updateCruiseSuccess('Cruise updated'));
     }).catch((error) => {
       console.error(error);
-      return dispatch(updateCruiseError(error.response.data.message));
+      return dispatch(updateCruiseError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -728,7 +728,7 @@ export function hideLowering(id) {
       return dispatch(fetchLowerings());
     }).catch((error) => {
       console.error(error);
-      return dispatch(updateLoweringError(error.response.data.message));
+      return dispatch(updateLoweringError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -743,7 +743,7 @@ export function showLowering(id) {
       return dispatch(fetchLowerings());
     }).catch((error) => {
       console.error(error);
-      return dispatch(updateLoweringError(error.response.data.message));
+      return dispatch(updateLoweringError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -796,7 +796,7 @@ export function updateLowering(formProps) {
       return dispatch(updateLoweringSuccess('Lowering updated'));
     }).catch((error) => {
       console.error(error);
-      return dispatch(updateLoweringError(error.response.data.message));
+      return dispatch(updateLoweringError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -847,7 +847,7 @@ export function updateUser(formProps) {
       console.error(error);
 
       // If request is unauthenticated
-      return dispatch(updateUserError(error.response.data.message));
+      return dispatch(updateUserError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -921,7 +921,7 @@ export function updateEventTemplate(formProps) {
       console.error(error);
 
       // If request is unauthenticated
-      return dispatch(updateEventTemplateError(error.response.data.message));
+      return dispatch(updateEventTemplateError(error.response?.data?.message || error.message));
     });
   };
 }
@@ -1159,7 +1159,7 @@ export function fetchUsers() {
     ).then(({data}) => {
       return dispatch({type: FETCH_USERS, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_USERS, payload: []});
       } else {
         console.error(error);
@@ -1175,7 +1175,7 @@ export function fetchGuestUsers() {
     ).then(({data}) => {
       return dispatch({type: FETCH_GUEST_USERS, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_GUEST_USERS, payload: []});
       } else {
         console.error(error);
@@ -1191,7 +1191,7 @@ export function fetchCruises() {
     ).then(({data}) => {
       return dispatch({type: FETCH_CRUISES, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_CRUISES, payload: []});
       } else {
         console.error(error);
@@ -1207,7 +1207,7 @@ export function fetchLowerings() {
     ).then(({data}) => {
       return dispatch({type: FETCH_LOWERINGS, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_LOWERINGS, payload: []});
       } else {
         console.error(error);
@@ -1224,7 +1224,7 @@ export function fetchCustomVars() {
     ).then(({data}) => {
       return dispatch({type: FETCH_CUSTOM_VARS, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_CUSTOM_VARS, payload: []});
       } else {
         console.error(error);
@@ -1267,7 +1267,7 @@ export function fetchEventTemplatesForMain() {
     ).then(({data}) => {
       return dispatch({type: FETCH_EVENT_TEMPLATES_FOR_MAIN, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_EVENT_TEMPLATES_FOR_MAIN, payload: []});
       } else {
         console.error(error);
@@ -1287,7 +1287,7 @@ export function fetchFilteredEvents(filterParams={}) {
     ).then(({data}) => {
       return dispatch({type: FETCH_FILTERED_EVENTS, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_FILTERED_EVENTS, payload: []});
       } else {
         console.error(error);
@@ -1303,7 +1303,7 @@ export function fetchEvents() {
     ).then(({data}) => {
       return dispatch({type: FETCH_EVENTS, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_EVENTS, payload: []});
       } else {
         console.error(error);
@@ -1358,7 +1358,7 @@ export function fetchEventHistory(asnap=false, filter='', page=0) {
     ).then(({data}) => {
       return dispatch({type: FETCH_EVENT_HISTORY, payload: data});
     }).catch((error) => {
-      if(error.response.status === 404) {
+      if(error.response?.status === 404) {
         return dispatch({type: FETCH_EVENT_HISTORY, payload: []});
       } else {
         console.error(error);
@@ -1374,7 +1374,7 @@ export function fetchEventTemplates() {
     ).then(({data}) => {
       return dispatch({type: FETCH_EVENT_TEMPLATES, payload: data});
     }).catch((error) => {
-      if(error.response.data.statusCode === 404) {
+      if(error.response?.data?.statusCode === 404) {
         return dispatch({type: FETCH_EVENT_TEMPLATES, payload: []});
       } else {
         console.error(error);
@@ -1503,7 +1503,7 @@ export function initLoweringReplay(id, hideASNAP = false) {
       }
       return dispatch({ type: EVENT_FETCHING, payload: false});
     }).catch((error)=>{
-      if(error.response.data.statusCode !== 404) {
+      if(error.response?.data?.statusCode !== 404) {
         console.error(error);
       }
       return dispatch({ type: EVENT_FETCHING, payload: false});
@@ -1652,10 +1652,10 @@ export function eventUpdate() {
       return dispatch({ type: EVENT_FETCHING, payload: false});
     }).catch((error)=>{
       console.error(error);
-      if(error.response.data.statusCode === 404) {
+      if(error.response?.data?.statusCode === 404) {
         dispatch({type: UPDATE_EVENTS, payload: []});
       } else {
-        console.error(error.response);
+        console.error(error);
       }
       return dispatch({ type: EVENT_FETCHING, payload: false});
     });
@@ -1713,7 +1713,7 @@ export function eventUpdateLoweringReplay(lowering_id, hideASNAP = false, showAS
       }
       return dispatch({ type: EVENT_FETCHING, payload: false});
     }).catch((error)=>{
-      if(error.response.data.statusCode === 404) {
+      if(error.response?.data?.statusCode === 404) {
         dispatch({type: UPDATE_EVENTS, payload: []});
         dispatch({ type: SET_SELECTED_EVENT, payload: {} });
 
@@ -1731,7 +1731,7 @@ export function deleteAllEvents() {
     ).then(() => {
       return dispatch(fetchEventHistory());
     }).catch((error)=> {
-      console.error(error.response);
+      console.error(error);
     });
   };
 }
@@ -1742,7 +1742,7 @@ export function deleteAllLowerings() {
     ).then(() => {
       return dispatch(fetchLowerings());
     }).catch((error)=> {
-      console.error(error.response);
+      console.error(error);
     });
   };
 }
@@ -1753,7 +1753,7 @@ export function deleteAllCruises() {
     ).then(() => {
       return dispatch(fetchCruises());
     }).catch((error)=> {
-      console.error(error.response);
+      console.error(error);
     });
   };
 }
@@ -1764,7 +1764,7 @@ export function deleteAllNonSystemUsers() {
       ).then((response) => {
         return response.data;
       }).catch((error) =>{
-        console.error(error.response);
+        console.error(error);
       });
 
     users.map(async (user) => {
@@ -1782,7 +1782,7 @@ export function deleteAllNonSystemEventTemplates() {
       ).then((response) => {
         return response.data;
       }).catch((error)=> {
-        console.error(error.response);
+        console.error(error);
       });
 
     event_templates.map(async (event_template) => {
