@@ -59,5 +59,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY config/client_config.js.dist ./config/client_config.js
 COPY config/map_tilelayers.js.dist ./config/map_tilelayers.js
 
-# Copy the built code
-COPY --from=builder work/build/ .
+# Copy the built code, including source maps for field debugging
+COPY --from=builder /work/build/ ./
+RUN test -n "$(find . -type f -name '*.map' -print -quit)"
