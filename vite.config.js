@@ -6,7 +6,10 @@ export default defineConfig({
   plugins: [react()],
   base: './',
   build: {
+    cssMinify: false,
+    minify: false,
     outDir: 'build',
+    sourcemap: true,
   },
   css: {
     preprocessorOptions: {
