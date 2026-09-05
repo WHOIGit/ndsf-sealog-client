@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [react()],
   base: './',
   build: {
+    // Deployments rewrite route-relative "static/" and "config/" requests to
+    // the app root (see nginx.conf); keep the CRA-era directory name so those
+    // rules also cover Vite's output.
+    assetsDir: 'static',
     cssMinify: false,
     minify: false,
     outDir: 'build',
