@@ -41,7 +41,7 @@ RUN npm ci
 COPY public ./public
 COPY src ./src
 COPY index.html ./
-COPY vite.config.js ./
+COPY vite.config.mjs ./
 
 # Build the application
 RUN mkdir ./config  `# Must be present for copy stage` \

@@ -1,7 +1,6 @@
 {
   "name": "ndsf-sealog-client",
   "version": "3.1.0",
-  "type": "module",
   "license": "MIT",
   "description": "NDSF edition of the Sealog event logging web client",
   "bugs": {
