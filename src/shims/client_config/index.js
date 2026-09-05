@@ -1,4 +1,10 @@
-const config = window.client_config || {};
+const config = globalThis.client_config;
+if (!config || typeof config !== 'object') {
+  throw new Error(
+    'Runtime configuration "client_config" must be loaded before the application',
+  );
+}
+
 export const {
   API_ROOT_URL, COORD_DECIMALS, CRUISE_ID_PLACEHOLDER, CRUISE_ID_REGEX,
   CUSTOM_CRUISE_NAME, CUSTOM_LOWERING_METADATA_FIELDS, CUSTOM_LOWERING_NAME,
