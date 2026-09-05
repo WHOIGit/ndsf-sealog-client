@@ -1,6 +1,6 @@
 ARG NETWORK_ACCESS=online
 
-FROM --platform=$BUILDPLATFORM node:20 AS builder-online
+FROM --platform=$BUILDPLATFORM node:20.19 AS builder-online
 
 
 # /!\ NOTE FOR AT-SEA DEVELOPMENT
@@ -35,7 +35,7 @@ WORKDIR /work
 
 # Install packages
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Copy sources
 COPY public ./public
